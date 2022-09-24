@@ -1,5 +1,6 @@
 export enum ContentInspectionType {
   SubResourceIntegrity = "SubResourceIntegrity",
+  NoMixedContent = "NoMixedContent",
 }
 
 export enum OrganizationalInspectionType {
@@ -21,7 +22,6 @@ export enum HttpInspectionType {
   HTTP308 = "HTTP308",
   // redirect to https.
   HTTPRedirectsToHttps = "HTTPRedirectsToHttps",
-  NoMixedContent = "NoMixedContent",
   ContentSecurityPolicy = "ContentSecurityPolicy",
   XFrameOptions = "XFrameOptions",
   XSSProtection = "XSSProtection",
@@ -70,14 +70,14 @@ export type InspectionType =
 export interface InspectResultDTO {
   type: InspectionType;
   didPass: boolean;
-  actualValue: Record<string, string | number>;
+  actualValue: Record<string, string | number | null>;
 }
 
 export class InspectionResult {
   constructor(
     private type: InspectionType,
     private didPass: boolean,
-    private actualValue: Record<string, string | number>
+    private actualValue: Record<string, string | number | null>
   ) {}
 
   toDTO(): InspectResultDTO {

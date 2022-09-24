@@ -19,19 +19,23 @@ export class SiteInspector {
   private contentInspector: ContentInspector;
 
   constructor(protected readonly httpClient: typeof fetch) {
+    // initialize all inspectors.
+    // some inspectors might have other dependencies than others.
     this.httpInspector = new HttpInspector(httpClient);
     this.tlsInspector = new TLSInspector();
     this.certificateInspector = new CertificateInspector();
     this.cookieInspector = new CookieInspector();
     this.networkInspector = new NetworkInspector();
     this.domainInspector = new DomainInspector();
-    this.organizationalInspector = new OrganizationalInspector();
+    this.organizationalInspector = new OrganizationalInspector(httpClient);
     this.contentInspector = new ContentInspector();
   }
 
   async inspect(
     hostname: string
   ): Promise<{ [type in InspectionType]: InspectionResult }> {
+    // run all inspections -
+    // use Promise all to execute them concurrently.
     const results = await Promise.all([
       this.httpInspector.inspect(hostname),
       this.tlsInspector.inspect(hostname),
