@@ -3,12 +3,18 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import DomainInspector from "../../inspection/domain/DomainInspector";
 import HttpInspector from "../../inspection/http/HttpInspector";
 import { InspectionResult, InspectionType } from "../../inspection/Inspector";
+import NetworkInspector from "../../inspection/network/NetworkInspector";
 import OrganizationalInspector from "../../inspection/organizational/OrganizationalInspector";
 import { sanitizeFQDN } from "../../utils/santize";
+import { resolve6 } from "dns";
+import { promisify } from "util";
 
 const httpInspector = new HttpInspector(fetch);
 const organizationalInspector = new OrganizationalInspector(fetch);
 const domainInspector = new DomainInspector(fetch);
+const networkInspector = new NetworkInspector({
+  resolve6: promisify(resolve6),
+});
 
 export default async function handler(
   req: NextApiRequest,
@@ -23,12 +29,19 @@ export default async function handler(
     });
   }
   try {
-    const [result, organizationalResult, domainResult] = await Promise.all([
-      httpInspector.inspect(siteToScan),
-      organizationalInspector.inspect(siteToScan),
-      domainInspector.inspect(siteToScan),
-    ]);
-    return res.json({ ...result, ...organizationalResult, ...domainResult });
+    const [result, organizationalResult, domainResult, networkResult] =
+      await Promise.all([
+        httpInspector.inspect(siteToScan),
+        organizationalInspector.inspect(siteToScan),
+        domainInspector.inspect(siteToScan),
+        networkInspector.inspect(siteToScan),
+      ]);
+    return res.json({
+      ...result,
+      ...organizationalResult,
+      ...domainResult,
+      ...networkResult,
+    });
   } catch (error: unknown) {
     if (error instanceof Error && error.message === "fetch failed") {
       return res.status(400).json({
