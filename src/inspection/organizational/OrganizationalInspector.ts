@@ -10,10 +10,10 @@ export default class OrganizationalInspector
 {
   constructor(protected readonly httpClient: typeof fetch) {}
   async inspect(
-    hostname: string
+    fqdn: string
   ): Promise<{ [key in OrganizationalInspectionType]: InspectionResult }> {
     const response = await this.httpClient(
-      new URL("https://" + hostname + "/.well-known/security.txt").toString()
+      new URL(`https://${fqdn}/.well-known/security.txt`).toString()
     );
 
     return {

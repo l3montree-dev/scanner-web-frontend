@@ -7,9 +7,11 @@ export const responsibleDisclosureChecker = async (
 
   return new InspectionResult(
     OrganizationalInspectionType.ResponsibleDisclosure,
-    textContent.includes("Contact") && textContent.includes("Expires"),
+    response.status !== 404 &&
+      textContent.includes("Contact") &&
+      textContent.includes("Expires"),
     {
-      "security.txt": textContent,
+      "security.txt": response.status === 404 ? "404" : textContent,
     }
   );
 };

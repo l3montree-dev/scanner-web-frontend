@@ -8,7 +8,7 @@ export default class NetworkInspector
   implements Inspector<NetworkInspectionType>
 {
   inspect(
-    hostname: string
+    fqdn: string
   ): Promise<{ [key in NetworkInspectionType]: InspectionResult }> {
     throw new Error("Method not implemented.");
   }

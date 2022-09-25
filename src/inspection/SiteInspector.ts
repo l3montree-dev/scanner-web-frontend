@@ -26,25 +26,25 @@ export class SiteInspector {
     this.certificateInspector = new CertificateInspector();
     this.cookieInspector = new CookieInspector();
     this.networkInspector = new NetworkInspector();
-    this.domainInspector = new DomainInspector();
+    this.domainInspector = new DomainInspector(httpClient);
     this.organizationalInspector = new OrganizationalInspector(httpClient);
     this.contentInspector = new ContentInspector();
   }
 
   async inspect(
-    hostname: string
+    fqdn: string
   ): Promise<{ [type in InspectionType]: InspectionResult }> {
     // run all inspections -
     // use Promise all to execute them concurrently.
     const results = await Promise.all([
-      this.httpInspector.inspect(hostname),
-      this.tlsInspector.inspect(hostname),
-      this.certificateInspector.inspect(hostname),
-      this.cookieInspector.inspect(hostname),
-      this.networkInspector.inspect(hostname),
-      this.domainInspector.inspect(hostname),
-      this.organizationalInspector.inspect(hostname),
-      this.contentInspector.inspect(hostname),
+      this.httpInspector.inspect(fqdn),
+      this.tlsInspector.inspect(fqdn),
+      this.certificateInspector.inspect(fqdn),
+      this.cookieInspector.inspect(fqdn),
+      this.networkInspector.inspect(fqdn),
+      this.domainInspector.inspect(fqdn),
+      this.organizationalInspector.inspect(fqdn),
+      this.contentInspector.inspect(fqdn),
     ]);
 
     // not using reduce here because it does not get all the types right.

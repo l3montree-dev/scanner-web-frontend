@@ -1,17 +1,28 @@
 import {
-  CertificateInspectionType,
-  ContentInspectionType,
   DomainInspectionType,
   InspectionResult,
   Inspector,
 } from "../Inspector";
+import { caaChecker } from "./caaChecker";
+import { dnsSecChecker } from "./dnsSecChecker";
+import { DOHResponse } from "./dohResponse";
 
 export default class DomainInspector
   implements Inspector<DomainInspectionType>
 {
-  inspect(
-    hostname: string
+  constructor(private httpClient: typeof fetch) {}
+
+  async inspect(
+    fqdn: string
   ): Promise<{ [key in DomainInspectionType]: InspectionResult }> {
-    throw new Error("Method not implemented.");
+    const response = await this.httpClient(
+      // cd=1 parameter to enable DNSSEC validation
+      `https://dns.google/resolve?name=${fqdn}&cd=1`
+    );
+    const json: DOHResponse = await response.json();
+    return {
+      [DomainInspectionType.DNSSec]: dnsSecChecker(json),
+      [DomainInspectionType.CAA]: caaChecker(json),
+    };
   }
 }

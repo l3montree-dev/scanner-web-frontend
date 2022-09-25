@@ -8,11 +8,11 @@ import { xssProtectionChecker } from "./xssProtectionChecker";
 export default class HttpInspector implements Inspector<HttpInspectionType> {
   constructor(private readonly httpClient: typeof fetch) {}
   async inspect(
-    hostname: string
+    fqdn: string
   ): Promise<{ [type in HttpInspectionType]: InspectionResult }> {
     // use http as protocol.
-    const url = new URL(`http://${hostname}`);
-    const httpsUrl = new URL("https://" + hostname);
+    const url = new URL(`http://${fqdn}`);
+    const httpsUrl = new URL(`https://${fqdn}`);
     const [httpResponse, httpsResponse] = await Promise.all([
       this.httpClient(url.toString(), {
         method: "GET",
@@ -24,7 +24,13 @@ export default class HttpInspector implements Inspector<HttpInspectionType> {
     ]);
 
     return {
-      HTTP: new InspectionResult(HttpInspectionType.HTTP, httpResponse.ok, {}),
+      HTTP: new InspectionResult(
+        HttpInspectionType.HTTP,
+        httpResponse.status <= 500,
+        {
+          response: await httpResponse.text(),
+        }
+      ),
       HTTP308: new InspectionResult(
         HttpInspectionType.HTTP308,
         httpResponse.status === 308,
@@ -32,7 +38,7 @@ export default class HttpInspector implements Inspector<HttpInspectionType> {
           status: httpResponse.status,
         }
       ),
-      HTTPRedirectsToHttps: redirectChecker(httpsResponse),
+      HTTPRedirectsToHttps: redirectChecker(httpResponse),
       ContentSecurityPolicy: contentSecurityPolicyCheck(httpsResponse),
       XFrameOptions: xFrameOptionsChecker(httpsResponse),
       XSSProtection: xssProtectionChecker(httpsResponse),

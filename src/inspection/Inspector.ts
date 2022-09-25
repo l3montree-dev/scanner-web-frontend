@@ -70,14 +70,14 @@ export type InspectionType =
 export interface InspectResultDTO {
   type: InspectionType;
   didPass: boolean;
-  actualValue: Record<string, string | number | null>;
+  actualValue: Record<string, any>;
 }
 
 export class InspectionResult {
   constructor(
     private type: InspectionType,
     private didPass: boolean,
-    private actualValue: Record<string, string | number | null>
+    private actualValue: Record<string, any>
   ) {}
 
   toDTO(): InspectResultDTO {
@@ -90,5 +90,5 @@ export class InspectionResult {
 }
 
 export interface Inspector<T extends InspectionType> {
-  inspect(hostname: string): Promise<{ [key in T]: InspectionResult }>;
+  inspect(fqdn: string): Promise<{ [key in T]: InspectionResult }>;
 }
