@@ -22,11 +22,15 @@ export enum HttpInspectionType {
   HTTP308 = "HTTP308",
   // redirect to https.
   HTTPRedirectsToHttps = "HTTPRedirectsToHttps",
+}
+
+export enum HeaderInspectionType {
   ContentSecurityPolicy = "ContentSecurityPolicy",
   XFrameOptions = "XFrameOptions",
   XSSProtection = "XSSProtection",
   ContentTypeOptions = "ContentTypeOptions",
 }
+
 export enum CookieInspectionType {
   SecureSessionCookies = "SecureSessionCookies",
 }
@@ -65,7 +69,8 @@ export type InspectionType =
   | NetworkInspectionType
   | DomainInspectionType
   | OrganizationalInspectionType
-  | ContentInspectionType;
+  | ContentInspectionType
+  | HeaderInspectionType;
 
 export interface InspectResultDTO {
   type: InspectionType;

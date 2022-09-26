@@ -1,4 +1,8 @@
-import { HttpInspectionType, InspectionResult } from "../Inspector";
+import {
+  HeaderInspectionType,
+  HttpInspectionType,
+  InspectionResult,
+} from "../Inspector";
 
 export const contentSecurityPolicyCheck = (
   response: Response
@@ -7,7 +11,7 @@ export const contentSecurityPolicyCheck = (
   // TODO: A meta tag might exist as well inside the body.
 
   return new InspectionResult(
-    HttpInspectionType.ContentSecurityPolicy,
+    HeaderInspectionType.ContentSecurityPolicy,
     // when should this check pass.
     !!header,
     {

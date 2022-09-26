@@ -1,9 +1,11 @@
-import { logger } from "../../utils/logger";
+import { getLogger } from "../../utils/logger";
 import {
   InspectionResult,
   NetworkInspectionType,
   Inspector,
 } from "../Inspector";
+
+const logger = getLogger(__filename);
 
 export default class NetworkInspector
   implements Inspector<NetworkInspectionType>
@@ -17,7 +19,7 @@ export default class NetworkInspector
     try {
       addresses = await this.dns.resolve6(fqdn);
     } catch (e) {
-      logger.error({ err: e }, `failed to resolve ${fqdn} to IPv6 addresses`);
+      logger.error(e, `failed to resolve ${fqdn} to IPv6 addresses`);
       addresses = [];
     }
 

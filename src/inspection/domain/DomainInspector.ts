@@ -1,5 +1,5 @@
 import { buildInspectionError } from "../../utils/error";
-import { logger } from "../../utils/logger";
+import { getLogger } from "../../utils/logger";
 import {
   DomainInspectionType,
   InspectionResult,
@@ -9,6 +9,7 @@ import { caaChecker } from "./caaChecker";
 import { dnsSecChecker } from "./dnsSecChecker";
 import { DOHResponse } from "./dohResponse";
 
+const logger = getLogger(__filename);
 export default class DomainInspector
   implements Inspector<DomainInspectionType>
 {
@@ -60,7 +61,7 @@ export default class DomainInspector
         [DomainInspectionType.CAA]: caaChecker(json),
       };
     } catch (e: unknown) {
-      logger.error({ err: e }, `domain inspection for ${fqdn} failed`);
+      logger.error(e, `domain inspection for ${fqdn} failed`);
       return buildInspectionError(DomainInspectionType, e);
     }
   }

@@ -1,20 +1,27 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { resolve6 } from "dns/promises";
 import type { NextApiRequest, NextApiResponse } from "next";
+import ContentInspector from "../../inspection/content/ContentInspector";
 import DomainInspector from "../../inspection/domain/DomainInspector";
+import HeaderInspector from "../../inspection/header/HttpInspector";
 import HttpInspector from "../../inspection/http/HttpInspector";
 import { InspectionResult, InspectionType } from "../../inspection/Inspector";
 import NetworkInspector from "../../inspection/network/NetworkInspector";
 import OrganizationalInspector from "../../inspection/organizational/OrganizationalInspector";
-import { logger } from "../../utils/logger";
+import { getLogger } from "../../utils/logger";
+
 import { sanitizeFQDN } from "../../utils/santize";
 
+const logger = getLogger(__filename);
+
 const httpInspector = new HttpInspector(fetch);
+const headerInspector = new HeaderInspector(fetch);
 const organizationalInspector = new OrganizationalInspector(fetch);
 const domainInspector = new DomainInspector(fetch);
 const networkInspector = new NetworkInspector({
   resolve6,
 });
+const contentInspector = new ContentInspector(fetch);
 
 export default async function handler(
   req: NextApiRequest,
@@ -35,21 +42,31 @@ export default async function handler(
     });
   }
   try {
-    const [result, organizationalResult, domainResult, networkResult] =
-      await Promise.all([
-        httpInspector.inspect(siteToScan),
-        organizationalInspector.inspect(siteToScan),
-        domainInspector.inspect(siteToScan),
-        networkInspector.inspect(siteToScan),
-      ]);
+    const [
+      result,
+      headerResult,
+      organizationalResult,
+      domainResult,
+      networkResult,
+      contentResults,
+    ] = await Promise.all([
+      httpInspector.inspect(siteToScan),
+      headerInspector.inspect(siteToScan),
+      organizationalInspector.inspect(siteToScan),
+      domainInspector.inspect(siteToScan),
+      networkInspector.inspect(siteToScan),
+      contentInspector.inspect(siteToScan),
+    ]);
     logger
       .child({ duration: performance.now() - start })
       .info(`successfully scanned site: ${siteToScan}`);
     return res.json({
       ...result,
+      ...headerResult,
       ...organizationalResult,
       ...domainResult,
       ...networkResult,
+      ...contentResults,
     });
   } catch (error: unknown) {
     if (error instanceof Error && error.message === "fetch failed") {

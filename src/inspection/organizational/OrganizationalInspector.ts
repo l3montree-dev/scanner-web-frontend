@@ -1,5 +1,5 @@
 import { buildInspectionError } from "../../utils/error";
-import { logger } from "../../utils/logger";
+import { getLogger } from "../../utils/logger";
 import {
   InspectionResult,
   OrganizationalInspectionType,
@@ -7,6 +7,7 @@ import {
 } from "../Inspector";
 import { responsibleDisclosureChecker } from "./responsibleDisclosureChecker";
 
+const logger = getLogger(__filename);
 export default class OrganizationalInspector
   implements Inspector<OrganizationalInspectionType>
 {
@@ -24,7 +25,7 @@ export default class OrganizationalInspector
           await responsibleDisclosureChecker(response),
       };
     } catch (e) {
-      logger.error({ err: e }, `organizational inspection for ${fqdn} failed`);
+      logger.error(e, `organizational inspection for ${fqdn} failed`);
       return buildInspectionError(OrganizationalInspectionType, e);
     }
   }

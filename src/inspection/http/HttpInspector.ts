@@ -1,12 +1,10 @@
 import { buildInspectionError } from "../../utils/error";
-import { logger } from "../../utils/logger";
-import { HttpInspectionType, InspectionResult, Inspector } from "../Inspector";
-import { contentSecurityPolicyCheck } from "./contentSecurityPolicy";
-import { contentTypeOptionsChecker } from "./contentTypeOptionsChecker";
-import { redirectChecker } from "./redirectChecker";
-import { xFrameOptionsChecker } from "./xframeOptionsChecker";
-import { xssProtectionChecker } from "./xssProtectionChecker";
+import { getLogger } from "../../utils/logger";
 
+import { HttpInspectionType, InspectionResult, Inspector } from "../Inspector";
+import { redirectChecker } from "./redirectChecker";
+
+const logger = getLogger(__filename);
 export default class HttpInspector implements Inspector<HttpInspectionType> {
   constructor(private readonly httpClient: typeof fetch) {}
   async inspect(
@@ -15,16 +13,10 @@ export default class HttpInspector implements Inspector<HttpInspectionType> {
     try {
       // use http as protocol.
       const url = new URL(`http://${fqdn}`);
-      const httpsUrl = new URL(`https://${fqdn}`);
-      const [httpResponse, httpsResponse] = await Promise.all([
-        this.httpClient(url.toString(), {
-          method: "GET",
-          redirect: "manual",
-        }),
-        this.httpClient(httpsUrl.toString(), {
-          method: "GET",
-        }),
-      ]);
+      const httpResponse = await this.httpClient(url.toString(), {
+        method: "GET",
+        redirect: "manual",
+      });
 
       return {
         HTTP: new InspectionResult(
@@ -42,13 +34,9 @@ export default class HttpInspector implements Inspector<HttpInspectionType> {
           }
         ),
         HTTPRedirectsToHttps: redirectChecker(httpResponse),
-        ContentSecurityPolicy: contentSecurityPolicyCheck(httpsResponse),
-        XFrameOptions: xFrameOptionsChecker(httpsResponse),
-        XSSProtection: xssProtectionChecker(httpsResponse),
-        ContentTypeOptions: contentTypeOptionsChecker(httpsResponse),
       };
     } catch (e: unknown) {
-      logger.error({ error: e }, `http inspection for ${fqdn} failed`);
+      logger.error(e, `http inspection for ${fqdn} failed`);
       return buildInspectionError(HttpInspectionType, e);
     }
   }
