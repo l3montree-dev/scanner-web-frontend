@@ -1,3 +1,5 @@
+import { buildInspectionError } from "../../utils/error";
+import { logger } from "../../utils/logger";
 import {
   InspectionResult,
   OrganizationalInspectionType,
@@ -12,13 +14,18 @@ export default class OrganizationalInspector
   async inspect(
     fqdn: string
   ): Promise<{ [key in OrganizationalInspectionType]: InspectionResult }> {
-    const response = await this.httpClient(
-      new URL(`https://${fqdn}/.well-known/security.txt`).toString()
-    );
+    try {
+      const response = await this.httpClient(
+        new URL(`https://${fqdn}/.well-known/security.txt`).toString()
+      );
 
-    return {
-      [OrganizationalInspectionType.ResponsibleDisclosure]:
-        await responsibleDisclosureChecker(response),
-    };
+      return {
+        [OrganizationalInspectionType.ResponsibleDisclosure]:
+          await responsibleDisclosureChecker(response),
+      };
+    } catch (e) {
+      logger.error({ err: e }, `organizational inspection for ${fqdn} failed`);
+      return buildInspectionError(OrganizationalInspectionType, e);
+    }
   }
 }

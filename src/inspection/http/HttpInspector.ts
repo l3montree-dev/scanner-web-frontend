@@ -1,3 +1,5 @@
+import { buildInspectionError } from "../../utils/error";
+import { logger } from "../../utils/logger";
 import { HttpInspectionType, InspectionResult, Inspector } from "../Inspector";
 import { contentSecurityPolicyCheck } from "./contentSecurityPolicy";
 import { contentTypeOptionsChecker } from "./contentTypeOptionsChecker";
@@ -10,39 +12,44 @@ export default class HttpInspector implements Inspector<HttpInspectionType> {
   async inspect(
     fqdn: string
   ): Promise<{ [type in HttpInspectionType]: InspectionResult }> {
-    // use http as protocol.
-    const url = new URL(`http://${fqdn}`);
-    const httpsUrl = new URL(`https://${fqdn}`);
-    const [httpResponse, httpsResponse] = await Promise.all([
-      this.httpClient(url.toString(), {
-        method: "GET",
-        redirect: "manual",
-      }),
-      this.httpClient(httpsUrl.toString(), {
-        method: "GET",
-      }),
-    ]);
+    try {
+      // use http as protocol.
+      const url = new URL(`http://${fqdn}`);
+      const httpsUrl = new URL(`https://${fqdn}`);
+      const [httpResponse, httpsResponse] = await Promise.all([
+        this.httpClient(url.toString(), {
+          method: "GET",
+          redirect: "manual",
+        }),
+        this.httpClient(httpsUrl.toString(), {
+          method: "GET",
+        }),
+      ]);
 
-    return {
-      HTTP: new InspectionResult(
-        HttpInspectionType.HTTP,
-        httpResponse.status <= 500,
-        {
-          response: await httpResponse.text(),
-        }
-      ),
-      HTTP308: new InspectionResult(
-        HttpInspectionType.HTTP308,
-        httpResponse.status === 308,
-        {
-          status: httpResponse.status,
-        }
-      ),
-      HTTPRedirectsToHttps: redirectChecker(httpResponse),
-      ContentSecurityPolicy: contentSecurityPolicyCheck(httpsResponse),
-      XFrameOptions: xFrameOptionsChecker(httpsResponse),
-      XSSProtection: xssProtectionChecker(httpsResponse),
-      ContentTypeOptions: contentTypeOptionsChecker(httpsResponse),
-    };
+      return {
+        HTTP: new InspectionResult(
+          HttpInspectionType.HTTP,
+          httpResponse.status <= 500,
+          {
+            response: await httpResponse.text(),
+          }
+        ),
+        HTTP308: new InspectionResult(
+          HttpInspectionType.HTTP308,
+          httpResponse.status === 308,
+          {
+            status: httpResponse.status,
+          }
+        ),
+        HTTPRedirectsToHttps: redirectChecker(httpResponse),
+        ContentSecurityPolicy: contentSecurityPolicyCheck(httpsResponse),
+        XFrameOptions: xFrameOptionsChecker(httpsResponse),
+        XSSProtection: xssProtectionChecker(httpsResponse),
+        ContentTypeOptions: contentTypeOptionsChecker(httpsResponse),
+      };
+    } catch (e: unknown) {
+      logger.error({ error: e }, `http inspection for ${fqdn} failed`);
+      return buildInspectionError(HttpInspectionType, e);
+    }
   }
 }

@@ -22,11 +22,13 @@ export default async function handler(
     Partial<{ [key in InspectionType]: InspectionResult }> | { error: string }
   >
 ) {
+  const start = performance.now();
   logger.debug(`received request to scan site: ${req.query.site}`);
   const siteToScan = sanitizeFQDN(req.query.site);
   logger.debug(`sanitized site to scan: ${siteToScan}`);
   if (!siteToScan) {
-    logger.error(`invalid site to scan: ${req.query.site} - provide a valid fully qualified domain name as query parameter: 
+    logger.child({ duration: performance.now() - start })
+      .error(`invalid site to scan: ${req.query.site} - provide a valid fully qualified domain name as query parameter: 
     ?site=example.com`);
     return res.status(400).json({
       error: `Missing site to scan or not a valid fully qualified domain name. Please provide the site you would like to scan using the site query parameter. Provided value: ?site=${req.query.site}`,
@@ -40,6 +42,9 @@ export default async function handler(
         domainInspector.inspect(siteToScan),
         networkInspector.inspect(siteToScan),
       ]);
+    logger
+      .child({ duration: performance.now() - start })
+      .info(`successfully scanned site: ${siteToScan}`);
     return res.json({
       ...result,
       ...organizationalResult,
@@ -48,14 +53,18 @@ export default async function handler(
     });
   } catch (error: unknown) {
     if (error instanceof Error && error.message === "fetch failed") {
-      logger.error({ err: error }, `failed to fetch site: ${siteToScan}`);
+      logger
+        .child({ duration: performance.now() - start })
+        .error({ err: error }, `failed to fetch site: ${siteToScan}`);
       return res.status(400).json({
         error:
           "Invalid site provided. Please provide a valid fully qualified domain name as site query parameter. Example: ?site=example.com",
       });
     }
 
-    logger.error({ err: error }, "unknown error happened while scanning site");
+    logger
+      .child({ duration: performance.now() - start })
+      .error({ err: error }, "unknown error happened while scanning site");
     return res.status(500).json({ error: "Unknown error" });
   }
 }

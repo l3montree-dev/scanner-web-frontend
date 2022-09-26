@@ -8,7 +8,9 @@ export const caaChecker = (response: DOHResponse): InspectionResult => {
     response.Status === 0 &&
       response.Answer.some((answer) => answer.type === 257),
     {
-      Answer: response.Answer,
+      CertificateAuthority: response.Answer.find(
+        (answer) => answer.type === 257
+      )?.data,
     }
   );
 };
