@@ -2,8 +2,9 @@
 import { resolve6 } from "dns/promises";
 import type { NextApiRequest, NextApiResponse } from "next";
 import ContentInspector from "../../inspection/content/ContentInspector";
+import CookieInspector from "../../inspection/cookie/CookieInspector";
 import DomainInspector from "../../inspection/domain/DomainInspector";
-import HeaderInspector from "../../inspection/header/HttpInspector";
+import HeaderInspector from "../../inspection/header/HeaderInspector";
 import HttpInspector from "../../inspection/http/HttpInspector";
 import { InspectionResult, InspectionType } from "../../inspection/Inspector";
 import NetworkInspector from "../../inspection/network/NetworkInspector";
@@ -22,6 +23,7 @@ const networkInspector = new NetworkInspector({
   resolve6,
 });
 const contentInspector = new ContentInspector(fetch);
+const cookieInspector = new CookieInspector(fetch);
 
 export default async function handler(
   req: NextApiRequest,
@@ -49,6 +51,7 @@ export default async function handler(
       domainResult,
       networkResult,
       contentResults,
+      cookieResults,
     ] = await Promise.all([
       httpInspector.inspect(siteToScan),
       headerInspector.inspect(siteToScan),
@@ -56,6 +59,7 @@ export default async function handler(
       domainInspector.inspect(siteToScan),
       networkInspector.inspect(siteToScan),
       contentInspector.inspect(siteToScan),
+      cookieInspector.inspect(siteToScan),
     ]);
     logger
       .child({ duration: performance.now() - start })
@@ -67,6 +71,7 @@ export default async function handler(
       ...domainResult,
       ...networkResult,
       ...contentResults,
+      ...cookieResults,
     });
   } catch (error: unknown) {
     if (error instanceof Error && error.message === "fetch failed") {

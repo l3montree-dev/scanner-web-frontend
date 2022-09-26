@@ -7,8 +7,10 @@ import {
   InspectionResult,
   Inspector,
 } from "../Inspector";
-import { contentSecurityPolicyCheck } from "../header/contentSecurityPolicy";
+import { contentSecurityPolicyCheck } from "./contentSecurityPolicy";
 import { contentTypeOptionsChecker } from "./contentTypeOptionsChecker";
+import { hstsChecker } from "./hstsChecker";
+import { hstsPreloadedChecker } from "./hstsPreloadedChecker";
 import { xFrameOptionsChecker } from "./xframeOptionsChecker";
 import { xssProtectionChecker } from "./xssProtectionChecker";
 
@@ -28,6 +30,13 @@ export default class HeaderInspector
       });
 
       return {
+        HTTPS: new InspectionResult(
+          HeaderInspectionType.HTTPS,
+          httpsResponse.ok,
+          {}
+        ),
+        HSTS: hstsChecker(httpsResponse),
+        HSTSPreloaded: hstsPreloadedChecker(httpsResponse),
         ContentSecurityPolicy: contentSecurityPolicyCheck(httpsResponse),
         XFrameOptions: xFrameOptionsChecker(httpsResponse),
         XSSProtection: xssProtectionChecker(httpsResponse),

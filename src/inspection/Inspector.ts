@@ -25,6 +25,9 @@ export enum HttpInspectionType {
 }
 
 export enum HeaderInspectionType {
+  HTTPS = "HTTPS",
+  HSTS = "HSTS",
+  HSTSPreloaded = "HSTSPreloaded",
   ContentSecurityPolicy = "ContentSecurityPolicy",
   XFrameOptions = "XFrameOptions",
   XSSProtection = "XSSProtection",
@@ -35,9 +38,6 @@ export enum CookieInspectionType {
   SecureSessionCookies = "SecureSessionCookies",
 }
 export enum TLSInspectionType {
-  HTTPS = "HTTPS",
-  HSTS = "HSTS",
-  HSTSPreloaded = "HSTSPreloaded",
   TLSv1_2 = "TLSv1_2",
   TLSv1_3 = "TLSv1_3",
   SSLDeactivated = "SSLDeactivated",
