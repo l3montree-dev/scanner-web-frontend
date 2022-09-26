@@ -1,3 +1,4 @@
+import { logger } from "../../utils/logger";
 import {
   InspectionResult,
   NetworkInspectionType,
@@ -12,7 +13,14 @@ export default class NetworkInspector
   async inspect(
     fqdn: string
   ): Promise<{ [key in NetworkInspectionType]: InspectionResult }> {
-    const addresses = await this.dns.resolve6(fqdn);
+    let addresses: string[];
+    try {
+      addresses = await this.dns.resolve6(fqdn);
+    } catch (e) {
+      logger.error({ err: e }, `failed to resolve ${fqdn} to IPv6 addresses`);
+      addresses = [];
+    }
+
     return {
       [NetworkInspectionType.IPv6]: new InspectionResult(
         NetworkInspectionType.IPv6,

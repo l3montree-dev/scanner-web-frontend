@@ -7,6 +7,7 @@ import { InspectionType, InspectionResult } from "./Inspector";
 import NetworkInspector from "./network/NetworkInspector";
 import OrganizationalInspector from "./organizational/OrganizationalInspector";
 import TLSInspector from "./tls/TLSInspector";
+import { resolve6 } from "dns/promises";
 
 export class SiteInspector {
   private httpInspector: HttpInspector;
@@ -25,7 +26,9 @@ export class SiteInspector {
     this.tlsInspector = new TLSInspector();
     this.certificateInspector = new CertificateInspector();
     this.cookieInspector = new CookieInspector();
-    this.networkInspector = new NetworkInspector();
+    this.networkInspector = new NetworkInspector({
+      resolve6,
+    });
     this.domainInspector = new DomainInspector(httpClient);
     this.organizationalInspector = new OrganizationalInspector(httpClient);
     this.contentInspector = new ContentInspector();
