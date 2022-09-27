@@ -9,6 +9,7 @@ import HttpInspector from "../../inspection/http/HttpInspector";
 import { InspectionResult, InspectionType } from "../../inspection/Inspector";
 import NetworkInspector from "../../inspection/network/NetworkInspector";
 import OrganizationalInspector from "../../inspection/organizational/OrganizationalInspector";
+import TLSInspector from "../../inspection/tls/TLSInspector";
 import { getLogger } from "../../utils/logger";
 
 import { sanitizeFQDN } from "../../utils/santize";
@@ -24,6 +25,7 @@ const networkInspector = new NetworkInspector({
 });
 const contentInspector = new ContentInspector(fetch);
 const cookieInspector = new CookieInspector(fetch);
+const tlsInspector = new TLSInspector();
 
 export default async function handler(
   req: NextApiRequest,
@@ -52,6 +54,7 @@ export default async function handler(
       networkResult,
       contentResults,
       cookieResults,
+      tlsResults,
     ] = await Promise.all([
       httpInspector.inspect(siteToScan),
       headerInspector.inspect(siteToScan),
@@ -60,6 +63,7 @@ export default async function handler(
       networkInspector.inspect(siteToScan),
       contentInspector.inspect(siteToScan),
       cookieInspector.inspect(siteToScan),
+      tlsInspector.inspect(siteToScan),
     ]);
     logger
       .child({ duration: performance.now() - start })
@@ -72,6 +76,7 @@ export default async function handler(
       ...networkResult,
       ...contentResults,
       ...cookieResults,
+      ...tlsResults,
     });
   } catch (error: unknown) {
     if (error instanceof Error && error.message === "fetch failed") {

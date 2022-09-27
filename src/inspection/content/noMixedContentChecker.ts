@@ -8,6 +8,7 @@ export const noMixedContentChecker = (dom: JSDOM): InspectionResult => {
     ...Array.from<Element>(dom.window.document.querySelectorAll("link")),
     ...Array.from(dom.window.document.querySelectorAll("script")),
     ...Array.from(dom.window.document.querySelectorAll("img")),
+    ...Array.from(dom.window.document.querySelectorAll("video")),
     ...Array.from(dom.window.document.querySelectorAll("iframe")),
   ];
 
