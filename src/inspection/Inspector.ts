@@ -56,7 +56,6 @@ export enum CertificateInspectionType {
   StrongSignatureAlgorithm = "StrongSignatureAlgorithm",
   MatchesHostname = "MatchesHostname",
   NotRevoked = "NotRevoked",
-  NotExpired = "NotExpired",
   CertificateTransparency = "CertificateTransparency",
   ValidCertificateChain = "ValidCertificateChain",
 }

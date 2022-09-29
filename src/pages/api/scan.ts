@@ -1,6 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { resolve6 } from "dns/promises";
 import type { NextApiRequest, NextApiResponse } from "next";
+import CertificateInspector from "../../inspection/certificate/CertificateInspector";
 import ContentInspector from "../../inspection/content/ContentInspector";
 import CookieInspector from "../../inspection/cookie/CookieInspector";
 import DomainInspector from "../../inspection/domain/DomainInspector";
@@ -26,6 +27,7 @@ const networkInspector = new NetworkInspector({
 const contentInspector = new ContentInspector(fetch);
 const cookieInspector = new CookieInspector(fetch);
 const tlsInspector = new TLSInspector();
+const certificateInspector = new CertificateInspector();
 
 export default async function handler(
   req: NextApiRequest,
@@ -55,6 +57,7 @@ export default async function handler(
       contentResults,
       cookieResults,
       tlsResults,
+      certificateResults,
     ] = await Promise.all([
       httpInspector.inspect(siteToScan),
       headerInspector.inspect(siteToScan),
@@ -64,6 +67,7 @@ export default async function handler(
       contentInspector.inspect(siteToScan),
       cookieInspector.inspect(siteToScan),
       tlsInspector.inspect(siteToScan),
+      certificateInspector.inspect(siteToScan),
     ]);
     logger
       .child({ duration: performance.now() - start })
@@ -77,6 +81,7 @@ export default async function handler(
       ...contentResults,
       ...cookieResults,
       ...tlsResults,
+      ...certificateResults,
     });
   } catch (error: unknown) {
     if (error instanceof Error && error.message === "fetch failed") {

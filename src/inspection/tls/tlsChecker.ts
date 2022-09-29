@@ -1,10 +1,7 @@
 import { SecureVersion } from "node:tls";
+import { tlsConnect } from "../../utils/tls";
 
-import { getLogger } from "../../utils/logger";
 import { InspectionResult, TLSInspectionType } from "../Inspector";
-import { tlsConnect } from "./connection";
-
-const logger = getLogger(__filename);
 
 const tlsVersionSupported = async (fqdn: string, tlsVersion: SecureVersion) => {
   try {

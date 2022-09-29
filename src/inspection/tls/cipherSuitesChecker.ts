@@ -1,6 +1,6 @@
 import { getCiphers, SecureVersion } from "node:tls";
 import { getLogger } from "../../utils/logger";
-import { protocols, tlsConnect } from "./connection";
+import { protocols, tlsConnect } from "../../utils/tls";
 
 const logger = getLogger(__filename);
 
@@ -17,6 +17,7 @@ export const serverPreferredCiphers = async (
         const supportedCiphers: string[] = [];
         let testCiphers = [...ciphers];
         // to keep the request count low, do it sequentially
+        // iterate over all cipher suites and check if they are supported
         while (testCiphers.length > 0) {
           try {
             const socket = await tlsConnect({
@@ -30,22 +31,21 @@ export const serverPreferredCiphers = async (
             });
 
             const selectedCipher = socket.getCipher().name.toUpperCase();
+            // add it to the list of supported ciphers
+            // the list is ordered - therefore use push, to append it to the end of the array.
             supportedCiphers.push(selectedCipher);
 
             const index = testCiphers.indexOf(selectedCipher);
             if (index === -1) {
-              console.error(
-                "cipher not found in list",
-                socket.getCipher(),
-                testCiphers
-              );
               throw new Error(
                 `Cipher ${selectedCipher} not found in ${testCiphers.join(
                   ", "
                 )}`
               );
             }
+            // remove the preferred cipher suite from the array.
             testCiphers.splice(index, 1);
+            // destroy the socket connection.
             socket.destroy();
           } catch (e) {
             break;

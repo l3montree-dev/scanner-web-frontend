@@ -1,11 +1,4 @@
-import { ConnectionOptions, TLSSocket, connect, SecureVersion } from "tls";
-
-export const protocols: Array<SecureVersion> = [
-  "TLSv1.2",
-  "TLSv1.3",
-  "TLSv1.1",
-  "TLSv1",
-];
+import { connect, ConnectionOptions, SecureVersion, TLSSocket } from "node:tls";
 
 export const tlsConnect = (options: ConnectionOptions) => {
   return new Promise<TLSSocket>((resolve, reject) => {
@@ -17,3 +10,10 @@ export const tlsConnect = (options: ConnectionOptions) => {
     socket.on("error", reject);
   });
 };
+
+export const protocols: Array<SecureVersion> = [
+  "TLSv1.2",
+  "TLSv1.3",
+  "TLSv1.1",
+  "TLSv1",
+];
