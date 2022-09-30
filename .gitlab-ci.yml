@@ -29,7 +29,7 @@ build:
         - docker build --network=host --cache-from $IMAGE_TAG -t $IMAGE_TAG .
         - docker push $IMAGE_TAG
     only:
-        - master
+        - main
     when: manual
 
 production-master:
@@ -46,5 +46,5 @@ production-master:
         - echo "$K8S_CERTIFICATE" >> ca.pem
         - kubectl --server=$K8S_API_URL --token=$K8S_TOKEN --certificate-authority=ca.pem --namespace=neuland-homeland rollout restart deployment/ozgsec-website
     only:
-        - master
+        - main
     when: manual
