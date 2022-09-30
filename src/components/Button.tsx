@@ -9,7 +9,7 @@ interface Props extends PropsWithChildren {
 }
 const Button: FunctionComponent<Props> = (props) => {
   const { loading, ...rest } = props;
-  return <button {...rest}>{loading ? <Spinner /> : props.children}</button>;
+  return <button {...rest}>{!loading ? <Spinner /> : props.children}</button>;
 };
 
 export default Button;
