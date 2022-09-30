@@ -1,0 +1,50 @@
+image: docker:20.10.2
+
+variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+
+stages:
+    - scanning
+    - publish
+    - deploy
+
+gitguardian scan:
+    image: gitguardian/ggshield:latest
+    stage: scanning
+    script: ggshield scan ci
+
+build:
+    image: docker:19.03.1
+    stage: publish
+    services:
+        - docker:19.03.1-dind
+    variables:
+        IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME
+        DOCKER_TLS_CERTDIR: ""
+        DOCKER_HOST: tcp://localhost:2375
+    allow_failure: false
+    script:
+        - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+        - docker pull $IMAGE_TAG || true
+        - docker build --network=host --cache-from $IMAGE_TAG -t $IMAGE_TAG .
+        - docker push $IMAGE_TAG
+    only:
+        - master
+    when: manual
+
+production-master:
+    stage: deploy
+    dependencies:
+        - build
+    image:
+        name: bitnami/kubectl
+        entrypoint: [""]
+    environment:
+        name: production
+        url: "https://l3montree.com"
+    script:
+        - echo "$K8S_CERTIFICATE" >> ca.pem
+        - kubectl --server=$K8S_API_URL --token=$K8S_TOKEN --certificate-authority=ca.pem --namespace=neuland-homeland rollout restart deployment/ozgsec-website
+    only:
+        - master
+    when: manual
