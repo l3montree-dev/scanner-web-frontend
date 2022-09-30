@@ -3,7 +3,7 @@
  * @returns The sanitized FQDN or null if the provided value is not a string
  */
 export const sanitizeFQDN = (providedValue: any): string | null => {
-  if (typeof providedValue !== "string") {
+  if (typeof providedValue !== "string" || !providedValue.includes(".")) {
     return null;
   }
   // add a protocol to the provided value, so that the URL constructor
