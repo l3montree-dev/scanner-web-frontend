@@ -44,7 +44,7 @@ production-master:
         url: "https://l3montree.com"
     script:
         - echo "$K8S_CERTIFICATE" >> ca.pem
-        - kubectl --server=$K8S_API_URL --token=$K8S_TOKEN --certificate-authority=ca.pem --namespace=neuland-homeland rollout restart deployment/ozgsec-website
+        - kubectl --server=$K8S_API_URL --token=$K8S_TOKEN --certificate-authority=ca.pem --namespace=ozgsec rollout restart deployment/ozgsec-website
     only:
         - main
     when: manual
