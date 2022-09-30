@@ -10,5 +10,8 @@ EXPOSE 3000
 COPY . .
 
 RUN npm i
+
+RUN npm build
+
 CMD [ "npm", "start" ]
 
