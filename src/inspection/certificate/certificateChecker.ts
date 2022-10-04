@@ -64,6 +64,7 @@ export const isValidCertificateChainChecker = (
     }
     currentCertificate = currentCertificate.issuerCertificate;
   }
+
   return new InspectionResult(
     CertificateInspectionType.ValidCertificateChain,
     true,

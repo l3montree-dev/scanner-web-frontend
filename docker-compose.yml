@@ -1,0 +1,16 @@
+version: '3'
+services:
+  mongodb:
+    image: mongo:5.0
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=ozgsec
+      - MONGO_INITDB_ROOT_PASSWORD=secret
+    ports:
+      - 27017:27017
+    volumes:
+      - db-data:/data/db
+      - mongo-config:/data/configdb
+ 
+volumes:
+  db-data:
+  mongo-config:

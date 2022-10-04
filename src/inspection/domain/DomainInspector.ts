@@ -51,14 +51,18 @@ export default class DomainInspector
     fqdn: string
   ): Promise<{ [key in DomainInspectionType]: InspectionResult }> {
     try {
-      const response = await this.httpClient(
-        // cd=1 parameter to enable DNSSEC validation
-        `https://dns.google/resolve?name=${fqdn}&do=true`
-      );
-      const json: DOHResponse = await response.json();
+      const [response, caaResponse] = await Promise.all([
+        this.httpClient(`https://dns.google/resolve?name=${fqdn}&do=true`).then(
+          (r) => r.json()
+        ),
+        this.httpClient(
+          `https://dns.google/resolve?name=${fqdn}&do=true&type=CAA`
+        ).then((r) => r.json()),
+      ]);
+
       return {
-        [DomainInspectionType.DNSSec]: dnsSecChecker(json),
-        [DomainInspectionType.CAA]: caaChecker(json),
+        [DomainInspectionType.DNSSec]: dnsSecChecker(response),
+        [DomainInspectionType.CAA]: caaChecker(caaResponse),
       };
     } catch (e: unknown) {
       logger.error(e, `domain inspection for ${fqdn} failed`);
