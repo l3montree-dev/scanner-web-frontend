@@ -1,5 +1,5 @@
 import { getCiphers, SecureVersion } from "node:tls";
-import { getLogger } from "../../utils/logger";
+import { getLogger } from "../../services/logger";
 import { protocols, tlsConnect } from "../../utils/tls";
 
 const logger = getLogger(__filename);

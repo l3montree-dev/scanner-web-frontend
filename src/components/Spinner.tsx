@@ -1,14 +1,7 @@
 import React from "react";
 
 const Spinner = () => {
-  return (
-    <div className="lds-ring">
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-    </div>
-  );
+  return <img src="/assets/spinner.svg" alt="Loading Spinner" />;
 };
 
 export default Spinner;

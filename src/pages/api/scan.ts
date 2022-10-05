@@ -11,21 +11,23 @@ import { InspectionResult, InspectionType } from "../../inspection/Inspector";
 import NetworkInspector from "../../inspection/network/NetworkInspector";
 import OrganizationalInspector from "../../inspection/organizational/OrganizationalInspector";
 import TLSInspector from "../../inspection/tls/TLSInspector";
-import { getLogger } from "../../utils/logger";
+import { api, fetchWithTimeout } from "../../services/api";
+import { getLogger } from "../../services/logger";
 
 import { sanitizeFQDN } from "../../utils/santize";
 
 const logger = getLogger(__filename);
 
-const httpInspector = new HttpInspector(fetch);
-const headerInspector = new HeaderInspector(fetch);
-const organizationalInspector = new OrganizationalInspector(fetch);
-const domainInspector = new DomainInspector(fetch);
+const fetchClient = fetchWithTimeout(3_000);
+const httpInspector = new HttpInspector(fetchClient);
+const headerInspector = new HeaderInspector(fetchClient);
+const organizationalInspector = new OrganizationalInspector(fetchClient);
+const domainInspector = new DomainInspector(fetchClient);
 const networkInspector = new NetworkInspector({
   resolve6,
 });
-const contentInspector = new ContentInspector(fetch);
-const cookieInspector = new CookieInspector(fetch);
+const contentInspector = new ContentInspector(fetchClient);
+const cookieInspector = new CookieInspector(fetchClient);
 const tlsInspector = new TLSInspector();
 const certificateInspector = new CertificateInspector();
 

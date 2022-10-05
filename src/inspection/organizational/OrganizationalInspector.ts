@@ -1,5 +1,5 @@
 import { buildInspectionError } from "../../utils/error";
-import { getLogger } from "../../utils/logger";
+import { getLogger } from "../../services/logger";
 import {
   InspectionResult,
   OrganizationalInspectionType,
