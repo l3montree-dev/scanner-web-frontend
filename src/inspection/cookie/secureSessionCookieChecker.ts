@@ -6,7 +6,7 @@ export const SecureSessionCookiesChecker = (response: Response) => {
     CookieInspectionType.SecureSessionCookies,
     header === null ||
       header
-        .split(";")
+        .split(",")
         // determine which cookie is a session cookie...
         // ref: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#attributes
         .filter((cookie) => !cookie.includes("Expires"))
@@ -14,7 +14,7 @@ export const SecureSessionCookiesChecker = (response: Response) => {
           (cookie) => cookie.includes("Secure") && cookie.includes("HttpOnly")
         ),
     {
-      "Set-Cookie": response.headers.get("Set-Cookie"),
+      "Set-Cookie": header,
     }
   );
 };

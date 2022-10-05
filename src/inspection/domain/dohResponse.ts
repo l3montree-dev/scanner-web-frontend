@@ -9,7 +9,7 @@ export interface DOHResponse {
     name: string;
     type: number;
   }>;
-  Answer: Array<{
+  Answer?: Array<{
     name: string;
     type: number;
     TTL: number;
