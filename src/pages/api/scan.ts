@@ -1,6 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { resolve6 } from "dns/promises";
+import { Model } from "mongoose";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { withDB } from "../../decorators/withDB";
 import CertificateInspector from "../../inspection/certificate/CertificateInspector";
 import ContentInspector from "../../inspection/content/ContentInspector";
 import CookieInspector from "../../inspection/cookie/CookieInspector";
@@ -11,7 +13,7 @@ import { InspectionResult, InspectionType } from "../../inspection/Inspector";
 import NetworkInspector from "../../inspection/network/NetworkInspector";
 import OrganizationalInspector from "../../inspection/organizational/OrganizationalInspector";
 import TLSInspector from "../../inspection/tls/TLSInspector";
-import { api, fetchWithTimeout } from "../../services/api";
+import { fetchWithTimeout } from "../../services/api";
 import { getLogger } from "../../services/logger";
 
 import { sanitizeFQDN } from "../../utils/santize";
@@ -31,11 +33,12 @@ const cookieInspector = new CookieInspector(fetchClient);
 const tlsInspector = new TLSInspector();
 const certificateInspector = new CertificateInspector();
 
-export default async function handler(
+const handler = async function handler(
   req: NextApiRequest,
   res: NextApiResponse<
     Partial<{ [key in InspectionType]: InspectionResult }> | { error: string }
-  >
+  >,
+  { Report }: { Report: Model<any> }
 ) {
   const start = performance.now();
   logger.debug(`received request to scan site: ${req.query.site}`);
@@ -51,7 +54,7 @@ export default async function handler(
   }
   try {
     const [
-      result,
+      httpResult,
       headerResult,
       organizationalResult,
       domainResult,
@@ -74,8 +77,8 @@ export default async function handler(
     logger
       .child({ duration: performance.now() - start })
       .info(`successfully scanned site: ${siteToScan}`);
-    return res.json({
-      ...result,
+    const result = {
+      ...httpResult,
       ...headerResult,
       ...organizationalResult,
       ...domainResult,
@@ -84,7 +87,10 @@ export default async function handler(
       ...cookieResults,
       ...tlsResults,
       ...certificateResults,
-    });
+    };
+    const report = new Report(result);
+    await report.save();
+    return res.json(result);
   } catch (error: unknown) {
     if (error instanceof Error && error.message === "fetch failed") {
       logger
@@ -101,4 +107,6 @@ export default async function handler(
       .error({ err: error }, "unknown error happened while scanning site");
     return res.status(500).json({ error: "Unknown error" });
   }
-}
+};
+
+export default withDB(handler);

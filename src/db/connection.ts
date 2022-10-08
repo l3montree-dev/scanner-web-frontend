@@ -1,18 +1,65 @@
-import mongoose from "mongoose";
+import mongoose, { Connection, Mongoose } from "mongoose";
+import { getLogger } from "../services/logger";
+import { models } from "./models";
 
-let connection: Promise<mongoose.Mongoose> | null = null;
+const logger = getLogger(__filename);
+
+let connectionPromise: Promise<Mongoose> | null = null;
+let connection: Connection | null = null;
+
+const addModels = (connection: Connection): Connection => {
+  Object.entries(models).forEach(([modelName, schema]) => {
+    if (connection.models[modelName] === undefined) {
+      connection.model(modelName, schema);
+    }
+  });
+  return connection;
+};
+
 async function connect() {
   const dbUrl = process.env.MONGODB_URI;
   if (!dbUrl) {
     throw new Error("MONGODB_URI is not set");
   }
-  connection = mongoose.connect(dbUrl);
-  // use `await mongoose.connect('mongodb://user:password@localhost:27017/test');` if your database has auth enabled
+  // handle concurrent requests.
+  if (connectionPromise) {
+    logger.info(
+      "concurrent request detected. Waiting for initial database connection to complete"
+    );
+    return (await connectionPromise).connection;
+  }
+  const now = Date.now();
+  connectionPromise = mongoose.connect(dbUrl);
+  logger
+    .child({ duration: Date.now() - now })
+    .info("connection to mongo database success");
+
+  // save it in a module variable.
+  connection = (await connectionPromise).connection;
+  connection = addModels(connection);
+
   return connection;
 }
 
-export default function getConnection(): Promise<mongoose.Mongoose> {
-  if (connection) {
+/**
+ * - 0 = disconnected
+ * - 1 = connected
+ * - 2 = connecting
+ * - 3 = disconnecting
+ * - 99 = uninitialized
+ */
+const successReadyStates = [1, 2];
+const connectionIsReady = (
+  connection: Connection | null
+): connection is Connection => {
+  if (!connection) {
+    return false;
+  }
+  return successReadyStates.includes(connection.readyState);
+};
+
+export default async function getConnection(): Promise<Connection> {
+  if (connectionIsReady(connection)) {
     return connection;
   }
   return connect();
