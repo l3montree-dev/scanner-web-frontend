@@ -44,7 +44,6 @@ export const startMonitoring = async () => {
 
   data.forEach(({ fqdn, interval }) => {
     // start monitoring
-    monitoringFn(fqdn);
     setInterval(
       () => monitoringFn(fqdn),
       interval

@@ -1,6 +1,7 @@
 import { createServer } from "http";
 import next from "next";
 import { startMonitoring } from "./src/leaderelection/ozgsecMonitoring";
+import { openSSL } from "./src/services/openssl";
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";

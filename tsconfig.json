@@ -16,7 +16,7 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "ts-node": {
+  "ts-node": { 
     "transpileOnly": true,
     "compilerOptions": {
       "module": "commonjs"

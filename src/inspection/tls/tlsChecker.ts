@@ -1,4 +1,4 @@
-import { SecureVersion } from "node:tls";
+import { DEFAULT_MIN_VERSION, SecureVersion } from "node:tls";
 import { tlsConnect } from "../../utils/tls";
 
 import { InspectionResult, TLSInspectionType } from "../Inspector";
@@ -16,6 +16,7 @@ const tlsVersionSupported = async (fqdn: string, tlsVersion: SecureVersion) => {
     socket.destroy();
     return true;
   } catch (e) {
+    console.log(tlsVersion, e, DEFAULT_MIN_VERSION);
     return false;
   }
 };
