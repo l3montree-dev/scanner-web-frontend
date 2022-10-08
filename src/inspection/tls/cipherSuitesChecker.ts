@@ -9,7 +9,7 @@ export const serverPreferredCiphers = async (
 ): Promise<{ [key in SecureVersion]: string[] }> => {
   const ciphers = getCiphers().map((cipher) => cipher.toUpperCase());
 
-  const now = performance.now();
+  const now = Date.now();
 
   const cipherPreference = (
     await Promise.all(
@@ -62,9 +62,7 @@ export const serverPreferredCiphers = async (
     {} as { [key in SecureVersion]: string[] }
   );
 
-  logger.debug(
-    `serverSupportedCiphers took ${performance.now() - now}ms for ${fqdn}`
-  );
+  logger.debug(`serverSupportedCiphers took ${Date.now() - now}ms for ${fqdn}`);
   return cipherPreference;
 };
 
