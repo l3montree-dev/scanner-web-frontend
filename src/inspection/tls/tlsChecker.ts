@@ -1,4 +1,6 @@
 import { DEFAULT_MIN_VERSION, SecureVersion } from "node:tls";
+import { openSSL } from "../../services/openssl";
+import { promise2Boolean } from "../../utils/promise";
 import { tlsConnect } from "../../utils/tls";
 
 import { InspectionResult, TLSInspectionType } from "../Inspector";
@@ -11,6 +13,7 @@ const tlsVersionSupported = async (fqdn: string, tlsVersion: SecureVersion) => {
       servername: fqdn,
       maxVersion: tlsVersion,
       minVersion: tlsVersion,
+      rejectUnauthorized: false,
     });
     // close the connection
     socket.destroy();
@@ -39,8 +42,12 @@ export const tls13Supported = async (fqdn: string) => {
 
 export const tls11NotSupported = async (fqdn: string) => {
   const [tls11Supported, tls10Supported] = await Promise.all([
-    tlsVersionSupported(fqdn, "TLSv1.1"),
-    tlsVersionSupported(fqdn, "TLSv1"),
+    await promise2Boolean(
+      openSSL(["s_client", "-connect", `${fqdn}:443`, "-tls1_1"])
+    ),
+    await promise2Boolean(
+      openSSL(["s_client", "-connect", `${fqdn}:443`, "-tls1"])
+    ),
   ]);
   return new InspectionResult(
     TLSInspectionType.TLSv1_1_Deactivated,
@@ -50,4 +57,16 @@ export const tls11NotSupported = async (fqdn: string) => {
       tls10Supported,
     }
   );
+};
+
+export const sslDeactivatedChecker = async (fqdn: string) => {
+  // use openSSL process wrapper, since the openssl version linked to nodejs does not support ssl3 anymore.
+  try {
+    const res = await openSSL(["s_client", "-connect", `${fqdn}:443`, "-ssl3"]);
+    return new InspectionResult(TLSInspectionType.SSLDeactivated, false, {
+      res,
+    });
+  } catch (e) {
+    return new InspectionResult(TLSInspectionType.SSLDeactivated, true, {});
+  }
 };

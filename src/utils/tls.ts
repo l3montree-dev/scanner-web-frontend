@@ -11,9 +11,4 @@ export const tlsConnect = (options: ConnectionOptions) => {
   });
 };
 
-export const protocols: Array<SecureVersion> = [
-  "TLSv1.2",
-  "TLSv1.3",
-  "TLSv1.1",
-  "TLSv1",
-];
+export const protocols: Array<SecureVersion> = ["TLSv1.2", "TLSv1.3"];

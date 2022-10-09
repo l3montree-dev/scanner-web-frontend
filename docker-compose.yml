@@ -4,11 +4,13 @@ services:
     build: .
     ports:
       - "3000:3000"
-    depends_on:
-      - mongodb
+    environment:
+      - NODE_ENV=development
     command: ["npm", "run", "dev"]
     volumes:
       - .:/usr/app
+      - /usr/app/.next
+      - /usr/app/node_modules
     
   test-server:
     build: test-server/
