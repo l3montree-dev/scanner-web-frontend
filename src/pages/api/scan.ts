@@ -40,6 +40,7 @@ const handler = async function handler(
     const report = new Report({
       fqdn: siteToScan,
       duration: Date.now() - start,
+      version: 1,
       result,
     });
     await report.save();

@@ -31,6 +31,7 @@ const monitoringFn = async (fqdn: string) => {
     fqdn,
     duration: Date.now() - now,
     result,
+    version: 1,
   });
   await report.save();
   logger.child({ duration: Date.now() - now }).info(`scanned site: ${fqdn}`);

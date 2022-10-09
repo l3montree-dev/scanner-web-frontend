@@ -1,6 +1,7 @@
 import { exec } from "child_process";
+import { promise2Boolean } from "../utils/promise";
 
-export const openSSL = (args: string[]) => {
+const openSSL = (args: string[]) => {
   return new Promise<string>((resolve, reject) => {
     /**
      * !!!! If running inside the provided Docker Image, this uses OpenSSL 1.0.2 !!!!
@@ -13,4 +14,22 @@ export const openSSL = (args: string[]) => {
       resolve(stdout);
     });
   });
+};
+
+export const isTLS11Supported = (fqdn: string): Promise<boolean> => {
+  return promise2Boolean(
+    openSSL(["s_client", "-connect", `${fqdn}:443`, "-tls1_1"])
+  );
+};
+
+export const isTLS1Supported = (fqdn: string): Promise<boolean> => {
+  return promise2Boolean(
+    openSSL(["s_client", "-connect", `${fqdn}:443`, "-tls1"])
+  );
+};
+
+export const isSSL3Supported = (fqdn: string): Promise<boolean> => {
+  return promise2Boolean(
+    openSSL(["s_client", "-connect", `${fqdn}:443`, "-ssl3"])
+  );
 };
