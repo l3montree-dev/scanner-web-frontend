@@ -11,7 +11,7 @@ stages:
 gitguardian scan:
     image: gitguardian/ggshield:latest
     stage: scanning
-    script: ggshield scan ci --exclude ./test-server
+    script: ggshield secret scan --exclude ./test-server
 
 build:
     image: docker:19.03.1
