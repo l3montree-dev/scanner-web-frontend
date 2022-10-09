@@ -1,16 +1,13 @@
 import type { NextPage } from "next";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { FormEvent, FunctionComponent, useState } from "react";
 import Button from "../components/Button";
 import Page from "../components/Page";
-import { InspectResultDTO } from "../inspection/Inspector";
+import { WithId } from "../db/models";
+import { IReport } from "../db/report";
 import { api } from "../services/api";
 import { sanitizeFQDN } from "../utils/santize";
-import SyntaxHighlighter from "react-syntax-highlighter";
-import {
-  docco,
-  atelierSulphurpoolDark,
-} from "react-syntax-highlighter/dist/cjs/styles/hljs";
 
 const hostnameRegex = new RegExp(
   /^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
@@ -20,26 +17,26 @@ const Home: NextPage = () => {
   const [website, setWebsite] = useState("");
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState<InspectResultDTO[]>([]);
+  const router = useRouter();
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     // test if valid url
     const fqdn = sanitizeFQDN(website);
-
     if (!fqdn || !hostnameRegex.test(fqdn)) {
       setErr("Bitte trage einen gültigen Domainnamen ein.");
       return;
     }
+    // react will batch those two calls anyways.
     setLoading(true);
     setErr("");
 
     // do the real api call.
     try {
       const response = await api(`/api/scan?site=${fqdn}`);
-      const obj: { [key: string]: InspectResultDTO } = await response.json();
-      setResults(Object.values(obj));
+      const obj: WithId<IReport> = await response.json();
+      router.push(obj.id);
     } catch (e) {
       console.log(e);
       setErr("Es ist ein Fehler aufgetreten. Bitte versuche es später erneut.");
@@ -87,33 +84,6 @@ const Home: NextPage = () => {
               einen Scan zu starten, geben Sie eine Webseite-Domain ein und
               drücken auf den Button “Scan starten”
             </p>
-          </div>
-          <div className="results">
-            <div className="my-10 mx-10  md:mx-0">
-              {results.map((result) => {
-                const { actualValue } = result;
-                return (
-                  <div key={result.type} className="mb-20 text-white mt-5">
-                    <span
-                      className={`font-medium p-4 bg-lightning-900 block ${
-                        result.didPass
-                          ? "bg-lightning-900 text-black"
-                          : "bg-red-700 text-white"
-                      }`}
-                    >
-                      {result.type}
-                    </span>
-                    <SyntaxHighlighter
-                      language="json"
-                      showLineNumbers
-                      style={atelierSulphurpoolDark}
-                    >
-                      {JSON.stringify(actualValue, null, 2)}
-                    </SyntaxHighlighter>
-                  </div>
-                );
-              })}
-            </div>
           </div>
         </div>
       </div>

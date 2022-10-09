@@ -1,10 +1,10 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { Model } from "mongoose";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { toDTO } from "../../db/models";
 import { IReport } from "../../db/report";
 import { withDB } from "../../decorators/withDB";
 import { inspect } from "../../inspection/inspect";
-import { InspectionResult, InspectionType } from "../../inspection/Inspector";
 import { getLogger } from "../../services/logger";
 
 import { sanitizeFQDN } from "../../utils/santize";
@@ -13,9 +13,7 @@ const logger = getLogger(__filename);
 
 const handler = async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<
-    Partial<{ [key in InspectionType]: InspectionResult }> | { error: string }
-  >,
+  res: NextApiResponse<IReport | { error: string }>,
   { Report }: { Report: Model<IReport> }
 ) {
   const start = Date.now();
@@ -33,7 +31,8 @@ const handler = async function handler(
     });
   }
   try {
-    const result = await inspect(siteToScan);
+    const { icon, results } = await inspect(siteToScan);
+    console.log("ICON", icon);
     logger
       .child({ duration: Date.now() - start })
       .info(`successfully scanned site: ${siteToScan}`);
@@ -41,10 +40,10 @@ const handler = async function handler(
       fqdn: siteToScan,
       duration: Date.now() - start,
       version: 1,
-      result,
+      iconHref: icon,
+      result: results,
     });
-    await report.save();
-    return res.json(result);
+    return res.json(toDTO(await report.save()));
   } catch (error: unknown) {
     if (error instanceof Error && error.message === "fetch failed") {
       logger

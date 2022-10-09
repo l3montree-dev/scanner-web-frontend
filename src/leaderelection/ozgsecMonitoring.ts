@@ -22,7 +22,7 @@ const monitoringFn = async (fqdn: string) => {
   }
   running[fqdn] = true;
   const now = Date.now();
-  const [result, connection] = await Promise.all([
+  const [{ icon, results }, connection] = await Promise.all([
     inspect(fqdn),
     getConnection(),
   ]);
@@ -30,7 +30,8 @@ const monitoringFn = async (fqdn: string) => {
   const report = new connection.models.Report({
     fqdn,
     duration: Date.now() - now,
-    result,
+    iconHref: icon,
+    result: results,
     version: 1,
   });
   await report.save();

@@ -13,18 +13,13 @@ import { subResourceIntegrityChecker } from "./subResourceIntegrityChecker";
 
 const logger = getLogger(__filename);
 export default class ContentInspector
-  implements Inspector<ContentInspectionType>
+  implements Inspector<ContentInspectionType, JSDOM>
 {
-  constructor(private readonly httpClient: typeof fetch) {}
+  constructor() {}
   async inspect(
-    fqdn: string
+    dom: JSDOM
   ): Promise<{ [key in ContentInspectionType]: InspectionResult }> {
     try {
-      const url = new URL(`https://${fqdn}`);
-      const response = await this.httpClient(url.toString(), {
-        method: "GET",
-      });
-      const dom = new JSDOM(await response.text());
       return {
         [ContentInspectionType.NoMixedContent]: noMixedContentChecker(dom),
         [ContentInspectionType.SubResourceIntegrity]:

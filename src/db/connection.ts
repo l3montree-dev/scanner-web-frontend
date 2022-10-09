@@ -1,6 +1,7 @@
-import mongoose, { Connection, Mongoose } from "mongoose";
+import mongoose, { Connection, Model, Mongoose } from "mongoose";
 import { getLogger } from "../services/logger";
-import { models } from "./models";
+import { models, ModelsType } from "./models";
+import { IReport } from "./report";
 
 const logger = getLogger(__filename);
 
@@ -58,9 +59,19 @@ const connectionIsReady = (
   return successReadyStates.includes(connection.readyState);
 };
 
-export default async function getConnection(): Promise<Connection> {
-  if (connectionIsReady(connection)) {
-    return connection;
+export default async function getConnection(): Promise<
+  Connection & {
+    models: ModelsType;
   }
-  return connect();
+> {
+  if (connectionIsReady(connection)) {
+    return connection as Connection & {
+      models: ModelsType;
+    };
+  }
+  return connect() as Promise<
+    Connection & {
+      models: ModelsType;
+    }
+  >;
 }

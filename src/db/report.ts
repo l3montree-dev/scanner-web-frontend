@@ -1,9 +1,13 @@
 import { Schema, SchemaTypes } from "mongoose";
+import { InspectionResult, InspectionType } from "../inspection/Inspector";
 
 export interface IReport {
   fqdn: string;
   duration: number;
-  result: Record<string, any>;
+  iconHref: string;
+  result: {
+    [key in InspectionType]: InspectionResult;
+  };
   version: number;
 }
 
@@ -14,6 +18,7 @@ export const reportSchema = new Schema<IReport>(
     duration: SchemaTypes.Number,
     result: SchemaTypes.Mixed,
     version: SchemaTypes.Number,
+    iconHref: SchemaTypes.String,
   },
   { strict: true, timestamps: true }
 );
