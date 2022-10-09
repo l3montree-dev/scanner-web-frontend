@@ -1,0 +1,3 @@
+# allow the certs in this directory.
+# since those are testing certs and keys.
+!*.pem

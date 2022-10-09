@@ -1,23 +1,16 @@
-import { spawn } from "child_process";
+import { exec } from "child_process";
 
 export const openSSL = (args: string[]) => {
-  const process = spawn("openssl", args);
   return new Promise((resolve, reject) => {
-    const stdOut: any[] = [];
-    const stdErr: any[] = [];
-    process.stdout.on("data", (data) => {
-      stdOut.push(data.toString());
-    });
-    process.stderr.on("data", (data) => {
-      stdErr.push(data.toString());
-    });
-
-    process.on("close", (code) => {
-      if (code === 0) {
-        resolve(stdOut.join("\n"));
-      } else {
-        reject(stdErr.join("\n"));
+    /**
+     * !!!! If running inside the provided Docker Image, this uses OpenSSL 1.0.2 !!!!
+     * This supports SSLv2 and SSLv3 but does NOT support TLSv1.3. Use the openssl binary linked with node itself to verify TLSv1.3 support.
+     */
+    exec(`echo 'Q' | openssl ${args.join(" ")}`, (err, stdout) => {
+      if (err !== null) {
+        return reject(err);
       }
+      resolve(stdout);
     });
   });
 };

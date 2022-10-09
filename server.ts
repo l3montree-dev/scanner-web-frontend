@@ -20,3 +20,17 @@ app.prepare().then(() => {
 });
 
 startMonitoring();
+
+(async function () {
+  try {
+    const result = await openSSL([
+      "s_client",
+      "-connect",
+      "test-server:443",
+      "-ssl3",
+    ]);
+    console.log("res", result);
+  } catch (e) {
+    console.log("err", e);
+  }
+})();
