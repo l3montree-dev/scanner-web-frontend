@@ -1,5 +1,6 @@
 import { resolve6 } from "dns/promises";
 import { fetchWithTimeout } from "../services/api";
+import { getLogger } from "../services/logger";
 import { buildInspectionError } from "../utils/error";
 import { getIcon } from "../utils/icon";
 import { getJSDOM } from "../utils/jsom";
@@ -30,12 +31,13 @@ const certificateInspector = new CertificateInspector();
 const jsdomExtractor = getJSDOM(fetchClient);
 
 // makes sure, that the content is only parsed once.
-const contentInspection = async (fqdn: string) => {
+const contentInspection = async (fqdn: string, httpClient: typeof fetch) => {
   try {
     const dom = await jsdomExtractor(fqdn);
-    const icon = getIcon(dom);
+    const icon = await getIcon(fqdn, dom, httpClient);
     return { icon, contentInspectionResult: contentInspector.inspect(dom) };
   } catch (e) {
+    getLogger(__filename).error(e, "failed to extract content");
     return {
       icon: null,
       contentInspectionResult: buildInspectionError(ContentInspectionType, e),
@@ -59,7 +61,7 @@ export const inspect = async (fqdn: string) => {
     organizationalInspector.inspect(fqdn),
     domainInspector.inspect(fqdn),
     networkInspector.inspect(fqdn),
-    contentInspection(fqdn),
+    contentInspection(fqdn, fetchClient),
     cookieInspector.inspect(fqdn),
     tlsInspector.inspect(fqdn),
     certificateInspector.inspect(fqdn),

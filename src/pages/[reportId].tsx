@@ -1,12 +1,20 @@
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import React, { FunctionComponent } from "react";
+import Page from "../components/Page";
+import SideNav from "../components/SideNav";
 import getConnection from "../db/connection";
 import { toDTO, WithId } from "../db/models";
 import { IReport } from "../db/report";
 
 const ReportId: FunctionComponent<{ report: WithId<IReport> }> = (props) => {
-  console.log(props);
-  return <div></div>;
+  return (
+    <Page>
+      <div className="flex flex-1 flex-row">
+        <SideNav {...props.report} />
+        <div>Content</div>
+      </div>
+    </Page>
+  );
 };
 
 export default ReportId;

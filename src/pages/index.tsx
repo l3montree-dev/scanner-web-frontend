@@ -50,11 +50,11 @@ const Home: NextPage = () => {
       <Head>
         <title>OZGSec</title>
       </Head>
-      <div className="flex flex-col justify-center">
+      <div className="flex flex-col w-full justify-center">
         <div className="max-w-screen-sm mx-auto">
           <div className="md:bg-deepblue-400 mt-10 p-10">
-            <h1 className="text-8xl mb-3 text-white font-bold">OZGSec</h1>
-            <h2 className="text-white text-6xl">Webseiten Scanner</h2>
+            <h1 className="text-5xl mb-3 text-white font-bold">OZGSec</h1>
+            <h2 className="text-white text-2xl">Webseiten Scanner</h2>
             <div className="pb-16">
               <form onSubmit={onSubmit} className="pt-20 flex">
                 <input

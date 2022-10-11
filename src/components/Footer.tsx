@@ -1,6 +1,6 @@
 const Footer = () => {
   return (
-    <footer className="bg-white text-2xl px-16 pb-14">
+    <footer className="bg-white px-16 pb-14">
       <div className="w-96">
         <img src={"/assets/bmi-logo.svg"} alt="Logo BMI" />
       </div>

@@ -2,11 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+
+@font-face {
+    font-family: 'BundesSans';
+    src: url('../../public/assets/fonts/BundesSansWeb-Regular.woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'BundesSans';
+    src: url('../../public/assets/fonts/BundesSansWeb-Bold.woff');
+    font-weight: bold;
+    font-style: normal;
+}
+
 html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+  font-family: BundesSans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
@@ -17,21 +32,6 @@ a {
 
 * {
   box-sizing: border-box;
-}
-
-/* REM settings */
-html {
-  font-size: 10px;
-}
-
-body {
-  font-size: 1.8rem;
-}
-
-@media all and (max-width: 768px) {
-    html {
-        font-size: 8px;
-    }
 }
 
 .results {
@@ -75,4 +75,9 @@ body {
       transform: rotate(360deg);
     }
   }
+  
+  nav {
+    min-width: 300px;
+  }
+
   
