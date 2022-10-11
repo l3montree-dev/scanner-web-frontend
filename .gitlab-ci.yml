@@ -31,7 +31,25 @@ build:
     only:
         - main
         - dev
-    # when: manual
+    when: manual
+
+production-dev:
+    stage: deploy
+    dependencies:
+        - build
+    image:
+        name: bitnami/kubectl
+        entrypoint: [""]
+    environment:
+        name: development
+        url: "https://l3montree.com"
+    script:
+        - echo "$K8S_DEVELOPMENT_CERTIFICATE" >> ca.pem
+        - kubectl --server=$K8S_DEVELOPMENT_API_URL --token=$K8S_DEVELOPMENT_TOKEN --certificate-authority=ca.pem --namespace=ozgsec rollout restart deployment/ozgsec-frontend
+    only:
+        - dev
+    when: manual
+
 
 production-master:
     stage: deploy
