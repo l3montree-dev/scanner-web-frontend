@@ -14,11 +14,13 @@ export default class OrganizationalInspector
 {
   constructor(protected readonly httpClient: HttpClient) {}
   async inspect(
+    requestId: string,
     fqdn: string
   ): Promise<{ [key in OrganizationalInspectionType]: InspectionResult }> {
     try {
       const response = await this.httpClient(
-        new URL(`https://${fqdn}/.well-known/security.txt`).toString()
+        new URL(`https://${fqdn}/.well-known/security.txt`).toString(),
+        requestId
       );
 
       return {
@@ -26,7 +28,10 @@ export default class OrganizationalInspector
           await responsibleDisclosureChecker(response),
       };
     } catch (e) {
-      logger.error(e, `organizational inspection for ${fqdn} failed`);
+      logger.error(
+        { err: e, requestId },
+        `organizational inspection for ${fqdn} failed`
+      );
       return buildInspectionError(OrganizationalInspectionType, e);
     }
   }

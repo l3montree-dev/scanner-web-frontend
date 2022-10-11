@@ -17,25 +17,36 @@ const handler = async function handler(
   { Report }: { Report: Model<IReport> }
 ) {
   const start = Date.now();
-  logger.debug(`received request to scan site: ${req.query.site}`);
+  // check if the client does provide a request id.
+  // if so, use this - otherwise generate a new one.
+  const requestId =
+    (req.headers["x-request-id"] as string | undefined) ?? crypto.randomUUID();
+
+  logger.debug(
+    { requestId },
+    `received request to scan site: ${req.query.site}`
+  );
   const siteToScan = sanitizeFQDN(req.query.site);
-  logger.debug(`sanitized site to scan: ${siteToScan}`);
+  logger.debug({ requestId }, `sanitized site to scan: ${siteToScan}`);
   // check if we were able to sanitize the site
   // if the requested site is not a valid fqdn, the function returns null
   if (!siteToScan) {
-    logger.child({ duration: Date.now() - start })
-      .error(`invalid site to scan: ${req.query.site} - provide a valid fully qualified domain name as query parameter: 
-    ?site=example.com`);
+    logger.error(
+      { requestId },
+      `invalid site to scan: ${req.query.site} - provide a valid fully qualified domain name as query parameter: 
+    ?site=example.com`
+    );
     return res.status(400).json({
       error: `Missing site to scan or not a valid fully qualified domain name. Please provide the site you would like to scan using the site query parameter. Provided value: ?site=${req.query.site}`,
     });
   }
   try {
-    const { icon, results } = await inspect(siteToScan);
+    const { icon, results } = await inspect(requestId, siteToScan);
 
-    logger
-      .child({ duration: Date.now() - start })
-      .info(`successfully scanned site: ${siteToScan}`);
+    logger.info(
+      { duration: Date.now() - start, requestId },
+      `successfully scanned site: ${siteToScan}`
+    );
     const report = new Report({
       fqdn: siteToScan,
       duration: Date.now() - start,
@@ -46,18 +57,20 @@ const handler = async function handler(
     return res.json(toDTO(await report.save()));
   } catch (error: unknown) {
     if (error instanceof Error && error.message === "fetch failed") {
-      logger
-        .child({ duration: Date.now() - start })
-        .error({ err: error }, `failed to fetch site: ${siteToScan}`);
+      logger.error(
+        { err: error, duration: Date.now() - start, requestId },
+        `failed to fetch site: ${siteToScan}`
+      );
       return res.status(400).json({
         error:
           "Invalid site provided. Please provide a valid fully qualified domain name as site query parameter. Example: ?site=example.com",
       });
     }
 
-    logger
-      .child({ duration: Date.now() - start })
-      .error({ err: error }, "unknown error happened while scanning site");
+    logger.error(
+      { err: error, duration: Date.now() - start, requestId },
+      "unknown error happened while scanning site"
+    );
     return res.status(500).json({ error: "Unknown error" });
   }
 };

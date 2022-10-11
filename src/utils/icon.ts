@@ -1,4 +1,5 @@
 import { JSDOM } from "jsdom";
+import { HttpClient } from "../services/httpClient";
 import { getLogger } from "../services/logger";
 
 const logger = getLogger(__filename);
@@ -9,9 +10,10 @@ const getSize = (el: Element) => {
 };
 
 export const getIcon = async (
+  requestId: string,
   fqdn: string,
   dom: JSDOM,
-  httpClient: typeof fetch
+  httpClient: HttpClient
 ): Promise<string | null> => {
   try {
     // find the biggest icon we can use
@@ -28,7 +30,8 @@ export const getIcon = async (
       // fetch the icon.
       if (href) {
         const res = await httpClient(
-          href.includes(fqdn) ? href : `https://${fqdn}${href}`
+          href.includes(fqdn) ? href : `https://${fqdn}${href}`,
+          requestId
         );
         if (res.status === 200) {
           const blob = await res.blob();
@@ -46,7 +49,7 @@ export const getIcon = async (
     }
     return null;
   } catch (e) {
-    logger.error(e, "failed to get icon");
+    logger.error({ requestId, err: e }, "failed to get icon");
     return null;
   }
 };

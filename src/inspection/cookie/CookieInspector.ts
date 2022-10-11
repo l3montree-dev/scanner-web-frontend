@@ -14,12 +14,13 @@ export default class CookieInspector
 {
   constructor(private readonly httpClient: HttpClient) {}
   async inspect(
+    requestId: string,
     fqdn: string
   ): Promise<{ [key in CookieInspectionType]: InspectionResult }> {
     try {
       // use http as protocol.
       const url = new URL(`https://${fqdn}`);
-      const httpsResponse = await this.httpClient(url.toString(), {
+      const httpsResponse = await this.httpClient(url.toString(), requestId, {
         method: "GET",
       });
 
@@ -27,7 +28,10 @@ export default class CookieInspector
         SecureSessionCookies: SecureSessionCookiesChecker(httpsResponse),
       };
     } catch (e: unknown) {
-      logger.error(e, `header inspection for ${fqdn} failed`);
+      logger.error(
+        { err: e, requestId },
+        `header inspection for ${fqdn} failed`
+      );
       return buildInspectionError(CookieInspectionType, e);
     }
   }

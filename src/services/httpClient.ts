@@ -6,6 +6,7 @@ const logger = getLogger(__filename);
 const fetchWithTimeout = (
   timeoutMS: number,
   input: RequestInfo | URL,
+  requestId: string | undefined,
   init?: RequestInit | undefined
 ) => {
   return new Promise<Response>(async (resolve, reject) => {
@@ -20,7 +21,19 @@ const fetchWithTimeout = (
     // this will overwrite the signal if another one is provided.
     let response: Response;
     try {
-      response = await fetch(input, { signal: controller.signal, ...init });
+      response = await fetch(input, {
+        signal: controller.signal,
+        redirect: "follow",
+        ...init,
+        headers: {
+          "X-Request-ID": requestId ?? crypto.randomUUID(),
+          // set a default user agent.
+          // this is required for some sites.
+          "User-Agent":
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36",
+          ...init?.headers,
+        },
+      });
       clearTimeout(timeout);
       resolve(response);
     } catch (e) {
@@ -35,22 +48,30 @@ export const httpClientFactory =
   (timeoutMS: number, maxRetries: number, timeoutBetweenRetriesMS = 500) =>
   (
     request: RequestInfo | URL,
+    // needs always to be defined! This makes our logs more readable.
+    requestId: string | undefined,
     init?: RequestInit | undefined
   ): Promise<Response> => {
     // capture the tries variable inside the closure
     // this way we can avoid using it as a parameter of the api fn itself.
     let tries = 0;
+
     const retry = async (
       request: RequestInfo | URL,
       init?: RequestInit | undefined
     ): Promise<Response> => {
       try {
-        const response = await fetchWithTimeout(timeoutMS, request, init);
+        const response = await fetchWithTimeout(
+          timeoutMS,
+          request,
+          requestId,
+          init
+        );
         return response;
       } catch (error) {
         logger.warn(
-          error,
-          `api call :${request} failed, retrying: ${tries}/${maxRetries}`
+          { err: error },
+          `api call: ${request} failed, retrying: ${tries}/${maxRetries}`
         );
         if (tries < maxRetries) {
           tries++;

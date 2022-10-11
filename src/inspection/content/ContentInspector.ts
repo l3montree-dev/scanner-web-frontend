@@ -17,6 +17,7 @@ export default class ContentInspector
 {
   constructor() {}
   async inspect(
+    requestId: string,
     dom: JSDOM
   ): Promise<{ [key in ContentInspectionType]: InspectionResult }> {
     try {
@@ -27,7 +28,7 @@ export default class ContentInspector
       };
     } catch (e) {
       // handle error
-      logger.error(e, "error while inspecting content");
+      logger.error({ err: e, requestId }, "error while inspecting content");
       return buildInspectionError(ContentInspectionType, e);
     }
   }

@@ -2,7 +2,7 @@ import { resolve6 } from "dns/promises";
 
 import { getLogger } from "../services/logger";
 import { serverHttpClient } from "../services/serverHttpClient";
-import { tlsClient, tlsClientWithoutRetry } from "../services/tlsSocket";
+import { tlsClient } from "../services/tlsSocket";
 import { buildInspectionError } from "../utils/error";
 import { getIcon } from "../utils/icon";
 import { getJSDOM } from "../utils/jsom";
@@ -26,19 +26,27 @@ const networkInspector = new NetworkInspector({
 });
 const contentInspector = new ContentInspector();
 const cookieInspector = new CookieInspector(serverHttpClient);
-const tlsInspector = new TLSInspector(tlsClient, tlsClientWithoutRetry);
+const tlsInspector = new TLSInspector(tlsClient);
 const certificateInspector = new CertificateInspector(tlsClient);
 
 const jsdomExtractor = getJSDOM(serverHttpClient);
 
+const logger = getLogger(__filename);
 // makes sure, that the content is only parsed once.
-const contentInspection = async (fqdn: string, httpClient: typeof fetch) => {
+const contentInspection = async (
+  requestId: string,
+  fqdn: string,
+  httpClient: typeof fetch
+) => {
   try {
-    const dom = await jsdomExtractor(fqdn);
-    const icon = await getIcon(fqdn, dom, httpClient);
-    return { icon, contentInspectionResult: contentInspector.inspect(dom) };
+    const dom = await jsdomExtractor(requestId, fqdn);
+    const icon = await getIcon(requestId, fqdn, dom, httpClient);
+    return {
+      icon,
+      contentInspectionResult: contentInspector.inspect(requestId, dom),
+    };
   } catch (e) {
-    getLogger(__filename).error(e, "failed to extract content");
+    logger.error({ err: e, requestId }, "failed to extract content");
     return {
       icon: null,
       contentInspectionResult: buildInspectionError(ContentInspectionType, e),
@@ -46,7 +54,7 @@ const contentInspection = async (fqdn: string, httpClient: typeof fetch) => {
   }
 };
 
-export const inspect = async (fqdn: string) => {
+export const inspect = async (requestId: string, fqdn: string) => {
   const [
     httpResult,
     headerResult,
@@ -58,15 +66,15 @@ export const inspect = async (fqdn: string) => {
     tlsResults,
     certificateResults,
   ] = await Promise.all([
-    httpInspector.inspect(fqdn),
-    headerInspector.inspect(fqdn),
-    organizationalInspector.inspect(fqdn),
-    domainInspector.inspect(fqdn),
-    networkInspector.inspect(fqdn),
-    contentInspection(fqdn, serverHttpClient),
-    cookieInspector.inspect(fqdn),
-    tlsInspector.inspect(fqdn),
-    certificateInspector.inspect(fqdn),
+    httpInspector.inspect(requestId, fqdn),
+    headerInspector.inspect(requestId, fqdn),
+    organizationalInspector.inspect(requestId, fqdn),
+    domainInspector.inspect(requestId, fqdn),
+    networkInspector.inspect(requestId, fqdn),
+    contentInspection(requestId, fqdn, serverHttpClient),
+    cookieInspector.inspect(requestId, fqdn),
+    tlsInspector.inspect(requestId, fqdn),
+    certificateInspector.inspect(requestId, fqdn),
   ]);
 
   return {

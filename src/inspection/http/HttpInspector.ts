@@ -9,12 +9,13 @@ const logger = getLogger(__filename);
 export default class HttpInspector implements Inspector<HttpInspectionType> {
   constructor(private readonly httpClient: HttpClient) {}
   async inspect(
+    requestId: string,
     fqdn: string
   ): Promise<{ [type in HttpInspectionType]: InspectionResult }> {
     try {
       // use http as protocol.
       const url = new URL(`http://${fqdn}`);
-      const httpResponse = await this.httpClient(url.toString(), {
+      const httpResponse = await this.httpClient(url.toString(), requestId, {
         method: "GET",
         redirect: "manual",
       });
@@ -37,7 +38,7 @@ export default class HttpInspector implements Inspector<HttpInspectionType> {
         HTTPRedirectsToHttps: redirectChecker(httpResponse),
       };
     } catch (e: unknown) {
-      logger.error(e, `http inspection for ${fqdn} failed`);
+      logger.error({ err: e, requestId }, `http inspection for ${fqdn} failed`);
       return buildInspectionError(HttpInspectionType, e);
     }
   }

@@ -1,7 +1,6 @@
 import mongoose, { Connection, Model, Mongoose } from "mongoose";
 import { getLogger } from "../services/logger";
 import { models, ModelsType } from "./models";
-import { IReport } from "./report";
 
 const logger = getLogger(__filename);
 

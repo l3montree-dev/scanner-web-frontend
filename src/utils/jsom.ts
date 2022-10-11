@@ -1,10 +1,11 @@
 import { JSDOM } from "jsdom";
+import { HttpClient } from "../services/httpClient";
 
 export const getJSDOM =
-  (httpClient: typeof fetch) =>
-  async (fqdn: string): Promise<JSDOM> => {
+  (httpClient: HttpClient) =>
+  async (requestId: string, fqdn: string): Promise<JSDOM> => {
     const url = new URL(`https://${fqdn}`);
-    const response = await httpClient(url.toString(), {
+    const response = await httpClient(url.toString(), requestId, {
       method: "GET",
     });
     return new JSDOM(await response.text());

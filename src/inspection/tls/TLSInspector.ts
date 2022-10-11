@@ -7,11 +7,9 @@ import { InspectionResult, Inspector, TLSInspectionType } from "../Inspector";
 
 const logger = getLogger(__filename);
 export default class TLSInspector implements Inspector<TLSInspectionType> {
-  constructor(
-    private tlsClient: TLSClient,
-    private tlsClientWithoutRetries: TLSClient
-  ) {}
+  constructor(private tlsClient: TLSClient) {}
   async inspect(
+    requestId: string,
     fqdn: string
   ): Promise<{ [key in TLSInspectionType]: InspectionResult }> {
     const [
@@ -28,7 +26,7 @@ export default class TLSInspector implements Inspector<TLSInspectionType> {
       this.tls13Supported(fqdn),
       this.tls11NotSupported(fqdn),
       this.sslDeactivatedChecker(fqdn),
-      this.serverPreferredCiphers(fqdn),
+      this.serverPreferredCiphers(requestId, fqdn),
       this.cipherSupportedAcrossProtocols(fqdn, "HIGH"),
       this.cipherSupportedAcrossProtocols(fqdn, "MEDIUM"),
       this.cipherSupportedAcrossProtocols(fqdn, "LOW"),
@@ -62,7 +60,7 @@ export default class TLSInspector implements Inspector<TLSInspectionType> {
 
   private async tlsVersionSupported(fqdn: string, tlsVersion: SecureVersion) {
     try {
-      const socket = await this.tlsClientWithoutRetries({
+      const socket = await this.tlsClient({
         port: 443,
         host: fqdn,
         servername: fqdn,
@@ -119,9 +117,10 @@ export default class TLSInspector implements Inspector<TLSInspectionType> {
     );
   }
 
-  serverPreferredCiphers = async (
+  private async serverPreferredCiphers(
+    requestId: string,
     fqdn: string
-  ): Promise<{ [key in SecureVersion]: string[] }> => {
+  ): Promise<{ [key in SecureVersion]: string[] }> {
     const ciphers = getCiphers().map((cipher) => cipher.toUpperCase());
 
     const now = Date.now();
@@ -135,7 +134,7 @@ export default class TLSInspector implements Inspector<TLSInspectionType> {
           // iterate over all cipher suites and check if they are supported
           while (testCiphers.length > 0) {
             try {
-              const socket = await this.tlsClientWithoutRetries({
+              const socket = await this.tlsClient({
                 host: fqdn,
                 ciphers: testCiphers.join(":"),
                 port: 443,
@@ -178,15 +177,16 @@ export default class TLSInspector implements Inspector<TLSInspectionType> {
     );
 
     logger.debug(
-      `serverSupportedCiphers took ${Date.now() - now}ms for ${fqdn}`
+      { requestId, duration: Date.now() - now },
+      `serverSupportedCiphers finished`
     );
     return cipherPreference;
-  };
+  }
 
   async cipherSupported(fqdn: string, cipher: string, protocol: SecureVersion) {
     try {
       // we are actually expecting failures. Retrying would be rather nonsense.
-      const socket = await this.tlsClientWithoutRetries({
+      const socket = await this.tlsClient({
         host: fqdn,
         ciphers: cipher,
         port: 443,

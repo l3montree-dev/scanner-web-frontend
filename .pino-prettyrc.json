@@ -1,0 +1,4 @@
+{
+    "messageFormat": "[{requestId}] {msg} {duration}",
+    "ignore": "requestId,pid,hostname,duration"
+}

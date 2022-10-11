@@ -23,7 +23,7 @@ const monitoringFn = async (fqdn: string) => {
   running[fqdn] = true;
   const now = Date.now();
   const [{ icon, results }, connection] = await Promise.all([
-    inspect(fqdn),
+    inspect("cron", fqdn),
     getConnection(),
   ]);
 
@@ -35,7 +35,7 @@ const monitoringFn = async (fqdn: string) => {
     version: 1,
   });
   await report.save();
-  logger.child({ duration: Date.now() - now }).info(`scanned site: ${fqdn}`);
+  logger.info({ duration: Date.now() - now }, `scanned site: ${fqdn}`);
   running[fqdn] = false;
 };
 

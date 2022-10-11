@@ -13,13 +13,17 @@ export default class NetworkInspector
   constructor(private dns: { resolve6: (fqdn: string) => Promise<string[]> }) {}
 
   async inspect(
+    requestId: string,
     fqdn: string
   ): Promise<{ [key in NetworkInspectionType]: InspectionResult }> {
     let addresses: string[];
     try {
       addresses = await this.dns.resolve6(fqdn);
     } catch (e) {
-      logger.error(e, `failed to resolve ${fqdn} to IPv6 addresses`);
+      logger.error(
+        { err: e, requestId },
+        `failed to resolve ${fqdn} to IPv6 addresses`
+      );
       addresses = [];
     }
 

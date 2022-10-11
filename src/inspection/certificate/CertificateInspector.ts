@@ -19,6 +19,7 @@ export default class CertificateInspector
   constructor(private tlsClient: TLSClient) {}
 
   async inspect(
+    requestId: string,
     fqdn: string
   ): Promise<{ [key in CertificateInspectionType]: InspectionResult }> {
     try {

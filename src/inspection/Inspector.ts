@@ -94,5 +94,8 @@ export class InspectionResult {
 }
 
 export interface Inspector<T extends InspectionType, Parameter = string> {
-  inspect(param: Parameter): Promise<{ [key in T]: InspectionResult }>;
+  inspect(
+    requestId: string,
+    param: Parameter
+  ): Promise<{ [key in T]: InspectionResult }>;
 }

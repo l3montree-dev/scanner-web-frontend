@@ -27,11 +27,6 @@ export const tlsSocketFactory =
     return retry(options);
   };
 
-export const tlsClient = tlsSocketFactory(
-  config.serverTimeout,
-  config.serverRetries
-);
-
-export const tlsClientWithoutRetry = tlsSocketFactory(config.serverTimeout, 0);
+export const tlsClient = tlsSocketFactory(config.serverTimeout, 0);
 
 export type TLSClient = ReturnType<typeof tlsSocketFactory>;

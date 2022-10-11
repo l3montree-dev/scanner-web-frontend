@@ -1,6 +1,6 @@
 import { InspectionResult, InspectionType } from "../inspection/Inspector";
 
-export const errorMessage = (e: unknown) => {
+const errorMessage = (e: unknown) => {
   if (e instanceof Error) {
     return `error message: ${e.message}, cause: ${
       (e.cause as string | undefined) ? e.cause : "unknown"

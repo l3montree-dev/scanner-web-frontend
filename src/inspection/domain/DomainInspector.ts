@@ -49,15 +49,18 @@ export default class DomainInspector
     }
   */
   async inspect(
+    requestId: string,
     fqdn: string
   ): Promise<{ [key in DomainInspectionType]: InspectionResult }> {
     try {
       const [response, caaResponse] = await Promise.all([
-        this.httpClient(`https://dns.google/resolve?name=${fqdn}&do=true`).then(
-          (r) => r.json()
-        ),
         this.httpClient(
-          `https://dns.google/resolve?name=${fqdn}&do=true&type=CAA`
+          `https://dns.google/resolve?name=${fqdn}&do=true`,
+          requestId
+        ).then((r) => r.json()),
+        this.httpClient(
+          `https://dns.google/resolve?name=${fqdn}&do=true&type=CAA`,
+          requestId
         ).then((r) => r.json()),
       ]);
 
@@ -66,7 +69,10 @@ export default class DomainInspector
         [DomainInspectionType.CAA]: caaChecker(caaResponse),
       };
     } catch (e: unknown) {
-      logger.error(e, `domain inspection for ${fqdn} failed`);
+      logger.error(
+        { err: e, requestId },
+        `domain inspection for ${fqdn} failed`
+      );
       return buildInspectionError(DomainInspectionType, e);
     }
   }
