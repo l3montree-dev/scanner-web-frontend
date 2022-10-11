@@ -8,12 +8,13 @@ import {
 import { caaChecker } from "./caaChecker";
 import { dnsSecChecker } from "./dnsSecChecker";
 import { DOHResponse } from "./dohResponse";
+import { HttpClient } from "../../services/httpClient";
 
 const logger = getLogger(__filename);
 export default class DomainInspector
   implements Inspector<DomainInspectionType>
 {
-  constructor(private httpClient: typeof fetch) {}
+  constructor(private httpClient: HttpClient) {}
 
   /*
   Example response:

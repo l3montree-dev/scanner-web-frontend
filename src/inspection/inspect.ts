@@ -1,6 +1,8 @@
 import { resolve6 } from "dns/promises";
-import { fetchWithTimeout } from "../services/api";
+
 import { getLogger } from "../services/logger";
+import { serverHttpClient } from "../services/serverHttpClient";
+import { tlsClient, tlsClientWithoutRetry } from "../services/tlsSocket";
 import { buildInspectionError } from "../utils/error";
 import { getIcon } from "../utils/icon";
 import { getJSDOM } from "../utils/jsom";
@@ -10,25 +12,24 @@ import CookieInspector from "./cookie/CookieInspector";
 import DomainInspector from "./domain/DomainInspector";
 import HeaderInspector from "./header/HeaderInspector";
 import HttpInspector from "./http/HttpInspector";
-import { ContentInspectionType, InspectionResult } from "./Inspector";
+import { ContentInspectionType } from "./Inspector";
 import NetworkInspector from "./network/NetworkInspector";
 import OrganizationalInspector from "./organizational/OrganizationalInspector";
 import TLSInspector from "./tls/TLSInspector";
 
-const fetchClient = fetchWithTimeout(3_000);
-const httpInspector = new HttpInspector(fetchClient);
-const headerInspector = new HeaderInspector(fetchClient);
-const organizationalInspector = new OrganizationalInspector(fetchClient);
-const domainInspector = new DomainInspector(fetchClient);
+const httpInspector = new HttpInspector(serverHttpClient);
+const headerInspector = new HeaderInspector(serverHttpClient);
+const organizationalInspector = new OrganizationalInspector(serverHttpClient);
+const domainInspector = new DomainInspector(serverHttpClient);
 const networkInspector = new NetworkInspector({
   resolve6,
 });
 const contentInspector = new ContentInspector();
-const cookieInspector = new CookieInspector(fetchClient);
-const tlsInspector = new TLSInspector();
-const certificateInspector = new CertificateInspector();
+const cookieInspector = new CookieInspector(serverHttpClient);
+const tlsInspector = new TLSInspector(tlsClient, tlsClientWithoutRetry);
+const certificateInspector = new CertificateInspector(tlsClient);
 
-const jsdomExtractor = getJSDOM(fetchClient);
+const jsdomExtractor = getJSDOM(serverHttpClient);
 
 // makes sure, that the content is only parsed once.
 const contentInspection = async (fqdn: string, httpClient: typeof fetch) => {
@@ -44,6 +45,7 @@ const contentInspection = async (fqdn: string, httpClient: typeof fetch) => {
     };
   }
 };
+
 export const inspect = async (fqdn: string) => {
   const [
     httpResult,
@@ -61,7 +63,7 @@ export const inspect = async (fqdn: string) => {
     organizationalInspector.inspect(fqdn),
     domainInspector.inspect(fqdn),
     networkInspector.inspect(fqdn),
-    contentInspection(fqdn, fetchClient),
+    contentInspection(fqdn, serverHttpClient),
     cookieInspector.inspect(fqdn),
     tlsInspector.inspect(fqdn),
     certificateInspector.inspect(fqdn),

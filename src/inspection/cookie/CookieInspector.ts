@@ -6,12 +6,13 @@ import {
   Inspector,
 } from "../Inspector";
 import { SecureSessionCookiesChecker } from "./secureSessionCookieChecker";
+import { HttpClient } from "../../services/httpClient";
 
 const logger = getLogger(__filename);
 export default class CookieInspector
   implements Inspector<CookieInspectionType>
 {
-  constructor(private readonly httpClient: typeof fetch) {}
+  constructor(private readonly httpClient: HttpClient) {}
   async inspect(
     fqdn: string
   ): Promise<{ [key in CookieInspectionType]: InspectionResult }> {

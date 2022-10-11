@@ -1,9 +1,9 @@
-import { buildInspectionError, errorMessage } from "../../utils/error";
 import { getLogger } from "../../services/logger";
+import { buildInspectionError } from "../../utils/error";
 
+import { HttpClient } from "../../services/httpClient";
 import {
   HeaderInspectionType,
-  HttpInspectionType,
   InspectionResult,
   Inspector,
 } from "../Inspector";
@@ -18,7 +18,7 @@ const logger = getLogger(__filename);
 export default class HeaderInspector
   implements Inspector<HeaderInspectionType>
 {
-  constructor(private readonly httpClient: typeof fetch) {}
+  constructor(private readonly httpClient: HttpClient) {}
   async inspect(
     fqdn: string
   ): Promise<{ [type in HeaderInspectionType]: InspectionResult }> {

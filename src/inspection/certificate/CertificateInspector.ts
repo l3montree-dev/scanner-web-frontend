@@ -1,5 +1,6 @@
+import { TLSClient } from "../../services/tlsSocket";
 import { buildInspectionError } from "../../utils/error";
-import { tlsConnect } from "../../utils/tls";
+
 import {
   CertificateInspectionType,
   InspectionResult,
@@ -15,11 +16,13 @@ import {
 export default class CertificateInspector
   implements Inspector<CertificateInspectionType>
 {
+  constructor(private tlsClient: TLSClient) {}
+
   async inspect(
     fqdn: string
   ): Promise<{ [key in CertificateInspectionType]: InspectionResult }> {
     try {
-      const socket = await tlsConnect({
+      const socket = await this.tlsClient({
         host: fqdn,
         port: 443,
         servername: fqdn,

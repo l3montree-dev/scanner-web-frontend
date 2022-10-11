@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "node --tls-min-v1.0 -r ts-node/register server.ts",
+        "dev": "ts-node server.ts",
         "build": "next build",
         "start": "NODE_ENV=production ts-node server.ts",
         "lint": "next lint"

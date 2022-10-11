@@ -6,7 +6,8 @@ import Button from "../components/Button";
 import Page from "../components/Page";
 import { WithId } from "../db/models";
 import { IReport } from "../db/report";
-import { api } from "../services/api";
+import { clientHttpClient } from "../services/clientHttpClient";
+
 import { sanitizeFQDN } from "../utils/santize";
 
 const hostnameRegex = new RegExp(
@@ -34,7 +35,7 @@ const Home: NextPage = () => {
 
     // do the real api call.
     try {
-      const response = await api(`/api/scan?site=${fqdn}`);
+      const response = await clientHttpClient(`/api/scan?site=${fqdn}`);
       const obj: WithId<IReport> = await response.json();
       router.push(obj.id);
     } catch (e) {

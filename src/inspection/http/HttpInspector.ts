@@ -3,10 +3,11 @@ import { getLogger } from "../../services/logger";
 
 import { HttpInspectionType, InspectionResult, Inspector } from "../Inspector";
 import { redirectChecker } from "./redirectChecker";
+import { HttpClient } from "../../services/httpClient";
 
 const logger = getLogger(__filename);
 export default class HttpInspector implements Inspector<HttpInspectionType> {
-  constructor(private readonly httpClient: typeof fetch) {}
+  constructor(private readonly httpClient: HttpClient) {}
   async inspect(
     fqdn: string
   ): Promise<{ [type in HttpInspectionType]: InspectionResult }> {

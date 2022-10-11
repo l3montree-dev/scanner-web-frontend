@@ -6,12 +6,13 @@ import {
   Inspector,
 } from "../Inspector";
 import { responsibleDisclosureChecker } from "./responsibleDisclosureChecker";
+import { HttpClient } from "../../services/httpClient";
 
 const logger = getLogger(__filename);
 export default class OrganizationalInspector
   implements Inspector<OrganizationalInspectionType>
 {
-  constructor(protected readonly httpClient: typeof fetch) {}
+  constructor(protected readonly httpClient: HttpClient) {}
   async inspect(
     fqdn: string
   ): Promise<{ [key in OrganizationalInspectionType]: InspectionResult }> {
