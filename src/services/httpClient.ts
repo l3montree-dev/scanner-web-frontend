@@ -1,9 +1,12 @@
 import { wait } from "../utils/promise";
-import { getLogger } from "./logger";
 
-const logger = getLogger(__filename);
+interface MultiPlatformLogger {
+  error: (obj: any, msg: string) => void;
+  warn: (obj: any, msg: string) => void;
+}
 
 const fetchWithTimeout = (
+  logger: MultiPlatformLogger,
   timeoutMS: number,
   input: RequestInfo | URL,
   requestId: string | undefined,
@@ -46,7 +49,12 @@ const fetchWithTimeout = (
 };
 
 export const httpClientFactory =
-  (timeoutMS: number, maxRetries: number, timeoutBetweenRetriesMS = 500) =>
+  (
+    logger: MultiPlatformLogger,
+    timeoutMS: number,
+    maxRetries: number,
+    timeoutBetweenRetriesMS = 500
+  ) =>
   (
     request: RequestInfo | URL,
     // needs always to be defined! This makes our logs more readable.
@@ -63,6 +71,7 @@ export const httpClientFactory =
     ): Promise<Response> => {
       try {
         const response = await fetchWithTimeout(
+          logger,
           timeoutMS,
           request,
           requestId,

@@ -1,1 +1,2 @@
 *.config.js
+load-test.k6.js
