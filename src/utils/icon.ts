@@ -42,10 +42,10 @@ export const getIcon = async (
           )};base64,${buffer.toString("base64")}`;
         }
       } else {
-        logger.warn("no href found for icon");
+        logger.warn({ requestId }, "no href found for icon");
       }
     } else {
-      logger.debug("no favicons found");
+      logger.debug({ requestId }, "no favicons found");
     }
     return null;
   } catch (e) {

@@ -1,4 +1,5 @@
 import { resolve6 } from "dns/promises";
+import { HttpClient } from "../services/httpClient";
 
 import { getLogger } from "../services/logger";
 import { serverHttpClient } from "../services/serverHttpClient";
@@ -36,7 +37,7 @@ const logger = getLogger(__filename);
 const contentInspection = async (
   requestId: string,
   fqdn: string,
-  httpClient: typeof fetch
+  httpClient: HttpClient
 ) => {
   try {
     const dom = await jsdomExtractor(requestId, fqdn);

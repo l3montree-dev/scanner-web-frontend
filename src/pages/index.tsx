@@ -35,7 +35,10 @@ const Home: NextPage = () => {
 
     // do the real api call.
     try {
-      const response = await clientHttpClient(`/api/scan?site=${fqdn}`);
+      const response = await clientHttpClient(
+        `/api/scan?site=${fqdn}`,
+        undefined
+      );
       const obj: WithId<IReport> = await response.json();
       router.push(obj.id);
     } catch (e) {

@@ -14,6 +14,7 @@ const fetchWithTimeout = (
     const timeout = setTimeout(() => {
       controller.abort();
       logger.error(
+        { requestId },
         `fetchWithTimeout: request to ${input} timed out after ${timeoutMS}ms`
       );
     }, timeoutMS);
