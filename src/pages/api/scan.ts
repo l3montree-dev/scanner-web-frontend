@@ -32,7 +32,7 @@ const handler = async function handler(
   }
   try {
     const { icon, results } = await inspect(siteToScan);
-    console.log("ICON", icon);
+
     logger
       .child({ duration: Date.now() - start })
       .info(`successfully scanned site: ${siteToScan}`);

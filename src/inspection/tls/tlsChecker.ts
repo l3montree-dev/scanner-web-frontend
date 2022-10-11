@@ -22,7 +22,6 @@ const tlsVersionSupported = async (fqdn: string, tlsVersion: SecureVersion) => {
     socket.destroy();
     return true;
   } catch (e) {
-    console.log(tlsVersion, e, DEFAULT_MIN_VERSION);
     return false;
   }
 };

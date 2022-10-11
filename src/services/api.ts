@@ -32,7 +32,7 @@ export const api = (
   request: RequestInfo | URL,
   init?: RequestInit | undefined,
   timeoutMS = 10_000,
-  maxRetries = 2,
+  maxRetries = 1,
   timeoutBetweenRetriesMS = 500
 ): Promise<Response> => {
   // capture the tries variable inside the closure
