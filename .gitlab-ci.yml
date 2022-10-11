@@ -31,7 +31,7 @@ build:
     only:
         - main
         - dev
-    when: manual
+    # when: manual
 
 production-dev:
     stage: deploy
@@ -48,7 +48,7 @@ production-dev:
         - kubectl --server=$K8S_DEVELOPMENT_API_URL --token=$K8S_DEVELOPMENT_TOKEN --certificate-authority=ca.pem --namespace=ozgsec rollout restart deployment/ozgsec-frontend
     only:
         - dev
-    when: manual
+    # when: manual
 
 
 production-master:
