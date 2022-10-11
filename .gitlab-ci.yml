@@ -30,6 +30,7 @@ build:
         - docker push $IMAGE_TAG
     only:
         - main
+        - dev
     # when: manual
 
 production-master:
