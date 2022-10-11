@@ -40,7 +40,7 @@ const handler = async function handler(
       fqdn: siteToScan,
       duration: Date.now() - start,
       version: 1,
-      iconHref: icon,
+      iconBase64: icon,
       result: results,
     });
     return res.json(toDTO(await report.save()));
