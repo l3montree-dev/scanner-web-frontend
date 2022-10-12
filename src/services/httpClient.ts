@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { wait } from "../utils/promise";
 
 interface MultiPlatformLogger {
@@ -30,7 +31,7 @@ const fetchWithTimeout = (
         redirect: "follow",
         ...init,
         headers: {
-          "X-Request-ID": requestId ?? crypto.randomUUID(),
+          "X-Request-ID": requestId ?? randomUUID(),
           // set a default user agent.
           // this is required for some sites.
           "User-Agent":
@@ -79,12 +80,12 @@ export const httpClientFactory =
         );
         return response;
       } catch (error) {
-        logger.warn(
-          { err: error },
-          `api call: ${request} failed, retrying: ${tries + 1}/${maxRetries}`
-        );
         if (tries < maxRetries) {
           tries++;
+          logger.warn(
+            { err: error },
+            `api call: ${request} failed, retrying: ${tries}/${maxRetries}`
+          );
           await wait(timeoutBetweenRetriesMS);
           return retry(request, init);
         }

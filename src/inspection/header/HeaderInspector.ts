@@ -27,7 +27,7 @@ export default class HeaderInspector
       // use http as protocol.
       const url = new URL(`https://${fqdn}`);
       const httpsResponse = await this.httpClient(url.toString(), requestId, {
-        method: "GET",
+        method: "HEAD",
       });
 
       return {
