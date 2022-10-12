@@ -29,10 +29,8 @@ export const getIcon = async (
       const href = favicons[0].getAttribute("href");
       // fetch the icon.
       if (href) {
-        const res = await httpClient(
-          href.includes(fqdn) ? href : `https://${fqdn}${href}`,
-          requestId
-        );
+        const url = href.includes(fqdn) ? href : `https://${fqdn}${href}`;
+        const res = await httpClient(url, requestId);
         if (res.status === 200) {
           const blob = await res.blob();
 
@@ -40,6 +38,11 @@ export const getIcon = async (
           return `data:${res.headers.get(
             "content-type"
           )};base64,${buffer.toString("base64")}`;
+        } else {
+          logger.warn(
+            { requestId, status: res.status },
+            `icon fetch failed for ${url}`
+          );
         }
       } else {
         logger.warn({ requestId }, "no href found for icon");

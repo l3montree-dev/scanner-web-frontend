@@ -15,6 +15,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 import { classNames } from "../utils/style-utils";
+import { useRouter } from "next/router";
+import useHash from "../hooks/useHash";
 
 interface MenuItem {
   title: string;
@@ -60,9 +62,16 @@ const sections: Array<Section> = [
 ];
 
 const Item: React.FC<MenuItem & { didPass: boolean }> = (props) => {
+  const hash = useHash();
+
   return (
     <Link scroll={true} key={props.hash} href={`#${props.hash}`}>
-      <a className="hover:bg-deepblue-100 transition-all px-7 justify-between items-center flex flex-row w-full p-2 block">
+      <a
+        className={classNames(
+          "hover:bg-deepblue-100 transition-all px-7 justify-between items-center flex flex-row w-full p-2 block",
+          hash === props.hash && "bg-deepblue-100"
+        )}
+      >
         <div>
           <FontAwesomeIcon
             className="mr-4"
@@ -88,7 +97,10 @@ const SectionGroup: FunctionComponent<
   const [isOpen, setIsOpen] = useState(false);
   return (
     <div
-      className="bg-deepblue-300 border-b border-t border-deepblue-200 py-2"
+      className={classNames(
+        "bg-deepblue-300 border-b border-t border-deepblue-200",
+        isOpen ? "pb-0 pt-2" : "py-2"
+      )}
       key={props.title}
     >
       <div className="flex flex-row justify-between pl-5 pr-4 items-center">
@@ -115,7 +127,12 @@ const SectionGroup: FunctionComponent<
                 <span className="opacity-75 px-5 text-sm">
                   {groupOrItem.title}
                 </span>
-                <div className={classNames(index + 1 !== arr.length && "mb-5")}>
+                <div
+                  className={classNames(
+                    "mt-1",
+                    index + 1 !== arr.length && "mb-5"
+                  )}
+                >
                   {groupOrItem.elements.map((element) => {
                     return (
                       <Item
@@ -147,6 +164,7 @@ const SideNav: FunctionComponent<IReport> = (props) => {
     return inspections.every((inspection) => props.result[inspection].didPass);
   };
   const date = new Date(props.createdAt);
+
   return (
     <nav className="text-white pb-5 bg-deepblue-400">
       <div className="mb-5">
@@ -159,9 +177,9 @@ const SideNav: FunctionComponent<IReport> = (props) => {
           />
           <span className="ml-4">Website Scanner</span>
         </div>
-        <div className="px-5 py-3 border-deepblue-100 items-center flex flex-row">
+        <div className="px-5 py-3 items-center flex flex-row">
           {props.iconBase64 && (
-            <div className="p-1 rounded-xl bg-white flex mr-4 flex-row items-center justify-center">
+            <div className="p-1 rounded-sm bg-deepblue-200 border border-deepblue-100 flex mr-4 flex-row items-center justify-center">
               <div className="flex flex-row items-center justify-center">
                 <Image
                   src={props.iconBase64}
