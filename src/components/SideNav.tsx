@@ -97,10 +97,10 @@ const SectionGroup: FunctionComponent<
   const [isOpen, setIsOpen] = useState(true);
   return (
     <div
-      className={classNames("bg-deepblue-300", isOpen ? "pb-0 pt-2" : "py-2")}
+      className={classNames(isOpen ? "pb-0 pt-2" : "py-2")}
       key={props.title}
     >
-      <div className="flex flex-row justify-between pl-5 pr-4 items-center">
+      <div className="flex flex-row justify-between pb-2 pl-5 pr-4 items-center">
         <h2 className="text-xl font-bold">{props.title} </h2>
         <button
           className="hover:bg-deepblue-100 rounded-md w-8 h-8 opacity-75 hover:opacity-100 transition-all"
@@ -113,7 +113,7 @@ const SectionGroup: FunctionComponent<
         </button>
       </div>
       <div
-        className="overflow-hidden"
+        className="overflow-hidden bg-deepblue-300"
         style={{ height: isOpen ? "auto" : "0px" }}
       >
         {props.groups.map((groupOrItem, index, arr) => {
