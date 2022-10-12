@@ -89,7 +89,7 @@ server {
         </p>
       }
       subtitle="Sicherer Transport"
-      title="Transport Layer Security (TLS)"
+      title="Transport Layer Security (TLS) v1.3"
     />
   );
 };
