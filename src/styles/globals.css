@@ -77,7 +77,10 @@ a {
   }
   
   nav {
-    min-width: 300px;
+    min-width: 270px;
   }
 
   
+  pre {
+    background-color: transparent!important;
+  }

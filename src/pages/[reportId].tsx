@@ -1,17 +1,29 @@
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useMemo } from "react";
 import Page from "../components/Page";
+import TLS from "../components/report-content/TLS";
 import SideNav from "../components/SideNav";
 import getConnection from "../db/connection";
 import { toDTO, WithId } from "../db/models";
 import { IReport } from "../db/report";
+import useHash from "../hooks/useHash";
 
+// Maybe use lazy loading in the future.
+const hashComponentMapping: {
+  [hash: string]: (
+    props: WithId<IReport>
+  ) => React.ReactElement<WithId<IReport>, any>;
+} = {
+  tls: TLS,
+};
 const ReportId: FunctionComponent<{ report: WithId<IReport> }> = (props) => {
+  const hash = useHash();
+  const Component = useMemo(() => hashComponentMapping[hash], [hash]);
   return (
     <Page>
       <div className="flex flex-1 flex-row">
         <SideNav {...props.report} />
-        <div>Content</div>
+        {Boolean(Component) && <Component {...props.report} />}
       </div>
     </Page>
   );

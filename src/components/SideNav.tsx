@@ -38,7 +38,7 @@ const sections: Array<Section> = [
     title: "WWW",
     groups: [
       {
-        title: "Modern security features",
+        title: "Moderne Sicherheitsfunktionen",
         elements: [
           {
             title: "HSTS",
@@ -48,7 +48,7 @@ const sections: Array<Section> = [
         ],
       },
       {
-        title: "Secure Transport",
+        title: "Sicherer Transport",
         elements: [
           {
             title: "TLS",
@@ -82,7 +82,7 @@ const Item: React.FC<MenuItem & { didPass: boolean }> = (props) => {
 
         <div
           className={classNames(
-            props.didPass ? "bg-green-500" : "bg-red-500",
+            props.didPass ? "bg-lightning-500" : "bg-red-500",
             "w-3 h-3 rounded-sm"
           )}
         />
@@ -94,17 +94,14 @@ const Item: React.FC<MenuItem & { didPass: boolean }> = (props) => {
 const SectionGroup: FunctionComponent<
   Section & { didPass: (inspectionTypes: InspectionType[]) => boolean }
 > = (props) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   return (
     <div
-      className={classNames(
-        "bg-deepblue-300 border-b border-t border-deepblue-200",
-        isOpen ? "pb-0 pt-2" : "py-2"
-      )}
+      className={classNames("bg-deepblue-300", isOpen ? "pb-0 pt-2" : "py-2")}
       key={props.title}
     >
       <div className="flex flex-row justify-between pl-5 pr-4 items-center">
-        <h2 className="text-2xl font-bold">{props.title} </h2>
+        <h2 className="text-xl font-bold">{props.title} </h2>
         <button
           className="hover:bg-deepblue-100 rounded-md w-8 h-8 opacity-75 hover:opacity-100 transition-all"
           onClick={() => setIsOpen((prev) => !prev)}
@@ -175,16 +172,16 @@ const SideNav: FunctionComponent<IReport> = (props) => {
             width={45}
             height={45}
           />
-          <span className="ml-4">Website Scanner</span>
+          <span className="ml-4 relative top-1">Website Scanner</span>
         </div>
         <div className="px-5 py-3 items-center flex flex-row">
           {props.iconBase64 && (
-            <div className="p-1 rounded-sm bg-deepblue-200 border border-deepblue-100 flex mr-4 flex-row items-center justify-center">
+            <div className="p-0 rounded-sm flex mr-4 flex-row items-center justify-center">
               <div className="flex flex-row items-center justify-center">
                 <Image
                   src={props.iconBase64}
-                  width={45}
-                  height={45}
+                  width={32}
+                  height={32}
                   alt={`${props.fqdn} icon`}
                 />
               </div>
@@ -192,7 +189,7 @@ const SideNav: FunctionComponent<IReport> = (props) => {
           )}
 
           <div>
-            <h2 className="text-3xl font-bold">{props.fqdn}</h2>
+            <h2 className="text-2xl font-bold">{props.fqdn}</h2>
             <p className="opacity-75 text-sm">
               {date
                 .toLocaleString()
