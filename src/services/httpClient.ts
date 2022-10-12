@@ -10,7 +10,7 @@ const fetchWithTimeout = (
   logger: MultiPlatformLogger,
   timeoutMS: number,
   input: RequestInfo | URL,
-  requestId: string | undefined,
+  requestId: string,
   init?: RequestInit | undefined
 ) => {
   return new Promise<Response>(async (resolve, reject) => {
@@ -31,7 +31,7 @@ const fetchWithTimeout = (
         redirect: "follow",
         ...init,
         headers: {
-          "X-Request-ID": requestId ?? randomUUID(),
+          "X-Request-ID": requestId,
           // set a default user agent.
           // this is required for some sites.
           "User-Agent":
@@ -59,7 +59,7 @@ export const httpClientFactory =
   (
     request: RequestInfo | URL,
     // needs always to be defined! This makes our logs more readable.
-    requestId: string | undefined,
+    requestId: string,
     init?: RequestInit | undefined
   ): Promise<Response> => {
     // capture the tries variable inside the closure

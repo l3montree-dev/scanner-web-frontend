@@ -37,7 +37,7 @@ const Home: NextPage = () => {
     try {
       const response = await clientHttpClient(
         `/api/scan?site=${fqdn}`,
-        undefined
+        crypto.randomUUID()
       );
       const obj: WithId<IReport> = await response.json();
       router.push(obj.id);
