@@ -10,5 +10,5 @@ export const decorate =
   <T>(fn: () => Promise<T>) =>
   (handler: DecoratedHandler<T>) =>
   async (req: NextApiRequest, res: NextApiResponse) => {
-    handler(req, res, await fn());
+    return handler(req, res, await fn());
   };
