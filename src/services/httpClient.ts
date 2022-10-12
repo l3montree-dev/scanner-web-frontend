@@ -81,7 +81,7 @@ export const httpClientFactory =
       } catch (error) {
         logger.warn(
           { err: error },
-          `api call: ${request} failed, retrying: ${tries}/${maxRetries}`
+          `api call: ${request} failed, retrying: ${tries + 1}/${maxRetries}`
         );
         if (tries < maxRetries) {
           tries++;

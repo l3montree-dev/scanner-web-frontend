@@ -1,4 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import { randomUUID } from "crypto";
 import { Model } from "mongoose";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { toDTO } from "../../db/models";
@@ -20,7 +21,7 @@ const handler = async function handler(
   // check if the client does provide a request id.
   // if so, use this - otherwise generate a new one.
   const requestId =
-    (req.headers["x-request-id"] as string | undefined) ?? crypto.randomUUID();
+    (req.headers["x-request-id"] as string | undefined) ?? randomUUID();
 
   logger.debug(
     { requestId },
@@ -54,7 +55,8 @@ const handler = async function handler(
       iconBase64: icon,
       result: results,
     });
-    return res.json(toDTO(await report.save()));
+
+    return res.json(toDTO((await report.save()).toObject()));
   } catch (error: unknown) {
     if (error instanceof Error && error.message === "fetch failed") {
       logger.error(

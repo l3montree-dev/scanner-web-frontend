@@ -1,4 +1,5 @@
 import { exec } from "child_process";
+import { config } from "../config";
 import { promise2Boolean } from "../utils/promise";
 
 /**
@@ -12,12 +13,17 @@ export class OpenSSL {
        * !!!! If running inside the provided Docker Image, this uses OpenSSL 1.0.2 !!!!
        * This supports SSLv2 and SSLv3 but does NOT support TLSv1.3. Use the openssl binary linked with node itself to verify TLSv1.3 support.
        */
-      exec(`echo 'Q' | openssl ${args.join(" ")}`, (err, stdout) => {
-        if (err !== null) {
-          return reject(err);
+      exec(
+        `echo 'Q' | timeout ${config.serverTimeout / 1000} openssl ${args.join(
+          " "
+        )}`,
+        (err, stdout) => {
+          if (err !== null) {
+            return reject(err);
+          }
+          resolve(stdout);
         }
-        resolve(stdout);
-      });
+      );
     });
   }
 
