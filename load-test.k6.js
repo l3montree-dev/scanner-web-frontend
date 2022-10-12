@@ -5,15 +5,13 @@ import encoding from 'k6/encoding';
 
 export const options = {
     discardResponseBodies: true,
-    // stages: [
-    //     { duration: '20m', target: 500 },
-    // ],
-    vus: 20,
-    duration: "20m",
+    stages: [
+        { duration: "5m", target: 150 },
+    ],
     thresholds: {
         http_req_failed: ['rate<0.01'], // http errors should be less than 1%
         http_req_duration: [{
-            threshold: 'p(95)<10000',
+            threshold: 'p(95)<20000',
             abortOnFail: true,
             delayAbortEval: '5s'
         }], // 95% of requests should be below 10 seconds
