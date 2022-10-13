@@ -83,9 +83,9 @@ const Home: NextPage = () => {
         <title>OZG Security Challenge 2023</title>
       </Head>
       <div className="flex pb-10 flex-col w-full justify-center">
-        <div className="max-w-screen-lg mx-auto">
-          <div className="md:bg-deepblue-400 mt-10 p-10">
-            <div className="flex flex-row items-center justify-between">
+        <div className="max-w-screen-lg md:p-5 mx-auto">
+          <div className="md:bg-deepblue-400 md:mt-0 mt-10 md:p-10 p-5">
+            <div className="flex flex-row items-start justify-between">
               <h1 className="text-5xl mb-3 text-white font-bold">
                 OZG-Security Challenge 2023
               </h1>
@@ -135,7 +135,7 @@ const Home: NextPage = () => {
                 Bestanden: {amountPassed}/6
               </p>
               <div className="flex-row flex flex-wrap mt-3">
-                <div className="md:w-1/3 w-full md:mb-4 mb-8 md:pr-2">
+                <div className="md:w-1/3 sm:w-1/2 w-full md:mb-4 mb-5 sm:pr-2">
                   <div
                     className={classNames(
                       "bg-deepblue-400 border  h-full p-5",
@@ -151,7 +151,7 @@ const Home: NextPage = () => {
                     />
                   </div>
                 </div>
-                <div className="md:w-1/3 w-full md:px-2 md:mb-4 mb-8">
+                <div className="md:w-1/3 sm:w-1/2 w-full sm:pl-2 md:px-2 md:mb-4 mb-5">
                   <div
                     className={classNames(
                       "bg-deepblue-400 border  h-full p-4",
@@ -167,7 +167,7 @@ const Home: NextPage = () => {
                     />
                   </div>
                 </div>
-                <div className="md:w-1/3 w-full md:pl-2 md:mb-4 mb-8">
+                <div className="md:w-1/3 sm:w-1/2 w-full sm:pr-2 md:pr-0 md:pl-2 md:mb-4 mb-5">
                   <div
                     className={classNames(
                       "bg-deepblue-400 border  h-full p-4",
@@ -183,7 +183,7 @@ const Home: NextPage = () => {
                     />
                   </div>
                 </div>
-                <div className="md:w-1/3 w-full md:mb-4 mb-8 md:pr-2">
+                <div className="md:w-1/3 sm:w-1/2 w-full md:mb-4 mb-5 sm:pl-2 md:pl-0 md:pr-2">
                   <div
                     className={classNames(
                       "bg-deepblue-400 border  h-full p-4",
@@ -199,7 +199,7 @@ const Home: NextPage = () => {
                     />
                   </div>
                 </div>
-                <div className="md:w-1/3 w-full md:mb-4 mb-8 md:px-2">
+                <div className="md:w-1/3 sm:w-1/2 w-full sm:pr-2 md:mb-4 mb-5 md:px-2">
                   <div
                     className={classNames(
                       "bg-deepblue-400 border  h-full p-4",
@@ -215,7 +215,7 @@ const Home: NextPage = () => {
                     />
                   </div>
                 </div>
-                <div className="md:w-1/3 w-full md:mb-4 mb-8 md:pl-2">
+                <div className="md:w-1/3 sm:w-1/2 w-full md:mb-4 mb-5 sm:pl-2">
                   <div
                     className={classNames(
                       "bg-deepblue-400 border  h-full p-4",
