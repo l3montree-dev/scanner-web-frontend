@@ -1,0 +1,29 @@
+{
+    "Status": 0 /* NOERROR */,
+    "TC": false,
+    "RD": true,
+    "RA": true,
+    "AD": true,
+    "CD": false,
+    "Question": [
+      {
+        "name": "ozgsec.de.",
+        "type": 1 /* A */
+      }
+    ],
+    "Answer": [
+      {
+        "name": "ozgsec.de.",
+        "type": 1 /* A */,
+        "TTL": 3600,
+        "data": "81.169.215.249"
+      },
+      {
+        "name": "ozgsec.de.",
+        "type": 46 /* RRSIG */,
+        "TTL": 3600,
+        "data": "a 13 2 3600 1666224000 1664409600 58974 ozgsec.de. cGluzmncBb8D9Yr2DcMJukPFSY4mpFDnj9YGcf1puet2ThdacQfaCw6vQwTzjZ1hZo7HiIkt3UGJCRDYEpgWZw=="
+      }
+    ],
+    "Comment": "Response from 2001:67c:10b8::104."
+  }
