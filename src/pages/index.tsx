@@ -83,11 +83,16 @@ const Home: NextPage = () => {
         <title>OZG Security Challenge 2023</title>
       </Head>
       <div className="flex pb-10 flex-col w-full justify-center">
-        <div className="max-w-screen-md mx-auto">
-          <div className="md:bg-deepblue-400 mt-10 p-5">
-            <h1 className="text-5xl mb-3 text-white font-bold">
-              OZG-Security Challenge 2023
-            </h1>
+        <div className="max-w-screen-lg mx-auto">
+          <div className="md:bg-deepblue-400 mt-10 p-10">
+            <div className="flex flex-row items-center justify-between">
+              <h1 className="text-5xl mb-3 text-white font-bold">
+                OZG-Security Challenge 2023
+              </h1>
+              <div className="p-2 bg-deepblue-200">
+                <span className="text-white">BETA</span>
+              </div>
+            </div>
             <h2 className="text-white text-2xl">OZG-Security Schnelltest</h2>
             <div className="pb-16">
               <form onSubmit={onSubmit} className="pt-20 flex">
@@ -141,7 +146,7 @@ const Home: NextPage = () => {
                   >
                     <ResultBox
                       title="DNSSEC"
-                      description="DNSSEC eingerichtet"
+                      description={`DNSSEC ist für die Domain ${report.fqdn} eingerichtet.`}
                       didPass={report.result.DNSSec.didPass}
                     />
                   </div>
@@ -157,7 +162,7 @@ const Home: NextPage = () => {
                   >
                     <ResultBox
                       title="CAA"
-                      description="CAA Einträge konfiguriert"
+                      description={`CAA Einträge sind für die Domain ${report.fqdn} eingerichtet.`}
                       didPass={report.result.CAA.didPass}
                     />
                   </div>
@@ -173,7 +178,7 @@ const Home: NextPage = () => {
                   >
                     <ResultBox
                       title="TLS 1.3"
-                      description="Server unterstützt TLS 1.3"
+                      description="Der Server unterstützt das Protokoll TLS 1.3."
                       didPass={report.result.TLSv1_3.didPass}
                     />
                   </div>
@@ -188,8 +193,8 @@ const Home: NextPage = () => {
                     )}
                   >
                     <ResultBox
-                      title="Deaktivierung von veralteten Protokollen"
-                      description="TLS 1.1 und älter sowie SSL deaktiviert"
+                      title="Deaktivierung von veralteten TLS/ SSL Protokollen"
+                      description="TLS 1.1 und älter sowie SSL sind deaktiviert."
                       didPass={report.result.TLSv1_1_Deactivated.didPass}
                     />
                   </div>
@@ -205,7 +210,7 @@ const Home: NextPage = () => {
                   >
                     <ResultBox
                       title="HSTS"
-                      description="HSTS Header vorhanden"
+                      description="Strict-Transport-Security Header vorhanden und korrekt konfiguriert."
                       didPass={report.result.HSTS.didPass}
                     />
                   </div>
@@ -221,7 +226,7 @@ const Home: NextPage = () => {
                   >
                     <ResultBox
                       title="Responsible Disclosure"
-                      description={`${report.fqdn}/.well-known/security.txt vorhanden`}
+                      description={`Die Datei ${report.fqdn}/.well-known/security.txt ist vorhanden und enthält die nötigen Einträge.`}
                       didPass={report.result.ResponsibleDisclosure.didPass}
                     />
                   </div>

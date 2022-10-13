@@ -43,13 +43,12 @@ const ResultBox: FunctionComponent<Props> = (props) => {
 
       <div className="flex flex-row justify-end">
         <a
+          className="text-sm underline"
           target="_blank"
           href="https://www.onlinezugangsgesetz.de/Webs/OZG/DE/themen/ozg-infrastruktur/infrastruktur-node.html"
           rel="noreferrer"
         >
-          <button className="bg-deepblue-200 hover:bg-deepblue-600 text-white font-bold py-2 px-4">
-            Mehr Informationen
-          </button>
+          Mehr Informationen
         </a>
       </div>
     </div>
