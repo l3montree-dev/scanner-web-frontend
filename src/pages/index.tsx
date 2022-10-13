@@ -106,15 +106,27 @@ const Home: NextPage = () => {
           property="twitter:description"
           content="OZG-Security Schnelltest einer Webseite in Bezug auf IT-Sicherheitsmaßnahmen und Best-Practices"
         />
+        <link
+          rel="preload"
+          href="/assets/fonts/BundesSansWeb-Bold.woff"
+          as="font"
+          type="font/woff"
+        ></link>
+        <link
+          rel="preload"
+          href="/assets/fonts/BundesSansWeb-Regular.woff"
+          as="font"
+          type="font/woff"
+        ></link>
       </Head>
       <div className="flex pb-10 flex-col w-full justify-center">
         <div className="max-w-screen-lg md:p-5 mx-auto">
           <div className="md:bg-deepblue-400 md:mt-0 mt-10 md:p-10 p-5">
-            <div className="flex flex-row items-start justify-between">
-              <h1 className="text-5xl mb-3 text-white font-bold">
+            <div className="flex flex-wrap sm:flex-nowrap flex-row items-start justify-between">
+              <h1 className="text-5xl sm:order-1 order-2 mb-3 text-white font-bold">
                 OZG-Security Challenge 2023
               </h1>
-              <div className="p-2 bg-deepblue-200">
+              <div className="p-2 mb-4 sm:mb-0 order-1 bg-deepblue-200">
                 <span className="text-white">BETA</span>
               </div>
             </div>

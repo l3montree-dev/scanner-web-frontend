@@ -2,7 +2,12 @@ const Footer = () => {
   return (
     <footer className="bg-white md:text-md text-sm px-5 md:px-10 pb-14">
       <div>
-        <img src={"/assets/bmi-logo.svg"} alt="Logo BMI" />
+        <img
+          width={256}
+          height={156}
+          src={"/assets/bmi-logo.svg"}
+          alt="Logo BMI"
+        />
       </div>
       <div className="lg:flex justify-between">
         <div className="md:mb-0 flex flex-wrap flex-row mb-5">
