@@ -1,5 +1,6 @@
-import { buildInspectionError } from "../../utils/error";
+import { HttpClient } from "../../services/httpClient";
 import { getLogger } from "../../services/logger";
+import { buildInspectionError } from "../../utils/error";
 import {
   DomainInspectionType,
   InspectionResult,
@@ -7,8 +8,6 @@ import {
 } from "../Inspector";
 import { caaChecker } from "./caaChecker";
 import { dnsSecChecker } from "./dnsSecChecker";
-import { DOHResponse } from "./dohResponse";
-import { HttpClient } from "../../services/httpClient";
 
 const logger = getLogger(__filename);
 export default class DomainInspector

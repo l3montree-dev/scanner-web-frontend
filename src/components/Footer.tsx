@@ -1,11 +1,11 @@
 const Footer = () => {
   return (
-    <footer className="bg-white px-16 pb-14">
-      <div className="w-96">
+    <footer className="bg-white md:text-md text-sm px-5 md:px-10 pb-14">
+      <div>
         <img src={"/assets/bmi-logo.svg"} alt="Logo BMI" />
       </div>
       <div className="md:flex justify-between">
-        <div className="md:ml-10 md:mb-0 mb-10">
+        <div className="md:mb-0 mb-5">
           <span className="mr-4">Impressum</span>
           <span className="mr-4">Datenschutz</span>
           <span>

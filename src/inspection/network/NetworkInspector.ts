@@ -1,4 +1,5 @@
 import { getLogger } from "../../services/logger";
+import { timeout } from "../../utils/promise";
 import {
   InspectionResult,
   NetworkInspectionType,
@@ -18,7 +19,7 @@ export default class NetworkInspector
   ): Promise<{ [key in NetworkInspectionType]: InspectionResult }> {
     let addresses: string[];
     try {
-      addresses = await this.dns.resolve6(fqdn);
+      addresses = await timeout(this.dns.resolve6(fqdn));
     } catch (e) {
       logger.error(
         { err: e, requestId },
