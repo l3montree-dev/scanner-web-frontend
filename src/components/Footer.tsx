@@ -4,7 +4,7 @@ const Footer = () => {
       <div>
         <img src={"/assets/bmi-logo.svg"} alt="Logo BMI" />
       </div>
-      <div className="md:flex justify-between">
+      <div className="lg:flex justify-between">
         <div className="md:mb-0 mb-5">
           <span className="mr-4">Impressum</span>
           <span className="mr-4">Datenschutz</span>
