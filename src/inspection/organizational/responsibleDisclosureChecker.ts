@@ -4,7 +4,7 @@ import { InspectionResult, OrganizationalInspectionType } from "../Inspector";
  *
  * @requirements
  * REQUIRED: the file "/.well-known/security.txt" is present.
- * REQUIRED: the file "/.well-known/security.txt" contains the "Contact:" field with a contact option ONCE.
+ * REQUIRED: the file "/.well-known/security.txt" contains one or more "Contact:" fields.
  * REQUIRED: the file "/.well-known/security.txt" contains the "Expires:" field ONCE.
  * RECCOMENDED: the file "/.well-known/security.txt" contains the "Encryption:" field, if so only ONCE.
  * RECCOMENDED: the file "/.well-known/security.txt" contains the "Canonical:" field, if so only ONCE.
