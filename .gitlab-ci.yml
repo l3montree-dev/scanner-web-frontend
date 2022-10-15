@@ -35,6 +35,8 @@ jest:
       paths:
         - node_modules/
     needs: [npm]
+    dependencies:
+      - npm
 
 build:
     image: docker:19.03.1
@@ -55,6 +57,9 @@ build:
         - main
         - dev
     needs: [jest, gitguardianscan]
+    dependencies:
+      - jest
+      - gitguardianscan
     # when: manual
 
 production-dev:
