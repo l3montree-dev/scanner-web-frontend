@@ -75,13 +75,17 @@ export interface InspectResultDTO {
   type: InspectionType;
   didPass: boolean;
   actualValue: Record<string, any>;
+  errors: string[];
+  recommendations: string[];
 }
 
 export class InspectionResult {
   constructor(
-    private type: InspectionType,
-    private didPass: boolean,
-    private actualValue: Record<string, any>
+    public type: InspectionType,
+    public didPass: boolean,
+    public actualValue: Record<string, any>,
+    public errors?: string[],
+    public recommendations?: string[]
   ) {}
 
   toDTO(): InspectResultDTO {
@@ -89,6 +93,8 @@ export class InspectionResult {
       type: this.type,
       didPass: this.didPass,
       actualValue: this.actualValue,
+      errors: this.errors || [],
+      recommendations: this.recommendations || [],
     };
   }
 }

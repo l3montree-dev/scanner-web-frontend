@@ -9,6 +9,7 @@ import { WithId } from "../db/models";
 import { IReport } from "../db/report";
 import {
   DomainInspectionType,
+  HeaderInspectionType,
   InspectionType,
   OrganizationalInspectionType,
   TLSInspectionType,
@@ -69,6 +70,7 @@ const Home: NextPage = () => {
             TLSInspectionType.TLSv1_1_Deactivated,
             DomainInspectionType.CAA,
             DomainInspectionType.DNSSec,
+            HeaderInspectionType.HSTS,
             OrganizationalInspectionType.ResponsibleDisclosure,
           ] as string[]
         ).includes(key)
@@ -163,7 +165,9 @@ const Home: NextPage = () => {
           </div>
           {report !== null && (
             <div className="mt-10 p-5 md:p-0 text-white">
-              <h2 className="text-white text-2xl">Testergebnisse</h2>
+              <h2 className="text-white text-2xl">
+                Testergebnisse für {report.fqdn}
+              </h2>
               <p
                 className={classNames(
                   amountPassed === 6 ? "text-lightning-500" : "text-red-500"
