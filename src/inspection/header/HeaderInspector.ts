@@ -1,7 +1,6 @@
 import { getLogger } from "../../services/logger";
 import { buildInspectionError } from "../../utils/error";
 
-import { HttpClient } from "../../services/httpClient";
 import {
   HeaderInspectionType,
   InspectionResult,
@@ -16,20 +15,13 @@ import { xssProtectionChecker } from "./xssProtectionChecker";
 
 const logger = getLogger(__filename);
 export default class HeaderInspector
-  implements Inspector<HeaderInspectionType>
+  implements Inspector<HeaderInspectionType, Response>
 {
-  constructor(private readonly httpClient: HttpClient) {}
   async inspect(
     requestId: string,
-    fqdn: string
+    httpsResponse: Response
   ): Promise<{ [type in HeaderInspectionType]: InspectionResult }> {
     try {
-      // use http as protocol.
-      const url = new URL(`https://${fqdn}`);
-      const httpsResponse = await this.httpClient(url.toString(), requestId, {
-        method: "HEAD",
-      });
-
       return {
         HTTPS: new InspectionResult(
           HeaderInspectionType.HTTPS,
@@ -44,10 +36,7 @@ export default class HeaderInspector
         ContentTypeOptions: contentTypeOptionsChecker(httpsResponse),
       };
     } catch (e: unknown) {
-      logger.error(
-        { err: e, requestId },
-        `header inspection for ${fqdn} failed`
-      );
+      logger.error({ err: e, requestId }, `header inspection failed`);
       return buildInspectionError(HeaderInspectionType, e);
     }
   }

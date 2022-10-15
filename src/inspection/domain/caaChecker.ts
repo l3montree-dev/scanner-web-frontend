@@ -62,13 +62,12 @@ export const caaChecker = (response: DOHResponse): InspectionResult => {
 
   const caaFlagIsZero = caaRecords.every((record) => record.CAA === "0");
 
-  console.log({ caaFlagIsZero, issueAndIssueWildProperty, iodefProperty });
   return new InspectionResult(
     DomainInspectionType.CAA,
     Boolean(
       caaFlagIsZero &&
         issueAndIssueWildProperty.length > 0 &&
-        issueAndIssueWildProperty.every((issue) => issue !== '";"') &&
+        issueAndIssueWildProperty.some((issue) => issue !== '";"') &&
         iodefProperty.length > 0 &&
         iodefProperty.every((iodef) => {
           const val = iodef.replaceAll('"', "");

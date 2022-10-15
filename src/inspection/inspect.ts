@@ -1,46 +1,51 @@
 import { resolve6 } from "dns/promises";
-import { HttpClient } from "../services/httpClient";
+import { config } from "../config";
+import { HttpClient } from "../services/clientHttpClient";
 
 import { getLogger } from "../services/logger";
-import { serverHttpClient } from "../services/serverHttpClient";
+import { httpClientFactory } from "../services/serverHttpClient";
 import { tlsClient } from "../services/tlsSocket";
 import { buildInspectionError } from "../utils/error";
 import { getIcon } from "../utils/icon";
-import { getJSDOM } from "../utils/jsom";
+import { getJSDOM } from "../utils/jsdom";
 import CertificateInspector from "./certificate/CertificateInspector";
 import ContentInspector from "./content/ContentInspector";
 import CookieInspector from "./cookie/CookieInspector";
 import DomainInspector from "./domain/DomainInspector";
 import HeaderInspector from "./header/HeaderInspector";
 import HttpInspector from "./http/HttpInspector";
-import { ContentInspectionType } from "./Inspector";
+import {
+  ContentInspectionType,
+  HttpInspectionType,
+  InspectionType,
+  InspectResultDTO,
+} from "./Inspector";
 import NetworkInspector from "./network/NetworkInspector";
 import OrganizationalInspector from "./organizational/OrganizationalInspector";
 import TLSInspector from "./tls/TLSInspector";
 
-const httpInspector = new HttpInspector(serverHttpClient);
-const headerInspector = new HeaderInspector(serverHttpClient);
-const organizationalInspector = new OrganizationalInspector(serverHttpClient);
-const domainInspector = new DomainInspector(serverHttpClient);
+const httpInspector = new HttpInspector();
+const headerInspector = new HeaderInspector();
+const organizationalInspector = new OrganizationalInspector();
+const domainInspector = new DomainInspector();
 const networkInspector = new NetworkInspector({
   resolve6,
 });
 const contentInspector = new ContentInspector();
-const cookieInspector = new CookieInspector(serverHttpClient);
+const cookieInspector = new CookieInspector();
 const tlsInspector = new TLSInspector(tlsClient);
 const certificateInspector = new CertificateInspector(tlsClient);
-
-const jsdomExtractor = getJSDOM(serverHttpClient);
 
 const logger = getLogger(__filename);
 // makes sure, that the content is only parsed once.
 const contentInspection = async (
   requestId: string,
   fqdn: string,
+  initialResponse: Response,
   httpClient: HttpClient
 ) => {
   try {
-    const dom = await jsdomExtractor(requestId, fqdn);
+    const dom = await getJSDOM(initialResponse);
     const icon = await getIcon(requestId, fqdn, dom, httpClient);
     return {
       icon,
@@ -56,6 +61,14 @@ const contentInspection = async (
 };
 
 export const inspect = async (requestId: string, fqdn: string) => {
+  const httpClient = httpClientFactory();
+  // make the sanity check - if this request fails, we can't do anything.
+  // besides that, it makes sure, that the http instance has all cookies set correctly.
+  // nevertheless, the response can be reused by the checkers.
+  const response = await httpClient(`https://${fqdn}`, requestId, undefined, {
+    setCookies: true,
+  });
+
   const [
     httpResult,
     headerResult,
@@ -67,13 +80,17 @@ export const inspect = async (requestId: string, fqdn: string) => {
     tlsResults,
     certificateResults,
   ] = await Promise.all([
-    httpInspector.inspect(requestId, fqdn),
-    headerInspector.inspect(requestId, fqdn),
-    organizationalInspector.inspect(requestId, fqdn),
-    domainInspector.inspect(requestId, fqdn),
+    buildInspectionError(HttpInspectionType, new Error("not implemented")),
+    //httpInspector.inspect(requestId, {
+    //  fqdn,
+    //  httpClient,
+    //}),
+    headerInspector.inspect(requestId, response),
+    organizationalInspector.inspect(requestId, { fqdn, httpClient }),
+    domainInspector.inspect(requestId, { fqdn, httpClient }),
     networkInspector.inspect(requestId, fqdn),
-    contentInspection(requestId, fqdn, serverHttpClient),
-    cookieInspector.inspect(requestId, fqdn),
+    contentInspection(requestId, fqdn, response, httpClient),
+    cookieInspector.inspect(requestId, response),
     tlsInspector.inspect(requestId, fqdn),
     certificateInspector.inspect(requestId, fqdn),
   ]);
@@ -90,6 +107,8 @@ export const inspect = async (requestId: string, fqdn: string) => {
       ...cookieResults,
       ...tlsResults,
       ...certificateResults,
+    } as {
+      [key in InspectionType]: InspectResultDTO;
     },
   };
 };

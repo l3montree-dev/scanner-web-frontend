@@ -49,11 +49,20 @@ const Home: NextPage = () => {
         `/api/scan?site=${fqdn}`,
         crypto.randomUUID()
       );
+
+      if (!response.ok) {
+        if (response.status === 400) {
+          return setErr("Die Domain konnte nicht gefunden werden.");
+        }
+        return setErr(
+          "Es ist ein Fehler aufgetreten. Bitte versuche es später erneut."
+        );
+      }
+
       const obj: WithId<IReport> = await response.json();
       setReport(obj);
       // router.push(obj.id);
     } catch (e) {
-      console.log(e);
       setErr("Es ist ein Fehler aufgetreten. Bitte versuche es später erneut.");
     } finally {
       setLoading(false);
@@ -62,6 +71,7 @@ const Home: NextPage = () => {
 
   const amountPassed = useMemo(() => {
     if (!report) return 0;
+    console.log(report);
     return Object.keys(report.result)
       .filter((key) =>
         (
@@ -166,7 +176,15 @@ const Home: NextPage = () => {
           {report !== null && (
             <div className="mt-10 p-5 md:p-0 text-white">
               <h2 className="text-white text-2xl">
-                Testergebnisse für {report.fqdn}
+                Testergebnisse für{" "}
+                <a
+                  target={"_blank"}
+                  className="underline"
+                  rel="noopener noreferrer"
+                  href={`//${report.fqdn}`}
+                >
+                  {report.fqdn}
+                </a>
               </h2>
               <p
                 className={classNames(

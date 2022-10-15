@@ -4,7 +4,7 @@ import { InspectionType, InspectResultDTO } from "../inspection/Inspector";
 export interface IReport {
   fqdn: string;
   duration: number;
-  iconBase64: string;
+  iconBase64: string | null;
   result: {
     [key in InspectionType]: InspectResultDTO;
   };

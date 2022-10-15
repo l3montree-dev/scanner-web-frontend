@@ -6,19 +6,22 @@ import {
   Inspector,
 } from "../Inspector";
 import { responsibleDisclosureChecker } from "./responsibleDisclosureChecker";
-import { HttpClient } from "../../services/httpClient";
+import { HttpClient } from "../../services/clientHttpClient";
 
 const logger = getLogger(__filename);
 export default class OrganizationalInspector
-  implements Inspector<OrganizationalInspectionType>
+  implements
+    Inspector<
+      OrganizationalInspectionType,
+      { fqdn: string; httpClient: HttpClient }
+    >
 {
-  constructor(protected readonly httpClient: HttpClient) {}
   async inspect(
     requestId: string,
-    fqdn: string
+    { fqdn, httpClient }: { fqdn: string; httpClient: HttpClient }
   ): Promise<{ [key in OrganizationalInspectionType]: InspectionResult }> {
     try {
-      const response = await this.httpClient(
+      const response = await httpClient(
         new URL(`https://${fqdn}/.well-known/security.txt`).toString(),
         requestId
       );
