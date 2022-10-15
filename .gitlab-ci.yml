@@ -19,7 +19,7 @@ npm:
     image: node:18@sha256:9d8a6466c6385e05f62f8ccf173e80209efb0ff4438f321f09ddf552b05af3ba
     stage: install
     script:
-        - npm install
+        - npm ci --include=dev
     cache:
       key: $CI_COMMIT_REF_NAME
       paths:
@@ -29,7 +29,7 @@ jest:
     image: node:18@sha256:9d8a6466c6385e05f62f8ccf173e80209efb0ff4438f321f09ddf552b05af3ba
     stage: test
     script:
-        - npm run test
+      - 'npx jest --ci --reporters=default --reporters=jest-junit'
     cache:
       key: $CI_COMMIT_REF_NAME
       paths:
@@ -37,6 +37,11 @@ jest:
     needs: [npm]
     dependencies:
       - npm
+    artifacts:
+      when: always
+      reports:
+          junit:
+            - junit.xml
 
 build:
     image: docker:19.03.1
