@@ -5,13 +5,37 @@ variables:
 
 stages:
     - scanning
+    - install
+    - test
     - publish
     - deploy
 
-gitguardian scan:
+
+gitguardianscan:
     image: gitguardian/ggshield:latest
     stage: scanning
     script: ggshield secret scan ci
+
+npm:
+    image: node:18@sha256:9d8a6466c6385e05f62f8ccf173e80209efb0ff4438f321f09ddf552b05af3ba
+    stage: install
+    script:
+        - npm install
+    cache:
+      key: $CI_COMMIT_REF_NAME
+      paths:
+        - node_modules/
+
+jest:
+    image: node:18@sha256:9d8a6466c6385e05f62f8ccf173e80209efb0ff4438f321f09ddf552b05af3ba
+    stage: test
+    script:
+        - npm run test
+    cache:
+      key: $CI_COMMIT_REF_NAME
+      paths:
+        - node_modules/
+    needs: [npm]
 
 build:
     image: docker:19.03.1
@@ -31,6 +55,7 @@ build:
     only:
         - main
         - dev
+    needs: [jest, gitguardianscan]
     # when: manual
 
 production-dev:
@@ -48,6 +73,7 @@ production-dev:
         - kubectl --server=$K8S_DEVELOPMENT_API_URL --token=$K8S_DEVELOPMENT_TOKEN --certificate-authority=ca.pem --namespace=ozgsec rollout restart deployment/ozgsec-frontend
     only:
         - dev
+    needs: [build]
     # when: manual
 
 
@@ -67,3 +93,4 @@ production-master:
     only:
         - main
     when: manual
+    needs: [build]

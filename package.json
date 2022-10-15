@@ -4,6 +4,7 @@
     "private": true,
     "scripts": {
         "dev": "ts-node server.ts",
+        "test": "jest",
         "build": "next build",
         "start": "NODE_ENV=production ts-node server.ts",
         "lint": "next lint",

@@ -2,7 +2,7 @@ import { sanitizeFQDN } from "./santize";
 
 describe("sanitize test suite", () => {
   it("should throw an error, if the input is not a string", () => {
-    expect(() => sanitizeFQDN(123 as any)).toThrowError();
+    expect(sanitizeFQDN(123 as any)).toEqual(null);
   });
   it("should remove any protocol if provided", () => {
     expect(sanitizeFQDN("https://example.com")).toBe("example.com");
