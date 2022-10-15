@@ -1,7 +1,7 @@
+import { HttpClient } from "../../services/clientHttpClient";
 import { getLogger } from "../../services/logger";
 import { buildInspectionError } from "../../utils/error";
 
-import { HttpClient } from "../../services/httpClient";
 import {
   HeaderInspectionType,
   InspectionResult,

@@ -1,5 +1,5 @@
 import { JSDOM } from "jsdom";
-import { HttpClient } from "../services/httpClient";
+import { HttpClient } from "../services/clientHttpClient";
 
 export const getJSDOM =
   (httpClient: HttpClient) =>

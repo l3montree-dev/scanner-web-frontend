@@ -3,7 +3,7 @@ import { getLogger } from "../../services/logger";
 
 import { HttpInspectionType, InspectionResult, Inspector } from "../Inspector";
 import { redirectChecker } from "./redirectChecker";
-import { HttpClient } from "../../services/httpClient";
+import { HttpClient } from "../../services/clientHttpClient";
 
 const logger = getLogger(__filename);
 export default class HttpInspector implements Inspector<HttpInspectionType> {

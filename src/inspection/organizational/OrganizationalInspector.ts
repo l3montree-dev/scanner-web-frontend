@@ -6,7 +6,7 @@ import {
   Inspector,
 } from "../Inspector";
 import { responsibleDisclosureChecker } from "./responsibleDisclosureChecker";
-import { HttpClient } from "../../services/httpClient";
+import { HttpClient } from "../../services/clientHttpClient";
 
 const logger = getLogger(__filename);
 export default class OrganizationalInspector
