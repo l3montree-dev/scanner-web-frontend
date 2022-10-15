@@ -166,7 +166,15 @@ const Home: NextPage = () => {
           {report !== null && (
             <div className="mt-10 p-5 md:p-0 text-white">
               <h2 className="text-white text-2xl">
-                Testergebnisse für {report.fqdn}
+                Testergebnisse für{" "}
+                <a
+                  target={"_blank"}
+                  className="underline"
+                  rel="noopener noreferrer"
+                  href={`//${report.fqdn}`}
+                >
+                  {report.fqdn}
+                </a>
               </h2>
               <p
                 className={classNames(

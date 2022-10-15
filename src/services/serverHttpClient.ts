@@ -1,10 +1,95 @@
 import { config } from "../config";
-import { httpClientFactory } from "./httpClient";
+import { wait } from "../utils/promise";
+import { userAgents } from "../utils/userAgents";
+
 import { getLogger } from "./logger";
 
 const logger = getLogger(__filename);
+
+const fetchWithTimeout = (
+  timeoutMS: number,
+  input: RequestInfo | URL,
+  requestId: string,
+  init?: RequestInit | undefined
+) => {
+  return new Promise<Response>(async (resolve, reject) => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => {
+      controller.abort();
+      logger.error(
+        { requestId },
+        `fetchWithTimeout: request to ${input} timed out after ${timeoutMS}ms`
+      );
+    }, timeoutMS);
+    // spread the provided parameters.
+    // this will overwrite the signal if another one is provided.
+    let response: Response;
+    try {
+      const ua = userAgents[Math.floor(Math.random() * userAgents.length)];
+      console.log("UA", ua);
+      response = await fetch(input, {
+        signal: controller.signal,
+        redirect: "follow",
+        ...init,
+        headers: {
+          //    "X-Request-ID": requestId,
+          // pick a random user agent
+          // this is required for some sites.
+          "User-Agent": ua,
+          ...init?.headers,
+        },
+      });
+      clearTimeout(timeout);
+      resolve(response);
+    } catch (e) {
+      // clear the timeout even if there is an error.
+      clearTimeout(timeout);
+      reject(e);
+    }
+  });
+};
+
+export const httpClientFactory =
+  (timeoutMS: number, maxRetries: number, timeoutBetweenRetriesMS = 500) =>
+  (
+    request: RequestInfo | URL,
+    // needs always to be defined! This makes our logs more readable.
+    requestId: string,
+    init?: RequestInit | undefined
+  ): Promise<Response> => {
+    // capture the tries variable inside the closure
+    // this way we can avoid using it as a parameter of the api fn itself.
+    let tries = 0;
+
+    const retry = async (
+      request: RequestInfo | URL,
+      init?: RequestInit | undefined
+    ): Promise<Response> => {
+      try {
+        const response = await fetchWithTimeout(
+          timeoutMS,
+          request,
+          requestId,
+          init
+        );
+        return response;
+      } catch (error) {
+        if (tries < maxRetries) {
+          tries++;
+          logger.warn(
+            { err: error },
+            `api call: ${request} failed, retrying: ${tries}/${maxRetries}`
+          );
+          await wait(timeoutBetweenRetriesMS);
+          return retry(request, init);
+        }
+        throw error;
+      }
+    };
+    return retry(request, init);
+  };
+
 export const serverHttpClient = httpClientFactory(
-  logger,
   config.serverTimeout,
   config.serverRetries
 );

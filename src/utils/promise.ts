@@ -24,14 +24,22 @@ export const timeout = async <T>(
   return result;
 };
 
+type Extract<T extends ReadonlyArray<() => Promise<any>>> = {
+  [Index in keyof T]: T[Index] extends () => Promise<infer V> ? V : never;
+};
+
 // Limit the concurrency of an array of promises.
 // might be useful to scan some more restrictive websites.
-export const promiseExecutor = <T>(
-  promiseFactories: Array<() => T | PromiseLike<T>>,
-  concurrency: number
-): Promise<T[]> => {
-  return new Promise<T[]>(async (resolve) => {
-    const results: Array<{ index: number; value: T }> = [];
+export const promiseExecutor = <T extends ReadonlyArray<() => Promise<any>>>(
+  promiseFactories: T,
+  // -1 unlimited.
+  concurrency: number = -1
+): Promise<Extract<T>> => {
+  if (concurrency === -1) {
+    return Promise.all(promiseFactories.map((f) => f())) as Promise<Extract<T>>;
+  }
+  return new Promise<Extract<T>>(async (resolve) => {
+    const results: Array<{ index: number; value: Promise<any> }> = [];
     const queue: Array<PromiseLike<any>> = [];
     let ongoing = 0;
 
@@ -60,6 +68,8 @@ export const promiseExecutor = <T>(
 
     // wait for all concurrent promises to resolve.
     await Promise.all(queue);
-    resolve(results.sort((a, b) => a.index - b.index).map((r) => r.value));
+    resolve(
+      results.sort((a, b) => a.index - b.index).map((r) => r.value) as any
+    );
   });
 };

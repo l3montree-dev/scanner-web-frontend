@@ -1,5 +1,5 @@
 import { resolve6 } from "dns/promises";
-import { HttpClient } from "../services/httpClient";
+import { HttpClient } from "../services/clientHttpClient";
 
 import { getLogger } from "../services/logger";
 import { serverHttpClient } from "../services/serverHttpClient";
@@ -13,7 +13,11 @@ import CookieInspector from "./cookie/CookieInspector";
 import DomainInspector from "./domain/DomainInspector";
 import HeaderInspector from "./header/HeaderInspector";
 import HttpInspector from "./http/HttpInspector";
-import { ContentInspectionType } from "./Inspector";
+import {
+  ContentInspectionType,
+  InspectionType,
+  InspectResultDTO,
+} from "./Inspector";
 import NetworkInspector from "./network/NetworkInspector";
 import OrganizationalInspector from "./organizational/OrganizationalInspector";
 import TLSInspector from "./tls/TLSInspector";
@@ -90,6 +94,8 @@ export const inspect = async (requestId: string, fqdn: string) => {
       ...cookieResults,
       ...tlsResults,
       ...certificateResults,
+    } as {
+      [key in InspectionType]: InspectResultDTO;
     },
   };
 };

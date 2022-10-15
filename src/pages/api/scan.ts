@@ -15,7 +15,7 @@ const logger = getLogger(__filename);
 const handler = async function handler(
   req: NextApiRequest,
   res: NextApiResponse<IReport | { error: string }>,
-  { Report }: { Report: Model<IReport> }
+  { Report }: { Report: Model<IReport> | null }
 ) {
   const start = Date.now();
   // check if the client does provide a request id.
@@ -48,15 +48,25 @@ const handler = async function handler(
       { duration: Date.now() - start, requestId },
       `successfully scanned site: ${siteToScan}`
     );
-    const report = new Report({
+
+    const data = {
       fqdn: siteToScan,
       duration: Date.now() - start,
       version: 1,
       iconBase64: icon,
       result: results,
-    });
+    };
 
-    return res.json(toDTO((await report.save()).toObject()));
+    if (Report) {
+      const report = new Report(data);
+      return res.json(toDTO((await report.save()).toObject()));
+    } else {
+      return res.json({
+        ...data,
+        createdAt: 0,
+        updatedAt: 0,
+      });
+    }
   } catch (error: unknown) {
     if (error instanceof Error && error.message === "fetch failed") {
       logger.error(
