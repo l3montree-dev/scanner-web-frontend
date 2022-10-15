@@ -26,9 +26,6 @@ jest:
       key: $CI_COMMIT_REF_NAME
       paths:
         - node_modules/
-    needs: [npm]
-    dependencies:
-      - npm
     artifacts:
       when: always
       reports:
