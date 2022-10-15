@@ -4,7 +4,6 @@ variables:
     GIT_SUBMODULE_STRATEGY: recursive
 
 stages:
-    - scan
     - test
     - publish
     - deploy
@@ -12,7 +11,7 @@ stages:
 
 gitguardianscan:
     image: gitguardian/ggshield:latest
-    stage: scan
+    stage: test
     script: ggshield secret scan ci
 
 
