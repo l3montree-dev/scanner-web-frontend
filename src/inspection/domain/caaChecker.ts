@@ -1,13 +1,33 @@
 import { DomainInspectionType, InspectionResult } from "../Inspector";
 import { DOHResponse } from "./dohResponse";
 
+const caaParser = (
+  dataString: string
+): {
+  CAA?: string;
+  issue?: string;
+  iodef?: string;
+  issuewild?: string;
+} => {
+  const data = dataString.split(" ");
+  let obj: {
+    CAA?: string;
+    issue?: string;
+    iodef?: string;
+    issuewild?: string;
+  } = {};
+  for (let i = 0; i < data.length; i += 2) {
+    obj[data[i] as keyof typeof obj] = data[i + 1];
+  }
+  return obj;
+};
 /**
  *
  * @requirements
- * REUQIRED: The "CAA" records are present.
+ * REQUIRED: The "CAA" records are present.
  * REQUIRED: The "CAA" flag is set to 0 (not critical).
- * REUQIRED: The "CAA" "issue" (value not ";") and/ or "issuewild" properties are present.
- * REUQIRED: The "CAA" "iodef" property is present (mailto: or https://).
+ * REQUIRED: The "CAA" "issue" (value not ";") and/ or "issuewild" properties are present.
+ * REQUIRED: The "CAA" "iodef" property is present (mailto: or https://).
  *
  * Base Format: CAA <flags> <tag> <value>
  * Example: CAA 0 issue "letsencrypt.org"
@@ -21,15 +41,46 @@ import { DOHResponse } from "./dohResponse";
  *
  */
 export const caaChecker = (response: DOHResponse): InspectionResult => {
+  const caaRecords = response.Answer?.filter((a) => a.type === 257)
+    .map((answer) => answer.data)
+    .map((data) => `CAA ${data}`)
+    .map(caaParser);
+
+  if (!caaRecords || caaRecords.length === 0) {
+    return new InspectionResult(DomainInspectionType.CAA, false, {
+      caaRecords: response.Answer?.filter((a) => a.type === 257),
+    });
+  }
+
+  const issueAndIssueWildProperty = caaRecords
+    .map((r) => r.issue || r.issuewild)
+    .filter((issue): issue is string => !!issue);
+
+  const iodefProperty = caaRecords
+    .map((r) => r.iodef)
+    .filter((iodef): iodef is string => !!iodef);
+
+  const caaFlagIsZero = caaRecords.every((record) => record.CAA === "0");
+
+  console.log({ caaFlagIsZero, issueAndIssueWildProperty, iodefProperty });
   return new InspectionResult(
     DomainInspectionType.CAA,
-    // status should be 0 ("SUCCESS") and AD flag should be set ("Authenticated Data")
-    response.Status === 0 &&
-      !!response.Answer?.some((answer) => answer.type === 257),
+    Boolean(
+      caaFlagIsZero &&
+        issueAndIssueWildProperty.length > 0 &&
+        issueAndIssueWildProperty.every((issue) => issue !== '";"') &&
+        iodefProperty.length > 0 &&
+        iodefProperty.every((iodef) => {
+          const val = iodef.replaceAll('"', "");
+          return (
+            val.startsWith("mailto:") ||
+            val.startsWith("https://") ||
+            val.startsWith("http://")
+          );
+        })
+    ),
     {
-      CertificateAuthority: response.Answer?.filter(
-        (answer) => answer.type === 257
-      ),
+      caaRecords: response.Answer?.filter((a) => a.type === 257),
     }
   );
 };
