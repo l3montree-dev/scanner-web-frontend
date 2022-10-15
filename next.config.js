@@ -2,7 +2,10 @@
 const nextConfig = {
     reactStrictMode: true,
     swcMinify: true,
-    productionBrowserSourceMaps: true,
+    i18n: {
+        locales: ["de"],
+        defaultLocale: "de",
+    },
 };
 
 module.exports = nextConfig;

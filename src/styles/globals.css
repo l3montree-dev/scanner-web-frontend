@@ -8,6 +8,7 @@
     src: url('../../public/assets/fonts/BundesSansWeb-Regular.woff');
     font-weight: normal;
     font-style: normal;
+    font-display: swap;
 }
 
 @font-face {
@@ -15,6 +16,7 @@
     src: url('../../public/assets/fonts/BundesSansWeb-Bold.woff');
     font-weight: bold;
     font-style: normal;
+    font-display: swap;
 }
 
 html,

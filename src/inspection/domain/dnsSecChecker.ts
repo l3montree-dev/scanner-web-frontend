@@ -1,6 +1,20 @@
 import { DomainInspectionType, InspectionResult } from "../Inspector";
 import { DOHResponse } from "./dohResponse";
 
+/**
+ *
+ * @requirements
+ * REUQIRED: "AD" MUST be set to "true".
+ * REUQIRED: "Status" MUST be set to "0" with Comment "NOERROR"
+ * REQUIRED: "CD" MUST be set to "false".
+ * REQUIRED: the "type": 46, RRSIG record MUST be present.
+ * Additional Resource: https://developers.google.com/speed/public-dns/faq#dnssec
+ * Additional Resource: https://developers.google.com/speed/public-dns/faq#gdns_validation_failure
+ * Additional Resource: https://developers.google.com/speed/public-dns/faq#dnshttps_dnssec
+ *
+ * Example response: ./src/inspection/domain/dnsSecValidExampleResponse.json
+ *
+ */
 export const dnsSecChecker = (response: DOHResponse): InspectionResult => {
   return new InspectionResult(
     DomainInspectionType.DNSSec,
