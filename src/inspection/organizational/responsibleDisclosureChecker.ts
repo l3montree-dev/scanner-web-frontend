@@ -1,4 +1,20 @@
+import { includesOnce, validationHelper } from "../../utils/validationHelper";
 import { InspectionResult, OrganizationalInspectionType } from "../Inspector";
+
+export enum ResponsibleDisclosureValidationError {
+  MissingResponsibleDisclosure = "MissingResponsibleDisclosure",
+  MissingContactField = "MissingContactField",
+  InvalidExpiresField = "InvalidExpiresField",
+  Expired = "Expired",
+}
+
+// invalid means either missing or twice included
+export enum ResponsibleDisclosureRecommendation {
+  InvalidEncryption = "InvalidEncryption",
+  InvalidCanonical = "InvalidCanonical",
+  InvalidPreferredLanguages = "InvalidPreferredLanguages",
+  MissingPGPSignature = "MissingPGPSignature",
+}
 
 /**
  *
@@ -6,10 +22,10 @@ import { InspectionResult, OrganizationalInspectionType } from "../Inspector";
  * REQUIRED: the file "/.well-known/security.txt" is present.
  * REQUIRED: the file "/.well-known/security.txt" contains one or more "Contact:" fields.
  * REQUIRED: the file "/.well-known/security.txt" contains the "Expires:" field ONCE.
- * RECCOMENDED: the file "/.well-known/security.txt" contains the "Encryption:" field, if so only ONCE.
- * RECCOMENDED: the file "/.well-known/security.txt" contains the "Canonical:" field, if so only ONCE.
- * RECCOMENDED: the file "/.well-known/security.txt" contains the "Preferred-Languages:" field, if so only ONCE.
- * RECCOMENDED: the file "/.well-known/security.txt" is signed with a valid PGP signature. https://datatracker.ietf.org/doc/html/draft-foudil-securitytxt-12#section-3.3
+ * RECOMMENDED: the file "/.well-known/security.txt" contains the "Encryption:" field, if so only ONCE.
+ * RECOMMENDED: the file "/.well-known/security.txt" contains the "Canonical:" field, if so only ONCE.
+ * RECOMMENDED: the file "/.well-known/security.txt" contains the "Preferred-Languages:" field, if so only ONCE.
+ * RECOMMENDED: the file "/.well-known/security.txt" is signed with a valid PGP signature. https://datatracker.ietf.org/doc/html/draft-foudil-securitytxt-12#section-3.3
  *
  * Example: "Contact: mailto:..."
  * Example: "Contact: tel:.."
@@ -22,13 +38,42 @@ export const responsibleDisclosureChecker = async (
 ): Promise<InspectionResult> => {
   const textContent = await response.text();
 
+  const { didPass, errors, recommendations } = validationHelper(
+    {
+      [ResponsibleDisclosureValidationError.MissingResponsibleDisclosure]: () =>
+        response.status < 300,
+      [ResponsibleDisclosureValidationError.MissingContactField]: () =>
+        textContent.includes("Contact:"),
+      [ResponsibleDisclosureValidationError.InvalidExpiresField]: () =>
+        includesOnce(textContent, "Expires:"),
+      [ResponsibleDisclosureValidationError.Expired]: () => {
+        const expires = textContent.split("Expires:")[1];
+        if (expires) {
+          const date = new Date(expires.trim());
+          return date > new Date();
+        }
+        return false;
+      },
+    },
+    {
+      [ResponsibleDisclosureRecommendation.InvalidEncryption]: () =>
+        includesOnce(textContent, "Encryption:"),
+      [ResponsibleDisclosureRecommendation.InvalidCanonical]: () =>
+        includesOnce(textContent, "Canonical:"),
+      [ResponsibleDisclosureRecommendation.InvalidPreferredLanguages]: () =>
+        includesOnce(textContent, "Preferred-Languages:"),
+      [ResponsibleDisclosureRecommendation.MissingPGPSignature]: () =>
+        textContent.includes("BEGIN PGP SIGNATURE"),
+    }
+  );
+
   return new InspectionResult(
     OrganizationalInspectionType.ResponsibleDisclosure,
-    response.status !== 404 &&
-      textContent.includes("Contact") &&
-      textContent.includes("Expires"),
+    didPass,
     {
       "security.txt": response.status === 404 ? "404" : textContent,
-    }
+    },
+    errors,
+    recommendations
   );
 };

@@ -1,4 +1,4 @@
-import { validationHelper } from "./validationHelper";
+import { includesOnce, validationHelper } from "./validationHelper";
 
 describe("Validation Helper Test suite", () => {
   it("should mark didPass as true, if there are no errors", () => {
@@ -24,5 +24,14 @@ describe("Validation Helper Test suite", () => {
       { c: () => false, d: () => true }
     );
     expect(recommendations).toEqual(["c"]);
+  });
+  it("should return true, if the substring is included exactly once", () => {
+    expect(includesOnce("abc", "a")).toBe(true);
+  });
+  it("should return false, if the substring is not included", () => {
+    expect(includesOnce("abc", "d")).toBe(false);
+  });
+  it("should return false if the substring is included twice", () => {
+    expect(includesOnce("abcabc", "a")).toBe(false);
   });
 });
