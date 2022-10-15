@@ -23,6 +23,18 @@
             "type": 46,
             "TTL": 3600,
             "data": "a 13 2 3600 1666224000 1664409600 58974 ozgsec.de. cGluzmncBb8D9Yr2DcMJukPFSY4mpFDnj9YGcf1puet2ThdacQfaCw6vQwTzjZ1hZo7HiIkt3UGJCRDYEpgWZw=="
+        },
+        {
+            "name": "ozgsec.de.",
+            "type": 257,
+            "TTL": 21600,
+            "data": "0 issue \"letsencrypt.org\""
+        },
+        {
+            "name": "ozgsec.de.",
+            "type": 257,
+            "TTL": 21600,
+            "data": "0 iodef \"mailto:developer@ozgsec.de\""
         }
     ],
     "Comment": "Response from 2001:67c:10b8::104."

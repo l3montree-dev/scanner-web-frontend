@@ -16,3 +16,10 @@ export const validationHelper = (
         : [],
   };
 };
+
+export const includesOnce = (haystack: string, needle: string): boolean => {
+  return (
+    haystack.includes(needle) &&
+    haystack.indexOf(needle) === haystack.lastIndexOf(needle)
+  );
+};
