@@ -4,7 +4,7 @@ variables:
     GIT_SUBMODULE_STRATEGY: recursive
 
 stages:
-    - install
+    - scan
     - test
     - publish
     - deploy
@@ -12,23 +12,15 @@ stages:
 
 gitguardianscan:
     image: gitguardian/ggshield:latest
-    stage: install
+    stage: scan
     script: ggshield secret scan ci
 
-npm:
-    image: node:18@sha256:9d8a6466c6385e05f62f8ccf173e80209efb0ff4438f321f09ddf552b05af3ba
-    stage: install
-    script:
-        - npm ci --include=dev
-    cache:
-      key: $CI_COMMIT_REF_NAME
-      paths:
-        - node_modules/
 
 jest:
     image: node:18@sha256:9d8a6466c6385e05f62f8ccf173e80209efb0ff4438f321f09ddf552b05af3ba
     stage: test
     script:
+      - npm ci --include=dev
       - 'npx jest --ci --reporters=default --reporters=jest-junit'
     cache:
       key: $CI_COMMIT_REF_NAME
@@ -53,6 +45,10 @@ build:
         DOCKER_TLS_CERTDIR: ""
         DOCKER_HOST: tcp://localhost:2375
     allow_failure: false
+    cache:
+      key: $CI_COMMIT_REF_NAME
+      paths:
+        - node_modules/
     script:
         - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
         - docker pull $IMAGE_TAG || true
