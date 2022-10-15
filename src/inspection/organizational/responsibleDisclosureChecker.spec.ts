@@ -81,11 +81,8 @@ describe("Responsible disclosure test suite", () => {
     expect(errors).toContain(ResponsibleDisclosureValidationError.Expired);
   });
   it("should succeed, if the expires date is in the future", async () => {
-    // expires in around 16 minutes
-    const date = new Date(Date.now() + 1_000_000);
-
     const { didPass, errors } = await responsibleDisclosureChecker(
-      new TestBodyResponse(`Expires:${date.toISOString()}`) as any
+      new TestBodyResponse(`Expires: 2099-06-29T12:00:00.000Z`) as any
     );
 
     expect(errors).not.toContain(ResponsibleDisclosureValidationError.Expired);
@@ -144,5 +141,23 @@ describe("Responsible disclosure test suite", () => {
         ResponsibleDisclosureRecommendation.MissingPGPSignature
       );
     });
+  });
+
+  it("should return true for the bsi.bund.de security.txt", async () => {
+    const { didPass } = await responsibleDisclosureChecker(
+      new TestBodyResponse(`# For Coordinated Vulnerability Disclosure
+        Contact: mailto:vulnerability@bsi.bund.de
+        # For BSI related Security Issues
+        Contact: mailto:certbund@bsi.bund.de
+        Contact: https://www.bsi.bund.de/Security-Contact
+        Encryption: https://www.bsi.bund.de/Security-Contact
+        Expires: 2099-06-29T12:00:00.000Z
+        Preferred-Languages: de, en
+        Canonical: https://bsi.bund.de/.well-known/security.txt
+        Hiring: https://www.bsi.bund.de/Jobs
+        CSAF: https://cert-bund.de/.well-known/csaf/provider-metadata.json`) as any
+    );
+
+    expect(didPass).toBe(true);
   });
 });

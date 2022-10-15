@@ -1,6 +1,7 @@
 import { JSDOM } from "jsdom";
-import { HttpClient } from "../services/httpClient";
+
 import { getLogger } from "../services/logger";
+import { ServerHttpClient } from "../services/serverHttpClient";
 
 const logger = getLogger(__filename);
 
@@ -13,7 +14,7 @@ export const getIcon = async (
   requestId: string,
   fqdn: string,
   dom: JSDOM,
-  httpClient: HttpClient
+  httpClient: ServerHttpClient
 ): Promise<string | null> => {
   try {
     // find the biggest icon we can use

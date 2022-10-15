@@ -62,6 +62,7 @@ export const httpClientFactory =
           requestId,
           init
         );
+
         return response;
       } catch (error) {
         if (tries < maxRetries) {

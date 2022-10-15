@@ -1,24 +1,35 @@
-import { buildInspectionError } from "../../utils/error";
 import { getLogger } from "../../services/logger";
+import { buildInspectionError } from "../../utils/error";
 
+import { ServerHttpClient } from "../../services/serverHttpClient";
 import { HttpInspectionType, InspectionResult, Inspector } from "../Inspector";
 import { redirectChecker } from "./redirectChecker";
-import { HttpClient } from "../../services/clientHttpClient";
 
 const logger = getLogger(__filename);
-export default class HttpInspector implements Inspector<HttpInspectionType> {
-  constructor(private readonly httpClient: HttpClient) {}
+export default class HttpInspector
+  implements
+    Inspector<
+      HttpInspectionType,
+      { fqdn: string; httpClient: ServerHttpClient }
+    >
+{
   async inspect(
     requestId: string,
-    fqdn: string
+    { fqdn, httpClient }: { fqdn: string; httpClient: ServerHttpClient }
   ): Promise<{ [type in HttpInspectionType]: InspectionResult }> {
     try {
       // use http as protocol.
       const url = new URL(`http://${fqdn}`);
-      const httpResponse = await this.httpClient(url.toString(), requestId, {
-        method: "GET",
-        redirect: "manual",
-      });
+      const httpResponse = await httpClient(
+        url.toString(),
+        requestId,
+        {
+          method: "GET",
+        },
+        {
+          maxRetries: 0,
+        }
+      );
 
       return {
         HTTP: new InspectionResult(

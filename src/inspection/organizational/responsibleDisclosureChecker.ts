@@ -47,7 +47,13 @@ export const responsibleDisclosureChecker = async (
       [ResponsibleDisclosureValidationError.InvalidExpiresField]: () =>
         includesOnce(textContent, "Expires:"),
       [ResponsibleDisclosureValidationError.Expired]: () => {
-        const expires = textContent.split("Expires:")[1];
+        const expiresLine = textContent
+          .split("\n")
+          .find((line) => line.includes("Expires"));
+        if (!expiresLine) {
+          return false;
+        }
+        const expires = expiresLine.split("Expires:")[1];
         if (expires) {
           const date = new Date(expires.trim());
           return date > new Date();
@@ -71,7 +77,7 @@ export const responsibleDisclosureChecker = async (
     OrganizationalInspectionType.ResponsibleDisclosure,
     didPass,
     {
-      "security.txt": response.status === 404 ? "404" : textContent,
+      "security.txt": textContent,
     },
     errors,
     recommendations

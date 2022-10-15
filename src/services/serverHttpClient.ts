@@ -1,6 +1,5 @@
 import { config } from "../config";
 import { wait } from "../utils/promise";
-import { userAgents } from "../utils/userAgents";
 
 import { getLogger } from "./logger";
 
@@ -25,8 +24,6 @@ const fetchWithTimeout = (
     // this will overwrite the signal if another one is provided.
     let response: Response;
     try {
-      const ua = userAgents[Math.floor(Math.random() * userAgents.length)];
-      console.log("UA", ua);
       response = await fetch(input, {
         signal: controller.signal,
         redirect: "follow",
@@ -35,10 +32,12 @@ const fetchWithTimeout = (
           //    "X-Request-ID": requestId,
           // pick a random user agent
           // this is required for some sites.
-          "User-Agent": ua,
+          "User-Agent":
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36",
           ...init?.headers,
         },
       });
+
       clearTimeout(timeout);
       resolve(response);
     } catch (e) {
@@ -49,29 +48,48 @@ const fetchWithTimeout = (
   });
 };
 
-export const httpClientFactory =
-  (timeoutMS: number, maxRetries: number, timeoutBetweenRetriesMS = 500) =>
-  (
+export const httpClientFactory = () => {
+  // store the cookie in this closure
+  let cookie: null | string = null;
+  return (
     request: RequestInfo | URL,
     // needs always to be defined! This makes our logs more readable.
     requestId: string,
-    init?: RequestInit | undefined
+    init?: RequestInit | undefined,
+    options: {
+      setCookies?: boolean;
+      timeoutMS?: number;
+      maxRetries?: number;
+      timeoutBetweenRetriesMS?: number;
+    } = {
+      timeoutMS: config.serverTimeout,
+      maxRetries: config.serverRetries,
+      setCookies: true,
+      timeoutBetweenRetriesMS: 500,
+    }
   ): Promise<Response> => {
     // capture the tries variable inside the closure
     // this way we can avoid using it as a parameter of the api fn itself.
     let tries = 0;
+    const setCookies = options.setCookies ?? false;
+    const timeoutMS = options.timeoutMS ?? config.serverTimeout;
+    const maxRetries = options.maxRetries ?? config.serverRetries;
+    const timeoutBetweenRetriesMS = options.timeoutBetweenRetriesMS ?? 500;
 
     const retry = async (
       request: RequestInfo | URL,
       init?: RequestInit | undefined
     ): Promise<Response> => {
       try {
-        const response = await fetchWithTimeout(
-          timeoutMS,
-          request,
-          requestId,
-          init
-        );
+        const response = await fetchWithTimeout(timeoutMS, request, requestId, {
+          ...init,
+          headers: { Cookie: cookie ?? "", ...init?.headers },
+        });
+        if (setCookies) {
+          // if the sanity check is enabled, we need to make sure, that the response is valid and we save the cookies.
+          cookie = response.headers.get("set-cookie");
+          logger.info({ requestId, cookie }, "sanity check");
+        }
         return response;
       } catch (error) {
         if (tries < maxRetries) {
@@ -88,8 +106,6 @@ export const httpClientFactory =
     };
     return retry(request, init);
   };
+};
 
-export const serverHttpClient = httpClientFactory(
-  config.serverTimeout,
-  config.serverRetries
-);
+export type ServerHttpClient = ReturnType<typeof httpClientFactory>;
