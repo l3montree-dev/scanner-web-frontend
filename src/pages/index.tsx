@@ -173,7 +173,7 @@ const Home: NextPage = () => {
                 <Button
                   loading={scanRequest.isLoading}
                   type="submit"
-                  className="bg-lightning-500 text-sm sm:text-base p-2 sm:p-3 hover:bg-lightning-900 font-bold transition-all"
+                  className="bg-lightning-500 text-sm sm:text-base p-2 sm:p-3 hover:bg-lightning-900 font-bold leading-4 transition-all"
                 >
                   Scan starten
                 </Button>
