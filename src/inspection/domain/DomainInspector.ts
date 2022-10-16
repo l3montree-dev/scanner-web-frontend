@@ -58,13 +58,15 @@ export default class DomainInspector
       const [response, caaResponse] = await Promise.all([
         httpClient(
           `https://dns.google/resolve?name=${fqdn}&do=true`,
-          requestId
+          requestId,
+          { credentials: "omit" }
         ).then(async (r) => {
           return r.json();
         }),
         httpClient(
           `https://dns.google/resolve?name=${fqdn}&do=true&type=CAA`,
-          requestId
+          requestId,
+          { credentials: "omit" }
         ).then((r) => r.json()),
       ]);
 

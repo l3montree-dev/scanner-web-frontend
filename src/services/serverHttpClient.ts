@@ -81,10 +81,22 @@ export const httpClientFactory = () => {
       init?: RequestInit | undefined
     ): Promise<Response> => {
       try {
-        const response = await fetchWithTimeout(timeoutMS, request, requestId, {
-          ...init,
-          headers: { Cookie: cookie ?? "", ...init?.headers },
-        });
+        if (init?.credentials !== "omit" && cookie) {
+          // set the cookie header
+          init = {
+            ...init,
+            headers: {
+              ...init?.headers,
+              cookie,
+            },
+          };
+        }
+        const response = await fetchWithTimeout(
+          timeoutMS,
+          request,
+          requestId,
+          init
+        );
         if (setCookies) {
           // if the sanity check is enabled, we need to make sure, that the response is valid and we save the cookies.
           cookie = response.headers.get("set-cookie");
