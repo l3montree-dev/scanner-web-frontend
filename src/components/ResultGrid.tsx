@@ -1,7 +1,5 @@
 import { FunctionComponent } from "react";
 import { IReport } from "../db/report";
-import { HSTSValidationError } from "../inspection/header/hstsChecker";
-import { ResponsibleDisclosureValidationError } from "../inspection/organizational/responsibleDisclosureChecker";
 import { getCAAReportMessage } from "../messages/caa";
 import { getDNSSecReportMessage } from "../messages/dnsSec";
 import { getHSTSReportMessage } from "../messages/hsts";
