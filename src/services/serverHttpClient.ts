@@ -88,7 +88,6 @@ export const httpClientFactory = () => {
         if (setCookies) {
           // if the sanity check is enabled, we need to make sure, that the response is valid and we save the cookies.
           cookie = response.headers.get("set-cookie");
-          logger.info({ requestId, cookie }, "sanity check");
         }
         return response;
       } catch (error) {

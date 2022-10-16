@@ -14,7 +14,6 @@ const Button: FunctionComponent<Props> = (props) => {
       {loading ? (
         <div className="flex flex-row items-center">
           <Spinner />
-          <span className="ml-2 hidden sm:inline">Test läuft...</span>
         </div>
       ) : (
         props.children

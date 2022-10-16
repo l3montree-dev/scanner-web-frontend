@@ -1,7 +1,13 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { FormEvent, FunctionComponent, useMemo, useState } from "react";
+import {
+  FormEvent,
+  FunctionComponent,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import Button from "../components/Button";
 import Page from "../components/Page";
 import ResultBox from "../components/ResultBox";
@@ -61,6 +67,8 @@ const Home: NextPage = () => {
 
       const obj: WithId<IReport> = await response.json();
       setReport(obj);
+      // scroll to the result box.
+
       // router.push(obj.id);
     } catch (e) {
       setErr("Es ist ein Fehler aufgetreten. Bitte versuche es später erneut.");
@@ -68,6 +76,21 @@ const Home: NextPage = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (report) {
+      const rec = document
+        .getElementById("test-results")
+        ?.getBoundingClientRect();
+
+      if (rec) {
+        window.scrollTo({
+          top: rec.top + window.scrollY - window.innerHeight / 16,
+          behavior: "smooth",
+        });
+      }
+    }
+  }, [report]);
 
   const amountPassed = useMemo(() => {
     if (!report) return 0;
@@ -132,7 +155,7 @@ const Home: NextPage = () => {
         ></link>
       </Head>
       <div className="flex pb-10 flex-col w-full justify-center">
-        <div className="max-w-screen-lg md:p-5 mx-auto">
+        <div className="max-w-screen-lg w-full md:p-5 mx-auto">
           <div className="md:bg-deepblue-400 md:mt-0 mt-10 md:p-10 p-5">
             <div className="flex flex-wrap sm:flex-nowrap flex-row items-start justify-between">
               <h1 className="text-5xl sm:order-1 order-2 mb-3 text-white font-bold">
@@ -143,18 +166,18 @@ const Home: NextPage = () => {
               </div>
             </div>
             <h2 className="text-white text-2xl">OZG-Security Schnelltest</h2>
-            <div className="pb-16">
-              <form onSubmit={onSubmit} className="pt-20 flex">
+            <div className="pb-14">
+              <form onSubmit={onSubmit} className="pt-10  flex">
                 <input
                   onChange={(e) => setWebsite(e.target.value)}
                   value={website}
                   placeholder="example.com"
-                  className="p-5 flex-1 outline-lightning-900 transition-all mr-3"
+                  className="sm:p-5 p-4 text-sm sm:text-base flex-1 outline-lightning-900 transition-all mr-3"
                 />
                 <Button
                   loading={loading}
                   type="submit"
-                  className="bg-lightning-500 p-3 hover:bg-lightning-900 font-bold transition-all"
+                  className="bg-lightning-500 text-sm sm:text-base p-2 sm:p-3 hover:bg-lightning-900 font-bold transition-all"
                 >
                   Scan starten
                 </Button>
@@ -173,9 +196,10 @@ const Home: NextPage = () => {
               drücken Sie auf den Button “Scan starten”
             </p>
           </div>
+
           {report !== null && (
             <div className="mt-10 p-5 md:p-0 text-white">
-              <h2 className="text-white text-2xl">
+              <h2 id="test-results" className="text-white text-2xl">
                 Testergebnisse für{" "}
                 <a
                   target={"_blank"}
