@@ -138,12 +138,12 @@ const Home: NextPage = () => {
         <title>OZG Security Challenge 2023</title>
         <meta
           name="description"
-          content="OZG-Security Schnelltest einer Webseite in Bezug auf IT-Sicherheitsmaßnahmen und Best-Practices"
+          content="OZG Security Schnelltest einer Webseite in Bezug auf IT-Sicherheitsmaßnahmen und Best-Practices"
         />
-        <meta name="title" content="OZG-Security Schnelltest einer Webseite" />
+        <meta name="title" content="OZG Security Schnelltest einer Webseite" />
         <meta
           name="keywords"
-          content="OZG, Security, IT-Security, Schnelltest, IT-Sicherheit, Onlinezugangsgesetz, Security-Challenge, OZG-Security-Challenge 2023, Best-Practices, Website Scan"
+          content="OZG, Security, IT-Security, Schnelltest, IT-Sicherheit, Onlinezugangsgesetz, Security-Challenge, OZG Security-Challenge 2023, Best-Practices, Website Scan"
         />
 
         <meta property="og:type" content="website" />
@@ -151,7 +151,7 @@ const Home: NextPage = () => {
         <meta property="og:title" content="OZG Security Challenge 2023" />
         <meta
           property="og:description"
-          content="OZG-Security Schnelltest einer Webseite in Bezug auf IT-Sicherheitsmaßnahmen und Best-Practices"
+          content="OZG Security Schnelltest einer Webseite in Bezug auf IT-Sicherheitsmaßnahmen und Best-Practices"
         />
 
         <meta property="twitter:card" content="summary_large_image" />
@@ -159,7 +159,7 @@ const Home: NextPage = () => {
         <meta property="twitter:title" content="OZG Security Challenge 2023" />
         <meta
           property="twitter:description"
-          content="OZG-Security Schnelltest einer Webseite in Bezug auf IT-Sicherheitsmaßnahmen und Best-Practices"
+          content="OZG Security Schnelltest einer Webseite in Bezug auf IT-Sicherheitsmaßnahmen und Best-Practices"
         />
         <link
           rel="preload"
@@ -179,13 +179,13 @@ const Home: NextPage = () => {
           <div className="md:bg-deepblue-400 md:mt-0 mt-10 md:p-10 p-5">
             <div className="flex flex-wrap sm:flex-nowrap flex-row items-start justify-between">
               <h1 className="text-5xl sm:order-1 order-2 mb-3 text-white font-bold">
-                OZG-Security Challenge 2023
+                OZG Security Challenge 2023
               </h1>
               <div className="p-2 mb-4 sm:mb-0 order-1 bg-deepblue-200">
                 <span className="text-white">BETA</span>
               </div>
             </div>
-            <h2 className="text-white text-2xl">OZG-Security Schnelltest</h2>
+            <h2 className="text-white text-2xl">OZG Security Schnelltest</h2>
             <div className="pb-14">
               <form onSubmit={onSubmit} className="pt-10  flex">
                 <input
@@ -211,9 +211,9 @@ const Home: NextPage = () => {
             </div>
             <p className="text-white">
               Mit diesem Tool kann ein Schnelltest einer Webseite in Bezug auf
-              IT-Sicherheitsmaßnahmen und Best-Practices durchgeführt werden. Um
-              einen Scan zu starten, geben Sie eine Webseite-Domain ein und
-              drücken Sie auf den Button “Scan starten”
+              ausgewählte IT-Sicherheitsmaßnahmen und Best-Practices
+              durchgeführt werden. Um einen Scan zu starten, geben Sie eine
+              Webseite-Domain ein und drücken Sie auf den Button “Scan starten”
             </p>
           </div>
 
