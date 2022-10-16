@@ -1,5 +1,13 @@
-import React, { FunctionComponent } from "react";
+import { FunctionComponent } from "react";
 import { IReport } from "../db/report";
+import { HSTSValidationError } from "../inspection/header/hstsChecker";
+import { ResponsibleDisclosureValidationError } from "../inspection/organizational/responsibleDisclosureChecker";
+import { getCAAReportMessage } from "../messages/caa";
+import { getDNSSecReportMessage } from "../messages/dnsSec";
+import { getHSTSReportMessage } from "../messages/hsts";
+import { getResponsibleDisclosureReportMessage } from "../messages/responsibleDisclosure";
+import { getTLSv1_1_DeactivatedReportMessage } from "../messages/tlsv1_1_deactivated";
+import { getTLSv1_3ReportMessage } from "../messages/tlsv1_3";
 import { classNames } from "../utils/style-utils";
 import ResultBox from "./ResultBox";
 
@@ -11,6 +19,27 @@ const borderClass = (didPass: boolean | null) => {
     : "border-red-500";
 };
 
+const messages = {
+  DNSSec: getDNSSecReportMessage,
+  CAA: getCAAReportMessage,
+  TLSv1_3: getTLSv1_3ReportMessage,
+  TLSv1_1_Deactivated: getTLSv1_1_DeactivatedReportMessage,
+  HSTS: getHSTSReportMessage,
+  ResponsibleDisclosure: getResponsibleDisclosureReportMessage,
+};
+
+const getDescription = (
+  report: IReport,
+  key:
+    | "DNSSec"
+    | "CAA"
+    | "TLSv1_3"
+    | "TLSv1_1_Deactivated"
+    | "HSTS"
+    | "ResponsibleDisclosure"
+): string => {
+  return messages[key](report);
+};
 interface Props {
   report: IReport;
 }
@@ -27,11 +56,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
         >
           <ResultBox
             title="DNSSEC"
-            description={
-              report.result.DNSSec.didPass !== null
-                ? `DNSSEC ist für die Domain ${report.fqdn} eingerichtet.`
-                : `DNSSEC konnte für die Domain ${report.fqdn} nicht überprüft werden.`
-            }
+            description={getDescription(report, "DNSSec")}
             didPass={report.result.DNSSec.didPass}
           />
         </div>
@@ -45,11 +70,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
         >
           <ResultBox
             title="CAA"
-            description={
-              report.result.CAA.didPass !== null
-                ? `CAA Einträge sind für die Domain ${report.fqdn} eingerichtet.`
-                : `Die Überprüfung nach CAA Einträgen für die Domain ${report.fqdn} konnte nicht durchgeführt werden.`
-            }
+            description={getDescription(report, "CAA")}
             didPass={report.result.CAA.didPass}
           />
         </div>
@@ -63,11 +84,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
         >
           <ResultBox
             title="TLS 1.3"
-            description={
-              report.result.TLSv1_3.didPass !== null
-                ? "Der Server unterstützt das Protokoll TLS 1.3."
-                : "Die Überprüfung nach TLS 1.3 konnte nicht durchgeführt werden."
-            }
+            description={getDescription(report, "TLSv1_3")}
             didPass={report.result.TLSv1_3.didPass}
           />
         </div>
@@ -81,11 +98,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
         >
           <ResultBox
             title="Deaktivierung von veralteten TLS/ SSL Protokollen"
-            description={
-              report.result.TLSv1_1_Deactivated.didPass !== null
-                ? "TLS 1.1 und älter sowie SSL sind deaktiviert."
-                : "Die Deaktivierung von TLS 1.1 und älter sowie SSL konnte nicht überprüft werden."
-            }
+            description={getDescription(report, "TLSv1_1_Deactivated")}
             didPass={report.result.TLSv1_1_Deactivated.didPass}
           />
         </div>
@@ -99,11 +112,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
         >
           <ResultBox
             title="HSTS"
-            description={
-              report.result.HSTS.didPass !== null
-                ? "Strict-Transport-Security Header vorhanden und korrekt konfiguriert."
-                : "Strict-Transport-Security Header konnte nicht überprüft werden."
-            }
+            description={getDescription(report, "HSTS")}
             didPass={report.result.HSTS.didPass}
           />
         </div>
@@ -117,11 +126,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
         >
           <ResultBox
             title="Responsible Disclosure"
-            description={
-              report.result.ResponsibleDisclosure.didPass !== null
-                ? `Die Datei ${report.fqdn}/.well-known/security.txt ist vorhanden und enthält die nötigen Einträge.`
-                : `Die Datei ${report.fqdn}/.well-known/security.txt konnte nicht überprüft werden.`
-            }
+            description={getDescription(report, "ResponsibleDisclosure")}
             didPass={report.result.ResponsibleDisclosure.didPass}
           />
         </div>
