@@ -18,6 +18,7 @@ const handler = async function handler(
   { Report }: { Report: Model<IReport> | null }
 ) {
   const start = Date.now();
+
   // check if the client does provide a request id.
   // if so, use this - otherwise generate a new one.
   const requestId =
@@ -41,6 +42,31 @@ const handler = async function handler(
       error: `Missing site to scan or not a valid fully qualified domain name. Please provide the site you would like to scan using the site query parameter. Provided value: ?site=${req.query.site}`,
     });
   }
+
+  // check if we already have a report for this site
+  const existingReport = await Report?.findOne(
+    {
+      site: siteToScan,
+      createdAt: {
+        // last hour
+        $gte: new Date(Date.now() - 1000 * 60 * 60 * 1),
+      },
+    },
+    null,
+    {
+      sort: {
+        createdAt: -1,
+      },
+    }
+  ).lean();
+  if (existingReport) {
+    logger.info(
+      { requestId },
+      `found existing report for site: ${siteToScan} - returning existing report`
+    );
+    return res.status(200).json(toDTO(existingReport));
+  }
+
   try {
     const { icon, results } = await inspect(requestId, siteToScan);
 

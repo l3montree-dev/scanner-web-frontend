@@ -37,6 +37,17 @@ const borderClass = (didPass: boolean | null) => {
     : "border-red-500";
 };
 
+const isInViewport = (element: HTMLElement) => {
+  const rect = element.getBoundingClientRect();
+  return (
+    rect.top >= 0 &&
+    rect.left >= 0 &&
+    rect.bottom <=
+      (window.innerHeight || document.documentElement.clientHeight) &&
+    rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+  );
+};
+
 const Home: NextPage = () => {
   const [website, setWebsite] = useState("");
   const [err, setErr] = useState("");
@@ -87,13 +98,14 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     if (report) {
-      const rec = document
-        .getElementById("test-results")
-        ?.getBoundingClientRect();
+      const rec = document.getElementById("test-results");
 
-      if (rec) {
+      if (rec && !isInViewport(rec)) {
         window.scrollTo({
-          top: rec.top + window.scrollY - window.innerHeight / 16,
+          top:
+            rec.getBoundingClientRect().top +
+            window.scrollY -
+            window.innerHeight / 16,
           behavior: "smooth",
         });
       }
@@ -102,7 +114,6 @@ const Home: NextPage = () => {
 
   const amountPassed = useMemo(() => {
     if (!report) return 0;
-    console.log(report);
     return Object.keys(report.result)
       .filter((key) =>
         (
@@ -120,6 +131,7 @@ const Home: NextPage = () => {
       .filter((inspection) => inspection.didPass).length;
   }, [report]);
 
+  const dateString = report ? new Date(report.createdAt).toLocaleString() : "";
   return (
     <Page>
       <Head>
@@ -218,6 +230,7 @@ const Home: NextPage = () => {
                   {report.fqdn}
                 </a>
               </h2>
+              <p>{dateString.substring(0, dateString.length - 3)}</p>
               <p
                 className={classNames(
                   amountPassed === 6 ? "text-lightning-500" : "text-red-500"
