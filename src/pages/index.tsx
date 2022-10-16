@@ -213,7 +213,7 @@ const Home: NextPage = () => {
               Mit diesem Tool kann ein Schnelltest einer Webseite in Bezug auf
               ausgewählte IT-Sicherheitsmaßnahmen und Best-Practices
               durchgeführt werden. Um einen Scan zu starten, geben Sie eine
-              Webseite-Domain ein und drücken Sie auf den Button “Scan starten”
+              Webseite-Domain ein und drücken Sie auf den Button „Scan starten“
             </p>
           </div>
 
