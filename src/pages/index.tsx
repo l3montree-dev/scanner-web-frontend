@@ -1,7 +1,13 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { FormEvent, FunctionComponent, useMemo, useState } from "react";
+import {
+  FormEvent,
+  FunctionComponent,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import Button from "../components/Button";
 import Page from "../components/Page";
 import ResultBox from "../components/ResultBox";
@@ -22,6 +28,25 @@ import { classNames } from "../utils/style-utils";
 const hostnameRegex = new RegExp(
   /^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 );
+
+const borderClass = (didPass: boolean | null) => {
+  return didPass === null
+    ? "border-white"
+    : didPass
+    ? "border-lightning-500"
+    : "border-red-500";
+};
+
+const isInViewport = (element: HTMLElement) => {
+  const rect = element.getBoundingClientRect();
+  return (
+    rect.top >= 0 &&
+    rect.left >= 0 &&
+    rect.bottom <=
+      (window.innerHeight || document.documentElement.clientHeight) &&
+    rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+  );
+};
 
 const Home: NextPage = () => {
   const [website, setWebsite] = useState("");
@@ -61,6 +86,8 @@ const Home: NextPage = () => {
 
       const obj: WithId<IReport> = await response.json();
       setReport(obj);
+      // scroll to the result box.
+
       // router.push(obj.id);
     } catch (e) {
       setErr("Es ist ein Fehler aufgetreten. Bitte versuche es später erneut.");
@@ -69,9 +96,24 @@ const Home: NextPage = () => {
     }
   };
 
+  useEffect(() => {
+    if (report) {
+      const rec = document.getElementById("test-results");
+
+      if (rec && !isInViewport(rec)) {
+        window.scrollTo({
+          top:
+            rec.getBoundingClientRect().top +
+            window.scrollY -
+            window.innerHeight / 16,
+          behavior: "smooth",
+        });
+      }
+    }
+  }, [report]);
+
   const amountPassed = useMemo(() => {
     if (!report) return 0;
-    console.log(report);
     return Object.keys(report.result)
       .filter((key) =>
         (
@@ -89,6 +131,7 @@ const Home: NextPage = () => {
       .filter((inspection) => inspection.didPass).length;
   }, [report]);
 
+  const dateString = report ? new Date(report.createdAt).toLocaleString() : "";
   return (
     <Page>
       <Head>
@@ -132,7 +175,7 @@ const Home: NextPage = () => {
         ></link>
       </Head>
       <div className="flex pb-10 flex-col w-full justify-center">
-        <div className="max-w-screen-lg md:p-5 mx-auto">
+        <div className="max-w-screen-lg w-full md:p-5 mx-auto">
           <div className="md:bg-deepblue-400 md:mt-0 mt-10 md:p-10 p-5">
             <div className="flex flex-wrap sm:flex-nowrap flex-row items-start justify-between">
               <h1 className="text-5xl sm:order-1 order-2 mb-3 text-white font-bold">
@@ -143,18 +186,18 @@ const Home: NextPage = () => {
               </div>
             </div>
             <h2 className="text-white text-2xl">OZG-Security Schnelltest</h2>
-            <div className="pb-16">
-              <form onSubmit={onSubmit} className="pt-20 flex">
+            <div className="pb-14">
+              <form onSubmit={onSubmit} className="pt-10  flex">
                 <input
                   onChange={(e) => setWebsite(e.target.value)}
                   value={website}
                   placeholder="example.com"
-                  className="p-5 flex-1 outline-lightning-900 transition-all mr-3"
+                  className="sm:p-5 p-4 text-sm sm:text-base flex-1 outline-lightning-900 transition-all mr-3"
                 />
                 <Button
                   loading={loading}
                   type="submit"
-                  className="bg-lightning-500 p-3 hover:bg-lightning-900 font-bold transition-all"
+                  className="bg-lightning-500 text-sm sm:text-base p-2 sm:p-3 hover:bg-lightning-900 font-bold transition-all"
                 >
                   Scan starten
                 </Button>
@@ -173,9 +216,10 @@ const Home: NextPage = () => {
               drücken Sie auf den Button “Scan starten”
             </p>
           </div>
+
           {report !== null && (
             <div className="mt-10 p-5 md:p-0 text-white">
-              <h2 className="text-white text-2xl">
+              <h2 id="test-results" className="text-white text-2xl">
                 Testergebnisse für{" "}
                 <a
                   target={"_blank"}
@@ -186,6 +230,7 @@ const Home: NextPage = () => {
                   {report.fqdn}
                 </a>
               </h2>
+              <p>{dateString.substring(0, dateString.length - 3)}</p>
               <p
                 className={classNames(
                   amountPassed === 6 ? "text-lightning-500" : "text-red-500"
@@ -198,14 +243,16 @@ const Home: NextPage = () => {
                   <div
                     className={classNames(
                       "bg-deepblue-400 border  h-full p-5",
-                      report.result.DNSSec.didPass
-                        ? "border-lightning-500"
-                        : "border-red-500"
+                      borderClass(report.result.DNSSec.didPass)
                     )}
                   >
                     <ResultBox
                       title="DNSSEC"
-                      description={`DNSSEC ist für die Domain ${report.fqdn} eingerichtet.`}
+                      description={
+                        report.result.DNSSec.didPass !== null
+                          ? `DNSSEC ist für die Domain ${report.fqdn} eingerichtet.`
+                          : `DNSSEC konnte für die Domain ${report.fqdn} nicht überprüft werden.`
+                      }
                       didPass={report.result.DNSSec.didPass}
                     />
                   </div>
@@ -214,14 +261,16 @@ const Home: NextPage = () => {
                   <div
                     className={classNames(
                       "bg-deepblue-400 border  h-full p-4",
-                      report.result.CAA.didPass
-                        ? "border-lightning-500"
-                        : "border-red-500"
+                      borderClass(report.result.CAA.didPass)
                     )}
                   >
                     <ResultBox
                       title="CAA"
-                      description={`CAA Einträge sind für die Domain ${report.fqdn} eingerichtet.`}
+                      description={
+                        report.result.CAA.didPass !== null
+                          ? `CAA Einträge sind für die Domain ${report.fqdn} eingerichtet.`
+                          : `Die Überprüfung nach CAA Einträgen für die Domain ${report.fqdn} konnte nicht durchgeführt werden.`
+                      }
                       didPass={report.result.CAA.didPass}
                     />
                   </div>
@@ -230,14 +279,16 @@ const Home: NextPage = () => {
                   <div
                     className={classNames(
                       "bg-deepblue-400 border  h-full p-4",
-                      report.result.TLSv1_3.didPass
-                        ? "border-lightning-500"
-                        : "border-red-500"
+                      borderClass(report.result.TLSv1_3.didPass)
                     )}
                   >
                     <ResultBox
                       title="TLS 1.3"
-                      description="Der Server unterstützt das Protokoll TLS 1.3."
+                      description={
+                        report.result.TLSv1_3.didPass !== null
+                          ? "Der Server unterstützt das Protokoll TLS 1.3."
+                          : "Die Überprüfung nach TLS 1.3 konnte nicht durchgeführt werden."
+                      }
                       didPass={report.result.TLSv1_3.didPass}
                     />
                   </div>
@@ -246,14 +297,16 @@ const Home: NextPage = () => {
                   <div
                     className={classNames(
                       "bg-deepblue-400 border  h-full p-4",
-                      report.result.TLSv1_1_Deactivated.didPass
-                        ? "border-lightning-500"
-                        : "border-red-500"
+                      borderClass(report.result.TLSv1_1_Deactivated.didPass)
                     )}
                   >
                     <ResultBox
                       title="Deaktivierung von veralteten TLS/ SSL Protokollen"
-                      description="TLS 1.1 und älter sowie SSL sind deaktiviert."
+                      description={
+                        report.result.TLSv1_1_Deactivated.didPass !== null
+                          ? "TLS 1.1 und älter sowie SSL sind deaktiviert."
+                          : "Die Deaktivierung von TLS 1.1 und älter sowie SSL konnte nicht überprüft werden."
+                      }
                       didPass={report.result.TLSv1_1_Deactivated.didPass}
                     />
                   </div>
@@ -262,14 +315,16 @@ const Home: NextPage = () => {
                   <div
                     className={classNames(
                       "bg-deepblue-400 border  h-full p-4",
-                      report.result.HSTS.didPass
-                        ? "border-lightning-500"
-                        : "border-red-500"
+                      borderClass(report.result.HSTS.didPass)
                     )}
                   >
                     <ResultBox
                       title="HSTS"
-                      description="Strict-Transport-Security Header vorhanden und korrekt konfiguriert."
+                      description={
+                        report.result.HSTS.didPass !== null
+                          ? "Strict-Transport-Security Header vorhanden und korrekt konfiguriert."
+                          : "Strict-Transport-Security Header konnte nicht überprüft werden."
+                      }
                       didPass={report.result.HSTS.didPass}
                     />
                   </div>
@@ -278,14 +333,16 @@ const Home: NextPage = () => {
                   <div
                     className={classNames(
                       "bg-deepblue-400 border  h-full p-4",
-                      report.result.ResponsibleDisclosure.didPass
-                        ? "border-lightning-500"
-                        : "border-red-500"
+                      borderClass(report.result.ResponsibleDisclosure.didPass)
                     )}
                   >
                     <ResultBox
                       title="Responsible Disclosure"
-                      description={`Die Datei ${report.fqdn}/.well-known/security.txt ist vorhanden und enthält die nötigen Einträge.`}
+                      description={
+                        report.result.ResponsibleDisclosure.didPass !== null
+                          ? `Die Datei ${report.fqdn}/.well-known/security.txt ist vorhanden und enthält die nötigen Einträge.`
+                          : `Die Datei ${report.fqdn}/.well-known/security.txt konnte nicht überprüft werden.`
+                      }
                       didPass={report.result.ResponsibleDisclosure.didPass}
                     />
                   </div>

@@ -30,9 +30,6 @@ async function connect() {
   }
   const now = Date.now();
   connectionPromise = mongoose.connect(dbUrl);
-  logger
-    .child({ duration: Date.now() - now })
-    .info("connection to mongo database success");
 
   // save it in a module variable.
   connection = (await connectionPromise).connection;

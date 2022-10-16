@@ -73,7 +73,7 @@ export type InspectionType =
 
 export interface InspectResultDTO {
   type: InspectionType;
-  didPass: boolean;
+  didPass: boolean | null;
   actualValue: Record<string, any>;
   errors: string[];
   recommendations: string[];
@@ -82,7 +82,7 @@ export interface InspectResultDTO {
 export class InspectionResult {
   constructor(
     public type: InspectionType,
-    public didPass: boolean,
+    public didPass: boolean | null,
     public actualValue: Record<string, any>,
     public errors?: string[],
     public recommendations?: string[]

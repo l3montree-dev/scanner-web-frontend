@@ -47,7 +47,13 @@ export const startMonitoring = async () => {
   data.forEach(({ fqdn, interval }) => {
     // start monitoring
     setInterval(
-      () => monitoringFn(fqdn),
+      async () => {
+        try {
+          await monitoringFn(fqdn);
+        } catch (e) {
+          logger.error(e, "error while monitoring");
+        }
+      },
       interval
         ? interval * 1000
         : // defaults to 4 hours.

@@ -1,6 +1,7 @@
 import {
   faCheck,
   faCheckCircle,
+  faQuestion,
   faTimes,
   faTimesCircle,
 } from "@fortawesome/free-solid-svg-icons";
@@ -9,7 +10,7 @@ import React, { FunctionComponent } from "react";
 import { classNames } from "../utils/style-utils";
 
 interface Props {
-  didPass: boolean;
+  didPass: boolean | null;
   title: string;
   description: string;
 }
@@ -20,16 +21,30 @@ const ResultBox: FunctionComponent<Props> = (props) => {
         <FontAwesomeIcon
           className={classNames(
             "md:text-2xl text-3xl",
-            props.didPass ? "text-lightning-500" : "text-red-500"
+            props.didPass === null
+              ? "text-white"
+              : props.didPass
+              ? "text-lightning-500"
+              : "text-red-500"
           )}
-          icon={props.didPass ? faCheck : faTimes}
+          icon={
+            props.didPass === null
+              ? faQuestion
+              : props.didPass
+              ? faCheck
+              : faTimes
+          }
         />
         <div className={classNames("flex ml-4 md:ml-2 flex-col mt-0.5")}>
           <div>
             <h5
               className={classNames(
                 "md:text-lg md:leading-5 block text-2xl leading-6 scroll-mt-11 font-bold",
-                props.didPass ? "text-lightning-500" : "text-red-500"
+                props.didPass === null
+                  ? "text-white"
+                  : props.didPass
+                  ? "text-lightning-500"
+                  : "text-red-500"
               )}
             >
               {props.title}
