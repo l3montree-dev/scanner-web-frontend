@@ -3,7 +3,7 @@ import Spinner from "./Spinner";
 
 interface Props extends PropsWithChildren {
   loading: boolean;
-  className: string;
+  className?: string;
   onPress?: () => void;
   type: "button" | "submit" | "reset";
 }
