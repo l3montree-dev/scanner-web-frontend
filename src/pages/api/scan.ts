@@ -46,7 +46,7 @@ const handler = async function handler(
   // check if we already have a report for this site
   const existingReport = await Report?.findOne(
     {
-      site: siteToScan,
+      fqdn: siteToScan,
       createdAt: {
         // last hour
         $gte: new Date(Date.now() - 1000 * 60 * 60 * 1),
