@@ -150,7 +150,7 @@ const Home: NextPage = () => {
   return (
     <Page>
       <Meta />
-      <div className="flex pb-10 flex-col w-full justify-center">
+      <div className="flex md:py-10 flex-col w-full justify-center">
         <div className="max-w-screen-lg w-full md:p-5 mx-auto">
           <div className="md:bg-deepblue-400 md:mt-0 mt-10 md:p-10 p-5">
             <div className="flex flex-wrap sm:flex-nowrap flex-row items-start justify-between">
