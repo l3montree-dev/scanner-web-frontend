@@ -1,12 +1,11 @@
 import { FunctionComponent } from "react";
 import { IReport } from "../db/report";
-import { HSTSValidationError } from "../inspection/header/hstsChecker";
-import { ResponsibleDisclosureValidationError } from "../inspection/organizational/responsibleDisclosureChecker";
 import { getCAAReportMessage } from "../messages/caa";
 import { getDNSSecReportMessage } from "../messages/dnsSec";
 import { getHSTSReportMessage } from "../messages/hsts";
 import { getResponsibleDisclosureReportMessage } from "../messages/responsibleDisclosure";
-import { getTLSv1_1_DeactivatedReportMessage } from "../messages/tlsv1_1_deactivated";
+import { getTLSv1_1_DeactivatedReportMessage } from "../messages/tlsv1_1_Deactivated";
+
 import { getTLSv1_3ReportMessage } from "../messages/tlsv1_3";
 import { classNames } from "../utils/style-utils";
 import ResultBox from "./ResultBox";
