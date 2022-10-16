@@ -43,28 +43,30 @@ const handler = async function handler(
     });
   }
 
-  // check if we already have a report for this site
-  const existingReport = await Report?.findOne(
-    {
-      fqdn: siteToScan,
-      createdAt: {
-        // last hour
-        $gte: new Date(Date.now() - 1000 * 60 * 60 * 1),
+  if (req.query.refresh !== "true") {
+    // check if we already have a report for this site
+    const existingReport = await Report?.findOne(
+      {
+        fqdn: siteToScan,
+        createdAt: {
+          // last hour
+          $gte: new Date(Date.now() - 1000 * 60 * 60 * 1),
+        },
       },
-    },
-    null,
-    {
-      sort: {
-        createdAt: -1,
-      },
+      null,
+      {
+        sort: {
+          createdAt: -1,
+        },
+      }
+    ).lean();
+    if (existingReport) {
+      logger.info(
+        { requestId },
+        `found existing report for site: ${siteToScan} - returning existing report`
+      );
+      return res.status(200).json(toDTO(existingReport));
     }
-  ).lean();
-  if (existingReport) {
-    logger.info(
-      { requestId },
-      `found existing report for site: ${siteToScan} - returning existing report`
-    );
-    return res.status(200).json(toDTO(existingReport));
   }
 
   try {
