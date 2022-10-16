@@ -29,6 +29,14 @@ const hostnameRegex = new RegExp(
   /^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 );
 
+const borderClass = (didPass: boolean | null) => {
+  return didPass === null
+    ? "border-white"
+    : didPass
+    ? "border-lightning-500"
+    : "border-red-500";
+};
+
 const Home: NextPage = () => {
   const [website, setWebsite] = useState("");
   const [err, setErr] = useState("");
@@ -222,14 +230,16 @@ const Home: NextPage = () => {
                   <div
                     className={classNames(
                       "bg-deepblue-400 border  h-full p-5",
-                      report.result.DNSSec.didPass
-                        ? "border-lightning-500"
-                        : "border-red-500"
+                      borderClass(report.result.DNSSec.didPass)
                     )}
                   >
                     <ResultBox
                       title="DNSSEC"
-                      description={`DNSSEC ist für die Domain ${report.fqdn} eingerichtet.`}
+                      description={
+                        report.result.DNSSec.didPass !== null
+                          ? `DNSSEC ist für die Domain ${report.fqdn} eingerichtet.`
+                          : `DNSSEC konnte für die Domain ${report.fqdn} nicht überprüft werden.`
+                      }
                       didPass={report.result.DNSSec.didPass}
                     />
                   </div>
@@ -238,14 +248,16 @@ const Home: NextPage = () => {
                   <div
                     className={classNames(
                       "bg-deepblue-400 border  h-full p-4",
-                      report.result.CAA.didPass
-                        ? "border-lightning-500"
-                        : "border-red-500"
+                      borderClass(report.result.CAA.didPass)
                     )}
                   >
                     <ResultBox
                       title="CAA"
-                      description={`CAA Einträge sind für die Domain ${report.fqdn} eingerichtet.`}
+                      description={
+                        report.result.CAA.didPass !== null
+                          ? `CAA Einträge sind für die Domain ${report.fqdn} eingerichtet.`
+                          : `Die Überprüfung nach CAA Einträgen für die Domain ${report.fqdn} konnte nicht durchgeführt werden.`
+                      }
                       didPass={report.result.CAA.didPass}
                     />
                   </div>
@@ -254,14 +266,16 @@ const Home: NextPage = () => {
                   <div
                     className={classNames(
                       "bg-deepblue-400 border  h-full p-4",
-                      report.result.TLSv1_3.didPass
-                        ? "border-lightning-500"
-                        : "border-red-500"
+                      borderClass(report.result.TLSv1_3.didPass)
                     )}
                   >
                     <ResultBox
                       title="TLS 1.3"
-                      description="Der Server unterstützt das Protokoll TLS 1.3."
+                      description={
+                        report.result.TLSv1_3.didPass !== null
+                          ? "Der Server unterstützt das Protokoll TLS 1.3."
+                          : "Die Überprüfung nach TLS 1.3 konnte nicht durchgeführt werden."
+                      }
                       didPass={report.result.TLSv1_3.didPass}
                     />
                   </div>
@@ -270,14 +284,16 @@ const Home: NextPage = () => {
                   <div
                     className={classNames(
                       "bg-deepblue-400 border  h-full p-4",
-                      report.result.TLSv1_1_Deactivated.didPass
-                        ? "border-lightning-500"
-                        : "border-red-500"
+                      borderClass(report.result.TLSv1_1_Deactivated.didPass)
                     )}
                   >
                     <ResultBox
                       title="Deaktivierung von veralteten TLS/ SSL Protokollen"
-                      description="TLS 1.1 und älter sowie SSL sind deaktiviert."
+                      description={
+                        report.result.TLSv1_1_Deactivated.didPass !== null
+                          ? "TLS 1.1 und älter sowie SSL sind deaktiviert."
+                          : "Die Deaktivierung von TLS 1.1 und älter sowie SSL konnte nicht überprüft werden."
+                      }
                       didPass={report.result.TLSv1_1_Deactivated.didPass}
                     />
                   </div>
@@ -286,14 +302,16 @@ const Home: NextPage = () => {
                   <div
                     className={classNames(
                       "bg-deepblue-400 border  h-full p-4",
-                      report.result.HSTS.didPass
-                        ? "border-lightning-500"
-                        : "border-red-500"
+                      borderClass(report.result.HSTS.didPass)
                     )}
                   >
                     <ResultBox
                       title="HSTS"
-                      description="Strict-Transport-Security Header vorhanden und korrekt konfiguriert."
+                      description={
+                        report.result.HSTS.didPass !== null
+                          ? "Strict-Transport-Security Header vorhanden und korrekt konfiguriert."
+                          : "Strict-Transport-Security Header konnte nicht überprüft werden."
+                      }
                       didPass={report.result.HSTS.didPass}
                     />
                   </div>
@@ -302,14 +320,16 @@ const Home: NextPage = () => {
                   <div
                     className={classNames(
                       "bg-deepblue-400 border  h-full p-4",
-                      report.result.ResponsibleDisclosure.didPass
-                        ? "border-lightning-500"
-                        : "border-red-500"
+                      borderClass(report.result.ResponsibleDisclosure.didPass)
                     )}
                   >
                     <ResultBox
                       title="Responsible Disclosure"
-                      description={`Die Datei ${report.fqdn}/.well-known/security.txt ist vorhanden und enthält die nötigen Einträge.`}
+                      description={
+                        report.result.ResponsibleDisclosure.didPass !== null
+                          ? `Die Datei ${report.fqdn}/.well-known/security.txt ist vorhanden und enthält die nötigen Einträge.`
+                          : `Die Datei ${report.fqdn}/.well-known/security.txt konnte nicht überprüft werden.`
+                      }
                       didPass={report.result.ResponsibleDisclosure.didPass}
                     />
                   </div>

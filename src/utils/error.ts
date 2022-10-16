@@ -18,7 +18,7 @@ export const buildInspectionError = <
   return Object.keys(inspectionType).reduce(
     (acc, key) => ({
       ...acc,
-      [key]: new InspectionResult(key as InspectionType, false, {
+      [key]: new InspectionResult(key as InspectionType, null, {
         error: errorMessage(error),
       }),
     }),

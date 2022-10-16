@@ -1,5 +1,6 @@
 import { HttpClient } from "../../services/clientHttpClient";
 import { getLogger } from "../../services/logger";
+import { ServerHttpClient } from "../../services/serverHttpClient";
 import { buildInspectionError } from "../../utils/error";
 import {
   DomainInspectionType,
@@ -12,7 +13,10 @@ import { dnsSecChecker } from "./dnsSecChecker";
 const logger = getLogger(__filename);
 export default class DomainInspector
   implements
-    Inspector<DomainInspectionType, { fqdn: string; httpClient: HttpClient }>
+    Inspector<
+      DomainInspectionType,
+      { fqdn: string; httpClient: ServerHttpClient }
+    >
 {
   /*
   Example response:
@@ -48,14 +52,16 @@ export default class DomainInspector
   */
   async inspect(
     requestId: string,
-    { fqdn, httpClient }: { fqdn: string; httpClient: HttpClient }
+    { fqdn, httpClient }: { fqdn: string; httpClient: ServerHttpClient }
   ): Promise<{ [key in DomainInspectionType]: InspectionResult }> {
     try {
       const [response, caaResponse] = await Promise.all([
         httpClient(
           `https://dns.google/resolve?name=${fqdn}&do=true`,
           requestId
-        ).then((r) => r.json()),
+        ).then(async (r) => {
+          return r.json();
+        }),
         httpClient(
           `https://dns.google/resolve?name=${fqdn}&do=true&type=CAA`,
           requestId
