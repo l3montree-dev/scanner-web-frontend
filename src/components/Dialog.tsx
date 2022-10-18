@@ -33,11 +33,11 @@ const Dialog: FunctionComponent<Props> = (props) => {
           )}
         >
           <div className="backdrop absolute top-0 bottom-0 left-0 right-0 bg-deepblue-400 opacity-50" />
-          <div className="max-w-screen-lg z-10 md:h-3/4 h-full  bg-deepblue-600">
+          <div className="max-w-screen-lg z-10 lg:h-3/4 h-full  bg-deepblue-600">
             <div className="flex flex-col  overflow-auto h-full">
               <div className="flex flex-row justify-end">
                 <button
-                  className="w-10 h-10 m-3 bg-deepblue-200"
+                  className="w-10 h-10 flex flex-col justify-center items-center m-3 bg-deepblue-200"
                   onClick={props.onClose}
                 >
                   <FontAwesomeIcon
@@ -46,7 +46,7 @@ const Dialog: FunctionComponent<Props> = (props) => {
                   />
                 </button>
               </div>
-              <div className="flex-1 md:overflow-visible overflow-auto">
+              <div className="flex-1 lg:overflow-visible overflow-auto">
                 {props.children}
               </div>
             </div>

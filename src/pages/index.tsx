@@ -158,7 +158,7 @@ const Home: NextPage = () => {
                 OZG Security Challenge 2023
               </h1>
               <div className="p-2 mb-4 sm:mb-0 order-1 bg-deepblue-200">
-                <span className="text-white">BETA</span>
+                <span className="text-white whitespace-nowrap">BETA</span>
               </div>
             </div>
             <h2 className="text-white text-2xl">OZG Security Schnelltest</h2>
