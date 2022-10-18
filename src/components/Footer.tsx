@@ -1,31 +1,58 @@
+import Image from "next/image";
+import { useState } from "react";
+import Dialog from "./Dialog";
+import Imprint from "./Imprint";
+
 const Footer = () => {
+  const [isOpen, setIsOpen] = useState(false);
   return (
-    <footer className="bg-white md:text-md text-sm px-5 md:px-10 pb-10">
-      <div>
-        <img
-          width={256}
-          height={156}
-          src={"/assets/bmi-logo.svg"}
-          alt="Logo BMI"
-        />
-      </div>
-      <div className="lg:flex justify-between">
-        <div className="md:mb-0 flex flex-wrap flex-row mb-5">
-          <span className="mr-4">Impressum</span>
-          <span className="mr-4">Datenschutz</span>
-          <span>
-            <a
-              href="https://www.onlinezugangsgesetz.de/"
-              rel="noopener noreferrer"
-              target={"_blank"}
-            >
-              Onlinezugangsgesetz.de
-            </a>
-          </span>
+    <>
+      <footer className="bg-white md:text-md text-sm px-5 md:px-10 pb-10">
+        <div>
+          <Image
+            width={256}
+            height={156}
+            src={"/assets/bmi-logo.svg"}
+            alt="Logo BMI"
+          />
         </div>
-        <span>© Bundesministerium des Innern und für Heimat, 2022</span>
-      </div>
-    </footer>
+        <div className="lg:flex justify-between">
+          <div className="md:mb-0 flex flex-wrap flex-row mb-5">
+            <span className="mr-4">
+              <a
+                onClick={() => setIsOpen(true)}
+                className="cursor-pointer"
+                type="button"
+              >
+                Impressum
+              </a>
+            </span>
+            <span className="mr-4">
+              <a
+                href="https://www.bmi.bund.de/DE/service/datenschutz/datenschutz_node.html"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Datenschutz
+              </a>
+            </span>
+            <span>
+              <a
+                href="https://www.onlinezugangsgesetz.de/"
+                rel="noopener noreferrer"
+                target={"_blank"}
+              >
+                Onlinezugangsgesetz.de
+              </a>
+            </span>
+          </div>
+          <span>© Bundesministerium des Innern und für Heimat, 2022</span>
+        </div>
+      </footer>
+      <Dialog onClose={() => setIsOpen(false)} isOpen={isOpen}>
+        <Imprint />
+      </Dialog>
+    </>
   );
 };
 

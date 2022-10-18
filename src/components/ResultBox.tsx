@@ -1,19 +1,20 @@
 import {
   faCheck,
-  faCheckCircle,
   faQuestion,
   faTimes,
-  faTimesCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { FunctionComponent } from "react";
+import { FunctionComponent, ReactNode } from "react";
 import { classNames } from "../utils/style-utils";
 
 interface Props {
   didPass: boolean | null;
   title: string;
   description: string;
+  link: string;
+  disableHyphens?: boolean;
 }
+
 const ResultBox: FunctionComponent<Props> = (props) => {
   return (
     <div className="flex-col h-full flex">
@@ -51,7 +52,9 @@ const ResultBox: FunctionComponent<Props> = (props) => {
             </h5>
           </div>
           <div className="mt-2 mb-5 h-full">
-            <p>{props.description}</p>
+            <p className={classNames(props.disableHyphens && "no-hyphens")}>
+              {props.description}
+            </p>
           </div>
         </div>
       </div>
@@ -60,7 +63,8 @@ const ResultBox: FunctionComponent<Props> = (props) => {
         <a
           className="text-sm underline"
           target="_blank"
-          href="https://www.onlinezugangsgesetz.de/Webs/OZG/DE/themen/ozg-infrastruktur/infrastruktur-node.html"
+          download
+          href={props.link}
           rel="noreferrer"
         >
           Mehr Informationen
