@@ -73,12 +73,12 @@ build-tag:
     services:
         - docker:19.03.15-dind@sha256:1875a3437d87a2fa8ec5e6fcd3233a98d571fa9692516b1e7d8eb18b7dca87a4
     variables:
-        IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:CI_COMMIT_TAG
+        IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_TAG
         DOCKER_TLS_CERTDIR: ""
         DOCKER_HOST: tcp://localhost:2375
     allow_failure: false
     script:
-        - docker login -u $CI_REGISTRY_USER -p $CI_REGISTR$Y_PASSWORD $CI_REGISTRY
+        - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
         - docker build --network=host -t $IMAGE_TAG .
         - docker push $IMAGE_TAG
     only:
