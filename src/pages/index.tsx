@@ -228,13 +228,7 @@ const Home: NextPage = () => {
               )}
               {!refreshRequest.isLoading && !refreshRequest.errored && (
                 <div>
-                  <p
-                    className={classNames(
-                      amountPassed === 6 ? "text-lightning-500" : "text-red-500"
-                    )}
-                  >
-                    Bestanden: {amountPassed}/6
-                  </p>
+                  <p>Bestanden: {amountPassed}/6</p>
                   <ResultGrid report={report} />
                 </div>
               )}
