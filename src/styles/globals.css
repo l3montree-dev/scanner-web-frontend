@@ -30,6 +30,12 @@ body {
   word-break: break-word;
 }
 
+@-moz-document url-prefix() {
+    html, body {
+        word-break: normal!important;
+    }
+ }
+
 a {
   color: inherit;
   text-decoration: none;
