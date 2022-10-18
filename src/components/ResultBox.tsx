@@ -12,7 +12,6 @@ interface Props {
   title: string;
   description: string;
   link: string;
-  disableHyphens?: boolean;
 }
 
 const ResultBox: FunctionComponent<Props> = (props) => {
@@ -52,9 +51,7 @@ const ResultBox: FunctionComponent<Props> = (props) => {
             </h5>
           </div>
           <div className="mt-2 mb-5 h-full">
-            <p className={classNames(props.disableHyphens && "no-hyphens")}>
-              {props.description}
-            </p>
+            <p>{props.description}</p>
           </div>
         </div>
       </div>
