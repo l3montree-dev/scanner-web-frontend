@@ -49,7 +49,7 @@ const Footer = () => {
               </a>
             </span>
           </div>
-          <span className="p-2">
+          <span className="p-2 block">
             © Bundesministerium des Innern und für Heimat, 2022
           </span>
         </div>
