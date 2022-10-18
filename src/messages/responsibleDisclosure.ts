@@ -18,13 +18,14 @@ export const getResponsibleDisclosureReportMessage = (report: IReport) => {
       ):
         return `Die Datei ${report.fqdn}/.well-known/security.txt ist vorhanden, enthält aber keinen Kontakt.`;
       case inspection.errors.includes(
-        ResponsibleDisclosureValidationError.Expired
-      ):
-        return `Die Datei ${report.fqdn}/.well-known/security.txt ist vorhanden, aber abgelaufen.`;
-      case inspection.errors.includes(
         ResponsibleDisclosureValidationError.InvalidExpiresField
       ):
         return `Die Datei ${report.fqdn}/.well-known/security.txt ist vorhanden, enthält aber keinen gültigen Expires Eintrag.`;
+      case inspection.errors.includes(
+        ResponsibleDisclosureValidationError.Expired
+      ):
+        return `Die Datei ${report.fqdn}/.well-known/security.txt ist vorhanden, aber abgelaufen.`;
+
       default:
         return `Die Datei ${report.fqdn}/.well-known/security.txt ist nicht vorhanden oder enthält nicht die nötigen Einträge.`;
     }
