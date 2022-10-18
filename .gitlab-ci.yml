@@ -45,7 +45,7 @@ build-dev:
         - gitguardianscan
     # when: manual
 
-build:
+build-main:
     image: docker:19.03.15@sha256:51b4ccfcc03639a1bf1755de6789aaf506697aa416136e3874499296c179241d
     stage: publish
     services:
@@ -106,7 +106,7 @@ deploy-dev:
         - kubectl --server=$K8S_DEVELOPMENT_API_URL --token=$K8S_DEVELOPMENT_TOKEN --certificate-authority=ca.pem --namespace=ozgsec rollout restart deployment/ozgsec-frontend
     only:
         - dev
-    needs: [build]
+    needs: [build-dev]
     # when: manual
 
 deploy-main:
@@ -125,4 +125,4 @@ deploy-main:
     only:
         - main
     when: manual
-    needs: [build]
+    needs: [build-main]
