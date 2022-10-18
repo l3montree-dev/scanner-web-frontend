@@ -94,7 +94,7 @@ build-tag:
 deploy-dev:
     stage: deploy
     dependencies:
-        - build
+        - build-dev
     image:
         name: bitnami/kubectl:1.24.7-debian-11-r1@sha256:8441eac029c5fd42cf2b73549874d5388c3822695f3b17954b293122426cf2b3
         entrypoint: [""]
@@ -112,7 +112,7 @@ deploy-dev:
 deploy-main:
     stage: deploy
     dependencies:
-        - build
+        - build-main
     image:
         name: bitnami/kubectl:1.24.7-debian-11-r1@sha256:8441eac029c5fd42cf2b73549874d5388c3822695f3b17954b293122426cf2b3
         entrypoint: [""]
