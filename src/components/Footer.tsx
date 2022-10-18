@@ -9,28 +9,30 @@ const Footer = () => {
     <>
       <footer className="bg-white md:text-md text-sm px-5 md:px-10 pb-10">
         <div>
-          <Image
-            width={256}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            width={255}
             height={156}
             src={"/assets/bmi-logo.svg"}
             alt="Logo BMI"
           />
         </div>
         <div className="lg:flex justify-between">
-          <div className="md:mb-0 flex flex-wrap flex-row mb-5">
+          <div className="flex flex-wrap flex-row mb-0">
             <span className="mr-4">
-              <a
+              <button
                 onClick={() => setIsOpen(true)}
-                className="cursor-pointer"
+                className="cursor-pointer p-2"
                 type="button"
               >
                 Impressum
-              </a>
+              </button>
             </span>
             <span className="mr-4">
               <a
                 href="https://www.bmi.bund.de/DE/service/datenschutz/datenschutz_node.html"
                 target="_blank"
+                className="p-2 block"
                 rel="noopener noreferrer"
               >
                 Datenschutz
@@ -40,13 +42,16 @@ const Footer = () => {
               <a
                 href="https://www.onlinezugangsgesetz.de/"
                 rel="noopener noreferrer"
+                className="p-2 block"
                 target={"_blank"}
               >
                 Onlinezugangsgesetz.de
               </a>
             </span>
           </div>
-          <span>© Bundesministerium des Innern und für Heimat, 2022</span>
+          <span className="p-2">
+            © Bundesministerium des Innern und für Heimat, 2022
+          </span>
         </div>
       </footer>
       <Dialog onClose={() => setIsOpen(false)} isOpen={isOpen}>
