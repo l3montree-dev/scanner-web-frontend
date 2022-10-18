@@ -28,6 +28,7 @@ const Imprint = () => {
           href="https://www.bmi.bund.de/DE/service/kontakt/kontakt_node.html"
           rel="noopener noreferrer"
           target="_blank"
+          className="underline"
         >
           Kontaktmöglichkeiten
         </a>
@@ -45,29 +46,29 @@ const Imprint = () => {
         <br />
         Realisierung:
         <br />
-        neuland@homeland
+        Neuland@Homeland GmbH
         <br />
         <br />
         Design:
         <br />
-        neuland@homeland
+        Neuland@Homeland GmbH
         <br />
         <br />
         Hosting:
         <br />
-        neuland@homeland
+        Neuland@Homeland GmbH
         <br />
         <br />
         Rechtliche Hinweise
         <br />
         <br />
-        Die Inhalte der Internet-Seiten von www.bmi.bund.de sollen den Zugang
-        der Öffentlichkeit zu Informationen unseres Ministeriums erleichtern und
-        ein zutreffendes Bild von den Tätigkeiten, Planungen und Vorhaben des
-        Bundesministeriums des Innern und für Heimat vermitteln. Auf die
-        Richtigkeit, Aktualität, Vollständigkeit, Verständlichkeit und
-        jederzeitige Verfügbarkeit der bereitgestellten Informationen wird
-        sorgfältig geachtet.
+        Die Inhalte der Internet-Seiten von www.bmi.bund.de (hier ozgsec.de)
+        sollen den Zugang der Öffentlichkeit zu Informationen unseres
+        Ministeriums erleichtern und ein zutreffendes Bild von den Tätigkeiten,
+        Planungen und Vorhaben des Bundesministeriums des Innern und für Heimat
+        vermitteln. Auf die Richtigkeit, Aktualität, Vollständigkeit,
+        Verständlichkeit und jederzeitige Verfügbarkeit der bereitgestellten
+        Informationen wird sorgfältig geachtet.
         <br />
         <br />
         Dennoch sind folgende Einschränkungen zu machen:
@@ -121,12 +122,13 @@ const Imprint = () => {
         <br />
         Sollten auf dieser Internetpräsenz Links enthalten sein, die auf
         rechtswidrige oder fehlerhafte Inhalte Dritter verweisen, so bittet die
-        Redaktion die Nutzer von www.bmi.bund.de darum, hierauf ggf. aufmerksam
-        zu machen. Ebenso wird um eine Nachricht über das{" "}
+        Redaktion die Nutzer von www.bmi.bund.de (hier ozgsec.de) darum, hierauf
+        ggf. aufmerksam zu machen. Ebenso wird um eine Nachricht über das{" "}
         <a
           href="https://www.bmi.bund.de/DE/service/kontakt/internetredaktion/internetredaktion-kontakt-node.html"
           rel="noopener noreferrer"
           target="_blank"
+          className="underline"
         >
           Kontaktformular
         </a>{" "}
@@ -142,6 +144,7 @@ const Imprint = () => {
           href="https://www.bmi.bund.de/DE/service/datenschutz/datenschutz_node.html"
           rel="noopener noreferrer"
           target="_blank"
+          className="underline"
         >
           Datenschutzerklärung
         </a>
