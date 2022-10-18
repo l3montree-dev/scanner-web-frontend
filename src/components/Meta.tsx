@@ -30,18 +30,6 @@ const Meta = () => {
         property="twitter:description"
         content="OZG Security Schnelltest einer Webseite in Bezug auf IT-Sicherheitsmaßnahmen und Best-Practices"
       />
-      <link
-        rel="preload"
-        href="/assets/fonts/BundesSansWeb-Bold.woff"
-        as="font"
-        type="font/woff"
-      ></link>
-      <link
-        rel="preload"
-        href="/assets/fonts/BundesSansWeb-Regular.woff"
-        as="font"
-        type="font/woff"
-      ></link>
     </Head>
   );
 };
