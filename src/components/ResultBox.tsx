@@ -1,18 +1,17 @@
 import {
   faCheck,
-  faCheckCircle,
   faQuestion,
   faTimes,
-  faTimesCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { FunctionComponent } from "react";
+import { FunctionComponent } from "react";
 import { classNames } from "../utils/style-utils";
 
 interface Props {
   didPass: boolean | null;
   title: string;
   description: string;
+  link: string;
 }
 const ResultBox: FunctionComponent<Props> = (props) => {
   return (
@@ -60,7 +59,8 @@ const ResultBox: FunctionComponent<Props> = (props) => {
         <a
           className="text-sm underline"
           target="_blank"
-          href="https://www.onlinezugangsgesetz.de/Webs/OZG/DE/themen/ozg-infrastruktur/infrastruktur-node.html"
+          download
+          href={props.link}
           rel="noreferrer"
         >
           Mehr Informationen

@@ -56,6 +56,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
           <ResultBox
             title="DNSSEC"
             description={getDescription(report, "DNSSec")}
+            link="/one-pager/DNSSEC-One-Pager.pdf"
             didPass={report.result.DNSSec.didPass}
           />
         </div>
@@ -69,6 +70,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
         >
           <ResultBox
             title="CAA"
+            link="/one-pager/CAA-One-Pager.pdf"
             description={getDescription(report, "CAA")}
             didPass={report.result.CAA.didPass}
           />
@@ -84,6 +86,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
           <ResultBox
             title="TLS 1.3"
             description={getDescription(report, "TLSv1_3")}
+            link={"/one-pager/TLS1_3-One-Pager.pdf"}
             didPass={report.result.TLSv1_3.didPass}
           />
         </div>
@@ -98,6 +101,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
           <ResultBox
             title="Deaktivierung von veralteten TLS/ SSL Protokollen"
             description={getDescription(report, "TLSv1_1_Deactivated")}
+            link={"/one-pager/TLS1_1_off-One-Pager.pdf"}
             didPass={report.result.TLSv1_1_Deactivated.didPass}
           />
         </div>
@@ -112,6 +116,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
           <ResultBox
             title="HSTS"
             description={getDescription(report, "HSTS")}
+            link={"/one-pager/HSTS-One-Pager.pdf"}
             didPass={report.result.HSTS.didPass}
           />
         </div>
@@ -126,6 +131,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
           <ResultBox
             title="Responsible Disclosure"
             description={getDescription(report, "ResponsibleDisclosure")}
+            link={"/one-pager/Responsible_Disclosure-One-Pager.pdf"}
             didPass={report.result.ResponsibleDisclosure.didPass}
           />
         </div>
