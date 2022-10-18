@@ -1,12 +1,9 @@
-FROM node:18@sha256:9d8a6466c6385e05f62f8ccf173e80209efb0ff4438f321f09ddf552b05af3ba
+FROM ozgsecurity/ozgsec-security-quick-test:base-image-v0.0.1@sha256:f37e4042c447d3723bfd8c5bed34da930cd3eb78039f391fafb2a0ff888bfbe1
 LABEL maintainer="bastin.tim@gmail.com"
 
 WORKDIR /usr/app/
 ENV PORT 3000
 EXPOSE 3000
-
-COPY build_openssl.sh .
-RUN ./build_openssl.sh
 
 COPY package.json .
 RUN npm install
