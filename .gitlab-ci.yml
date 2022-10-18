@@ -1,5 +1,3 @@
-image: docker:20.10.2
-
 variables:
     GIT_SUBMODULE_STRATEGY: recursive
 
@@ -8,67 +6,101 @@ stages:
     - publish
     - deploy
 
-
 gitguardianscan:
-    image: gitguardian/ggshield:latest
+    image: gitguardian/ggshield:v1.13.5@sha256:82b46a5ebda17645a8aabd3d20cfb65cd65938db4fb6d31275bc91132ff21472
     stage: test
     script: ggshield secret scan ci
-
 
 jest:
     image: node:18@sha256:9d8a6466c6385e05f62f8ccf173e80209efb0ff4438f321f09ddf552b05af3ba
     stage: test
     script:
-      - npm ci --include=dev
-      - 'npx jest --ci --reporters=default --reporters=jest-junit'
-    cache:
-      key: $CI_COMMIT_REF_NAME
-      paths:
-        - node_modules/
+        - npm ci --include=dev
+        - "npx jest --ci --reporters=default --reporters=jest-junit"
     artifacts:
-      when: always
-      reports:
-          junit:
-            - junit.xml
+        when: always
+        reports:
+            junit:
+                - junit.xml
 
-build:
-    image: docker:19.03.1
+build-dev:
+    image: docker:19.03.15@sha256:51b4ccfcc03639a1bf1755de6789aaf506697aa416136e3874499296c179241d
     stage: publish
     services:
-        - docker:19.03.1-dind
+        - docker:19.03.15-dind@sha256:1875a3437d87a2fa8ec5e6fcd3233a98d571fa9692516b1e7d8eb18b7dca87a4
     variables:
         IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME
         DOCKER_TLS_CERTDIR: ""
         DOCKER_HOST: tcp://localhost:2375
     allow_failure: false
-    cache:
-      key: $CI_COMMIT_REF_NAME
-      paths:
-        - node_modules/
     script:
         - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-        - docker pull $IMAGE_TAG || true
-        - docker build --network=host --cache-from $IMAGE_TAG -t $IMAGE_TAG .
+        - docker build --network=host -t $IMAGE_TAG .
         - docker push $IMAGE_TAG
     only:
-        - main
         - dev
     needs: [jest, gitguardianscan]
     dependencies:
-      - jest
-      - gitguardianscan
+        - jest
+        - gitguardianscan
     # when: manual
 
-production-dev:
+build:
+    image: docker:19.03.15@sha256:51b4ccfcc03639a1bf1755de6789aaf506697aa416136e3874499296c179241d
+    stage: publish
+    services:
+        - docker:19.03.15-dind@sha256:1875a3437d87a2fa8ec5e6fcd3233a98d571fa9692516b1e7d8eb18b7dca87a4
+    variables:
+        IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME
+        DOCKER_TLS_CERTDIR: ""
+        DOCKER_HOST: tcp://localhost:2375
+    allow_failure: false
+    script:
+        - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+        - docker build --network=host -t $IMAGE_TAG .
+        - docker push $IMAGE_TAG
+    only:
+        - main
+    needs: [jest, gitguardianscan]
+    dependencies:
+        - jest
+        - gitguardianscan
+    when: manual
+
+build-tag:
+    image: docker:19.03.15@sha256:51b4ccfcc03639a1bf1755de6789aaf506697aa416136e3874499296c179241d
+    stage: publish
+    services:
+        - docker:19.03.15-dind@sha256:1875a3437d87a2fa8ec5e6fcd3233a98d571fa9692516b1e7d8eb18b7dca87a4
+    variables:
+        IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:CI_COMMIT_TAG
+        DOCKER_TLS_CERTDIR: ""
+        DOCKER_HOST: tcp://localhost:2375
+    allow_failure: false
+    script:
+        - docker login -u $CI_REGISTRY_USER -p $CI_REGISTR$Y_PASSWORD $CI_REGISTRY
+        - docker build --network=host -t $IMAGE_TAG .
+        - docker push $IMAGE_TAG
+    only:
+        - tags
+    except:
+        - branches
+    needs: [jest, gitguardianscan]
+    dependencies:
+        - jest
+        - gitguardianscan
+    when: manual
+
+deploy-dev:
     stage: deploy
     dependencies:
         - build
     image:
-        name: bitnami/kubectl
+        name: bitnami/kubectl:1.24.7-debian-11-r1@sha256:8441eac029c5fd42cf2b73549874d5388c3822695f3b17954b293122426cf2b3
         entrypoint: [""]
     environment:
         name: development
-        url: "https://l3montree.com"
+        url: "https://dev.ozgsec.neuland-homeland.de"
     script:
         - echo "$K8S_DEVELOPMENT_CERTIFICATE" >> ca.pem
         - kubectl --server=$K8S_DEVELOPMENT_API_URL --token=$K8S_DEVELOPMENT_TOKEN --certificate-authority=ca.pem --namespace=ozgsec rollout restart deployment/ozgsec-frontend
@@ -77,17 +109,16 @@ production-dev:
     needs: [build]
     # when: manual
 
-
-production-master:
+deploy-main:
     stage: deploy
     dependencies:
         - build
     image:
-        name: bitnami/kubectl
+        name: bitnami/kubectl:1.24.7-debian-11-r1@sha256:8441eac029c5fd42cf2b73549874d5388c3822695f3b17954b293122426cf2b3
         entrypoint: [""]
     environment:
         name: production
-        url: "https://l3montree.com"
+        url: "https://ozgsec.de"
     script:
         - echo "$K8S_CERTIFICATE" >> ca.pem
         - kubectl --server=$K8S_API_URL --token=$K8S_TOKEN --certificate-authority=ca.pem --namespace=ozgsec rollout restart deployment/ozgsec-frontend
