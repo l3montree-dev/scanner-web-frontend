@@ -24,71 +24,68 @@ jest:
                 - junit.xml
 
 build-dev:
-    image: docker:19.03.15@sha256:51b4ccfcc03639a1bf1755de6789aaf506697aa416136e3874499296c179241d
     stage: publish
-    services:
-        - docker:19.03.15-dind@sha256:1875a3437d87a2fa8ec5e6fcd3233a98d571fa9692516b1e7d8eb18b7dca87a4
-    variables:
-        IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME
-        DOCKER_TLS_CERTDIR: ""
-        DOCKER_HOST: tcp://localhost:2375
-    allow_failure: false
-    script:
-        - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-        - docker build --network=host -t $IMAGE_TAG .
-        - docker push $IMAGE_TAG
-    only:
-        - dev
     needs: [jest, gitguardianscan]
     dependencies:
         - jest
         - gitguardianscan
+    variables:
+        IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME
+    only:
+        - dev
+    image:
+        name: gcr.io/kaniko-project/executor:v1.9.1-debug@sha256:ac169723b2076f9d5804f4bc05c98397e286da6fdcdd5a09fdc179f06ccb3be1
+        entrypoint: [""]
+    script:
+        - /kaniko/executor
+          --cleanup
+          --context $CI_PROJECT_DIR
+          --dockerfile $CI_PROJECT_DIR/Dockerfile
+          --destination $IMAGE_TAG
     # when: manual
 
 build-main:
-    image: docker:19.03.15@sha256:51b4ccfcc03639a1bf1755de6789aaf506697aa416136e3874499296c179241d
     stage: publish
-    services:
-        - docker:19.03.15-dind@sha256:1875a3437d87a2fa8ec5e6fcd3233a98d571fa9692516b1e7d8eb18b7dca87a4
-    variables:
-        IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME
-        DOCKER_TLS_CERTDIR: ""
-        DOCKER_HOST: tcp://localhost:2375
-    allow_failure: false
-    script:
-        - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-        - docker build --network=host -t $IMAGE_TAG .
-        - docker push $IMAGE_TAG
-    only:
-        - main
     needs: [jest, gitguardianscan]
     dependencies:
         - jest
         - gitguardianscan
+    variables:
+        IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME
+    only:
+        - main
+    image:
+        name: gcr.io/kaniko-project/executor:v1.9.1-debug@sha256:ac169723b2076f9d5804f4bc05c98397e286da6fdcdd5a09fdc179f06ccb3be1
+        entrypoint: [""]
+    script:
+        - /kaniko/executor
+          --cleanup
+          --context $CI_PROJECT_DIR
+          --dockerfile $CI_PROJECT_DIR/Dockerfile
+          --destination $IMAGE_TAG
     when: manual
 
 build-tag:
-    image: docker:19.03.15@sha256:51b4ccfcc03639a1bf1755de6789aaf506697aa416136e3874499296c179241d
     stage: publish
-    services:
-        - docker:19.03.15-dind@sha256:1875a3437d87a2fa8ec5e6fcd3233a98d571fa9692516b1e7d8eb18b7dca87a4
+    needs: [jest, gitguardianscan]
+    dependencies:
+        - jest
+        - gitguardianscan
     variables:
         IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_TAG
-        DOCKER_TLS_CERTDIR: ""
-        DOCKER_HOST: tcp://localhost:2375
-    allow_failure: false
-    script:
-        - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-        - docker build --network=host -t $IMAGE_TAG .
-        - docker push $IMAGE_TAG
     only:
         - tags
     except:
         - branches
-    needs: [jest, gitguardianscan]
-    dependencies:
-        - jest
-        - gitguardianscan
+    image:
+        name: gcr.io/kaniko-project/executor:v1.9.1-debug@sha256:ac169723b2076f9d5804f4bc05c98397e286da6fdcdd5a09fdc179f06ccb3be1
+        entrypoint: [""]
+    script:
+        - /kaniko/executor
+          --cleanup
+          --context $CI_PROJECT_DIR
+          --dockerfile $CI_PROJECT_DIR/Dockerfile
+          --destination $IMAGE_TAG
     when: manual
 
 deploy-dev:
