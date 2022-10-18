@@ -33,7 +33,7 @@ const Dialog: FunctionComponent<Props> = (props) => {
           )}
         >
           <div className="backdrop absolute top-0 bottom-0 left-0 right-0 bg-deepblue-400 opacity-50" />
-          <div className="max-w-screen-lg z-10 lg:h-3/4 h-full  bg-deepblue-600">
+          <div className="max-w-screen-lg z-10 lg:h-3/4 h-full bg-deepblue-600">
             <div className="flex flex-col  overflow-auto h-full">
               <div className="flex flex-row justify-end">
                 <button
