@@ -56,6 +56,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
           <ResultBox
             title="Responsible Disclosure"
             description={getDescription(report, "ResponsibleDisclosure")}
+            disableHyphens
             link={"/one-pager/Responsible_Disclosure-One-Pager.pdf"}
             didPass={report.result.ResponsibleDisclosure.didPass}
           />

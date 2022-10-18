@@ -61,3 +61,6 @@ pre {
 .rotate {
     animation: spin 1.5s linear infinite;
 }
+.no-hyphens {
+    hyphens: none;
+}
