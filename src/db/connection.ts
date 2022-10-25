@@ -17,7 +17,19 @@ const addModels = (connection: Connection): Connection => {
 };
 
 async function connect() {
-  const dbUrl = process.env.MONGODB_URI;
+  const user = process.env.MONGODB_USER;
+  const password = process.env.MONGODB_PASSWORD;
+  const host = process.env.MONGODB_HOST;
+  const port = process.env.MONGODB_PORT;
+  const db = process.env.MONGODB_DATABASE;
+
+  if (!user || !password || !host || !port) {
+    throw new Error(
+      "Missing environment variables: MONGODB_USER, MONGODB_PASSWORD, MONGODB_HOST, MONGODB_PORT"
+    );
+  }
+  const dbUrl = `mongodb://${user}:${password}@${host}:${port}/${db}`;
+
   if (!dbUrl) {
     throw new Error("MONGODB_URI is not set");
   }
@@ -28,7 +40,7 @@ async function connect() {
     );
     return (await connectionPromise).connection;
   }
-  const now = Date.now();
+
   connectionPromise = mongoose.connect(dbUrl);
 
   // save it in a module variable.

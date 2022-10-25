@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "ozgsec.fullname" . }}
+  labels:
+    {{- include "ozgsec.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "ozgsec.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "ozgsec.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+        - name: request-montioring-config
+          configMap:
+            name: request-montioring-config
+      containers:
+        - name: request-monitoring-sidecar
+          image: "registry.gitlab.com/l3montree/request-monitoring-sidecar{{ .Values.requestMonitoringSidecar.image.tag | default ":latest" }}"
+          ports:
+            - name: rqm
+              containerPort: 4000
+          env:
+            - name: INFLUXDB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: influxdb-token
+                  key: token
+          volumeMounts:
+            - mountPath: "/go/src/app/config"
+              name: request-montioring-config
+          imagePullPolicy: {{ .Values.requestMonitoringSidecar.image.pullPolicy }}
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "registry.gitlab.com/ozg-security/ozgsec-security-quick-test{{ .Values.ozgsec.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.ozgsec.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 3000
+          env:
+            - name: MONGODB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-credentials
+                  key: mongodb-passwords
+            - name: MONGODB_USER
+              value: ozgsec
+            - name: MONGODB_HOST
+              value: ozgsec-mongodb
+            - name: MONGODB_PORT
+              value: "27017"
+            - name: MONGODB_DATABASE  
+              value: "ozgsec"
+          livenessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

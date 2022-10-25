@@ -37,3 +37,6 @@ next-env.d.ts
 
 .env
 server.js
+
+helm-chart/charts/*
+!helm-chart/charts/.gitkeep

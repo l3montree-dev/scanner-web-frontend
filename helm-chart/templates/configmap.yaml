@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: request-montioring-config
+data:
+  config.yaml: |-
+    proxy:
+      port: 4000
+      forwardTo: http://localhost:3000
+      pathRegex: api
+    influxdb:
+      url: http://ozgsec-influxdb:8086
+      org: ozgsec
+      bucket: ozgsec
+      measurement: request
