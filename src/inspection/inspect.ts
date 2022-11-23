@@ -8,6 +8,7 @@ import { tlsClient } from "../services/tlsSocket";
 import { buildInspectionError } from "../utils/error";
 import { getIcon } from "../utils/icon";
 import { getJSDOM } from "../utils/jsdom";
+import { resolveProtocol } from "../utils/resolveProtocol";
 import CertificateInspector from "./certificate/CertificateInspector";
 import ContentInspector from "./content/ContentInspector";
 import CookieInspector from "./cookie/CookieInspector";
@@ -65,9 +66,15 @@ export const inspect = async (requestId: string, fqdn: string) => {
   // make the sanity check - if this request fails, we can't do anything.
   // besides that, it makes sure, that the http instance has all cookies set correctly.
   // nevertheless, the response can be reused by the checkers.
-  const response = await httpClient(`http://${fqdn}`, requestId, undefined, {
-    setCookies: true,
-  });
+  const protocol = resolveProtocol(fqdn);
+  const response = await httpClient(
+    `${protocol}://${fqdn}`,
+    requestId,
+    undefined,
+    {
+      setCookies: true,
+    }
+  );
 
   const [
     httpResult,

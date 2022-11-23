@@ -7,6 +7,7 @@ import {
 } from "../Inspector";
 import { responsibleDisclosureChecker } from "./responsibleDisclosureChecker";
 import { HttpClient } from "../../services/clientHttpClient";
+import { resolveProtocol } from "../../utils/resolveProtocol";
 
 const logger = getLogger(__filename);
 export default class OrganizationalInspector
@@ -21,8 +22,9 @@ export default class OrganizationalInspector
     { fqdn, httpClient }: { fqdn: string; httpClient: HttpClient }
   ): Promise<{ [key in OrganizationalInspectionType]: InspectionResult }> {
     try {
+      const protocol = resolveProtocol(fqdn);
       const response = await httpClient(
-        new URL(`http://${fqdn}/.well-known/security.txt`).toString(),
+        new URL(`${protocol}://${fqdn}/.well-known/security.txt`).toString(),
         requestId
       );
 
