@@ -5,7 +5,6 @@ stages:
     - test
     - publish
     - container_scanning
-    - deploy
 
 gitguardianscan:
     image: gitguardian/ggshield:v1.13.5@sha256:82b46a5ebda17645a8aabd3d20cfb65cd65938db4fb6d31275bc91132ff21472
@@ -62,43 +61,6 @@ build-tag:
     only:
         - tags
     when: manual
-
-.deploy-template:
-    stage: deploy
-    image:
-        name: bitnami/kubectl:1.24.7-debian-11-r1@sha256:8441eac029c5fd42cf2b73549874d5388c3822695f3b17954b293122426cf2b3
-        entrypoint: [""]
-
-deploy-dev:
-    extends: .deploy-template
-    dependencies:
-        - build-dev
-    environment:
-        name: development
-        url: "https://dev.ozgsec.neuland-homeland.de"
-    script:
-        - echo "$K8S_DEVELOPMENT_CERTIFICATE" >> ca.pem
-        - kubectl --server=$K8S_DEVELOPMENT_API_URL --token=$K8S_DEVELOPMENT_TOKEN --certificate-authority=ca.pem --namespace=ozgsec rollout restart deployment/ozgsec-frontend
-    only:
-        - dev
-    needs: [build-dev]
-    # when: manual
-
-deploy-main:
-    extends: .deploy-template
-    dependencies:
-        - build-main
-    environment:
-        name: production
-        url: "https://ozgsec.de"
-    script:
-        - echo "$K8S_CERTIFICATE" >> ca.pem
-        - kubectl --server=$K8S_API_URL --token=$K8S_TOKEN --certificate-authority=ca.pem --namespace=ozgsec rollout restart deployment/ozgsec-frontend
-    only:
-        - main
-    when: manual
-    needs: [build-main]
-
 
 helm:
   stage: deploy
