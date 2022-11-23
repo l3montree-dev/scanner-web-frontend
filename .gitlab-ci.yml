@@ -4,6 +4,7 @@ variables:
 stages:
     - test
     - publish
+    - container_scanning
     - deploy
 
 gitguardianscan:
@@ -23,78 +24,55 @@ jest:
             junit:
                 - junit.xml
 
-build-dev:
+.build-template:
     stage: publish
     needs: [jest, gitguardianscan]
     dependencies:
         - jest
         - gitguardianscan
+    image:
+        name: gcr.io/kaniko-project/executor:v1.9.1-debug@sha256:ac169723b2076f9d5804f4bc05c98397e286da6fdcdd5a09fdc179f06ccb3be1
+        entrypoint: [""]
+    script:
+        - /kaniko/executor
+          --cleanup
+          --context $CI_PROJECT_DIR
+          --dockerfile $CI_PROJECT_DIR/Dockerfile
+          --destination $IMAGE_TAG
+
+build-dev:
+    extends: .build-template
     variables:
         IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME
     only:
         - dev
-    image:
-        name: gcr.io/kaniko-project/executor:v1.9.1-debug@sha256:ac169723b2076f9d5804f4bc05c98397e286da6fdcdd5a09fdc179f06ccb3be1
-        entrypoint: [""]
-    script:
-        - /kaniko/executor
-          --cleanup
-          --context $CI_PROJECT_DIR
-          --dockerfile $CI_PROJECT_DIR/Dockerfile
-          --destination $IMAGE_TAG
-    # when: manual
 
 build-main:
-    stage: publish
-    needs: [jest, gitguardianscan]
-    dependencies:
-        - jest
-        - gitguardianscan
+    extends: .build-template
     variables:
         IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME
     only:
         - main
-    image:
-        name: gcr.io/kaniko-project/executor:v1.9.1-debug@sha256:ac169723b2076f9d5804f4bc05c98397e286da6fdcdd5a09fdc179f06ccb3be1
-        entrypoint: [""]
-    script:
-        - /kaniko/executor
-          --cleanup
-          --context $CI_PROJECT_DIR
-          --dockerfile $CI_PROJECT_DIR/Dockerfile
-          --destination $IMAGE_TAG
     when: manual
 
 build-tag:
-    stage: publish
-    needs: [jest, gitguardianscan]
-    dependencies:
-        - jest
-        - gitguardianscan
+    extends: .build-template
     variables:
         IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_TAG
     only:
         - tags
-    except:
-        - branches
-    image:
-        name: gcr.io/kaniko-project/executor:v1.9.1-debug@sha256:ac169723b2076f9d5804f4bc05c98397e286da6fdcdd5a09fdc179f06ccb3be1
-        entrypoint: [""]
-    script:
-        - /kaniko/executor
-          --cleanup
-          --context $CI_PROJECT_DIR
-          --dockerfile $CI_PROJECT_DIR/Dockerfile
-          --destination $IMAGE_TAG
     when: manual
 
-deploy-dev:
+.deploy-template:
     stage: deploy
-    dependencies:
-        - build-dev
     image:
         name: bitnami/kubectl:1.24.7-debian-11-r1@sha256:8441eac029c5fd42cf2b73549874d5388c3822695f3b17954b293122426cf2b3
         entrypoint: [""]
+
+deploy-dev:
+    extends: .deploy-template
+    dependencies:
+        - build-dev
     environment:
         name: development
         url: "https://dev.ozgsec.neuland-homeland.de"
@@ -107,12 +85,9 @@ deploy-dev:
     # when: manual
 
 deploy-main:
-    stage: deploy
+    extends: .deploy-template
     dependencies:
         - build-main
-    image:
-        name: bitnami/kubectl:1.24.7-debian-11-r1@sha256:8441eac029c5fd42cf2b73549874d5388c3822695f3b17954b293122426cf2b3
-        entrypoint: [""]
     environment:
         name: production
         url: "https://ozgsec.de"
@@ -127,12 +102,39 @@ deploy-main:
 
 helm:
   stage: deploy
-  image: dtzar/helm-kubectl
+  image: dtzar/helm-kubectl:3.10.0@sha256:489617317614daad6181603d55319c35529b9d41bfc4a23a11e8e3109a5f5588
   before_script:
     - 'helm repo add --username gitlab-ci-token --password ${CI_JOB_TOKEN} ${CI_PROJECT_NAME} ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/helm/stable'
     - helm dependency update ./helm-chart
   script:
     - 'helm plugin install https://github.com/chartmuseum/helm-push.git'
     - ./helm-package-and-push.sh
+  only:
+    - tags
+
+.trivy-template:
+  stage: container_scanning
+  image: aquasec/trivy:0.32.1@sha256:418e71f4895cc6f83f824a313e3bbfdd66bd3d9b843678059340361e74f42355
+  script:
+    - trivy --exit-code 1 --severity HIGH,CRITICAL --no-progress --ignore-unfixed --ignorefile .trivyignore --format template --template "@/trivy.tpl" $IMAGE_TAG
+
+trivy-dev:
+  extends: .trivy-template
+  variables:
+    IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME
+  only:
+    - dev
+
+trivy-main:
+  extends: .trivy-template
+  variables:
+    IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME
+  only:
+    - main
+
+trivy-tag:
+  extends: .trivy-template
+  variables:
+    IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_TAG
   only:
     - tags
