@@ -65,7 +65,7 @@ export const inspect = async (requestId: string, fqdn: string) => {
   // make the sanity check - if this request fails, we can't do anything.
   // besides that, it makes sure, that the http instance has all cookies set correctly.
   // nevertheless, the response can be reused by the checkers.
-  const response = await httpClient(`https://${fqdn}`, requestId, undefined, {
+  const response = await httpClient(`http://${fqdn}`, requestId, undefined, {
     setCookies: true,
   });
 

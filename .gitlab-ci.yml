@@ -63,7 +63,7 @@ build-tag:
     when: manual
 
 helm:
-  stage: deploy
+  stage: publish
   image: dtzar/helm-kubectl:3.10.0@sha256:489617317614daad6181603d55319c35529b9d41bfc4a23a11e8e3109a5f5588
   before_script:
     - 'helm repo add --username gitlab-ci-token --password ${CI_JOB_TOKEN} ${CI_PROJECT_NAME} ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/helm/stable'

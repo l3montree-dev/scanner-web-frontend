@@ -66,7 +66,7 @@ export default class TLSInspector implements Inspector<TLSInspectionType> {
         servername: fqdn,
         maxVersion: tlsVersion,
         minVersion: tlsVersion,
-        rejectUnauthorized: false,
+        rejectUnauthorized: true,
       });
       // close the connection
       socket.destroy();

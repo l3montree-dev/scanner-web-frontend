@@ -22,7 +22,7 @@ export default class OrganizationalInspector
   ): Promise<{ [key in OrganizationalInspectionType]: InspectionResult }> {
     try {
       const response = await httpClient(
-        new URL(`https://${fqdn}/.well-known/security.txt`).toString(),
+        new URL(`http://${fqdn}/.well-known/security.txt`).toString(),
         requestId
       );
 
