@@ -16,6 +16,7 @@
         "@fortawesome/fontawesome-svg-core": "^6.2.0",
         "@fortawesome/free-solid-svg-icons": "^6.2.0",
         "@fortawesome/react-fontawesome": "^0.2.0",
+        "amqplib": "^0.10.3",
         "jsdom": "^20.0.0",
         "mongoose": "^6.6.4",
         "next": "12.2.5",
@@ -25,6 +26,7 @@
         "react-syntax-highlighter": "^15.5.0"
     },
     "devDependencies": {
+        "@types/amqplib": "^0.10.0",
         "@types/jest": "^29.0.0",
         "@types/jsdom": "^20.0.0",
         "@types/node": "18.7.15",
