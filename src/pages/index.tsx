@@ -15,7 +15,8 @@ import {
   InspectionType,
   OrganizationalInspectionType,
   TLSInspectionType,
-} from "../inspection/Inspector";
+} from "../inspection/scans";
+
 import { clientHttpClient } from "../services/clientHttpClient";
 
 import { sanitizeFQDN } from "../utils/santize";

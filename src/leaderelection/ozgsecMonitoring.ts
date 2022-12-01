@@ -1,9 +1,5 @@
 // read the file and parse it
-import { readFile } from "fs/promises";
-import getConnection from "../db/connection";
-import { inspect } from "../inspection/inspect";
 import { getLogger } from "../services/logger";
-import { isMaster } from "./leaderelection";
 
 interface MonitoringItem {
   fqdn: string;
@@ -16,7 +12,7 @@ const running: { [fqdn: string]: boolean } = {};
 const logger = getLogger(__filename);
 
 const monitoringFn = async (fqdn: string) => {
-  // only if this pod is the master
+  /*// only if this pod is the master
   if (!isMaster() || running[fqdn]) {
     return;
   }
@@ -59,5 +55,5 @@ export const startMonitoring = async () => {
         : // defaults to 4 hours.
           1000 * 60 * 60 * 4
     );
-  });
+  });*/
 };

@@ -5,7 +5,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { toDTO } from "../../db/models";
 import { IReport } from "../../db/report";
 import { withDB } from "../../decorators/withDB";
-import { inspect } from "../../inspection/inspect";
+import { inspectRPC } from "../../inspection/inspect";
 import { getLogger } from "../../services/logger";
 
 import { sanitizeFQDN } from "../../utils/santize";
@@ -70,7 +70,7 @@ const handler = async function handler(
   }
 
   try {
-    const { icon, results } = await inspect(requestId, siteToScan);
+    const { icon, results } = await inspectRPC(requestId, siteToScan);
 
     logger.info(
       { duration: Date.now() - start, requestId },

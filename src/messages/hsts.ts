@@ -1,5 +1,5 @@
 import { IReport } from "../db/report";
-import { HSTSValidationError } from "../inspection/header/hstsChecker";
+import { HSTSValidationError } from "../inspection/result-enums/hsts.typings";
 
 export const getHSTSReportMessage = (report: IReport) => {
   const inspection = report.result["HSTS"];

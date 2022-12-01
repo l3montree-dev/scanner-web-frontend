@@ -23,11 +23,11 @@ services:
     ports:
       - "443:443"
   mongodb:
-    image: bitnami/mongodb
+    image: mongo
     environment:
-      - MONGODB_USERNAME=ozgsec
-      - MONGODB_PASSWORD=secret12345
-      - MONGODB_DATABASE=ozgsec
+      - MONGO_INITDB_ROOT_USERNAME=ozgsec
+      - MONGO_INITDB_ROOT_PASSWORD=secret12345
+      - MONGO_INITDB_DATABASE=ozgsec
     ports:
       - 27017:27017
     volumes:

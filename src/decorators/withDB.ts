@@ -1,5 +1,5 @@
 import { Model } from "mongoose";
-import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import getConnection from "../db/connection";
 import { getLogger } from "../services/logger";
 import CircuitBreaker from "../utils/CircuitBreaker";

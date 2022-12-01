@@ -78,30 +78,3 @@ export interface InspectResultDTO {
   errors: string[];
   recommendations: string[];
 }
-
-export class InspectionResult {
-  constructor(
-    public type: InspectionType,
-    public didPass: boolean | null,
-    public actualValue: Record<string, any>,
-    public errors?: string[],
-    public recommendations?: string[]
-  ) {}
-
-  toDTO(): InspectResultDTO {
-    return {
-      type: this.type,
-      didPass: this.didPass,
-      actualValue: this.actualValue,
-      errors: this.errors || [],
-      recommendations: this.recommendations || [],
-    };
-  }
-}
-
-export interface Inspector<T extends InspectionType, Parameter = string> {
-  inspect(
-    requestId: string,
-    param: Parameter
-  ): Promise<{ [key in T]: InspectionResult }>;
-}

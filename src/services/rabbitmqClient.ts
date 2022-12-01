@@ -1,15 +1,12 @@
 import amqp from "amqplib";
 import { randomUUID } from "crypto";
 import EventEmitter from "events";
+import { getRabbitMQConnString } from "../server-config";
 import { getLogger } from "./logger";
-
-const getRabbitMQConnString = (): string => {
-  return `amqp://${process.env.RABBITMQ_USER}:${process.env.RABBITMQ_PASS}@${process.env.RABBITMQ_HOST}:${process.env.RABBITMQ_PORT}`;
-};
 
 const logger = getLogger(__filename);
 
-class RabbitMQClient {
+export class RabbitMQClient {
   private connection: Promise<amqp.Connection> | null = null;
   private publishChannel: amqp.Channel | null = null;
   private subscribeChannel: amqp.Channel | null = null;
@@ -60,14 +57,8 @@ class RabbitMQClient {
           );
           channel.ack(msg);
         } catch (e: any) {
-          logger.error(
-            {
-              msg: msg.content.toString(),
-            },
-            e
-          );
+          logger.error(e);
         }
-
         return;
       }
     });
@@ -81,49 +72,59 @@ class RabbitMQClient {
   ): Promise<void> {
     const channel = await this.getPublishChannel();
     channel.assertQueue(queue, queueOptions);
-    channel.sendToQueue(queue, Buffer.from(JSON.stringify(message)), {
-      messageId: randomUUID(),
-      ...options,
-    });
+    channel.sendToQueue(
+      queue,
+      Buffer.from(JSON.stringify({ pattern: queue, data: message })),
+      {
+        messageId: randomUUID(),
+        ...options,
+      }
+    );
   }
 }
 
-class RabbitMQRPCClient extends RabbitMQClient {
+export class RabbitMQRPCClient extends RabbitMQClient {
   private eventEmitter = new EventEmitter();
 
   constructor(rabbitmqConnString: string, replyToQueue: string) {
     super(rabbitmqConnString, replyToQueue);
-    this.listenToReplyQueue();
   }
-  private async listenToReplyQueue() {
+  async listenToReplyQueue() {
+    logger.info("listening to reply queue");
     this.subscribe(this.replyToQueue, (msg) => {
       if (msg) {
-        this.eventEmitter.emit(msg.properties.correlationId, msg.content);
+        this.eventEmitter.emit(msg.properties.messageId, msg.content);
       }
     });
   }
 
   call<T extends Record<string, any>>(
     queue: string,
-    message: Record<string, any>
+    message: Record<string, any>,
+    options: amqp.Options.Publish & { messageId: string }
   ): Promise<T> {
     return new Promise(async (resolve) => {
-      const correlationId = randomUUID();
       // resolve the promise after receiving an event - might block forever.
-      this.eventEmitter.once(correlationId, (buffer) => {
-        resolve(JSON.parse(buffer.toString()));
+      console.log("waiting for", options.messageId);
+      this.eventEmitter.once(options.messageId, (buffer) => {
+        resolve(JSON.parse(buffer.toString()).data);
       });
       this.publish(
         queue,
         message,
         { durable: true, maxPriority: 10 },
         {
-          correlationId,
           replyTo: this.replyToQueue,
           // an rpc should always have a higher priority than a regular message
           priority: 5,
+          ...options,
         }
       );
     });
   }
 }
+
+export const rabbitMQRPCClient = new RabbitMQRPCClient(
+  getRabbitMQConnString(),
+  process.env.SCAN_RESPONSE_QUEUE ?? "scan-response"
+);

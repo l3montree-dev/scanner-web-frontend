@@ -30,9 +30,7 @@ async function connect() {
   }
   const dbUrl = `mongodb://${user}:${password}@${host}:${port}/${db}`;
 
-  if (!dbUrl) {
-    throw new Error("MONGODB_URI is not set");
-  }
+  console.log(dbUrl);
   // handle concurrent requests.
   if (connectionPromise) {
     logger.info(

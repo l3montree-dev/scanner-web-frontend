@@ -1,7 +1,6 @@
 import { createServer } from "http";
 import next from "next";
-import { startMonitoring } from "./src/leaderelection/ozgsecMonitoring";
-
+import { rabbitMQRPCClient } from "./src/services/rabbitmqClient";
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
 const port = 3000;
@@ -15,6 +14,7 @@ const server = createServer(handle);
 app
   .prepare()
   .then(() => {
+    rabbitMQRPCClient.listenToReplyQueue();
     server.listen(port, () => {
       console.log(`> Ready on http://localhost:${port}`);
     });
@@ -22,5 +22,3 @@ app
   .catch((err) => {
     console.error(err);
   });
-
-startMonitoring();

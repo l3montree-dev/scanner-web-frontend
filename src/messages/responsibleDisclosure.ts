@@ -1,5 +1,5 @@
 import { IReport } from "../db/report";
-import { ResponsibleDisclosureValidationError } from "../inspection/organizational/responsibleDisclosureChecker";
+import { ResponsibleDisclosureValidationError } from "../inspection/result-enums/organizational.typings";
 
 export const getResponsibleDisclosureReportMessage = (report: IReport) => {
   const inspection = report.result["ResponsibleDisclosure"];
