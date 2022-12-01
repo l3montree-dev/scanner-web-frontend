@@ -3,7 +3,7 @@ import { randomUUID } from "crypto";
 import { Model } from "mongoose";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { toDTO } from "../../db/models";
-import { IReport } from "../../db/report";
+import { IDetailedReport } from "../../types";
 import { withDB } from "../../decorators/withDB";
 import { inspectRPC } from "../../inspection/inspect";
 import { getLogger } from "../../services/logger";
@@ -14,8 +14,8 @@ const logger = getLogger(__filename);
 
 const handler = async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<IReport | { error: string }>,
-  { Report }: { Report: Model<IReport> | null }
+  res: NextApiResponse<IDetailedReport | { error: string }>,
+  { DetailedReport }: { DetailedReport: Model<IDetailedReport> | null }
 ) {
   const start = Date.now();
 
@@ -45,7 +45,7 @@ const handler = async function handler(
 
   if (req.query.refresh !== "true") {
     // check if we already have a report for this site
-    const existingReport = await Report?.findOne(
+    const existingReport = await DetailedReport?.findOne(
       {
         fqdn: siteToScan,
         createdAt: {
@@ -85,8 +85,8 @@ const handler = async function handler(
       result: results,
     };
 
-    if (Report) {
-      const report = new Report(data);
+    if (DetailedReport) {
+      const report = new DetailedReport(data);
       return res.json(toDTO((await report.save()).toObject()));
     } else {
       return res.json({

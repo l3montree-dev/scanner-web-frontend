@@ -1,18 +1,6 @@
 version: '3'
 
-services:
-  ozgsec:
-    build: .
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=development
-    command: ["npm", "run", "dev"]
-    volumes:
-      - .:/usr/app
-      - /usr/app/.next
-      - /usr/app/node_modules
-    
+services:    
   test-server:
     build: test-server/
     volumes:

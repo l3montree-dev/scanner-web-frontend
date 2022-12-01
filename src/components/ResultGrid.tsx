@@ -1,5 +1,4 @@
 import { FunctionComponent } from "react";
-import { IReport } from "../db/report";
 import { getCAAReportMessage } from "../messages/caa";
 import { getDNSSecReportMessage } from "../messages/dnsSec";
 import { getHSTSReportMessage } from "../messages/hsts";
@@ -7,6 +6,7 @@ import { getResponsibleDisclosureReportMessage } from "../messages/responsibleDi
 import { getTLSv1_1_DeactivatedReportMessage } from "../messages/tlsv1_1_Deactivated";
 
 import { getTLSv1_3ReportMessage } from "../messages/tlsv1_3";
+import { IDetailedReport } from "../types";
 import { classNames } from "../utils/style-utils";
 import ResultBox from "./ResultBox";
 
@@ -28,7 +28,7 @@ const messages = {
 };
 
 const getDescription = (
-  report: IReport,
+  report: IDetailedReport,
   key:
     | "DNSSec"
     | "CAA"
@@ -40,7 +40,7 @@ const getDescription = (
   return messages[key](report);
 };
 interface Props {
-  report: IReport;
+  report: IDetailedReport;
 }
 const ResultGrid: FunctionComponent<Props> = (props) => {
   const { report } = props;

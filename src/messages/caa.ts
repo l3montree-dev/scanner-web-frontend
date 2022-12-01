@@ -1,6 +1,6 @@
-import { IReport } from "../db/report";
+import { IDetailedReport } from "../types";
 
-export const getCAAReportMessage = (report: IReport) => {
+export const getCAAReportMessage = (report: IDetailedReport) => {
   const inspection = report.result["CAA"];
   if (inspection.didPass === null) {
     return `Die Überprüfung nach CAA Einträgen für die Domain ${report.fqdn} konnte nicht durchgeführt werden.`;

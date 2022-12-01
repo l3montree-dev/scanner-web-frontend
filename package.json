@@ -16,6 +16,7 @@
         "@fortawesome/fontawesome-svg-core": "^6.2.0",
         "@fortawesome/free-solid-svg-icons": "^6.2.0",
         "@fortawesome/react-fontawesome": "^0.2.0",
+        "@types/socket.io": "^3.0.2",
         "amqplib": "^0.10.3",
         "dotenv": "^16.0.3",
         "jsdom": "^20.0.0",
@@ -24,7 +25,8 @@
         "pino": "^8.6.0",
         "react": "18.2.0",
         "react-dom": "18.2.0",
-        "react-syntax-highlighter": "^15.5.0"
+        "react-syntax-highlighter": "^15.5.0",
+        "socket.io-client": "^4.5.4"
     },
     "devDependencies": {
         "@types/amqplib": "^0.10.0",
