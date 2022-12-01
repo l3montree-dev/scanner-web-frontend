@@ -18,13 +18,16 @@ const databaseCircuitBreaker = new CircuitBreaker(2, 2 * 60 * 1000);
 export const withDB = decorate(async () => {
   try {
     const con = databaseCircuitBreaker.run(() => timeout(getConnection()));
+
     return (await con).models as {
-      Report: Model<any>;
+      DetailedReport: Model<any>;
+      CompressedReport: Model<any>;
     };
   } catch (err) {
     logger.warn({ err }, "could not connect to database");
     return {
-      Report: null,
+      DetailedReport: null,
+      CompressedReport: null,
     };
   }
 });

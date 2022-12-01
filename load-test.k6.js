@@ -32,7 +32,7 @@ const encodedCredentials = encoding.b64encode(credentials);
 export default function () {
     const site = domains[scenario.iterationInTest % domains.length];
 
-    http.get(`https://dev.ozgsec.neuland-homeland.de/api/scan?site=${site}`, {
+    http.get(`http://localhost:3000/api/trigger?site=${site}`, {
         headers: {
             Authorization: `Basic ${encodedCredentials}`,
         },

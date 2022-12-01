@@ -1,12 +1,19 @@
 import { Model, Schema, Types } from "mongoose";
-import { IReport, reportSchema } from "./report";
+import {
+  IDetailedReport,
+  detailedReportSchema,
+  ICompressedReport,
+  compressedReportSchema,
+} from "./report";
 
 export const models: { [name: string]: Schema } = {
-  Report: reportSchema,
+  DetailedReport: detailedReportSchema,
+  CompressedReport: compressedReportSchema,
 };
 
 export interface ModelsType {
-  Report: Model<IReport>;
+  DetailedReport: Model<IDetailedReport>;
+  CompressedReport: Model<ICompressedReport>;
 }
 
 export type WithId<T> = Omit<T, "_id"> & { id: string };

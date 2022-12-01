@@ -1,6 +1,8 @@
-import { IReport } from "../db/report";
+import { IDetailedReport } from "../db/report";
 
-export const getTLSv1_1_DeactivatedReportMessage = (report: IReport) => {
+export const getTLSv1_1_DeactivatedReportMessage = (
+  report: IDetailedReport
+) => {
   const inspection = report.result["TLSv1_1_Deactivated"];
   if (inspection.didPass === null) {
     return "Die Überprüfung der Protokolle TLS 1.1 und älter sowie SSL konnte nicht durchgeführt werden.";

@@ -7,13 +7,11 @@ import { getLogger } from "./logger";
 const logger = getLogger(__filename);
 
 export class RabbitMQClient {
+  protected instanceId = randomUUID();
   private connection: Promise<amqp.Connection> | null = null;
   private publishChannel: amqp.Channel | null = null;
   private subscribeChannel: amqp.Channel | null = null;
-  constructor(
-    protected rabbitmqConnString: string,
-    protected replyToQueue: string
-  ) {}
+  constructor(protected rabbitmqConnString: string) {}
 
   private connect() {
     if (!this.connection) {
@@ -38,10 +36,11 @@ export class RabbitMQClient {
 
   async subscribe(
     queue: string,
-    listener: (msg: amqp.Message) => Promise<void> | void
+    listener: (msg: amqp.Message) => Promise<void> | void,
+    queueOptions?: amqp.Options.AssertQueue
   ) {
     const channel = await this.getSubscribeChannel();
-    channel.assertQueue(queue);
+    channel.assertQueue(queue, queueOptions);
     channel.consume(queue, async (msg) => {
       if (msg) {
         try {
@@ -71,6 +70,7 @@ export class RabbitMQClient {
     options?: amqp.Options.Publish
   ): Promise<void> {
     const channel = await this.getPublishChannel();
+
     channel.assertQueue(queue, queueOptions);
     channel.sendToQueue(
       queue,
@@ -86,16 +86,31 @@ export class RabbitMQClient {
 export class RabbitMQRPCClient extends RabbitMQClient {
   private eventEmitter = new EventEmitter();
 
-  constructor(rabbitmqConnString: string, replyToQueue: string) {
-    super(rabbitmqConnString, replyToQueue);
+  constructor(rabbitmqConnString: string) {
+    super(rabbitmqConnString);
+    this.listenToReplyQueue();
   }
   async listenToReplyQueue() {
-    logger.info("listening to reply queue");
-    this.subscribe(this.replyToQueue, (msg) => {
-      if (msg) {
-        this.eventEmitter.emit(msg.properties.messageId, msg.content);
+    logger.info("listening to reply queue", this.instanceId);
+    this.subscribe(
+      this.instanceId,
+      (msg) => {
+        if (msg) {
+          const listenerWasRegistered = this.eventEmitter.emit(
+            msg.properties.messageId,
+            msg.content
+          );
+          if (!listenerWasRegistered) {
+            logger.warn(
+              `no listener was registered for ${msg.properties.messageId}`
+            );
+          }
+        }
+      },
+      {
+        exclusive: true,
       }
-    });
+    );
   }
 
   call<T extends Record<string, any>>(
@@ -105,7 +120,6 @@ export class RabbitMQRPCClient extends RabbitMQClient {
   ): Promise<T> {
     return new Promise(async (resolve) => {
       // resolve the promise after receiving an event - might block forever.
-      console.log("waiting for", options.messageId);
       this.eventEmitter.once(options.messageId, (buffer) => {
         resolve(JSON.parse(buffer.toString()).data);
       });
@@ -114,7 +128,7 @@ export class RabbitMQRPCClient extends RabbitMQClient {
         message,
         { durable: true, maxPriority: 10 },
         {
-          replyTo: this.replyToQueue,
+          replyTo: this.instanceId,
           // an rpc should always have a higher priority than a regular message
           priority: 5,
           ...options,
@@ -124,7 +138,5 @@ export class RabbitMQRPCClient extends RabbitMQClient {
   }
 }
 
-export const rabbitMQRPCClient = new RabbitMQRPCClient(
-  getRabbitMQConnString(),
-  process.env.SCAN_RESPONSE_QUEUE ?? "scan-response"
-);
+export const rabbitMQRPCClient = new RabbitMQRPCClient(getRabbitMQConnString());
+export const rabbitMQClient = new RabbitMQClient(getRabbitMQConnString());

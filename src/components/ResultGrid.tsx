@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react";
-import { IReport } from "../db/report";
+import { IDetailedReport } from "../db/report";
 import { getCAAReportMessage } from "../messages/caa";
 import { getDNSSecReportMessage } from "../messages/dnsSec";
 import { getHSTSReportMessage } from "../messages/hsts";
@@ -28,7 +28,7 @@ const messages = {
 };
 
 const getDescription = (
-  report: IReport,
+  report: IDetailedReport,
   key:
     | "DNSSec"
     | "CAA"
@@ -40,7 +40,7 @@ const getDescription = (
   return messages[key](report);
 };
 interface Props {
-  report: IReport;
+  report: IDetailedReport;
 }
 const ResultGrid: FunctionComponent<Props> = (props) => {
   const { report } = props;

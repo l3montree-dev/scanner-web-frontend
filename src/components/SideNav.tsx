@@ -1,12 +1,8 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import React, { FunctionComponent, useState } from "react";
-import { IReport } from "../db/report";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  HeaderInspectionType,
-  InspectionType,
-  TLSInspectionType,
-} from "../inspection/Inspector";
+import { IDetailedReport } from "../db/report";
+
 import {
   faCaretDown,
   faCaretUp,
@@ -14,9 +10,13 @@ import {
   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
-import { classNames } from "../utils/style-utils";
-import { useRouter } from "next/router";
 import useHash from "../hooks/useHash";
+import {
+  HeaderInspectionType,
+  InspectionType,
+  TLSInspectionType,
+} from "../inspection/scans";
+import { classNames } from "../utils/style-utils";
 
 interface MenuItem {
   title: string;
@@ -156,7 +156,7 @@ const SectionGroup: FunctionComponent<
     </div>
   );
 };
-const SideNav: FunctionComponent<IReport> = (props) => {
+const SideNav: FunctionComponent<IDetailedReport> = (props) => {
   const didPass = (inspections: InspectionType[]) => {
     return inspections.every((inspection) => props.result[inspection].didPass);
   };

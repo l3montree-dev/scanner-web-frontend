@@ -5,18 +5,20 @@ import TLS from "../components/report-content/TLS";
 import SideNav from "../components/SideNav";
 import getConnection from "../db/connection";
 import { toDTO, WithId } from "../db/models";
-import { IReport } from "../db/report";
+import { IDetailedReport } from "../db/report";
 import useHash from "../hooks/useHash";
 
 // Maybe use lazy loading in the future.
 const hashComponentMapping: {
   [hash: string]: (
-    props: WithId<IReport>
-  ) => React.ReactElement<WithId<IReport>, any>;
+    props: WithId<IDetailedReport>
+  ) => React.ReactElement<WithId<IDetailedReport>, any>;
 } = {
   tls: TLS,
 };
-const ReportId: FunctionComponent<{ report: WithId<IReport> }> = (props) => {
+const ReportId: FunctionComponent<{ report: WithId<IDetailedReport> }> = (
+  props
+) => {
   const hash = useHash();
   const Component = useMemo(() => hashComponentMapping[hash], [hash]);
   return (
@@ -32,7 +34,7 @@ const ReportId: FunctionComponent<{ report: WithId<IReport> }> = (props) => {
 export default ReportId;
 
 export const getServerSideProps: GetServerSideProps<{
-  report: WithId<IReport>;
+  report: WithId<IDetailedReport>;
 }> = async (context: GetServerSidePropsContext) => {
   const reportId = context.params?.reportId;
   if (!reportId) {
@@ -45,7 +47,9 @@ export const getServerSideProps: GetServerSideProps<{
   }
   // fetch the report from the database.
   const connection = await getConnection();
-  const report = await connection.models.Report.findById(reportId).lean();
+  const report = await connection.models.DetailedReport.findById(
+    reportId
+  ).lean();
   if (!report) {
     return {
       redirect: {

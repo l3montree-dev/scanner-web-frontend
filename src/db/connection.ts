@@ -1,4 +1,4 @@
-import mongoose, { Connection, Model, Mongoose } from "mongoose";
+import mongoose, { Connection, Mongoose } from "mongoose";
 import { getLogger } from "../services/logger";
 import { models, ModelsType } from "./models";
 
@@ -30,7 +30,6 @@ async function connect() {
   }
   const dbUrl = `mongodb://${user}:${password}@${host}:${port}/${db}`;
 
-  console.log(dbUrl);
   // handle concurrent requests.
   if (connectionPromise) {
     logger.info(
