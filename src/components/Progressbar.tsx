@@ -4,7 +4,6 @@ interface Props {
   progress: number; // number between 0 and 1
 }
 const Progressbar: FunctionComponent<Props> = (props) => {
-  console.log(props.progress * 100);
   return (
     <div className="flex-1 flex-row flex items-center p-1 h-10 border">
       <div

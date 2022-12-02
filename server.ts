@@ -53,7 +53,13 @@ io.on("connection", (socket) => {
             return +a.replace(".", "") - +b.replace(".", "");
           })
         );
-        logger.info({ requestId, cidr }, `sending progress update for ${cidr}`);
+
+        logger.info(
+          { requestId, cidr },
+          `sending progress update for ${cidr}, queued: ${
+            "queued" in msg ? msg.queued : 0
+          }`
+        );
         socket.emit("ip-lookup", { ...msg, requestId, cidr });
         if (!isProgressMessage(msg)) {
           // the last message was received - stop the stream

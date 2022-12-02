@@ -1,34 +1,18 @@
-import {
-  faArrowUpRightFromSquare,
-  faRefresh,
-} from "@fortawesome/free-solid-svg-icons";
+import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { NextPage } from "next";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import Button from "../components/Button";
 import Meta from "../components/Meta";
 import Page from "../components/Page";
-import ResultGrid from "../components/ResultGrid";
-import {
-  IDetailedReport,
-  IIpLookupProgressUpdate,
-  IIpLookupReport,
-} from "../types";
 import useLoading from "../hooks/useLoading";
-import {
-  DomainInspectionType,
-  HeaderInspectionType,
-  InspectionType,
-  OrganizationalInspectionType,
-  TLSInspectionType,
-} from "../inspection/scans";
+import { IIpLookupProgressUpdate, IIpLookupReport } from "../types";
 
-import { clientHttpClient } from "../services/clientHttpClient";
 import { socket } from "../services/socketClient";
 import { isProgressMessage } from "../utils/common";
 
-import { classNames } from "../utils/style-utils";
 import Progressbar from "../components/Progressbar";
+import { classNames } from "../utils/style-utils";
 
 const cidrRegex = new RegExp(
   /^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$/
@@ -51,36 +35,7 @@ const IPLookup: NextPage = () => {
   const refreshRequest = useLoading();
   const [report, setReport] = useState<
     null | IIpLookupProgressUpdate | IIpLookupReport
-  >({
-    queued: 6,
-    results: {
-      "45.10.0.1": ["dus1.core.as209859.net", "core.as209859.net"],
-      "45.10.0.113": ["gw.telephony.esser.io"],
-      "45.10.0.116": ["cnf.telephony.esser.io"],
-      "45.10.0.117": ["dect.telephony.esser.io", "telephony.esser.io"],
-      "45.10.0.118": ["pbx.telephony.esser.io"],
-      "45.10.0.126": ["p126.telephony.esser.io", "esser.io"],
-      "45.10.0.129": ["vlan128.florianesser.koeln", "florianesser.koeln"],
-      "45.10.0.131": ["otzenrath.florianesser.koeln"],
-      "45.10.0.140": ["dns.florianesser.koeln"],
-      "45.10.0.161": ["tun-0001.dus.fesr.net", "dus.fesr.net"],
-      "45.10.0.2": ["dus2.core.as209859.net"],
-      "45.10.0.225": ["rt01.ohs.scix.cc", "ohs.scix.cc", "scix.cc"],
-      "45.10.0.25": ["mail.esser.io"],
-      "45.10.0.27": ["lists.femx.de", "femx.de"],
-      "45.10.0.28": ["mailcow.fesr.email", "fesr.email"],
-      "45.10.0.30": [
-        "vlan25.iapetos.hznr.fesr.net",
-        "iapetos.hznr.fesr.net",
-        "hznr.fesr.net",
-        "fesr.net",
-      ],
-      "45.10.0.5": ["fra2.core.as209859.net"],
-      "45.10.0.53": ["dns.as209859.net", "as209859.net"],
-    },
-    requestId: "2876a6aa-d355-4bba-8d3d-de1a7d012e4e",
-    cidr: "45.10.0.0/24",
-  });
+  >(null);
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -110,10 +65,14 @@ const IPLookup: NextPage = () => {
       }
     });
 
-    socket.on("connect", () => {
+    if (socket.connected) {
       socket.emit("ip-lookup", { cidr, requestId: crypto.randomUUID() });
-    });
-    socket.connect();
+    } else {
+      socket.on("connect", () => {
+        socket.emit("ip-lookup", { cidr, requestId: crypto.randomUUID() });
+      });
+      socket.connect();
+    }
   };
 
   useEffect(() => {
@@ -175,9 +134,12 @@ const IPLookup: NextPage = () => {
                   Testergebnisse für {report.cidr}
                 </h2>
                 {isProgressMessage(report) && (
-                  <div className="text-white w-52">
-                    <Progressbar progress={(100 - report.queued) / 100} />
-                    Warteschlangengrö{report.queued}
+                  <div className="text-white text-right w-52">
+                    <Progressbar
+                      progress={Math.max(0, (50 - report.queued) / 50)}
+                    />
+                    Warteschlangengrösse:{" "}
+                    <span className="font-bold">{report.queued}</span>
                   </div>
                 )}
               </div>
@@ -187,17 +149,17 @@ const IPLookup: NextPage = () => {
                 </p>
               )}
               {!refreshRequest.isLoading && !refreshRequest.errored && (
-                <div>
+                <div className="mt-10">
                   {Object.entries(report.results).map(([ip, result]) => (
                     <div key={ip} className="mt-2 flex flex-row items-center">
                       <h3 className="text-xl font-bold w-28 text-right mr-5">
                         {ip}
                       </h3>
-                      <div className="flex flex-wrap">
+                      <div className="flex flex-1 flex-wrap">
                         {result.map((domain) => (
                           <div
                             key={domain}
-                            className="p-2 bg-deepblue-200 rounded-md mr-2"
+                            className="p-2 bg-deepblue-200 mt-2 rounded-md mr-2"
                           >
                             {domain}
                             <a
