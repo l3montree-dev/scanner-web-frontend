@@ -55,15 +55,18 @@ const IPLookup: NextPage = () => {
     }, 10000);
 
     // listen for updates.
-    socket.on("ip-lookup", (data) => {
-      clearTimeout(timeout);
-      setReport(data);
-      if (!isProgressMessage(data)) {
-        console.log("finished ip-lookup, removing listeners");
-        socket.removeAllListeners("ip-lookup");
-        scanRequest.success();
+    socket.on(
+      "ip-lookup",
+      (data: IIpLookupReport | IIpLookupProgressUpdate) => {
+        clearTimeout(timeout);
+        setReport(data);
+        if (!isProgressMessage(data)) {
+          console.log("finished ip-lookup, removing listeners");
+          socket.removeAllListeners("ip-lookup");
+          scanRequest.success();
+        }
       }
-    });
+    );
 
     if (socket.connected) {
       socket.emit("ip-lookup", { cidr, requestId: crypto.randomUUID() });
