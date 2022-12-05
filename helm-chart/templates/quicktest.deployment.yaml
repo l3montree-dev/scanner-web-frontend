@@ -1,38 +1,38 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "ozgsec.fullname" . }}
+  name: quicktest
   labels:
     {{- include "ozgsec.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
+  {{- if not .Values.quicktest.autoscaling.enabled }}
+  replicas: {{ .Values.quicktest.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "ozgsec.selectorLabels" . | nindent 6 }}
+      app: quicktest
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
+      {{- with .Values.quicktest.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "ozgsec.selectorLabels" . | nindent 8 }}
+        app: quicktest
     spec:
-      {{- with .Values.imagePullSecrets }}
+      {{- with .Values.quicktest.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+        {{- toYaml .Values.quicktest.podSecurityContext | nindent 8 }}
       volumes:
         - name: request-montioring-config
           configMap:
             name: request-montioring-config
       containers:
         - name: request-monitoring-sidecar
-          image: "registry.gitlab.com/l3montree/request-monitoring-sidecar{{ .Values.requestMonitoringSidecar.image.tag | default ":latest" }}"
+          image: "registry.gitlab.com/l3montree/request-monitoring-sidecar:{{ .Values.requestMonitoringSidecar.image.tag | default ":latest" }}"
           ports:
             - name: rqm
               containerPort: 4000
@@ -46,11 +46,11 @@ spec:
             - mountPath: "/go/src/app/config"
               name: request-montioring-config
           imagePullPolicy: {{ .Values.requestMonitoringSidecar.image.pullPolicy }}
-        - name: {{ .Chart.Name }}
+        - name: quicktest
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "registry.gitlab.com/ozg-security/ozgsec-security-quick-test{{ .Values.ozgsec.image.tag | default "latest" }}"
-          imagePullPolicy: {{ .Values.ozgsec.image.pullPolicy }}
+            {{- toYaml .Values.quicktest.securityContext | nindent 12 }}
+          image: "registry.gitlab.com/ozg-security/ozgsec-security-quick-test:{{ .Values.quicktest.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.quicktest.image.pullPolicy }}
           ports:
             - name: http
               containerPort: 3000
@@ -63,11 +63,23 @@ spec:
             - name: MONGODB_USER
               value: ozgsec
             - name: MONGODB_HOST
-              value: ozgsec-mongodb
+              value: {{.Release.Namespace}}-mongodb
             - name: MONGODB_PORT
               value: "27017"
             - name: MONGODB_DATABASE  
               value: "ozgsec"
+            
+            - name: RABBITMQ_HOST
+              value: {{.Release.Namespace}}-rabbitmq
+            - name : RABBITMQ_PORT
+              value: "5672"
+            - name: RABBITMQ_USER
+              value: ozgsec
+            - name: RABBITMQ_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-credentials
+                  key: rabbitmq-password
           livenessProbe:
             initialDelaySeconds: 10
             periodSeconds: 30
@@ -81,16 +93,16 @@ spec:
               path: /
               port: http
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-      {{- with .Values.nodeSelector }}
+            {{- toYaml .Values.quicktest.resources | nindent 12 }}
+      {{- with .Values.quicktest.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.affinity }}
+      {{- with .Values.quicktest.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.tolerations }}
+      {{- with .Values.quicktest.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}

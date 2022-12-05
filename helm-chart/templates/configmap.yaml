@@ -9,7 +9,7 @@ data:
       forwardTo: http://localhost:3000
       pathRegex: api
     influxdb:
-      url: http://ozgsec-influxdb:8086
+      url: http://dev-ozgsec-influxdb:8086
       org: ozgsec
       bucket: ozgsec
       measurement: request

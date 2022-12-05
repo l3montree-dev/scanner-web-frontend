@@ -1,0 +1,28 @@
+{{- if .Values.quicktest.autoscaling.enabled }}
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: quicktest-hpa
+  labels:
+    {{- include "ozgsec.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: quicktest-deployment
+  minReplicas: {{ .Values.quicktest.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.quicktest.autoscaling.maxReplicas }}
+  metrics:
+    {{- if .Values.quicktest.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: {{ .Values.quicktest.autoscaling.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if .Values.quicktest.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        targetAverageUtilization: {{ .Values.quicktest.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- end }}
+{{- end }}

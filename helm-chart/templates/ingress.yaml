@@ -1,5 +1,4 @@
 {{- if .Values.ingress.enabled -}}
-{{- $fullName := include "ozgsec.fullname" . -}}
 {{- $svcPort := 4000 -}}
 {{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
   {{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
@@ -15,7 +14,7 @@ apiVersion: extensions/v1beta1
 {{- end }}
 kind: Ingress
 metadata:
-  name: {{ $fullName }}
+  name: quicktest-ingress
   labels:
     {{- include "ozgsec.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
@@ -41,21 +40,12 @@ spec:
     - host: {{ .host | quote }}
       http:
         paths:
-          {{- range .paths }}
-          - path: {{ .path }}
-            {{- if and .pathType (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
-            pathType: {{ .pathType }}
-            {{- end }}
-            backend:
-              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
+        - path: /
+          pathType: Prefix
+          backend:
               service:
-                name: {{ $fullName }}
+                name: quicktest-service
                 port:
-                  number: {{ $svcPort }}
-              {{- else }}
-              serviceName: {{ $fullName }}
-              servicePort: {{ $svcPort }}
-              {{- end }}
-          {{- end }}
+                  number: 4000
     {{- end }}
 {{- end }}

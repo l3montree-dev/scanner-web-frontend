@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sec-scanner-deployment
+  labels:
+    {{- include "ozgsec.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.secScanner.autoscaling.enabled }}
+  replicas: {{ .Values.secScanner.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+        app: sec-scanner
+  template:
+    metadata:
+      {{- with .Values.secScanner.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: sec-scanner
+    spec:
+      {{- with .Values.secScanner.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.secScanner.podSecurityContext | nindent 8 }}
+      containers:
+        - name: sec-scanner
+          securityContext:
+            {{- toYaml .Values.secScanner.securityContext | nindent 12 }}
+          image: "registry.gitlab.com/ozg-security/sec-scanner:{{ .Values.secScanner.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.secScanner.image.pullPolicy }}
+          env:   
+            - name: SERVER_TIMEOUT
+              value: {{ .Values.secScanner.serverTimeout | default "3000" | quote }}
+            - name: SERVER_RETRIES
+              value: {{ .Values.secScanner.serverRetries | default "0" | quote }}
+            - name: RABBITMQ_HOST
+              value: {{.Release.Namespace}}-rabbitmq
+            - name : RABBITMQ_PORT
+              value: "5672"
+            - name: RABBITMQ_USER
+              value: ozgsec
+            - name: RABBITMQ_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-credentials
+                  key: rabbitmq-password
+          resources:
+            {{- toYaml .Values.secScanner.resources | nindent 12 }}
+      {{- with .Values.secScanner.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.secScanner.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.secScanner.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

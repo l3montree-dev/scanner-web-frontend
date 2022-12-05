@@ -40,3 +40,5 @@ server.js
 
 helm-chart/charts/*
 !helm-chart/charts/.gitkeep
+
+helm-chart/values.yaml

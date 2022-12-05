@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "ozgsec.fullname" . }}
+  name: quicktest-service
   labels:
     {{- include "ozgsec.labels" . | nindent 4 }}
 spec:
@@ -9,4 +9,4 @@ spec:
     - port: 4000
       targetPort: 4000
   selector:
-    {{- include "ozgsec.selectorLabels" . | nindent 4 }}
+    app: quicktest

@@ -1,0 +1,28 @@
+{{- if .Values.netLookup.autoscaling.enabled }}
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: net-lookup-hpa
+  labels:
+    {{- include "ozgsec.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: net-lookup-deployment
+  minReplicas: {{ .Values.netLookup.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.netLookup.autoscaling.maxReplicas }}
+  metrics:
+    {{- if .Values.netLookup.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: {{ .Values.netLookup.autoscaling.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if .Values.netLookup.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        targetAverageUtilization: {{ .Values.netLookup.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- end }}
+{{- end }}

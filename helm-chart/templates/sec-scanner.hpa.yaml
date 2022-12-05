@@ -1,0 +1,28 @@
+{{- if .Values.secScanner.autoscaling.enabled }}
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: sec-scanner-hpa
+  labels:
+    {{- include "ozgsec.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: sec-scanner-deployment
+  minReplicas: {{ .Values.secScanner.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.secScanner.autoscaling.maxReplicas }}
+  metrics:
+    {{- if .Values.secScanner.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: {{ .Values.secScanner.autoscaling.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if .Values.secScanner.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        targetAverageUtilization: {{ .Values.secScanner.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- end }}
+{{- end }}

@@ -1,0 +1,107 @@
+quicktest:
+  image:
+    pullPolicy: IfNotPresent
+    tag: "v1.0.5"
+  imagePullSecrets: []
+  annotations: {}
+  podAnnotations: {}
+  podSecurityContext: {}
+    # fsGroup: 2000
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+  resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  replicaCount: 1
+
+
+# Attached to the quicktest deployment as sidecar.
+# enables influxdb basic request monitoring.
+requestMonitoringSidecar:
+  image:
+    pullPolicy: IfNotPresent
+    tag: "v1.0.4"
+
+secScanner:
+  image:
+    pullPolicy: IfNotPresent
+    tag: "v1.0.3"
+  # decrease this value to increase the performance of the scanner
+  # but it will decrease the accuracy since some pages might need more time to load
+  # defaults to 3000
+  serverTimeout: "3000"
+  # the amount of retries if a scanning request fails.
+  # if the value is 0, the request wont be retried
+  # defaults to 0
+  serverRetries: "0"
+  autoscaling: {}
+  imagePullSecrets: []
+  replicaCount: 1
+
+netLookup:
+  image:
+    pullPolicy: IfNotPresent
+    tag: "v0.1.0"
+  autoscaling: {}
+  imagePullSecrets: []
+  replicaCount: 1
+
+ingress:
+  enabled: true
+  className: ""
+  annotations: {}
+  hosts:
+    - host: ozgsec.example.com
+  tls:
+    - secretName: ozgsec-tls
+      hosts:
+        - ozgsec.example.com
+
+
+####################
+## DO NOT MODIFY! ##
+####################
+influxdb:
+  auth:
+    existingSecret: influxdb-credentials
+    writeUser:
+      username: ozgsec-write
+    readUser:
+      username: ozgsec-read
+    user:
+      username: ozgsec
+      org: ozgsec
+      bucket: ozgsec
+
+
+# define the mongo db credentials using an existing secret
+mongodb:
+  auth:
+    existingSecret: mongodb-credentials
+    usernames:
+      - ozgsec
+    databases:
+      - ozgsec
+
+rabbitmq:
+  auth:
+    username: ozgsec
+    existingPasswordSecret: rabbitmq-credentials
