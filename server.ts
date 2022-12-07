@@ -58,7 +58,7 @@ io.on("connection", (socket) => {
           { requestId, cidr },
           `sending progress update for ${cidr}, queued: ${
             "queued" in msg ? msg.queued : 0
-          }`
+          }, ${"processed" in msg ? msg.processed : 0} processed"}`
         );
         socket.emit("ip-lookup", { ...msg, requestId, cidr });
         if (!isProgressMessage(msg)) {

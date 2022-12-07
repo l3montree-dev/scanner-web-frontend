@@ -18,17 +18,6 @@ const cidrRegex = new RegExp(
   /^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$/
 );
 
-const isInViewport = (element: HTMLElement) => {
-  const rect = element.getBoundingClientRect();
-  return (
-    rect.top >= 0 &&
-    rect.left >= 0 &&
-    rect.bottom <=
-      (window.innerHeight || document.documentElement.clientHeight) &&
-    rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-  );
-};
-
 const IPLookup: NextPage = () => {
   const [cidr, setCidr] = useState("");
   const scanRequest = useLoading();
@@ -139,10 +128,12 @@ const IPLookup: NextPage = () => {
                 {isProgressMessage(report) && (
                   <div className="text-white text-right w-52">
                     <Progressbar
-                      progress={Math.max(0, (50 - report.queued) / 50)}
+                      progress={Math.max(0, report.processed / report.queued)}
                     />
                     Warteschlangengrösse:{" "}
-                    <span className="font-bold">{report.queued}</span>
+                    <span className="font-bold">
+                      {report.processed}/{report.queued}
+                    </span>
                   </div>
                 )}
               </div>

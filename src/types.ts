@@ -37,5 +37,6 @@ export interface IIpLookupProgressUpdate {
   requestId: string;
   cidr: string;
   queued: number;
+  processed: number;
   results: { [ip: string]: string[] };
 }
