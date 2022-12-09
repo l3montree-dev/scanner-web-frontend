@@ -19,7 +19,6 @@ export const inspectRPC = async (requestId: string, fqdn: string) => {
     },
     { messageId: requestId }
   );
-  console.log(result);
   if ("error" in result) {
     throw new Error(result.error);
   }

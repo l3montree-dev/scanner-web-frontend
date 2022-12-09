@@ -42,3 +42,4 @@ helm-chart/charts/*
 !helm-chart/charts/.gitkeep
 
 helm-chart/values.yaml
+helm-chart/values.prod.yaml

@@ -34,7 +34,7 @@ spec:
           imagePullPolicy: {{ .Values.netLookup.image.pullPolicy }}
           env:
             - name: RABBITMQ_HOST
-              value: dev-ozgsec-rabbitmq
+              value: {{.Release.Namespace}}-rabbitmq
             - name : RABBITMQ_PORT
               value: "5672"
             - name: RABBITMQ_USER
