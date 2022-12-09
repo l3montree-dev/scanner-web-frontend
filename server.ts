@@ -7,11 +7,14 @@ import {
   rabbitMQRPCClient,
 } from "./src/services/rabbitmqClient";
 import { Server } from "socket.io";
-import { isProgressMessage } from "./src/utils/common";
+import {
+  isProgressMessage,
+  transformIpLookupMsg2DTO,
+} from "./src/utils/common";
 import {
   ICompressedReport,
-  IIpLookupProgressUpdate,
-  IIpLookupReport,
+  IIpLookupProgressUpdateMsg as IIpLookupProgressUpdateMsg,
+  IIpLookupReportMsg as IIpLookupReportMsg,
 } from "./src/types";
 const logger = getLogger(__filename);
 
@@ -46,13 +49,10 @@ io.on("connection", (socket) => {
       {
         messageId: requestId,
       },
-      (cancelFn, msg: IIpLookupProgressUpdate | IIpLookupReport) => {
+      (cancelFn, msg: IIpLookupProgressUpdateMsg | IIpLookupReportMsg) => {
         // order the result list by IP address
-        msg.results = Object.fromEntries(
-          Object.entries(msg.results).sort(([a], [b]) => {
-            return +a.replace(".", "") - +b.replace(".", "");
-          })
-        );
+        const results = transformIpLookupMsg2DTO(msg);
+        results.results.sort((a, b) => a.domain.localeCompare(b.domain));
 
         logger.info(
           { requestId, cidr },
@@ -60,7 +60,7 @@ io.on("connection", (socket) => {
             "queued" in msg ? msg.queued : 0
           }, ${"processed" in msg ? msg.processed : 0} processed"}`
         );
-        socket.emit("ip-lookup", { ...msg, requestId, cidr });
+        socket.emit("ip-lookup", { ...results, requestId, cidr });
         if (!isProgressMessage(msg)) {
           // the last message was received - stop the stream
           cancelFn();

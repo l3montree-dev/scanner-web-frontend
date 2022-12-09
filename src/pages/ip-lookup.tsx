@@ -6,7 +6,12 @@ import Button from "../components/Button";
 import Meta from "../components/Meta";
 import Page from "../components/Page";
 import useLoading from "../hooks/useLoading";
-import { IIpLookupProgressUpdate, IIpLookupReport } from "../types";
+import {
+  IIpLookupProgressUpdateDTO,
+  IIpLookupProgressUpdateMsg,
+  IIpLookupReportDTO,
+  IIpLookupReportMsg,
+} from "../types";
 
 import { socket } from "../services/socketClient";
 import { isProgressMessage } from "../utils/common";
@@ -23,7 +28,7 @@ const IPLookup: NextPage = () => {
   const scanRequest = useLoading();
   const refreshRequest = useLoading();
   const [report, setReport] = useState<
-    null | IIpLookupProgressUpdate | IIpLookupReport
+    null | IIpLookupReportDTO | IIpLookupProgressUpdateDTO
   >(null);
 
   const onSubmit = async (e: FormEvent) => {
@@ -46,8 +51,9 @@ const IPLookup: NextPage = () => {
     // listen for updates.
     socket.on(
       "ip-lookup",
-      (data: IIpLookupReport | IIpLookupProgressUpdate) => {
+      (data: IIpLookupReportDTO | IIpLookupProgressUpdateDTO) => {
         clearTimeout(timeout);
+        console.log(data);
         setReport(data);
         if (!isProgressMessage(data)) {
           console.log("finished ip-lookup, removing listeners");
@@ -122,9 +128,12 @@ const IPLookup: NextPage = () => {
           {report !== null && (
             <div className="mt-10 p-5 md:p-0 text-white">
               <div className="flex justify-between flex-row">
-                <h2 id="test-results" className="text-white text-2xl">
-                  Testergebnisse für {report.cidr}
-                </h2>
+                <div>
+                  <h2 id="test-results" className="text-white text-2xl">
+                    Testergebnisse für {report.cidr}
+                  </h2>
+                  <span>Gefundene DNS Einträge: {report.results.length}</span>
+                </div>
                 {isProgressMessage(report) && (
                   <div className="text-white text-right w-52">
                     <Progressbar
@@ -144,31 +153,27 @@ const IPLookup: NextPage = () => {
               )}
               {!refreshRequest.isLoading && !refreshRequest.errored && (
                 <div className="mt-10">
-                  {Object.entries(report.results).map(([ip, result]) => (
-                    <div key={ip} className="mt-2 flex flex-row items-center">
-                      <h3 className="text-xl font-bold w-28 text-right mr-5">
-                        {ip}
-                      </h3>
+                  {report.results.map(({ ip, domain }) => (
+                    <div
+                      key={ip + domain}
+                      className="mt-2 flex border-b border-b-deepblue-200 flex-row items-center"
+                    >
                       <div className="flex flex-1 flex-wrap">
-                        {result.map((domain) => (
-                          <div
-                            key={domain}
-                            className="p-2 bg-deepblue-200 mt-2 rounded-md mr-2"
-                          >
-                            {domain}
-                            <a
-                              rel="noopener noreferrer nofollow"
-                              target="_blank"
-                              href={`//${domain}`}
-                            >
-                              <FontAwesomeIcon
-                                className="ml-2 cursor-pointer"
-                                icon={faArrowUpRightFromSquare}
-                              />
-                            </a>
-                          </div>
-                        ))}
+                        {domain}
+                        <a
+                          rel="noopener noreferrer nofollow"
+                          target="_blank"
+                          href={`//${domain}`}
+                        >
+                          <FontAwesomeIcon
+                            className="ml-2 cursor-pointer"
+                            icon={faArrowUpRightFromSquare}
+                          />
+                        </a>
                       </div>
+                      <span className="font-bold flex-1 text-left mr-5">
+                        {ip}
+                      </span>
                     </div>
                   ))}
                 </div>

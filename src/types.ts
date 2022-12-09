@@ -20,23 +20,32 @@ export interface ICompressedReport extends IReport {
   };
 }
 
-export type IIpLookupReport = {
+export type IIpLookupReportMsg = {
   results: { [ip: string]: string[] };
 } & {
   cidr: string;
   requestId: string;
 };
 
-export interface IpLookupRequest {
+export interface IIpLookupRequestMsg {
   cidr: string;
   requestId: string;
   sendProgress?: boolean; // defaults to false
 }
 
-export interface IIpLookupProgressUpdate {
+export interface IIpLookupProgressUpdateMsg {
   requestId: string;
   cidr: string;
   queued: number;
   processed: number;
   results: { [ip: string]: string[] };
 }
+
+export type IIpLookupProgressUpdateDTO = Omit<
+  IIpLookupProgressUpdateMsg,
+  "results"
+> & { results: Array<{ domain: string; ip: string }> };
+
+export type IIpLookupReportDTO = Omit<IIpLookupReportMsg, "results"> & {
+  results: Array<{ domain: string; ip: string }>;
+};
