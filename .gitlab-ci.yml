@@ -38,20 +38,6 @@ jest:
           --dockerfile $CI_PROJECT_DIR/Dockerfile
           --destination $IMAGE_TAG
 
-build-dev:
-    extends: .build-template
-    variables:
-        IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME
-    only:
-        - dev
-
-build-main:
-    extends: .build-template
-    variables:
-        IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME
-    only:
-        - main
-
 build-tag:
     extends: .build-template
     variables:
