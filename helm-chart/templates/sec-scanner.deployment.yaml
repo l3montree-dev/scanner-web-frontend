@@ -43,6 +43,8 @@ spec:
               value: "5672"
             - name: RABBITMQ_USER
               value: ozgsec
+            - name: RIPE_SOURCE_APP
+              value: {{ .Values.secScanner.ripeSourceApp | default "" | quote }}
             - name: RABBITMQ_PASS
               valueFrom:
                 secretKeyRef:

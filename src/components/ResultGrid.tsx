@@ -3,6 +3,7 @@ import { getCAAReportMessage } from "../messages/caa";
 import { getDNSSecReportMessage } from "../messages/dnsSec";
 import { getHSTSReportMessage } from "../messages/hsts";
 import { getResponsibleDisclosureReportMessage } from "../messages/responsibleDisclosure";
+import getRPKIReportMessage from "../messages/rpki";
 import { getTLSv1_1_DeactivatedReportMessage } from "../messages/tlsv1_1_Deactivated";
 
 import { getTLSv1_3ReportMessage } from "../messages/tlsv1_3";
@@ -25,6 +26,7 @@ const messages = {
   TLSv1_1_Deactivated: getTLSv1_1_DeactivatedReportMessage,
   HSTS: getHSTSReportMessage,
   ResponsibleDisclosure: getResponsibleDisclosureReportMessage,
+  RPKI: getRPKIReportMessage,
 };
 
 const getDescription = (
@@ -36,6 +38,7 @@ const getDescription = (
     | "TLSv1_1_Deactivated"
     | "HSTS"
     | "ResponsibleDisclosure"
+    | "RPKI"
 ): string => {
   return messages[key](report);
 };
@@ -49,7 +52,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
       <div className="md:w-1/3 sm:w-1/2 w-full md:mb-4 mb-5 sm:pr-2">
         <div
           className={classNames(
-            "bg-deepblue-400 border  h-full p-5",
+            "bg-deepblue-400 border h-full p-5",
             borderClass(report.result.ResponsibleDisclosure.didPass)
           )}
         >
@@ -64,7 +67,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
       <div className="md:w-1/3 sm:w-1/2 w-full sm:pl-2 md:px-2 md:mb-4 mb-5">
         <div
           className={classNames(
-            "bg-deepblue-400 border  h-full p-4",
+            "bg-deepblue-400 border h-full p-4",
             borderClass(report.result.TLSv1_3.didPass)
           )}
         >
@@ -79,7 +82,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
       <div className="md:w-1/3 sm:w-1/2 w-full sm:pr-2 md:pr-0 md:pl-2 md:mb-4 mb-5">
         <div
           className={classNames(
-            "bg-deepblue-400 border  h-full p-4",
+            "bg-deepblue-400 border h-full p-4",
             borderClass(report.result.TLSv1_1_Deactivated.didPass)
           )}
         >
@@ -94,7 +97,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
       <div className="md:w-1/3 sm:w-1/2 w-full md:mb-4 mb-5 sm:pl-2 md:pl-0 md:pr-2">
         <div
           className={classNames(
-            "bg-deepblue-400 border  h-full p-4",
+            "bg-deepblue-400 border h-full p-4",
             borderClass(report.result.HSTS.didPass)
           )}
         >
@@ -109,7 +112,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
       <div className="md:w-1/3 sm:w-1/2 w-full sm:pr-2 md:mb-4 mb-5 md:px-2">
         <div
           className={classNames(
-            "bg-deepblue-400 border  h-full p-4",
+            "bg-deepblue-400 border h-full p-4",
             borderClass(report.result.DNSSec.didPass)
           )}
         >
@@ -124,7 +127,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
       <div className="md:w-1/3 sm:w-1/2 w-full md:mb-4 mb-5 sm:pl-2">
         <div
           className={classNames(
-            "bg-deepblue-400 border  h-full p-4",
+            "bg-deepblue-400 border h-full p-4",
             borderClass(report.result.CAA.didPass)
           )}
         >
@@ -133,6 +136,22 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
             link="/one-pager/CAA-One-Pager.pdf"
             description={getDescription(report, "CAA")}
             didPass={report.result.CAA.didPass}
+          />
+        </div>
+      </div>
+
+      <div className="md:w-1/3 sm:w-1/2 md:mb-4 mb-5 sm:pr-2">
+        <div
+          className={classNames(
+            "bg-deepblue-400 border h-full p-4",
+            borderClass(report.result.CAA.didPass)
+          )}
+        >
+          <ResultBox
+            title="RPKI"
+            link="/one-pager/RPKI-One-Pager.pdf"
+            description={getDescription(report, "RPKI")}
+            didPass={report.result.RPKI.didPass}
           />
         </div>
       </div>

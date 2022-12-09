@@ -24,6 +24,10 @@ export enum HttpInspectionType {
   HTTPRedirectsToHttps = "HTTPRedirectsToHttps",
 }
 
+export enum RPKIInspectionType {
+  RPKI = "RPKI",
+}
+
 export enum HeaderInspectionType {
   HTTPS = "HTTPS",
   HSTS = "HSTS",
@@ -69,7 +73,8 @@ export type InspectionType =
   | DomainInspectionType
   | OrganizationalInspectionType
   | ContentInspectionType
-  | HeaderInspectionType;
+  | HeaderInspectionType
+  | RPKIInspectionType;
 
 export interface InspectResultDTO {
   type: InspectionType;
