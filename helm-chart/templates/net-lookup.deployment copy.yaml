@@ -44,6 +44,11 @@ spec:
                 secretKeyRef:
                   name: rabbitmq-credentials
                   key: rabbitmq-password
+            - name: HACKERTARGET_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: hackertarget-api-key
+                  key: hackertarget-api-key
           resources:
             {{- toYaml .Values.netLookup.resources | nindent 12 }}
       {{- with .Values.netLookup.nodeSelector }}

@@ -74,6 +74,18 @@ data:
 type: Opaque
 ```
 
+Besides that, a hackertarget api key needs to be created. This can be done by creating a secret which matches the following format:
+
+```yaml
+apiVersion: v1
+metadata:
+  name: hackertarget-api-key # important!
+kind: Secret
+data:
+  hackertarget-api: <the api key>
+type: Opaque
+```
+
 It is recommended to create an api token with limited capabilities. Only the write capability is required.
 
 The helm chart includes the following setup:
@@ -83,7 +95,7 @@ The helm chart includes the following setup:
 3. A influxdb database for monitoring purposes
 4. A sidecar setup to monitor the incoming requests
 
-The [values.yaml](./helm-chart/values.yaml) provides a good overview of the configuration options.
+The [values.example.yaml](./helm-chart/values.example.yaml) provides a good overview of the configuration options.
 
 The helm chart can be installed using the following commands:
 
