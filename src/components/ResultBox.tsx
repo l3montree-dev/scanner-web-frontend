@@ -11,7 +11,7 @@ interface Props {
   didPass: boolean | null;
   title: string;
   description: string;
-  link: string;
+  link?: string;
 }
 
 const ResultBox: FunctionComponent<Props> = (props) => {
@@ -56,17 +56,19 @@ const ResultBox: FunctionComponent<Props> = (props) => {
         </div>
       </div>
 
-      <div className="flex flex-row justify-end">
-        <a
-          className="text-sm underline"
-          target="_blank"
-          download
-          href={props.link}
-          rel="noreferrer"
-        >
-          Mehr Informationen
-        </a>
-      </div>
+      {props.link !== undefined && (
+        <div className="flex flex-row justify-end">
+          <a
+            className="text-sm underline"
+            target="_blank"
+            download
+            href={props.link}
+            rel="noreferrer"
+          >
+            Mehr Informationen
+          </a>
+        </div>
+      )}
     </div>
   );
 };

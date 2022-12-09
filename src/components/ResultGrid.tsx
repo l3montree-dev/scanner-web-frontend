@@ -144,12 +144,11 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
         <div
           className={classNames(
             "bg-deepblue-400 border h-full p-4",
-            borderClass(report.result.CAA.didPass)
+            borderClass(report.result.RPKI.didPass)
           )}
         >
           <ResultBox
             title="RPKI"
-            link="/one-pager/RPKI-One-Pager.pdf"
             description={getDescription(report, "RPKI")}
             didPass={report.result.RPKI.didPass}
           />
