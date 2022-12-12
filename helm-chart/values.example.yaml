@@ -105,3 +105,11 @@ rabbitmq:
   auth:
     username: ozgsec
     existingPasswordSecret: rabbitmq-credentials
+
+keycloak:
+  auth:
+    existingSecret: keycloak-credentials
+    passwordSecretKey: keycloak-password
+  postgresql:
+    auth:
+      existingSecret: postgresql-credentials

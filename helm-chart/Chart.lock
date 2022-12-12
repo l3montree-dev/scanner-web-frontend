@@ -8,5 +8,8 @@ dependencies:
 - name: rabbitmq
   repository: https://charts.bitnami.com/bitnami
   version: 11.1.5
-digest: sha256:f201471398123e609cf79785947cd546e074d564fad227b8496a15103a7f7eaf
-generated: "2022-12-05T10:53:41.546298+01:00"
+- name: keycloak
+  repository: https://charts.bitnami.com/bitnami
+  version: 12.2.0
+digest: sha256:cde657dde9f44f30e73d46f3df053e586005551f8716f5eb2682d317e6a93128
+generated: "2022-12-12T10:13:25.098486+01:00"
