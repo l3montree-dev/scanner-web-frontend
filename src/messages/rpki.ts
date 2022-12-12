@@ -1,6 +1,6 @@
-import { IDetailedReport } from "../types";
+import { IReport } from "../types";
 
-export default function getRPKIReportMessage(report: IDetailedReport) {
+export default function getRPKIReportMessage(report: IReport) {
   const inspection = report.result["RPKI"];
   if (inspection.didPass === null) {
     return `Der RPKI Status der Domain ${report.fqdn} konnte nicht überprüft werden.`;

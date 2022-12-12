@@ -1,24 +1,17 @@
 import { Schema, SchemaTypes } from "mongoose";
-import { ICompressedReport, IDetailedReport } from "../types";
+import { IReport } from "../types";
 
-// in the future, this should be modified, to match the real report, after the type is rather stable and not subject to change.
-export const detailedReportSchema = new Schema<IDetailedReport>(
+export const reportSchema = new Schema<IReport>(
   {
-    fqdn: SchemaTypes.String,
+    fqdn: { type: SchemaTypes.String, index: true },
+    ipAddress: { type: SchemaTypes.String, index: true },
     duration: SchemaTypes.Number,
     result: SchemaTypes.Mixed,
     version: SchemaTypes.Number,
-    iconBase64: SchemaTypes.String,
+    validFrom: SchemaTypes.Number,
+    lastScan: SchemaTypes.Number,
   },
   { strict: true, timestamps: true }
 );
 
-export const compressedReportSchema = new Schema<ICompressedReport>(
-  {
-    fqdn: SchemaTypes.String,
-    duration: SchemaTypes.Number,
-    result: SchemaTypes.Mixed,
-    version: SchemaTypes.Number,
-  },
-  { strict: true, timestamps: true }
-);
+export const userSchema = new Schema({});

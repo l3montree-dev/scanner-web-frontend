@@ -16,7 +16,7 @@ import {
   TLSInspectionType,
 } from "../inspection/scans";
 import { classNames } from "../utils/style-utils";
-import { IDetailedReport } from "../types";
+import { IReport } from "../types";
 
 interface MenuItem {
   title: string;
@@ -156,7 +156,7 @@ const SectionGroup: FunctionComponent<
     </div>
   );
 };
-const SideNav: FunctionComponent<IDetailedReport> = (props) => {
+const SideNav: FunctionComponent<IReport> = (props) => {
   const didPass = (inspections: InspectionType[]) => {
     return inspections.every((inspection) => props.result[inspection].didPass);
   };

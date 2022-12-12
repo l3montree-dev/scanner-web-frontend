@@ -1,9 +1,7 @@
 import { ResponsibleDisclosureValidationError } from "../inspection/result-enums/organizational.typings";
-import { IDetailedReport } from "../types";
+import { IReport } from "../types";
 
-export const getResponsibleDisclosureReportMessage = (
-  report: IDetailedReport
-) => {
+export const getResponsibleDisclosureReportMessage = (report: IReport) => {
   const inspection = report.result["ResponsibleDisclosure"];
   if (inspection.didPass === null) {
     return `Die Datei ${report.fqdn}/.well-known/security.txt konnte nicht überprüft werden.`;

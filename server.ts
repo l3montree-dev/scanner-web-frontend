@@ -12,10 +12,11 @@ import {
   transformIpLookupMsg2DTO,
 } from "./src/utils/common";
 import {
-  ICompressedReport,
+  IReport,
   IIpLookupProgressUpdateMsg as IIpLookupProgressUpdateMsg,
   IIpLookupReportMsg as IIpLookupReportMsg,
 } from "./src/types";
+import { handleNewScanReport } from "./src/services/reportService";
 const logger = getLogger(__filename);
 
 const dev = process.env.NODE_ENV !== "production";
@@ -75,8 +76,11 @@ getConnection()
     rabbitMQClient.subscribe("scan-response", async (msg) => {
       const content = JSON.parse(msg.content.toString()).data as
         | {
-            results: ICompressedReport;
+            result: IReport["result"];
             fqdn: string;
+            icon: string;
+            ipAddress: string;
+            duration: number;
           }
         | { fqdn: string; error: any };
 
@@ -85,13 +89,19 @@ getConnection()
         return;
       }
 
-      const report = new connection.models.CompressedReport({
-        fqdn: content.fqdn,
-        result: content.results,
-        version: 1,
-      });
+      const now = Date.now();
       try {
-        await report.save();
+        await handleNewScanReport(
+          {
+            ...content,
+            validFrom: now,
+            lastScan: now,
+            iconBase64: content.icon,
+            automated: true,
+            version: 1,
+          },
+          connection.models.Report
+        );
       } catch (e) {
         // always ack the message - catch the error.
         logger.error(e);

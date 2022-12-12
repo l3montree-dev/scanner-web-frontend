@@ -1,6 +1,6 @@
-import { IDetailedReport } from "../types";
+import { IReport } from "../types";
 
-export const getDNSSecReportMessage = (report: IDetailedReport) => {
+export const getDNSSecReportMessage = (report: IReport) => {
   const inspection = report.result["DNSSec"];
   if (inspection.didPass === null) {
     return `DNSSEC konnte für die Domain ${report.fqdn} nicht überprüft werden.`;

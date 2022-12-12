@@ -7,7 +7,6 @@ import Meta from "../components/Meta";
 import Page from "../components/Page";
 import ResultGrid from "../components/ResultGrid";
 import { WithId } from "../db/models";
-import { IDetailedReport } from "../types";
 import useLoading from "../hooks/useLoading";
 import {
   DomainInspectionType,
@@ -18,6 +17,7 @@ import {
 } from "../inspection/scans";
 
 import { clientHttpClient } from "../services/clientHttpClient";
+import { IReport } from "../types";
 
 import { sanitizeFQDN } from "../utils/santize";
 import { classNames } from "../utils/style-utils";
@@ -41,7 +41,7 @@ const Home: NextPage = () => {
   const [website, setWebsite] = useState("");
   const scanRequest = useLoading();
   const refreshRequest = useLoading();
-  const [report, setReport] = useState<null | IDetailedReport>(null);
+  const [report, setReport] = useState<null | IReport>(null);
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -72,7 +72,7 @@ const Home: NextPage = () => {
         );
       }
 
-      const obj: WithId<IDetailedReport> = await response.json();
+      const obj: WithId<IReport> = await response.json();
       setReport(obj);
       scanRequest.success();
     } catch (e) {

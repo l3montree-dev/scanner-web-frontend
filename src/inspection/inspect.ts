@@ -1,20 +1,19 @@
-import { IDetailedReport } from "../types";
+import { IReport } from "../types";
 import { rabbitMQClient, rabbitMQRPCClient } from "../services/rabbitmqClient";
 
 export const inspectRPC = async (requestId: string, fqdn: string) => {
   const result = await rabbitMQRPCClient.call<
     | {
+        ipAddress: string;
         fqdn: string;
-        results: {
-          icon: string;
-          results: IDetailedReport["result"];
-        };
+        icon: string;
+        timestamp: number;
+        result: IReport["result"];
       }
     | { error: any }
   >(
     process.env.SCAN_REQUEST_QUEUE ?? "scan-request",
     {
-      includeDetails: true,
       fqdn,
     },
     { messageId: requestId }
@@ -23,14 +22,13 @@ export const inspectRPC = async (requestId: string, fqdn: string) => {
     throw new Error(result.error);
   }
 
-  return result.results;
+  return result;
 };
 
 export const inspect = async (requestId: string, fqdn: string) => {
   const result = await rabbitMQClient.publish(
     process.env.SCAN_REQUEST_QUEUE ?? "scan-request",
     {
-      includeDetails: false,
       fqdn,
     },
     { durable: true, maxPriority: 10 },

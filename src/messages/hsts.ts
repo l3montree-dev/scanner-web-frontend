@@ -1,7 +1,7 @@
 import { HSTSValidationError } from "../inspection/result-enums/hsts.typings";
-import { IDetailedReport } from "../types";
+import { IReport } from "../types";
 
-export const getHSTSReportMessage = (report: IDetailedReport) => {
+export const getHSTSReportMessage = (report: IReport) => {
   const inspection = report.result["HSTS"];
   if (inspection.didPass === null) {
     return "Die Überprüfung des Strict-Transport-Security Headers konnte nicht durchgeführt werden.";

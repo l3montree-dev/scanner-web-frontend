@@ -2,11 +2,13 @@
 import { randomUUID } from "crypto";
 import { Model } from "mongoose";
 import type { NextApiRequest, NextApiResponse } from "next";
+
 import { toDTO } from "../../db/models";
-import { IDetailedReport } from "../../types";
 import { withDB } from "../../decorators/withDB";
 import { inspectRPC } from "../../inspection/inspect";
 import { getLogger } from "../../services/logger";
+import { handleNewScanReport } from "../../services/reportService";
+import { IReport } from "../../types";
 
 import { sanitizeFQDN } from "../../utils/santize";
 
@@ -14,8 +16,8 @@ const logger = getLogger(__filename);
 
 const handler = async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<IDetailedReport | { error: string }>,
-  { DetailedReport }: { DetailedReport: Model<IDetailedReport> | null }
+  res: NextApiResponse<IReport | { error: string }>,
+  { Report }: { Report: Model<IReport> | null }
 ) {
   const start = Date.now();
 
@@ -45,10 +47,10 @@ const handler = async function handler(
 
   if (req.query.refresh !== "true") {
     // check if we already have a report for this site
-    const existingReport = await DetailedReport?.findOne(
+    const existingReport = await Report?.findOne(
       {
         fqdn: siteToScan,
-        createdAt: {
+        validUntil: {
           // last hour
           $gte: new Date(Date.now() - 1000 * 60 * 60 * 1),
         },
@@ -56,7 +58,7 @@ const handler = async function handler(
       null,
       {
         sort: {
-          createdAt: -1,
+          validUntil: -1,
         },
       }
     ).lean();
@@ -70,30 +72,28 @@ const handler = async function handler(
   }
 
   try {
-    const { icon, results } = await inspectRPC(requestId, siteToScan);
-
+    const result = await inspectRPC(requestId, siteToScan);
     logger.info(
       { duration: Date.now() - start, requestId },
       `successfully scanned site: ${siteToScan}`
     );
 
-    const data = {
-      fqdn: siteToScan,
+    const data: IReport = {
+      ...result,
       duration: Date.now() - start,
       version: 1,
-      iconBase64: icon,
-      result: results,
+      iconBase64: result.icon,
+      lastScan: result.timestamp,
+      validFrom: result.timestamp,
+      createdAt: result.timestamp,
+      updatedAt: result.timestamp,
+      automated: false,
     };
 
-    if (DetailedReport) {
-      const report = new DetailedReport(data);
-      return res.json(toDTO((await report.save()).toObject()));
+    if (Report) {
+      return res.json(toDTO(await handleNewScanReport(data, Report)));
     } else {
-      return res.json({
-        ...data,
-        createdAt: 0,
-        updatedAt: 0,
-      });
+      return res.json(data);
     }
   } catch (error: unknown) {
     if (error instanceof Error && error.message === "fetch failed") {

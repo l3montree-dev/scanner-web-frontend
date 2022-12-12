@@ -53,7 +53,6 @@ const IPLookup: NextPage = () => {
       "ip-lookup",
       (data: IIpLookupReportDTO | IIpLookupProgressUpdateDTO) => {
         clearTimeout(timeout);
-        console.log(data);
         setReport(data);
         if (!isProgressMessage(data)) {
           console.log("finished ip-lookup, removing listeners");

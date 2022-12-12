@@ -1,23 +1,23 @@
 import { InspectionType, InspectResultDTO } from "./inspection/scans";
 
 export interface IReport {
+  result: {
+    [key in InspectionType]: InspectResultDTO;
+  };
+  iconBase64: string | null;
+  validFrom: number;
+  lastScan: number;
   fqdn: string;
+  ipAddress: string;
   duration: number;
   version: number;
   createdAt: number;
   updatedAt: number;
-}
-export interface IDetailedReport extends IReport {
-  iconBase64: string | null;
-  result: {
-    [key in InspectionType]: InspectResultDTO;
-  };
+  automated: boolean;
 }
 
-export interface ICompressedReport extends IReport {
-  result: {
-    [key in InspectionType]: boolean;
-  };
+export interface IUser {
+  id: string;
 }
 
 export type IIpLookupReportMsg = {

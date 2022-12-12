@@ -20,14 +20,12 @@ export const withDB = decorate(async () => {
     const con = databaseCircuitBreaker.run(() => timeout(getConnection()));
 
     return (await con).models as {
-      DetailedReport: Model<any>;
-      CompressedReport: Model<any>;
+      Report: Model<any>;
     };
   } catch (err) {
     logger.warn({ err }, "could not connect to database");
     return {
-      DetailedReport: null,
-      CompressedReport: null,
+      Report: null,
     };
   }
 });
