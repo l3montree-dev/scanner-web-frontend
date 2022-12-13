@@ -1,6 +1,5 @@
 import { GetServerSideProps } from "next";
-import React from "react";
-import { unstable_getServerSession } from "next-auth/next";
+import { unstable_getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]";
 
 const Dashboard = () => {
@@ -17,10 +16,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   console.log(session);
 
   return {
-    props: {
-      redirect: "/",
-      // props for your component
-    },
+    props: {},
   };
 };
 
