@@ -15,8 +15,9 @@ import {
   InspectionType,
   TLSInspectionType,
 } from "../inspection/scans";
-import { classNames } from "../utils/style-utils";
+
 import { IReport } from "../types";
+import { classNames } from "../utils/common";
 
 interface MenuItem {
   title: string;

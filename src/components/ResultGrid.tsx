@@ -8,7 +8,8 @@ import { getTLSv1_1_DeactivatedReportMessage } from "../messages/tlsv1_1_Deactiv
 
 import { getTLSv1_3ReportMessage } from "../messages/tlsv1_3";
 import { IReport } from "../types";
-import { classNames } from "../utils/style-utils";
+import { classNames } from "../utils/common";
+
 import ResultBox from "./ResultBox";
 
 const borderClass = (didPass: boolean | null) => {

@@ -9,8 +9,7 @@ import { inspectRPC } from "../../inspection/inspect";
 import { getLogger } from "../../services/logger";
 import { handleNewScanReport } from "../../services/reportService";
 import { IReport } from "../../types";
-
-import { sanitizeFQDN } from "../../utils/santize";
+import { sanitizeFQDN } from "../../utils/common";
 
 const logger = getLogger(__filename);
 

@@ -13,9 +13,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     context.res,
     authOptions
   );
+
   console.log(session);
+
   return {
     props: {
+      redirect: "/",
       // props for your component
     },
   };

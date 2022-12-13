@@ -2,7 +2,7 @@ import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { FunctionComponent, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { classNames } from "../utils/style-utils";
+import { classNames } from "../utils/common";
 
 interface Props {
   children: React.ReactNode;

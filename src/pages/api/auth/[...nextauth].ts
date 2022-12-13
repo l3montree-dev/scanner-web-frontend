@@ -12,12 +12,17 @@ export const authOptions = {
     }),
   ],
   callbacks: {
-    // @ts-expect-error
-    async session({ session, token, user }) {
+    async session(params: any) {
       // Send properties to the client, like an access_token and user id from a provider.
-      console.log("session", session, token, user);
-      return session;
+      return { ...params.session, roles: params.token.roles };
+    },
+    jwt(params: any) {
+      if (params.profile) {
+        params.token.roles = params.profile.roles;
+      }
+      return params.token;
     },
   },
 };
+
 export default NextAuth(authOptions);

@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import getConnection from "../db/connection";
 import { getLogger } from "../services/logger";
 import CircuitBreaker from "../utils/CircuitBreaker";
-import { timeout } from "../utils/promise";
+import { timeout } from "../utils/common";
 import { decorate } from "./decorate";
 
 const logger = getLogger(__filename);

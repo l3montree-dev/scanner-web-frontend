@@ -1,4 +1,4 @@
-import { sanitizeFQDN } from "./santize";
+import { sanitizeFQDN } from "./common";
 
 describe("sanitize test suite", () => {
   it("should throw an error, if the input is not a string", () => {

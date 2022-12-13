@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import { classNames } from "../utils/style-utils";
+import { classNames } from "../utils/common";
 
 type Color = "red" | "orange" | "green";
 

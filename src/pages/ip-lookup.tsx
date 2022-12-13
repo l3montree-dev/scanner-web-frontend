@@ -6,18 +6,12 @@ import Button from "../components/Button";
 import Meta from "../components/Meta";
 import Page from "../components/Page";
 import useLoading from "../hooks/useLoading";
-import {
-  IIpLookupProgressUpdateDTO,
-  IIpLookupProgressUpdateMsg,
-  IIpLookupReportDTO,
-  IIpLookupReportMsg,
-} from "../types";
+import { IIpLookupProgressUpdateDTO, IIpLookupReportDTO } from "../types";
 
 import { socket } from "../services/socketClient";
-import { isProgressMessage } from "../utils/common";
+import { classNames, isProgressMessage } from "../utils/common";
 
 import Progressbar from "../components/Progressbar";
-import { classNames } from "../utils/style-utils";
 
 const cidrRegex = new RegExp(
   /^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$/

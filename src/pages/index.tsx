@@ -18,9 +18,7 @@ import {
 
 import { clientHttpClient } from "../services/clientHttpClient";
 import { IReport } from "../types";
-
-import { sanitizeFQDN } from "../utils/santize";
-import { classNames } from "../utils/style-utils";
+import { sanitizeFQDN, classNames } from "../utils/common";
 
 const hostnameRegex = new RegExp(
   /^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/

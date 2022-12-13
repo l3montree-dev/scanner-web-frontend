@@ -5,7 +5,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FunctionComponent, ReactNode } from "react";
-import { classNames } from "../utils/style-utils";
+import { classNames } from "../utils/common";
 
 interface Props {
   didPass: boolean | null;

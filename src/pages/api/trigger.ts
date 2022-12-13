@@ -3,7 +3,7 @@ import { randomUUID } from "crypto";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { inspect } from "../../inspection/inspect";
-import { sanitizeFQDN } from "../../utils/santize";
+import { sanitizeFQDN } from "../../utils/common";
 
 export default async function handler(
   req: NextApiRequest,

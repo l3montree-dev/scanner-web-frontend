@@ -1,5 +1,5 @@
 import { config } from "../config";
-import { wait } from "../utils/promise";
+import { wait } from "../utils/common";
 
 const fetchWithTimeout = (
   timeoutMS: number,

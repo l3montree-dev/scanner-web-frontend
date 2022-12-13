@@ -1,4 +1,3 @@
-import { signOut } from "next-auth/react";
 import {
   IIpLookupProgressUpdateMsg,
   IIpLookupReportDTO,
@@ -32,4 +31,60 @@ export const transformIpLookupMsg2DTO = (
       )
       .flat(),
   };
+};
+
+export const isAdmin = (session: any): boolean => {
+  return session?.roles?.includes("admin");
+};
+
+export const promise2Boolean = async (promise: Promise<any>) => {
+  try {
+    await promise;
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+export const wait = (delayMS: number) => {
+  return new Promise<void>((resolve) => setTimeout(resolve, delayMS));
+};
+
+export const timeout = async <T>(
+  promise: Promise<T>,
+  timeoutMS = 3_000
+): Promise<T> => {
+  const result = await Promise.race([promise, wait(timeoutMS)]);
+  if (!result) {
+    throw new Error("timeout");
+  }
+  return result;
+};
+
+/**
+ * @param providedValue Any value which should be sanitized as a FQDN
+ * @returns The sanitized FQDN or null if the provided value is not a string
+ */
+export const sanitizeFQDN = (providedValue: any): string | null => {
+  if (typeof providedValue !== "string" || !providedValue.includes(".")) {
+    return null;
+  }
+  // remove www prefix if any.
+  providedValue = providedValue.replace("www.", "");
+  // add a protocol to the provided value, so that the URL constructor
+  // can parse it correctly
+  const url = new URL(
+    providedValue.startsWith("https://") || providedValue.startsWith("http://")
+      ? providedValue
+      : `https://${providedValue}`
+  );
+
+  // make sure to keep the port if provided
+  return url.port ? `${url.hostname}:${url.port}` : url.hostname;
+};
+
+export const classNames = (
+  ...args: Array<string | boolean | undefined>
+): string => {
+  return args.filter(Boolean).join(" ");
 };
