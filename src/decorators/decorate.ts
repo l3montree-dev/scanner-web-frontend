@@ -7,8 +7,8 @@ export type DecoratedHandler<T> = (
 ) => void | Promise<void>;
 
 export const decorate =
-  <T>(fn: () => Promise<T>) =>
+  <T>(fn: (req: NextApiRequest, res: NextApiResponse) => Promise<T>) =>
   (handler: DecoratedHandler<T>) =>
   async (req: NextApiRequest, res: NextApiResponse) => {
-    return handler(req, res, await fn());
+    return handler(req, res, await fn(req, res));
   };

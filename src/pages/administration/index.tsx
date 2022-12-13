@@ -1,10 +1,16 @@
 import { GetServerSideProps } from "next";
 import { unstable_getServerSession } from "next-auth";
-import React from "react";
+import React, { useEffect } from "react";
+import { clientHttpClient } from "../../services/clientHttpClient";
 import { isAdmin } from "../../utils/common";
 import { authOptions } from "../api/auth/[...nextauth]";
 
 const Administration = () => {
+  useEffect(() => {
+    clientHttpClient("/api/administration", crypto.randomUUID()).then(
+      (res) => {}
+    );
+  }, []);
   return <div></div>;
 };
 

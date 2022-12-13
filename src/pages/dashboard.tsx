@@ -13,8 +13,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     authOptions
   );
 
-  console.log(session);
-
   return {
     props: {},
   };

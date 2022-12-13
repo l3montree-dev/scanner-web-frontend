@@ -49,3 +49,9 @@ export type IIpLookupProgressUpdateDTO = Omit<
 export type IIpLookupReportDTO = Omit<IIpLookupReportMsg, "results"> & {
   results: Array<{ domain: string; ip: string }>;
 };
+
+export interface Session {
+  user: { name: string; email: string; image: string; id: string };
+  roles: string[];
+  accessToken: string;
+}
