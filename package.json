@@ -6,7 +6,7 @@
         "dev": "next dev",
         "test": "jest",
         "build": "next build",
-        "start": "NODE_ENV=production ts-node server.ts",
+        "start": "next start",
         "lint": "next lint",
         "load-test": "k6 run load-test.k6.js",
         "load-test:monitor": "k6 run load-test.k6.js --out influxdb=http://localhost:8086/k6"
