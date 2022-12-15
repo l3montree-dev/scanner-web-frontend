@@ -21,7 +21,7 @@ export const handleNewScanReport = async (
   const lastReport = await model
     .findOne({ fqdn: newReport.fqdn })
     .sort({
-      validUntil: -1,
+      lastScan: -1,
     })
     .lean();
 
@@ -32,12 +32,9 @@ export const handleNewScanReport = async (
   }
   // mark the last report valid until the next scan.
   const now = newReport.validFrom;
-  await model
-    .updateOne({ _id: lastReport._id }, { validUntil: now, lastScan: now })
-    .lean();
+  await model.updateOne({ _id: lastReport._id }, { lastScan: now }).lean();
   return {
     ...lastReport,
-    validUntil: null,
     lastScan: now,
   };
 };

@@ -8,10 +8,10 @@ import {
   IReport,
 } from "../types";
 import { isProgressMessage, transformIpLookupMsg2DTO } from "../utils/common";
-import { GlobalRef } from "./globalRef";
 import { getLogger } from "./logger";
 import { rabbitMQClient, rabbitMQRPCClient } from "./rabbitmqClient";
 import { handleNewScanReport } from "./reportService";
+import ip from "ip";
 
 const logger = getLogger(__filename);
 
@@ -92,6 +92,7 @@ export const startScanResponseLoop = once(() => {
               iconBase64: content.icon,
               automated: true,
               version: 1,
+              ipAddressNumber: ip.toLong(content.ipAddress),
             },
             connection.models.Report
           );

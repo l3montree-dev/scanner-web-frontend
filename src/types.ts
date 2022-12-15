@@ -14,6 +14,7 @@ export interface IReport {
   createdAt: number;
   updatedAt: number;
   automated: boolean;
+  ipAddressNumber: number;
 }
 
 export interface Domain {

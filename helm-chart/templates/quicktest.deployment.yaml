@@ -80,17 +80,24 @@ spec:
                 secretKeyRef:
                   name: rabbitmq-credentials
                   key: rabbitmq-password
+            - name: NEXTAUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: quicktest-credentials
+                  key: nextauth-secret
+            - name: NEXTAUTH_URL
+              value: "https://{{ index (index .Values.ingress.tls 0).hosts 0 }}"
           livenessProbe:
-            initialDelaySeconds: 10
+            initialDelaySeconds: 30
             periodSeconds: 30
             httpGet:
-              path: /
+              path: /api/health
               port: http
           readinessProbe:
-            initialDelaySeconds: 10
+            initialDelaySeconds: 30
             periodSeconds: 30
             httpGet:
-              path: /
+              path: /api/health
               port: http
           resources:
             {{- toYaml .Values.quicktest.resources | nindent 12 }}

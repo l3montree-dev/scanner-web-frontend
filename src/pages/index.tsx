@@ -12,6 +12,7 @@ import {
   DomainInspectionType,
   HeaderInspectionType,
   InspectionType,
+  NetworkInspectionType,
   OrganizationalInspectionType,
   TLSInspectionType,
 } from "../inspection/scans";
@@ -134,7 +135,7 @@ const Home: NextPage = () => {
           [
             TLSInspectionType.TLSv1_3,
             TLSInspectionType.TLSv1_1_Deactivated,
-            DomainInspectionType.CAA,
+            NetworkInspectionType.RPKI,
             DomainInspectionType.DNSSec,
             HeaderInspectionType.HSTS,
             OrganizationalInspectionType.ResponsibleDisclosure,
@@ -145,7 +146,7 @@ const Home: NextPage = () => {
       .filter((inspection) => inspection.didPass).length;
   }, [report]);
 
-  const dateString = report ? new Date(report.createdAt).toLocaleString() : "";
+  const dateString = report ? new Date(report.lastScan).toLocaleString() : "";
   return (
     <Page>
       <Meta />

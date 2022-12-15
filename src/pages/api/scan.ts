@@ -10,6 +10,7 @@ import { getLogger } from "../../services/logger";
 import { handleNewScanReport } from "../../services/reportService";
 import { IReport } from "../../types";
 import { sanitizeFQDN } from "../../utils/common";
+import ip from "ip";
 
 const logger = getLogger(__filename);
 
@@ -87,6 +88,7 @@ const handler = async function handler(
       createdAt: result.timestamp,
       updatedAt: result.timestamp,
       automated: false,
+      ipAddressNumber: ip.toLong(result.ipAddress),
     };
 
     if (Report) {

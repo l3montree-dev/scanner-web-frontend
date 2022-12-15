@@ -9,6 +9,7 @@ export const reportSchema = new Schema<IReport>(
     version: SchemaTypes.Number,
     validFrom: SchemaTypes.Number,
     lastScan: SchemaTypes.Number,
+    ipAddressNumber: { type: SchemaTypes.Number, index: true },
   },
   { strict: true, timestamps: true }
 );

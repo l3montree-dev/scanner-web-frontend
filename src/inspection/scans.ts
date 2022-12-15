@@ -14,6 +14,7 @@ export enum DomainInspectionType {
 
 export enum NetworkInspectionType {
   IPv6 = "IPv6",
+  RPKI = "RPKI",
 }
 
 export enum HttpInspectionType {
@@ -22,10 +23,6 @@ export enum HttpInspectionType {
   HTTP308 = "HTTP308",
   // redirect to https.
   HTTPRedirectsToHttps = "HTTPRedirectsToHttps",
-}
-
-export enum RPKIInspectionType {
-  RPKI = "RPKI",
 }
 
 export enum HeaderInspectionType {
@@ -73,8 +70,7 @@ export type InspectionType =
   | DomainInspectionType
   | OrganizationalInspectionType
   | ContentInspectionType
-  | HeaderInspectionType
-  | RPKIInspectionType;
+  | HeaderInspectionType;
 
 export interface InspectResultDTO {
   type: InspectionType;
