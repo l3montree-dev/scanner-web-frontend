@@ -1,9 +1,11 @@
 import { Model, Schema, Types } from "mongoose";
 import { IReport } from "../types";
-import { reportSchema } from "./report";
+import { domainSchema, reportSchema, userSchema } from "./report";
 
 export const models: { [name: string]: Schema } = {
   Report: reportSchema,
+  Domain: domainSchema,
+  User: userSchema,
 };
 
 export interface ModelsType {

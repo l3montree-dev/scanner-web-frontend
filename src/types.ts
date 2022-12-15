@@ -16,8 +16,25 @@ export interface IReport {
   automated: boolean;
 }
 
+export interface Domain {
+  fqdn: string;
+  ipV4Address: string;
+  ipV6Address: string;
+  lastScan: number;
+  // save the number representation of the v4 address as well
+  // to make it easier to query for ranges
+  ipV4AddressNumber: number;
+}
+export interface Network {
+  prefixLength: number;
+  networkAddress: string;
+  startAddressNumber: number;
+  endAddressNumber: number;
+}
+
 export interface IUser {
-  id: string;
+  _id: string; // match it with the id of the user inside the authorization server
+  networks: Network[];
 }
 
 export type IIpLookupReportMsg = {
