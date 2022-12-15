@@ -129,22 +129,6 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
         <div
           className={classNames(
             "bg-deepblue-400 border h-full p-4",
-            borderClass(report.result.CAA.didPass)
-          )}
-        >
-          <ResultBox
-            title="CAA"
-            link="/one-pager/CAA-One-Pager.pdf"
-            description={getDescription(report, "CAA")}
-            didPass={report.result.CAA.didPass}
-          />
-        </div>
-      </div>
-
-      <div className="md:w-1/3 sm:w-1/2 md:mb-4 mb-5 sm:pr-2">
-        <div
-          className={classNames(
-            "bg-deepblue-400 border h-full p-4",
             borderClass(report.result.RPKI.didPass)
           )}
         >
