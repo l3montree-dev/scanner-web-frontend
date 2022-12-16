@@ -50,7 +50,7 @@ const handler = async function handler(
     const existingReport = await Report?.findOne(
       {
         fqdn: siteToScan,
-        validUntil: {
+        lastScan: {
           // last hour
           $gte: new Date(Date.now() - 1000 * 60 * 60 * 1),
         },
@@ -58,7 +58,7 @@ const handler = async function handler(
       null,
       {
         sort: {
-          validUntil: -1,
+          lastScan: -1,
         },
       }
     ).lean();
