@@ -73,6 +73,7 @@ const handler = async function handler(
 
   try {
     const result = await inspectRPC(requestId, siteToScan);
+
     logger.info(
       { duration: Date.now() - start, requestId },
       `successfully scanned site: ${siteToScan}`

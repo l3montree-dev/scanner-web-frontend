@@ -1,27 +1,35 @@
 import { IReport } from "../types";
 import { rabbitMQClient, rabbitMQRPCClient } from "../services/rabbitmqClient";
 
-export const inspectRPC = async (requestId: string, fqdn: string) => {
-  const result = await rabbitMQRPCClient.call<
-    | {
-        ipAddress: string;
-        fqdn: string;
-        icon: string;
-        timestamp: number;
-        result: IReport["result"];
-      }
-    | { error: any }
-  >(
+export const inspectRPC = async (
+  requestId: string,
+  fqdn: string
+): Promise<{
+  ipAddress: string;
+  fqdn: string;
+  icon: string;
+  timestamp: number;
+  result: IReport["result"];
+}> => {
+  const result = await rabbitMQRPCClient.call<{
+    ipAddress: string;
+    fqdn: string;
+    icon: string;
+    timestamp: number;
+    result: IReport["result"] | { error: any };
+  }>(
     process.env.SCAN_REQUEST_QUEUE ?? "scan-request",
     {
       fqdn,
     },
     { messageId: requestId }
   );
-  if ("error" in result) {
-    throw new Error(result.error);
+
+  if ("error" in result.result) {
+    throw new Error(result.result.error);
   }
 
+  // @ts-expect-error
   return result;
 };
 
