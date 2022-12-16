@@ -48,7 +48,7 @@ build-tag:
 build-main:
     extends: .build-template
     variables:
-        IMAGE_TAG: $CI_REGISTRY_IMAGE:latest
+        IMAGE_TAG: $CI_REGISTRY_IMAGE:unstable
     only:
         - main
 
