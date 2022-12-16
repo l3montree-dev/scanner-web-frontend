@@ -45,6 +45,14 @@ build-tag:
     only:
         - tags
 
+build-main:
+    extends: .build-template
+    variables:
+        IMAGE_TAG: $CI_REGISTRY_IMAGE:latest
+    only:
+        - main
+
+
 helm:
   stage: publish
   image: dtzar/helm-kubectl:3.10.0@sha256:489617317614daad6181603d55319c35529b9d41bfc4a23a11e8e3109a5f5588
