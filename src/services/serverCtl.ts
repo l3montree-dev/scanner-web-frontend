@@ -62,6 +62,51 @@ export const startSocketIOServer = once((server: HttpServer) => {
   });
 });
 
+export const startLookupResponseLoop = once(() => {
+  getConnection()
+    .then((connection) => {
+      logger.info("connected to database - starting scan response loop");
+      rabbitMQClient.subscribe("ip-lookup-response", async (msg) => {
+        const content = JSON.parse(msg.content.toString()).data as
+          | {
+              result: IReport["result"];
+              fqdn: string;
+              icon: string;
+              ipAddress: string;
+              duration: number;
+            }
+          | { fqdn: string; error: any };
+
+        if ("error" in content) {
+          logger.error({ fqdn: content.fqdn }, content.error);
+          return;
+        }
+
+        const now = Date.now();
+        try {
+          await handleNewScanReport(
+            {
+              ...content,
+              validFrom: now,
+              lastScan: now,
+              iconBase64: content.icon,
+              automated: true,
+              version: 1,
+              ipAddressNumber: ip.toLong(content.ipAddress),
+            },
+            connection.models.Report
+          );
+        } catch (e) {
+          // always ack the message - catch the error.
+          logger.error(e);
+        }
+      });
+    })
+    .catch((err) => {
+      logger.error(err);
+    });
+});
+
 export const startScanResponseLoop = once(() => {
   getConnection()
     .then((connection) => {

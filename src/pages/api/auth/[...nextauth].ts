@@ -1,9 +1,11 @@
-import NextAuth from "next-auth";
+import NextAuth, { AuthOptions } from "next-auth";
 import KeycloakProvider from "next-auth/providers/keycloak";
-import { Session } from "../../../types";
-export const authOptions = {
+export const authOptions: AuthOptions = {
   pages: {
     signIn: "/auth/sign-in",
+  },
+  jwt: {
+    maxAge: 30 * 60 * 60, // 1 day
   },
   providers: [
     KeycloakProvider({
@@ -18,13 +20,12 @@ export const authOptions = {
       return {
         ...params.session,
         user: { ...params.session.user, id: params.token.sub },
-        roles: params.token.roles,
-        accessToken: params.token.accessToken,
+        resource_access: params.token.resource_access,
       };
     },
     jwt(params: any) {
       if (params.profile) {
-        params.token.roles = params.profile.roles;
+        params.token.resource_access = params.profile.resource_access;
       }
       if (params.account) {
         params.token.accessToken = params.account.access_token;

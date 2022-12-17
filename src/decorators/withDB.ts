@@ -1,10 +1,10 @@
 import { Model } from "mongoose";
 import { NextApiRequest, NextApiResponse } from "next";
 import getConnection from "../db/connection";
+import { ModelsType } from "../db/models";
 import { getLogger } from "../services/logger";
 import CircuitBreaker from "../utils/CircuitBreaker";
 import { timeout } from "../utils/common";
-import { decorate } from "./decorate";
 
 const logger = getLogger(__filename);
 export type DecoratedHandler<T> = (
@@ -15,17 +15,15 @@ export type DecoratedHandler<T> = (
 
 // try again after two minutes.
 const databaseCircuitBreaker = new CircuitBreaker(2, 2 * 60 * 1000);
-export const withDB = decorate(async () => {
+export const withDB = async () => {
   try {
     const con = databaseCircuitBreaker.run(() => timeout(getConnection()));
-
-    return (await con).models as {
-      Report: Model<any>;
-    };
+    return (await con).models as ModelsType;
   } catch (err) {
     logger.warn({ err }, "could not connect to database");
     return {
       Report: null,
+      User: null,
     };
   }
-});
+};

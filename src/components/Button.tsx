@@ -4,7 +4,7 @@ import Spinner from "./Spinner";
 interface Props extends PropsWithChildren {
   loading: boolean;
   className?: string;
-  onPress?: () => void;
+  onClick?: () => void;
   type: "button" | "submit" | "reset";
 }
 const Button: FunctionComponent<Props> = (props) => {

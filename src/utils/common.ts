@@ -2,7 +2,11 @@ import {
   IIpLookupProgressUpdateMsg,
   IIpLookupReportDTO,
   IIpLookupReportMsg,
+  Network,
+  Session,
 } from "../types";
+
+import ip from "ip";
 
 export const serverOnly = <T>(fn: () => T): T | null => {
   if (typeof window === "undefined") {
@@ -33,8 +37,13 @@ export const transformIpLookupMsg2DTO = (
   };
 };
 
-export const isAdmin = (session: any): boolean => {
-  return session?.roles?.includes("admin");
+export const isAdmin = (session: Session | null): boolean => {
+  if (!session) {
+    return false;
+  }
+  return session?.resource_access["realm-management"]?.roles.includes(
+    "realm-admin"
+  );
 };
 
 export const promise2Boolean = async (promise: Promise<any>) => {
@@ -85,4 +94,18 @@ export const classNames = (
   ...args: Array<string | boolean | undefined>
 ): string => {
   return args.filter(Boolean).join(" ");
+};
+
+export const parseNetwork = (cidr: string): Network => {
+  const subnet = ip.cidrSubnet(cidr);
+
+  return {
+    prefixLength: subnet.subnetMaskLength,
+    networkAddress: subnet.networkAddress,
+    startAddress: subnet.firstAddress,
+    endAddress: subnet.lastAddress,
+    cidr,
+    startAddressNumber: ip.toLong(subnet.firstAddress),
+    endAddressNumber: ip.toLong(subnet.lastAddress),
+  };
 };

@@ -29,8 +29,11 @@ export interface Domain {
 export interface Network {
   prefixLength: number;
   networkAddress: string;
+  startAddress: string;
+  endAddress: string;
   startAddressNumber: number;
   endAddressNumber: number;
+  cidr: string;
 }
 
 export interface IUser {
@@ -70,6 +73,21 @@ export type IIpLookupReportDTO = Omit<IIpLookupReportMsg, "results"> & {
 
 export interface Session {
   user: { name: string; email: string; image: string; id: string };
-  roles: string[];
+  resource_access: {
+    [clientId: string]: {
+      roles: string[];
+    };
+  };
+}
+
+export interface Token extends Session {
   accessToken: string;
+}
+
+export interface CreateUserDTO {
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  networks: string[]; // CIDR notation
 }

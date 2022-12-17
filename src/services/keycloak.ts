@@ -1,26 +1,30 @@
-const getBaseUrl = (issuer: string) => {
-  const url = new URL(issuer);
-  // build the base url from the issuer
-  return `${url.protocol}//${url.hostname}:${url.port}`;
-};
+import KcAdminClient from "@keycloak/keycloak-admin-client";
 
-const getRealmName = (issuer: string) => {
-  return issuer.substring(issuer.lastIndexOf("/") + 1);
-};
-
-export const getKcAdminClient = async (accessToken: string) => {
-  const KcAdminClient = (await import("@keycloak/keycloak-admin-client"))
-    .default;
-
-  console.log(KcAdminClient);
+const getBaseUrl = () => {
   if (!process.env.KEYCLOAK_ISSUER) {
     throw new Error("KEYCLOAK_ISSUER is not defined");
   }
+  const issuer = process.env.KEYCLOAK_ISSUER;
+  const url = new URL(issuer);
+  // build the base url from the issuer
+  return `${url.protocol}//${url.hostname}`;
+};
+
+export const getRealmName = () => {
+  if (!process.env.KEYCLOAK_ISSUER) {
+    throw new Error("KEYCLOAK_ISSUER is not defined");
+  }
+  const issuer = process.env.KEYCLOAK_ISSUER;
+  return issuer.substring(issuer.lastIndexOf("/") + 1);
+};
+
+export const getKcAdminClient = (accessToken: string) => {
   const kcAdminClient = new KcAdminClient({
     // the issuer contains the realm as well.
-    baseUrl: getBaseUrl(process.env.KEYCLOAK_ISSUER),
-    realmName: getRealmName(process.env.KEYCLOAK_ISSUER),
+    baseUrl: getBaseUrl(),
+    realmName: getRealmName(),
   });
+
   // set the access token
   kcAdminClient.setAccessToken(accessToken);
   return kcAdminClient;

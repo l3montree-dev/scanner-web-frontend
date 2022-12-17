@@ -1,5 +1,5 @@
 import { Model, Schema, Types } from "mongoose";
-import { IReport } from "../types";
+import { IReport, IUser } from "../types";
 import { domainSchema, reportSchema, userSchema } from "./report";
 
 export const models: { [name: string]: Schema } = {
@@ -10,6 +10,7 @@ export const models: { [name: string]: Schema } = {
 
 export interface ModelsType {
   Report: Model<IReport>;
+  User: Model<IUser>;
 }
 
 export type WithId<T> = Omit<T, "_id"> & { id: string };

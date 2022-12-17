@@ -11,6 +11,7 @@ import { handleNewScanReport } from "../../services/reportService";
 import { IReport } from "../../types";
 import { sanitizeFQDN } from "../../utils/common";
 import ip from "ip";
+import { decorate } from "../../decorators/decorate";
 
 const logger = getLogger(__filename);
 
@@ -117,4 +118,4 @@ const handler = async function handler(
   }
 };
 
-export default withDB(handler);
+export default decorate(handler, withDB);
