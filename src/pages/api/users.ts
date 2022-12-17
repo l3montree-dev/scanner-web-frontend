@@ -4,7 +4,8 @@ import { decorate } from "../../decorators/decorate";
 import { withDB } from "../../decorators/withDB";
 import { withToken } from "../../decorators/withToken";
 import { getKcAdminClient, getRealmName } from "../../services/keycloak";
-import { CreateUserDTO, IReport, IUser, Token } from "../../types";
+import { getLogger } from "../../services/logger";
+import { ICreateUserDTO, IReport, IUser, IToken } from "../../types";
 import { parseNetwork } from "../../utils/common";
 
 async function handler(
@@ -12,7 +13,7 @@ async function handler(
   res: NextApiResponse,
   params: {
     User: Model<IUser> | null;
-    token: Token | null;
+    token: IToken | null;
   }
 ) {
   if (!params.token) {
@@ -25,7 +26,7 @@ async function handler(
     res.end();
     return;
   }
-  const user: CreateUserDTO = JSON.parse(req.body);
+  const user: ICreateUserDTO = JSON.parse(req.body);
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json");
 
@@ -46,6 +47,7 @@ async function handler(
         _id: id,
         networks: user.networks.map(parseNetwork),
       });
+      // request the domain lookup for each network.
     } catch (e) {
       // Rollback keycloak if this fails.
       await kcClient.users.del({ id, realm: getRealmName() });
@@ -53,7 +55,6 @@ async function handler(
 
     res.end(JSON.stringify({ success: true }));
   } catch (e) {
-    // console.log(e);
     res.end(JSON.stringify({ error: e }));
   }
 }

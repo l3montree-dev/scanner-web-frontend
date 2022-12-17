@@ -45,7 +45,8 @@ export class RabbitMQClient {
     queueOptions?: amqp.Options.AssertQueue
   ) {
     const channel = await this.getSubscribeChannel();
-    channel.assertQueue(queue, queueOptions);
+    await channel.assertQueue(queue, queueOptions);
+    await channel.prefetch(1);
     await channel.consume(queue, async (msg) => {
       if (msg) {
         try {
@@ -70,6 +71,11 @@ export class RabbitMQClient {
         return;
       }
     });
+  }
+
+  async assertQueue(queue: string, queueOptions?: amqp.Options.AssertQueue) {
+    const channel = await this.getPublishChannel();
+    return channel.assertQueue(queue, queueOptions);
   }
 
   async publish(

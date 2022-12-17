@@ -30,7 +30,7 @@ export const decorate = <Decorators extends Decorator<any>[]>(
   handler: DecoratedHandler<Reducer<Decorators>>,
   ...decorators: Decorators
 ) => {
-  async (req: NextApiRequest, res: NextApiResponse) => {
+  return async (req: NextApiRequest, res: NextApiResponse) => {
     const obj = (
       await Promise.all(decorators.map((fn) => fn(req, res)))
     ).reduce(

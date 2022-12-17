@@ -1,5 +1,6 @@
 import { IReport } from "../types";
 import { rabbitMQClient, rabbitMQRPCClient } from "../services/rabbitmqClient";
+import { once } from "../decorators/once";
 
 export const inspectRPC = async (
   requestId: string,
@@ -40,7 +41,7 @@ export const inspect = async (requestId: string, fqdn: string) => {
       fqdn,
     },
     { durable: true, maxPriority: 10 },
-    { messageId: requestId, priority: 1 }
+    { messageId: requestId, priority: 1, replyTo: "scan-response" }
   );
   return result;
 };

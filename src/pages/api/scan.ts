@@ -90,7 +90,7 @@ const handler = async function handler(
       createdAt: result.timestamp,
       updatedAt: result.timestamp,
       automated: false,
-      ipAddressNumber: ip.toLong(result.ipAddress),
+      ipV4AddressNumber: ip.toLong(result.ipAddress),
     };
 
     if (Report) {

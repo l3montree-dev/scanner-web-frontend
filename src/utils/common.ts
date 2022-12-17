@@ -2,11 +2,14 @@ import {
   IIpLookupProgressUpdateMsg,
   IIpLookupReportDTO,
   IIpLookupReportMsg,
-  Network,
-  Session,
+  INetwork,
+  IScanErrorResponse,
+  IScanResponse,
+  ISession,
 } from "../types";
 
 import ip from "ip";
+import { isValidIp, isValidMask } from "./validator";
 
 export const serverOnly = <T>(fn: () => T): T | null => {
   if (typeof window === "undefined") {
@@ -37,7 +40,7 @@ export const transformIpLookupMsg2DTO = (
   };
 };
 
-export const isAdmin = (session: Session | null): boolean => {
+export const isAdmin = (session: ISession | null): boolean => {
   if (!session) {
     return false;
   }
@@ -96,7 +99,7 @@ export const classNames = (
   return args.filter(Boolean).join(" ");
 };
 
-export const parseNetwork = (cidr: string): Network => {
+export const parseNetwork = (cidr: string): INetwork => {
   const subnet = ip.cidrSubnet(cidr);
 
   return {
@@ -108,4 +111,31 @@ export const parseNetwork = (cidr: string): Network => {
     startAddressNumber: ip.toLong(subnet.firstAddress),
     endAddressNumber: ip.toLong(subnet.lastAddress),
   };
+};
+
+export const parseNetworkString = (networks: string | string[]): string[] => {
+  // parse the networks - they are line separated
+  const networksArray =
+    networks instanceof Array ? networks : networks.trim().split("\n");
+  // check if each network is in cidr notation.
+
+  const networksValid = networksArray.every((network) => {
+    const [ip, mask] = network.split("/");
+    if (ip === undefined || mask === undefined) {
+      return false;
+    }
+    const ipValid = isValidIp(ip);
+    const maskValid = isValidMask(mask);
+    return ipValid && maskValid;
+  });
+  if (!networksValid) {
+    throw new Error("Bitte trage gültige Netzwerke ein.");
+  }
+  return networksArray;
+};
+
+export const isScanError = (
+  response: IScanResponse
+): response is IScanErrorResponse => {
+  return "error" in response.result;
 };
