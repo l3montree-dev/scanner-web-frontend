@@ -1,6 +1,5 @@
-import { IReport } from "../types";
 import { rabbitMQClient, rabbitMQRPCClient } from "../services/rabbitmqClient";
-import { once } from "../decorators/once";
+import { IReport } from "../types";
 
 export const inspectRPC = async (
   requestId: string,

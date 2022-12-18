@@ -101,17 +101,22 @@ const handler = async function handler(
   } catch (error: unknown) {
     if (error instanceof Error && error.message === "fetch failed") {
       logger.error(
-        { err: error, duration: Date.now() - start, requestId },
+        { err: error.message, duration: Date.now() - start, requestId },
         `failed to fetch site: ${siteToScan}`
       );
       return res.status(400).json({
         error:
           "Invalid site provided. Please provide a valid fully qualified domain name as site query parameter. Example: ?site=example.com",
       });
+    } else if (error instanceof Error) {
+      logger.error(
+        { err: error.message, duration: Date.now() - start, requestId },
+        `timeout while scanning site: ${siteToScan}`
+      );
+      return res.status(500).json({ error: "Error happened..." });
     }
-
     logger.error(
-      { err: error, duration: Date.now() - start, requestId },
+      { duration: Date.now() - start, requestId },
       "unknown error happened while scanning site"
     );
     return res.status(500).json({ error: "Unknown error" });
