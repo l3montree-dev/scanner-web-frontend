@@ -68,7 +68,6 @@ spec:
               value: "27017"
             - name: MONGODB_DATABASE  
               value: "ozgsec"
-            
             - name: RABBITMQ_HOST
               value: {{.Release.Namespace}}-rabbitmq
             - name : RABBITMQ_PORT
@@ -87,6 +86,15 @@ spec:
                   key: nextauth-secret
             - name: NEXTAUTH_URL
               value: "https://{{ index (index .Values.ingress.tls 0).hosts 0 }}"
+            - name: KEYCLOAK_ISSUER
+              value: "https://{{ index (index .Values.ingress.auth.tls 0).hosts 0 }}/realms/OZGSec"
+            - name: KEYCLOAK_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: quicktest-keycloak-secret
+                  key: keycloak-secret
+            - name: KEYCLOAK_ID
+              value: quicktest
           livenessProbe:
             initialDelaySeconds: 30
             periodSeconds: 30
