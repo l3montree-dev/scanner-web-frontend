@@ -1,5 +1,3 @@
-import { Model } from "mongoose";
-import { NextApiRequest, NextApiResponse } from "next";
 import getConnection from "../db/connection";
 import { ModelsType } from "../db/models";
 import { getLogger } from "../services/logger";
@@ -7,11 +5,6 @@ import CircuitBreaker from "../utils/CircuitBreaker";
 import { timeout } from "../utils/common";
 
 const logger = getLogger(__filename);
-export type DecoratedHandler<T> = (
-  req: NextApiRequest,
-  res: NextApiResponse,
-  additionalData: T
-) => void | Promise<void>;
 
 // try again after two minutes.
 const databaseCircuitBreaker = new CircuitBreaker(2, 2 * 60 * 1000);
@@ -24,6 +17,7 @@ export const withDB = async () => {
     return {
       Report: null,
       User: null,
+      Domain: null,
     };
   }
 };
