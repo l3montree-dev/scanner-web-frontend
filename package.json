@@ -20,6 +20,7 @@
         "@types/socket.io": "^3.0.2",
         "amqplib": "^0.10.3",
         "dotenv": "^16.0.3",
+        "formidable": "^2.1.1",
         "ip": "^2.0.0",
         "mongoose": "^6.7.5",
         "next": "13.0.6",
@@ -33,6 +34,7 @@
     },
     "devDependencies": {
         "@types/amqplib": "^0.10.0",
+        "@types/formidable": "^2.0.5",
         "@types/ip": "^1.1.0",
         "@types/jest": "^29.2.3",
         "@types/jsdom": "^20.0.1",

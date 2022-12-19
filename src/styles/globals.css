@@ -70,3 +70,7 @@ pre {
 .no-hyphens {
     hyphens: none;
 }
+
+.draganddrop {
+    min-height: 200px;
+}

@@ -1,3 +1,4 @@
+import { resolve4 } from "dns/promises";
 import ip from "ip";
 import { Model } from "mongoose";
 import { IDomain } from "../types";
@@ -11,6 +12,25 @@ export const handleNewDomain = async (
     fqdn: domain.fqdn,
     ipV4Address: domain.ipV4Address,
     ipV4AddressNumber: ip.toLong(domain.ipV4Address),
+  };
+  try {
+    await model.create(payload);
+  } catch (e) {
+    // probably unique key index error
+  }
+  return payload;
+};
+
+export const handleNewFQDN = async (
+  fqdn: string,
+  model: Model<IDomain>
+): Promise<{ fqdn: string }> => {
+  // resolve v4
+  const [ipAddress] = await resolve4(fqdn);
+  let payload = {
+    fqdn: fqdn,
+    ipV4Address: ipAddress,
+    ipV4AddressNumber: ip.toLong(ipAddress),
   };
   try {
     await model.create(payload);
