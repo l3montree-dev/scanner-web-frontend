@@ -32,7 +32,9 @@ spec:
             {{- toYaml .Values.secScanner.securityContext | nindent 12 }}
           image: "registry.gitlab.com/ozg-security/sec-scanner:{{ .Values.secScanner.image.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.secScanner.image.pullPolicy }}
-          env:   
+          env:
+            - name: INFLUX_URL
+              value: http://{{ .Release.Namespace }}-influxdb:8086  
             - name: SERVER_TIMEOUT
               value: {{ .Values.secScanner.serverTimeout | default "3000" | quote }}
             - name: SERVER_RETRIES
@@ -50,6 +52,17 @@ spec:
                 secretKeyRef:
                   name: rabbitmq-credentials
                   key: rabbitmq-password
+            - name: INFLUX_ORG
+              value: ozgsec
+            - name: INFLUX_BUCKET
+              value: ozgsec
+            - name: PREFETCH_COUNT
+              value: {{ .Values.secScanner.prefetchCount | default "5" | quote }}
+            - name: INFLUX_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: influxdb-token
+                  key: token
           resources:
             {{- toYaml .Values.secScanner.resources | nindent 12 }}
       {{- with .Values.secScanner.nodeSelector }}
