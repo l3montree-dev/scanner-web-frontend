@@ -58,11 +58,15 @@ spec:
               value: ozgsec
             - name: PREFETCH_COUNT
               value: {{ .Values.secScanner.prefetchCount | default "5" | quote }}
+            - name: UV_THREADPOOL_SIZE
+              value: {{ .Values.secScanner.uvThreadpoolSize | default "4" | quote }}
             - name: INFLUX_TOKEN
               valueFrom:
                 secretKeyRef:
                   name: influxdb-token
                   key: token
+            - name: LOG_LEVEL
+              value: {{ .Values.secScanner.logLevel | default "info" | quote }}
           resources:
             {{- toYaml .Values.secScanner.resources | nindent 12 }}
       {{- with .Values.secScanner.nodeSelector }}

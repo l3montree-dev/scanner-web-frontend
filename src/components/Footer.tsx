@@ -1,10 +1,14 @@
+import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import Dialog from "./Dialog";
 import Imprint from "./Imprint";
 
 const Footer = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const session = useSession();
+
   return (
     <>
       <footer className="bg-white md:text-md text-sm px-5 md:px-10 pb-10">
@@ -49,9 +53,23 @@ const Footer = () => {
               </a>
             </span>
           </div>
-          <span className="p-2 block">
-            © Bundesministerium des Innern und für Heimat, 2022
-          </span>
+          <div className="p-2 flex-row flex">
+            <div className="mr-2">
+              {session.status === "authenticated" ? (
+                <>
+                  <Link className="mr-2" href="/dashboard">
+                    Dashboard
+                  </Link>
+                  <span className="cursor-pointer" onClick={() => signOut()}>
+                    Logout
+                  </span>
+                </>
+              ) : (
+                <Link href="/dashboard">Login</Link>
+              )}
+            </div>
+            <span>© Bundesministerium des Innern und für Heimat, 2022</span>
+          </div>
         </div>
       </footer>
       <Dialog onClose={() => setIsOpen(false)} isOpen={isOpen}>

@@ -4,8 +4,7 @@ import { decorate } from "../../decorators/decorate";
 import { withDB } from "../../decorators/withDB";
 import { withToken } from "../../decorators/withToken";
 import { getKcAdminClient, getRealmName } from "../../services/keycloak";
-import { getLogger } from "../../services/logger";
-import { ICreateUserDTO, IReport, IUser, IToken } from "../../types";
+import { ICreateUserDTO, IToken, IUser } from "../../types";
 import { parseNetwork } from "../../utils/common";
 
 async function handler(
@@ -39,6 +38,9 @@ async function handler(
       lastName: user.lastName,
       email: user.email,
       username: user.username,
+      emailVerified: true, // TODO: Change for real validation
+      enabled: true,
+      requiredActions: ["UPDATE_PASSWORD"],
     });
 
     // create a new user inside our database as well.
@@ -47,15 +49,18 @@ async function handler(
         _id: id,
         networks: user.networks.map(parseNetwork),
       });
+      res.end(JSON.stringify({ success: true }));
       // request the domain lookup for each network.
     } catch (e) {
+      console.log(e);
       // Rollback keycloak if this fails.
       await kcClient.users.del({ id, realm: getRealmName() });
+      res.status(500).end(JSON.stringify({ error: e }));
+      return;
     }
-
-    res.end(JSON.stringify({ success: true }));
   } catch (e) {
-    res.end(JSON.stringify({ error: e }));
+    console.log(e);
+    res.status(500).end(JSON.stringify({ error: e }));
   }
 }
 
