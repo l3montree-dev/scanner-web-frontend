@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { NextPage } from "next";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import Button from "../components/Button";
+import Footer from "../components/Footer";
 import Meta from "../components/Meta";
 import Page from "../components/Page";
 import ResultGrid from "../components/ResultGrid";

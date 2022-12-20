@@ -1,7 +1,8 @@
 import { resolve4 } from "dns/promises";
 import ip from "ip";
 import { Model } from "mongoose";
-import { IDomain, INetwork } from "../types";
+import { IDomain, INetwork, IReport, PaginateRequest } from "../types";
+import { jsonSerializableStage } from "../utils/dbUtils";
 // only create a new report if the didPass property changed.
 export const handleNewDomain = async (
   domain: { fqdn: string; ipV4Address: string },
@@ -40,18 +41,46 @@ export const handleNewFQDN = async (
   return payload;
 };
 
-export const getAllDomainsOfNetwork = async (
+export const getDomainsOfNetworkWithLatestTestResult = async (
   network: INetwork,
+  paginateRequest: PaginateRequest,
   domain: Model<IDomain>
-) => {
+): Promise<Array<IDomain & { report: IReport }>> => {
   // get all domains of the network
   const domains = await domain
-    .find({
-      ipV4AddressNumber: {
-        $gte: network.startAddressNumber,
-        $lte: network.endAddressNumber,
+    .aggregate([
+      {
+        $match: {
+          ipV4AddressNumber: {
+            $gte: network.startAddressNumber,
+            $lte: network.endAddressNumber,
+          },
+        },
       },
-    })
-    .lean();
+      { $skip: paginateRequest.page * paginateRequest.pageSize },
+      { $limit: paginateRequest.pageSize },
+      {
+        $lookup: {
+          from: "reports",
+          localField: "fqdn",
+          foreignField: "fqdn",
+          as: "report",
+          pipeline: [
+            {
+              $sort: {
+                lastScan: -1,
+              },
+            },
+            { $limit: 1 },
+            ...jsonSerializableStage,
+          ],
+        },
+      },
+      {
+        $unwind: "$report",
+      },
+      ...jsonSerializableStage,
+    ])
+    .sort({ fqdn: 1 });
   return domains;
 };

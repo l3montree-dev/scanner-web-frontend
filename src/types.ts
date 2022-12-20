@@ -109,3 +109,8 @@ export type IScanErrorResponse = {
 };
 
 export type IScanResponse = IScanErrorResponse | IScanSuccessResponse;
+
+export interface PaginateRequest {
+  page: number;
+  pageSize: number;
+}
