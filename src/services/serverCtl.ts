@@ -124,6 +124,7 @@ export const startScanResponseLoop = once(() => {
                 ipV4AddressNumber,
               },
               {
+                lastScan: content.timestamp,
                 // increment the error count property by 1
                 $inc: { errorCount: 1 },
               }
@@ -134,15 +135,14 @@ export const startScanResponseLoop = once(() => {
           }
         }
 
-        const now = Date.now();
         try {
           await Promise.all([
             handleNewScanReport(
               {
                 ...content,
                 ipAddress: address,
-                validFrom: now,
-                lastScan: now,
+                validFrom: content.timestamp,
+                lastScan: content.timestamp,
                 iconBase64: content.icon,
                 automated: true,
                 version: 1,

@@ -21,7 +21,9 @@ export const getServerSideProps: GetServerSideProps = decorateServerSideProps(
     // fetch the user object.;
     console.log(currentUser);
 
-    getAllDomainsOfNetwork(currentUser.networks[0], db.Domain);
+    console.log(
+      await getAllDomainsOfNetwork(currentUser.networks[0], db.Domain)
+    );
     return {
       props: {},
     };
