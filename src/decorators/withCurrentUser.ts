@@ -3,13 +3,13 @@ import { authOptions } from "../pages/api/auth/[...nextauth]";
 import { IUser } from "../types";
 import { getServerSession } from "../utils/server";
 
-import { withDB } from "./withDB";
+import { tryDB } from "./tryDB";
 
 export const withCurrentUser = async (
   ctx: GetServerSidePropsContext
 ): Promise<IUser> => {
   const [{ User }, session] = await Promise.all([
-    withDB(),
+    tryDB(),
     getServerSession(ctx.req, ctx.res, authOptions),
   ]);
 

@@ -1,7 +1,7 @@
 import { resolve4 } from "dns/promises";
 import ip from "ip";
 import { Model } from "mongoose";
-import { IDomain } from "../types";
+import { IDomain, INetwork } from "../types";
 // only create a new report if the didPass property changed.
 export const handleNewDomain = async (
   domain: { fqdn: string; ipV4Address: string },
@@ -40,4 +40,18 @@ export const handleNewFQDN = async (
   return payload;
 };
 
-export const getAllDomainsOfNetwork = async (domain: Model<IDomain>) => {};
+export const getAllDomainsOfNetwork = async (
+  network: INetwork,
+  domain: Model<IDomain>
+) => {
+  // get all domains of the network
+  const domains = await domain
+    .find({
+      ipV4AddressNumber: {
+        $gte: network.startAddressNumber,
+        $lte: network.endAddressNumber,
+      },
+    })
+    .lean();
+  return domains;
+};

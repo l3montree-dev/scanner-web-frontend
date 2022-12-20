@@ -1,4 +1,3 @@
-import { Model } from "mongoose";
 import { GetServerSideProps } from "next";
 import Meta from "../components/Meta";
 import Page from "../components/Page";
@@ -6,7 +5,7 @@ import { decorateServerSideProps } from "../decorators/decorateServerSideProps";
 
 import { withCurrentUser } from "../decorators/withCurrentUser";
 import { withDB } from "../decorators/withDB";
-import { IUser, IDomain } from "../types";
+import { getAllDomainsOfNetwork } from "../services/domainService";
 
 const Dashboard = () => {
   return (
@@ -18,10 +17,11 @@ const Dashboard = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = decorateServerSideProps(
-  async (context, [currentUser, { Domain }]) => {
+  async (context, [currentUser, db]) => {
     // fetch the user object.;
     console.log(currentUser);
 
+    getAllDomainsOfNetwork(currentUser.networks[0], db.Domain);
     return {
       props: {},
     };

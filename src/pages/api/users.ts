@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { decorate } from "../../decorators/decorate";
-import { withDB } from "../../decorators/withDB";
+import { tryDB } from "../../decorators/tryDB";
 import { withToken } from "../../decorators/withToken";
 import { getKcAdminClient, getRealmName } from "../../services/keycloak";
 import { ICreateUserDTO } from "../../types";
@@ -56,6 +56,6 @@ export default decorate(
       res.status(500).end(JSON.stringify({ error: e }));
     }
   },
-  withDB,
+  tryDB,
   withToken
 );

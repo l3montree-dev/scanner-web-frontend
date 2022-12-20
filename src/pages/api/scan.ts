@@ -4,7 +4,7 @@ import { Model } from "mongoose";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { toDTO } from "../../db/models";
-import { withDB } from "../../decorators/withDB";
+import { tryDB } from "../../decorators/tryDB";
 import { inspectRPC } from "../../inspection/inspect";
 import { getLogger } from "../../services/logger";
 import { handleNewScanReport } from "../../services/reportService";
@@ -123,4 +123,4 @@ const handler = async function handler(
   }
 };
 
-export default decorate(handler, withDB);
+export default decorate(handler, tryDB);
