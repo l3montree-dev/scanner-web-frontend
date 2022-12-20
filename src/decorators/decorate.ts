@@ -30,15 +30,9 @@ export const decorate = <Decorators extends Decorator<any>[]>(
   ...decorators: Decorators
 ) => {
   return async (req: NextApiRequest, res: NextApiResponse) => {
-    const obj = (
-      await Promise.all(decorators.map((fn) => fn(req, res)))
-    ).reduce(
-      (prev, curr) => ({
-        ...prev,
-        ...curr,
-      }),
-      {}
-    ) as Extract<Decorators>;
+    const obj = (await Promise.all(
+      decorators.map((fn) => fn(req, res))
+    )) as Extract<Decorators>;
     return handler(req, res, obj);
   };
 };
