@@ -1,14 +1,5 @@
-import {
-  GetServerSideProps,
-  GetServerSidePropsContext,
-  GetServerSidePropsResult,
-  NextApiRequest,
-  NextApiResponse,
-} from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import _logger from "next-auth/utils/logger";
-import { getLogger } from "../services/logger";
-
-const logger = getLogger(__filename);
 
 export type DecoratedHandler<T> = (
   req: NextApiRequest,
@@ -28,7 +19,7 @@ type ReturnVal<Item> = Item extends (
   ? ReturnVal
   : never;
 
-type Reducer<
+export type Reducer<
   T extends Array<(...params: any[]) => any>,
   Acc = {}
 > = T extends []
@@ -53,46 +44,5 @@ export const decorate = <Decorators extends Decorator<any>[]>(
       {}
     ) as Reducer<Decorators>;
     return handler(req, res, obj);
-  };
-};
-
-export type ServerSidePropsDecorator<T extends Record<string, any>> = (
-  context: GetServerSidePropsContext
-) => Promise<T>;
-
-export type DecoratedGetServerSideProps<
-  AdditionalData extends Record<string, any>,
-  Props
-> = (
-  ctx: GetServerSidePropsContext,
-  additionalData: AdditionalData
-) => GetServerSidePropsResult<Props> | Promise<GetServerSidePropsResult<Props>>;
-
-export const decorateServerSideProps = <
-  Decorators extends ServerSidePropsDecorator<any>[]
->(
-  handler: DecoratedGetServerSideProps<Reducer<Decorators>, any>,
-  ...decorators: Decorators
-): GetServerSideProps => {
-  return async (ctx: GetServerSidePropsContext) => {
-    try {
-      const obj = (await Promise.all(decorators.map((fn) => fn(ctx)))).reduce(
-        (prev, curr) => ({
-          ...prev,
-          ...curr,
-        }),
-        {}
-      ) as Reducer<Decorators>;
-      return handler(ctx, obj);
-    } catch (e: any) {
-      logger.error({ err: e?.message }, "decorateServerSideProps error");
-      return {
-        props: {},
-        redirect: {
-          destination: "/",
-          permanent: false,
-        },
-      };
-    }
   };
 };

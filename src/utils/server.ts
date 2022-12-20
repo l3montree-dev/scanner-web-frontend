@@ -32,7 +32,7 @@ export const promiseExecutor = <T extends ReadonlyArray<() => Promise<any>>>(
     for (let i = 0; i < promiseFactories.length; i++) {
       if (ongoing >= concurrency) {
         // no busy waiting - let them race against each other
-        // if the first prmise resolves, we can start another one.
+        // if the first promise resolves, we can start another one.
         const res = await Promise.race(queue);
         queue.splice(queue.indexOf(res), 1);
       }

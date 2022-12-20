@@ -8,16 +8,16 @@ const logger = getLogger(__filename);
 
 // try again after two minutes.
 const databaseCircuitBreaker = new CircuitBreaker(2, 2 * 60 * 1000);
-export const withDB = async () => {
+export const withDB = async (): Promise<Partial<ModelsType>> => {
   try {
     const con = databaseCircuitBreaker.run(() => timeout(getConnection()));
     return (await con).models as ModelsType;
   } catch (err) {
     logger.warn({ err }, "could not connect to database");
     return {
-      Report: null,
-      User: null,
-      Domain: null,
+      Report: undefined,
+      User: undefined,
+      Domain: undefined,
     };
   }
 };
