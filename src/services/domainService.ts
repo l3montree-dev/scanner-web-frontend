@@ -39,3 +39,5 @@ export const handleNewFQDN = async (
   }
   return payload;
 };
+
+export const getAllDomainsOfNetwork = async (domain: Model<IDomain>) => {};

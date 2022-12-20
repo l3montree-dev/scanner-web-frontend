@@ -6,8 +6,6 @@ import { ISession } from "../types";
 export const withSession = async (
   req: NextApiRequest,
   res: NextApiResponse
-): Promise<{ session: ISession | null }> => {
-  return {
-    session: (await unstable_getServerSession(req, res, authOptions)) ?? null,
-  };
+): Promise<ISession | null> => {
+  return (await unstable_getServerSession(req, res, authOptions)) ?? null;
 };

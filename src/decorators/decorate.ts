@@ -7,30 +7,26 @@ export type DecoratedHandler<T> = (
   additionalData: T
 ) => void | Promise<void>;
 
+type Extract<
+  T extends ReadonlyArray<
+    (req: NextApiRequest, res: NextApiResponse) => Promise<any>
+  >
+> = {
+  [Index in keyof T]: T[Index] extends (
+    req: NextApiRequest,
+    res: NextApiResponse
+  ) => Promise<infer V>
+    ? V
+    : never;
+};
+
 export type Decorator<T extends Record<string, any>> = (
   req: NextApiRequest,
   res: NextApiResponse
 ) => Promise<T>;
 
-type ReturnVal<Item> = Item extends (
-  req: NextApiRequest,
-  res: NextApiResponse
-) => Promise<infer ReturnVal>
-  ? ReturnVal
-  : never;
-
-export type Reducer<
-  T extends Array<(...params: any[]) => any>,
-  Acc = {}
-> = T extends []
-  ? Acc
-  : T extends [infer Head, ...infer Tail]
-  ? // @ts-expect-error it is just unknown
-    Reducer<Tail, Acc & ReturnVal<Head>>
-  : never;
-
 export const decorate = <Decorators extends Decorator<any>[]>(
-  handler: DecoratedHandler<Reducer<Decorators>>,
+  handler: DecoratedHandler<Extract<Decorators>>,
   ...decorators: Decorators
 ) => {
   return async (req: NextApiRequest, res: NextApiResponse) => {
@@ -42,7 +38,7 @@ export const decorate = <Decorators extends Decorator<any>[]>(
         ...curr,
       }),
       {}
-    ) as Reducer<Decorators>;
+    ) as Extract<Decorators>;
     return handler(req, res, obj);
   };
 };

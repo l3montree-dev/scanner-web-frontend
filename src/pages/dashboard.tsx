@@ -18,8 +18,10 @@ const Dashboard = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = decorateServerSideProps(
-  async (context, [currentUser, Domain]) => {
+  async (context, [currentUser, { Domain }]) => {
     // fetch the user object.;
+    console.log(currentUser);
+
     return {
       props: {},
     };
