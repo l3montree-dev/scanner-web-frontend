@@ -7,7 +7,7 @@ import { withDB } from "./withDB";
 
 export const withCurrentUser = async (
   ctx: GetServerSidePropsContext
-): Promise<{ currentUser: IUser }> => {
+): Promise<IUser> => {
   const [{ User }, session] = await Promise.all([
     withDB(),
     getServerSession(ctx.req, ctx.res, authOptions),
@@ -25,7 +25,5 @@ export const withCurrentUser = async (
     throw new Error(`currentUser with id: ${session.user.id} not found`);
   }
 
-  return {
-    currentUser,
-  };
+  return currentUser;
 };

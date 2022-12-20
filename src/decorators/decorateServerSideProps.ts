@@ -32,7 +32,7 @@ export const decorateServerSideProps = <
 ): GetServerSideProps => {
   return async (ctx: GetServerSidePropsContext) => {
     try {
-      // @ts-expect-error
+      // @ts-ignore
       const params = (await Promise.all(
         decorators.map((fn) => fn(ctx))
       )) as Extract<Decorators>;
