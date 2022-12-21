@@ -40,7 +40,7 @@ export const transformIpLookupMsg2DTO = (
   };
 };
 
-export const isAdmin = (session: ISession | null): boolean => {
+export const isAdmin = (session: ISession | null | undefined): boolean => {
   if (!session) {
     return false;
   }

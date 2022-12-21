@@ -8,35 +8,32 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FormEvent, FunctionComponent, useEffect, useState } from "react";
-import Button from "../components/Button";
-
-import DashboardPage from "../components/DashboardPage";
-import FormInput from "../components/FormInput";
-import Menu from "../components/Menu";
-import MenuItem from "../components/MenuItem";
-import MenuList from "../components/MenuList";
-import Meta from "../components/Meta";
-import Pagination from "../components/Pagination";
-import ResultIcon from "../components/ResultIcon";
-import SideNavigation from "../components/SideNavigation";
-import { WithId } from "../db/models";
-import { decorateServerSideProps } from "../decorators/decorateServerSideProps";
-
-import { withCurrentUser } from "../decorators/withCurrentUser";
-import { withDB } from "../decorators/withDB";
-import useLoading from "../hooks/useLoading";
+import Button from "../../components/Button";
+import DashboardPage from "../../components/DashboardPage";
+import FormInput from "../../components/FormInput";
+import Menu from "../../components/Menu";
+import MenuItem from "../../components/MenuItem";
+import MenuList from "../../components/MenuList";
+import Meta from "../../components/Meta";
+import Pagination from "../../components/Pagination";
+import ResultIcon from "../../components/ResultIcon";
+import SideNavigation from "../../components/SideNavigation";
+import { WithId } from "../../db/models";
+import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
+import { withCurrentUser } from "../../decorators/withCurrentUser";
+import { withDB } from "../../decorators/withDB";
+import useLoading from "../../hooks/useLoading";
 import {
-  DomainInspectionType,
-  HeaderInspectionType,
-  NetworkInspectionType,
   OrganizationalInspectionType,
   TLSInspectionType,
-} from "../inspection/scans";
-import { clientHttpClient } from "../services/clientHttpClient";
-import { getDomainsOfNetworksWithLatestTestResult } from "../services/domainService";
-
-import { IDomain, IReport, PaginateResult } from "../types";
-import { classNames } from "../utils/common";
+  HeaderInspectionType,
+  DomainInspectionType,
+  NetworkInspectionType,
+} from "../../inspection/scans";
+import { clientHttpClient } from "../../services/clientHttpClient";
+import { getDomainsOfNetworksWithLatestTestResult } from "../../services/domainService";
+import { PaginateResult, IDomain, IReport } from "../../types";
+import { classNames } from "../../utils/common";
 
 interface Props {
   domains: PaginateResult<WithId<IDomain> & { report?: WithId<IReport> }>;
