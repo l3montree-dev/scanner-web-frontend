@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import Dialog from "./Dialog";
 import Imprint from "./Imprint";
+import Modal from "./Modal";
 
 const Footer = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,13 +13,21 @@ const Footer = () => {
   return (
     <>
       <footer className="bg-white md:text-md text-sm px-5 md:px-10 pb-10">
-        <div>
+        <div className="flex flex-row p-5">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            width={255}
-            height={156}
+            width={200}
+            height={50}
             src={"/assets/bmi-logo.svg"}
             alt="Logo BMI"
+          />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            width={210}
+            height={50}
+            className="ml-5"
+            src={"/assets/bsi-logo.svg"}
+            alt="Logo BSI"
           />
         </div>
         <div className="lg:flex justify-between">
@@ -72,9 +81,9 @@ const Footer = () => {
           </div>
         </div>
       </footer>
-      <Dialog onClose={() => setIsOpen(false)} isOpen={isOpen}>
+      <Modal onClose={() => setIsOpen(false)} isOpen={isOpen}>
         <Imprint />
-      </Dialog>
+      </Modal>
     </>
   );
 };

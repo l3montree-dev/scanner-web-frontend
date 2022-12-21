@@ -3,9 +3,9 @@ import {
   faCaretDown,
   faCaretUp,
   faEllipsisVertical,
+  faQuestionCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { FormEvent, FunctionComponent, useEffect, useState } from "react";
 import Button from "../../components/Button";
@@ -18,21 +18,22 @@ import Meta from "../../components/Meta";
 import Pagination from "../../components/Pagination";
 import ResultIcon from "../../components/ResultIcon";
 import SideNavigation from "../../components/SideNavigation";
+import Tooltip from "../../components/Tooltip";
 import { WithId } from "../../db/models";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
 import { withCurrentUser } from "../../decorators/withCurrentUser";
 import { withDB } from "../../decorators/withDB";
 import useLoading from "../../hooks/useLoading";
 import {
+  DomainInspectionType,
+  HeaderInspectionType,
+  NetworkInspectionType,
   OrganizationalInspectionType,
   TLSInspectionType,
-  HeaderInspectionType,
-  DomainInspectionType,
-  NetworkInspectionType,
 } from "../../inspection/scans";
 import { clientHttpClient } from "../../services/clientHttpClient";
 import { getDomainsOfNetworksWithLatestTestResult } from "../../services/domainService";
-import { PaginateResult, IDomain, IReport } from "../../types";
+import { IDomain, IReport, PaginateResult } from "../../types";
 import { classNames } from "../../utils/common";
 
 interface Props {
@@ -275,6 +276,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
           const newDomains = [...prev];
           newDomains[index] = {
             ...newDomains[index],
+            lastScan: data.lastScan,
             report: {
               ...data,
             },
@@ -440,7 +442,21 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                         className="border-b border-b-deepblue-300 transition-all"
                         key={domain.id}
                       >
-                        <td className="p-2">{domain.fqdn}</td>
+                        <td className="p-2">
+                          {domain.fqdn}
+                          <div className="inline ml-2">
+                            <Tooltip
+                              tooltip={`Letzter Scan: ${new Date(
+                                domain.lastScan
+                              ).toLocaleString()}`}
+                            >
+                              <FontAwesomeIcon
+                                className="opacity-50"
+                                icon={faQuestionCircle}
+                              />
+                            </Tooltip>
+                          </div>
+                        </td>
                         <td className="p-2">{domain.ipV4Address}</td>
                         <td className="p-2">
                           <ResultIcon

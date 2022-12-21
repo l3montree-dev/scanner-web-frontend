@@ -2,7 +2,7 @@ import React from "react";
 
 const Imprint = () => {
   return (
-    <div className="text-white pb-5 px-5 md:px-14 md:pb-14 pt-0">
+    <div className="text-white pb-5 px-5 pt-0">
       <p>
         <h2 className="text-2xl font-bold">Impressum</h2>
         <br />
