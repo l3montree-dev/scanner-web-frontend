@@ -63,8 +63,9 @@ export default decorate(
       })
       .flat()
       .filter((domain) => domain.length > 0)
-      .map((domain) => {
+      .map((domain, i) => {
         return async () => {
+          console.log(i);
           try {
             const { fqdn } = await handleNewFQDN(domain, db.Domain);
             await inspect("csv-import", fqdn);
@@ -77,7 +78,7 @@ export default decorate(
         };
       });
 
-    promiseExecutor(promiseFactories, 3);
+    promiseExecutor(promiseFactories, 1);
 
     res.status(200).end();
   },

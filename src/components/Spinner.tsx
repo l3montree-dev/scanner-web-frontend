@@ -1,10 +1,14 @@
-import React from "react";
+import React, { FunctionComponent } from "react";
 
-const Spinner = () => {
+interface Props {
+  color?: string;
+  size?: number;
+}
+const Spinner: FunctionComponent<Props> = ({ color, size }) => {
   return (
     <svg
-      width="37"
-      height="37"
+      width={(size ?? 35) + 2}
+      height={(size ?? 35) + 2}
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 100 100"
       preserveAspectRatio="xMidYMid"
@@ -13,9 +17,9 @@ const Spinner = () => {
         cx="50"
         cy="50"
         fill="none"
-        stroke="#060d38"
+        stroke={color ?? "#060d38"}
         strokeWidth="10"
-        r="35"
+        r={size ?? 35}
         strokeDasharray="164.93361431346415 56.97787143782138"
       >
         <animateTransform

@@ -1,7 +1,13 @@
 import { resolve4 } from "dns/promises";
 import ip from "ip";
 import { Model } from "mongoose";
-import { IDomain, INetwork, IReport, PaginateRequest } from "../types";
+import {
+  IDomain,
+  INetwork,
+  IReport,
+  PaginateRequest,
+  PaginateResult,
+} from "../types";
 import { jsonSerializableStage } from "../utils/dbUtils";
 // only create a new report if the didPass property changed.
 export const handleNewDomain = async (
@@ -41,46 +47,80 @@ export const handleNewFQDN = async (
   return payload;
 };
 
-export const getDomainsOfNetworkWithLatestTestResult = async (
-  network: INetwork,
-  paginateRequest: PaginateRequest,
+export const getDomainsOfNetworksWithLatestTestResult = async (
+  networks: INetwork[],
+  paginateRequest: PaginateRequest & { search?: string },
   domain: Model<IDomain>
-): Promise<Array<IDomain & { report: IReport }>> => {
+): Promise<PaginateResult<IDomain & { report?: IReport }>> => {
   // get all domains of the network
-  const domains = await domain
-    .aggregate([
-      {
-        $match: {
+  const [domains] = (await domain.aggregate([
+    ...(paginateRequest.search
+      ? [
+          {
+            $match: {
+              fqdn: {
+                $regex: paginateRequest.search,
+                $options: "i",
+              },
+            },
+          },
+        ]
+      : []),
+    {
+      $match: {
+        $or: networks.map((network) => ({
           ipV4AddressNumber: {
             $gte: network.startAddressNumber,
             $lte: network.endAddressNumber,
           },
-        },
+        })),
       },
-      { $skip: paginateRequest.page * paginateRequest.pageSize },
-      { $limit: paginateRequest.pageSize },
-      {
-        $lookup: {
-          from: "reports",
-          localField: "fqdn",
-          foreignField: "fqdn",
-          as: "report",
-          pipeline: [
-            {
-              $sort: {
-                lastScan: -1,
-              },
+    },
+    {
+      $facet: {
+        data: [
+          {
+            $sort: {
+              fqdn: 1,
             },
-            { $limit: 1 },
-            ...jsonSerializableStage,
-          ],
-        },
+          },
+          { $skip: paginateRequest.page * paginateRequest.pageSize },
+          { $limit: paginateRequest.pageSize },
+
+          {
+            $lookup: {
+              from: "reports",
+              localField: "fqdn",
+              foreignField: "fqdn",
+              as: "report",
+              pipeline: [
+                {
+                  $sort: {
+                    lastScan: -1,
+                  },
+                },
+                { $limit: 1 },
+                ...jsonSerializableStage,
+              ],
+            },
+          },
+          {
+            $unwind: {
+              path: "$report",
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          ...jsonSerializableStage,
+        ],
+        totalCount: [{ $count: "total" }],
       },
-      {
-        $unwind: "$report",
-      },
-      ...jsonSerializableStage,
-    ])
-    .sort({ fqdn: 1 });
-  return domains;
+    },
+  ])) as any;
+
+  return {
+    total: domains.totalCount[0].total,
+    page: paginateRequest.page,
+    pageSize: paginateRequest.pageSize,
+    data: domains.data,
+  };
 };

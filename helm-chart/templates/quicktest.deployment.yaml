@@ -85,9 +85,9 @@ spec:
                   name: quicktest-credentials
                   key: nextauth-secret
             - name: NEXTAUTH_URL
-              value: "https://{{ index (index .Values.ingress.tls 0).hosts 0 }}"
+              value: "https://{{ index (index .Values.quicktestIngress.tls 0).hosts 0 }}"
             - name: KEYCLOAK_ISSUER
-              value: "https://{{ index (index .Values.ingress.auth.tls 0).hosts 0 }}/realms/OZGSec"
+              value: "https://{{ index (index .Values.authIngress.tls 0).hosts 0 }}/realms/OZGSec"
             - name: KEYCLOAK_SECRET
               valueFrom:
                 secretKeyRef:
@@ -96,13 +96,13 @@ spec:
             - name: KEYCLOAK_ID
               value: quicktest
           livenessProbe:
-            initialDelaySeconds: 30
+            initialDelaySeconds: 10
             periodSeconds: 30
             httpGet:
               path: /api/health
               port: http
           readinessProbe:
-            initialDelaySeconds: 30
+            initialDelaySeconds: 10
             periodSeconds: 30
             httpGet:
               path: /api/health

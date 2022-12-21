@@ -74,3 +74,13 @@ pre {
 .draganddrop {
     min-height: 200px;
 }
+
+th > div {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
+
+.menu {
+    min-width: 200px;
+}
