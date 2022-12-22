@@ -1,15 +1,15 @@
 dependencies:
 - name: influxdb
   repository: https://charts.bitnami.com/bitnami
-  version: 2.6.1
+  version: 5.4.13
 - name: mongodb
   repository: https://charts.bitnami.com/bitnami
   version: 13.1.7
 - name: rabbitmq
   repository: https://charts.bitnami.com/bitnami
   version: 11.1.5
-- name: keycloak
+- name: mysql
   repository: https://charts.bitnami.com/bitnami
-  version: 12.2.0
-digest: sha256:cde657dde9f44f30e73d46f3df053e586005551f8716f5eb2682d317e6a93128
-generated: "2022-12-12T10:13:25.098486+01:00"
+  version: 9.4.5
+digest: sha256:17a5f11070ea1f55f33b39640199ae9f7c41ff107d890bef1221d9efa15dea4c
+generated: "2022-12-22T14:57:37.167845+01:00"

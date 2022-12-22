@@ -57,36 +57,32 @@ spec:
             - name: KC_DB
               value: "mysql"
             - name: KC_DB_SCHEMA
-              value: {{ .Values.keycloak.db.schema | default "keycloak" }}
+              value: {{ .Values.keycloak.config.db.schema | default "keycloak" }}
             - name: KC_DB_USERNAME
-              value: {{ .Values.keycloak.db.username | default "keycloak" }}
+              value: {{ .Values.keycloak.config.db.username | default "keycloak" }}
             - name: KC_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.keycloak.existingSecret.name | default "keycloak" }}
-                  key: {{ .Values.keycloak.existingSecret.db-pass-key | default "db-password" }}
+                  name: {{ .Values.keycloak.config.existingSecret.name | default "keycloak" }}
+                  key: {{ .Values.keycloak.config.existingSecret.dbPassKey | default "db-password" }}
             - name: KC_DB_URL
-              value: {{ .Values.keycloak.db.url | default ""jdbc:mysql://mysql.{{.Release.Namespace}}.svc.cluster.local:3306/keycloak"" }}
+              value: {{ .Values.keycloak.config.db.url | default "jdbc:mysql://mysql.{{.Release.Namespace}}.svc.cluster.local:3306/keycloak" }}
             - name: KEYCLOAK_ADMIN
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.keycloak.existingSecret.name | default "keycloak" }}
-                  key: {{ .Values.keycloak.existingSecret.admin-username-key | default "admin-username" }}
+                  name: {{ .Values.keycloak.config.existingSecret.name | default "keycloak" }}
+                  key: {{ .Values.keycloak.config.existingSecret.adminUsernameKey | default "admin-username" }}
             - name: KEYCLOAK_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.keycloak.existingSecret.name | default "keycloak" }}
-                  key: {{ .Values.keycloak.existingSecret.admin-pass-key | default "admin-pass" }}
+                  name: {{ .Values.keycloak.config.existingSecret.name | default "keycloak" }}
+                  key: {{ .Values.keycloak.config.existingSecret.adminPassKey | default "admin-pass" }}
             - name: KC_HTTPS_KEY_STORE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.keycloak.existingSecret.name | default "keycloak" }}
-                  key: {{ .Values.keycloak.existingSecret.keystore-pass-key | default "keystore-pass" }}
+                  name: {{ .Values.keycloak.config.existingSecret.name | default "keycloak" }}
+                  key: {{ .Values.keycloak.config.existingSecret.keystorePassKey | default "keystore-pass" }}
           volumeMounts:
-            # keytool -genkeypair -storepass ... -storetype PKCS12 -keyalg RSA -keysize 2048 -alias server -keystore keycloak.truststore.jks
-            # Answer name with auth.l3montree.cloud
-            # Copy to Control Plane
-            # kubectl create secret -n l3montree generic keycloak-truststore --from-file=./keycloak.truststore.jks
             - mountPath: "/opt/keycloak/conf/"
               name: keycloak-truststore
           readinessProbe:
