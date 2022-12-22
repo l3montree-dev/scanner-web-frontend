@@ -100,7 +100,10 @@ const DomainOverviewForm: FunctionComponent<{
       .catch((err) => {
         createRequest.error("Leider ist ein Fehler aufgetreten.");
       })
-      .then(() => createRequest.success());
+      .then(() => {
+        setNewDomain("");
+        createRequest.success();
+      });
   };
   return (
     <div>
@@ -296,7 +299,15 @@ const Dashboard: FunctionComponent<Props> = (props) => {
     patchQuery({ search: value });
   };
 
-  const handleAddRecord = async (domain: string) => {};
+  const handleAddRecord = async (domain: string) => {
+    await clientHttpClient(`/api/domains`, crypto.randomUUID(), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ domain }),
+    });
+  };
 
   return (
     <>

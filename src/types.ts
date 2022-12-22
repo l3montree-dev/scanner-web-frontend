@@ -85,10 +85,10 @@ export interface IToken extends ISession {
 
 export interface ICreateUserDTO {
   username: string;
-  email: string;
   firstName: string;
   lastName: string;
   networks: string[]; // CIDR notation
+  role: string;
 }
 
 export type IScanSuccessResponse = {

@@ -25,15 +25,25 @@ export default decorate(
     const kcClient = getKcAdminClient(token?.accessToken);
 
     try {
+      const password = Math.random().toString(36).substring(2, 15);
       const { id } = await kcClient.users.create({
         realm: getRealmName(),
         firstName: user.firstName,
         lastName: user.lastName,
-        email: user.email,
         username: user.username,
         emailVerified: true, // TODO: Change for real validation
         enabled: true,
         requiredActions: ["UPDATE_PASSWORD"],
+        attributes: {
+          role: user.role,
+        },
+        credentials: [
+          {
+            type: "password",
+            temporary: true,
+            value: password,
+          },
+        ],
       });
 
       // create a new user inside our database as well.
@@ -42,7 +52,7 @@ export default decorate(
           _id: id,
           networks: user.networks.map(parseNetwork),
         });
-        res.end(JSON.stringify({ success: true }));
+        res.end(JSON.stringify({ success: true, password }));
         // request the domain lookup for each network.
       } catch (e) {
         console.log(e);
@@ -51,9 +61,8 @@ export default decorate(
         res.status(500).end(JSON.stringify({ error: e }));
         return;
       }
-    } catch (e) {
-      console.log(e);
-      res.status(500).end(JSON.stringify({ error: e }));
+    } catch (e: any) {
+      res.status(500).end(JSON.stringify({ error: e.message }));
     }
   },
   tryDB,

@@ -1,5 +1,7 @@
 import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { signOut } from "next-auth/react";
+import { useRouter } from "next/router";
 import React from "react";
 import { useSession } from "../hooks/useSession";
 import Menu from "./Menu";
@@ -15,14 +17,29 @@ const getInitials = (name: string) => {
 
 const Header = () => {
   const session = useSession();
-
-  const handleSignOut = () => {};
+  const router = useRouter();
+  console.log(session);
+  const handleSignOut = () => {
+    signOut({
+      redirect: false,
+    });
+    router.push("/");
+  };
   return (
-    <div className="bg-deepblue-300 h-14 border-b text-white border-deepblue-50">
+    <div className="bg-deepblue-400 h-14 border-b text-white border-deepblue-400">
       {session.status === "authenticated" && session.data && (
         <div className="flex items-center justify-between h-full px-4">
           <div className="flex items-center">
-            <div className="text-xl font-bold">OZG Security</div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              width={70}
+              height={50}
+              src={"/assets/ozg-logo.svg"}
+              alt="Logo BMI"
+            />
+            <div className="text-xl font-bold ml-2 relative top-1">
+              Security
+            </div>
           </div>
           <div className="flex items-center">
             <div className="ml-2">
@@ -41,7 +58,7 @@ const Header = () => {
                       />
                       Ausloggen
                     </MenuItem>
-                    <div className="p-2 text-sm border-t border-t-deepblue-50 bg-deepblue-300">
+                    <div className="p-2 text-sm border-t border-t-deepblue-200 bg-deepblue-300">
                       Eingeloggt als: {session.data.user.name}
                     </div>
                   </MenuList>

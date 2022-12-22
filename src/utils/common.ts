@@ -41,7 +41,7 @@ export const transformIpLookupMsg2DTO = (
 };
 
 export const isAdmin = (session: ISession | null | undefined): boolean => {
-  if (!session) {
+  if (!session || !session.resource_access) {
     return false;
   }
   return session?.resource_access["realm-management"]?.roles.includes(

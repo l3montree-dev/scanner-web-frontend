@@ -7,7 +7,7 @@ import { withSession } from "../../decorators/withSession";
 import { inspect } from "../../inspection/inspect";
 import { handleNewFQDN } from "../../services/domainService";
 import { getLogger } from "../../services/logger";
-import { promiseExecutor } from "../../utils/server";
+import { promiseExecutor, stream2buffer } from "../../utils/server";
 
 const logger = getLogger(__filename);
 
@@ -28,6 +28,20 @@ export default decorate(
       res.status(405).end();
       return;
     }
+
+    // check if the user uploads a file or only inputs a single domain.
+    if (req.headers["content-type"]?.includes("application/json")) {
+      // the user does only send a single domain.
+
+      const { domain }: { domain: string } = JSON.parse(
+        (await stream2buffer(req)).toString()
+      );
+
+      const { fqdn } = await handleNewFQDN(domain, db.Domain);
+      // the domain will automatically be inspected.
+      return res.send({ success: true, fqdn });
+    }
+
     const data = await new Promise<{ files: formidable.Files }>(
       (resolve, reject) => {
         const form = formidable({ multiples: true });
@@ -65,7 +79,6 @@ export default decorate(
       .filter((domain) => domain.length > 0)
       .map((domain, i) => {
         return async () => {
-          console.log(i);
           try {
             const { fqdn } = await handleNewFQDN(domain, db.Domain);
             await inspect("csv-import", fqdn);

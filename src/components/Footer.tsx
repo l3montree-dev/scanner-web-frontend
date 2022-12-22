@@ -23,7 +23,7 @@ const Footer = () => {
           />
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            width={210}
+            width={205}
             height={50}
             className="ml-5"
             src={"/assets/bsi-logo.svg"}

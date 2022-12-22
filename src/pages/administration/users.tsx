@@ -1,90 +1,85 @@
 import { GetServerSideProps } from "next";
 import { unstable_getServerSession } from "next-auth";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import Button from "../../components/Button";
+import CreateUserForm from "../../components/CreateUserForm";
 import DashboardPage from "../../components/DashboardPage";
-import FormInput from "../../components/FormInput";
-import FormTextarea from "../../components/FormTextarea";
-import Meta from "../../components/Meta";
 import Modal from "../../components/Modal";
-import Page from "../../components/Page";
-import PrimaryButton from "../../components/PrimaryButton";
 import SideNavigation from "../../components/SideNavigation";
-import useLoading from "../../hooks/useLoading";
 import { clientHttpClient } from "../../services/clientHttpClient";
 import { ICreateUserDTO, ISession } from "../../types";
 import { isAdmin, parseNetworkString } from "../../utils/common";
-import { isValidEmail, isValidIp, isValidMask } from "../../utils/validator";
 import { authOptions } from "../api/auth/[...nextauth]";
 
 export const parseCreateUserForm = ({
   firstName,
   lastName,
-  email,
   networks,
   username,
+  role,
 }: {
   firstName: string;
   lastName: string;
-  email: string;
   username: string;
   networks: string;
+  role: string;
 }): ICreateUserDTO => {
   if (username.length === 0) {
     throw new Error("Bitte trage einen Nutzernamen ein.");
   }
 
-  if (!isValidEmail(email)) {
-    throw new Error("Bitte trage eine gültige E-Mail ein.");
-  }
   const networksArray = parseNetworkString(networks);
   return {
     firstName,
     lastName,
-    email,
     networks: networksArray,
     username,
+    role,
   };
 };
 
 const Users = () => {
-  const createRequest = useLoading();
-
-  const [username, setUsername] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [networks, setNetworks] = useState("");
-
   const [isOpen, setIsOpen] = useState(false);
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      const createUserDTO = parseCreateUserForm({
-        firstName,
-        lastName,
-        email,
-        networks,
-        username,
-      });
-      createRequest.loading();
-      await clientHttpClient("/api/users", crypto.randomUUID(), {
-        method: "POST",
-        body: JSON.stringify(createUserDTO),
-      });
-      createRequest.success();
-    } catch (e: any) {
-      createRequest.error(e.toString());
+  const handleCreateUser = async (
+    form: Omit<ICreateUserDTO, "networks"> & { networks: string }
+  ) => {
+    const { firstName, lastName, networks, username, role } = form;
+    const createUserDTO = parseCreateUserForm({
+      firstName,
+      lastName,
+      networks,
+      username,
+      role,
+    });
+
+    const res = await clientHttpClient("/api/users", crypto.randomUUID(), {
+      method: "POST",
+      body: JSON.stringify(createUserDTO),
+    });
+    const body = await res.json();
+    return body.password;
+    if (!res.ok) {
+      throw new Error(await res.text());
     }
   };
   return (
     <DashboardPage>
       <SideNavigation />
-      <div className="flex-1 ">
-        <Button type="button" loading={false} onClick={() => setIsOpen(true)}>
-          Hallo
-        </Button>
+      <div className="flex-1">
+        <div className="flex flex-row w-full justfy-between">
+          <h1 className="text-4xl flex-1 mb-3 text-white font-bold">
+            Nutzerverwaltung
+          </h1>
+          <Button
+            className="bg-deepblue-200 px-5 text-white"
+            type="button"
+            loading={false}
+            onClick={() => setIsOpen(true)}
+          >
+            Nutzer erstellen
+          </Button>
+        </div>
         <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
           <div className="w-full mx-auto">
             <div>
@@ -93,105 +88,7 @@ const Users = () => {
                   Nutzer erstellen
                 </h1>
               </div>
-
-              <div className="pb-14">
-                <form onSubmit={onSubmit} className="pt-10  flex">
-                  <div className="flex flex-col flex-1">
-                    <FormInput
-                      label="Nutzername *"
-                      validator={(value) => {
-                        if (value.length === 0) {
-                          return "Bitte trage einen Nutzernamen ein.";
-                        }
-                        return true;
-                      }}
-                      onChange={setUsername}
-                      value={username}
-                    />
-                    <div className="mt-4 flex-col flex">
-                      <FormInput
-                        label="Vorname"
-                        onChange={setFirstName}
-                        value={firstName}
-                      />
-                    </div>
-                    <div className="mt-4 flex-col flex">
-                      <FormInput
-                        label="Nachname"
-                        onChange={setLastName}
-                        value={lastName}
-                      />
-                    </div>
-                    <div className="mt-4 flex-col flex">
-                      <FormInput
-                        label="Email-Adresse *"
-                        onChange={setEmail}
-                        validator={(value) => {
-                          if (!isValidEmail(value)) {
-                            return "Bitte eine gültige Email-Adresse eingeben.";
-                          }
-                          return true;
-                        }}
-                        value={email}
-                      />
-                    </div>
-                    <div className="mt-4 flex-col flex">
-                      <FormTextarea
-                        label="Netzwerke (CIDR-Notation) *"
-                        onChange={setNetworks}
-                        value={networks}
-                        validator={(value) => {
-                          const networksArray = value.trim().split("\n");
-                          // check if each network is in cidr notation.
-
-                          const networksValid = networksArray.every(
-                            (network) => {
-                              const [ip, mask] = network.split("/");
-                              if (ip === undefined || mask === undefined) {
-                                return false;
-                              }
-                              const ipValid = isValidIp(ip);
-                              const maskValid = isValidMask(mask);
-                              return ipValid && maskValid;
-                            }
-                          );
-                          if (!networksValid) {
-                            return "Bitte trage gültige Netzwerke ein.";
-                          }
-                          return true;
-                        }}
-                        placeholder={`45.10.26.0/24
-45.12.32.0/16
-                      `}
-                      />
-                      <span className="text-white text-right text-sm mt-1">
-                        Mehrere Netzwerke können durch Zeilenumbrüche getrennt
-                        werden.
-                      </span>
-                    </div>
-                    <div className="flex flex-row justify-end mt-5">
-                      <PrimaryButton
-                        loading={createRequest.isLoading}
-                        type="submit"
-                      >
-                        Nutzer anlegen
-                      </PrimaryButton>
-                    </div>
-                  </div>
-                </form>
-
-                {createRequest.errored && (
-                  <span className="text-red-600 absolute text-sm mt-3 block">
-                    {createRequest.errorMessage}
-                  </span>
-                )}
-              </div>
-              <p className="text-white">
-                Mit Abschicken des Formulars wird ein neuer Nutzer angelegt. Der
-                Nutzer erhält eine E-Mail mit einem Link, über den er sein
-                Passwort setzen kann. Der Nutzer erhält Zugriff auf die
-                Netzwerke, die hier eingegeben werden.
-              </p>
+              <CreateUserForm onCreateUser={handleCreateUser} />
             </div>
           </div>
         </Modal>

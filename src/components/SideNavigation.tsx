@@ -41,7 +41,7 @@ const SideNavigation = () => {
   const { pathname } = useRouter();
 
   return (
-    <div className="bg-deepblue-600 h-full border-r border-r-deepblue-300">
+    <div className="bg-deepblue-600 h-full border-r border-r-deepblue-500">
       <div className="sticky top-0 pt-10">
         {getLinks(isAdmin(session.data)).map(({ path, name, icon }) => (
           <Link key={name} href={path}>
@@ -49,7 +49,7 @@ const SideNavigation = () => {
               className={classNames(
                 "p-4 text-white hover:bg-deepblue-300 transition-all cursor-pointer",
                 pathname === path &&
-                  "bg-deepblue-300 border-t border-b border-deepblue-50"
+                  "bg-deepblue-500 border-t border-b border-deepblue-500"
               )}
             >
               <FontAwesomeIcon
