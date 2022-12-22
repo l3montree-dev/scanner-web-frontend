@@ -457,9 +457,18 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                           {domain.fqdn}
                           <div className="inline ml-2">
                             <Tooltip
-                              tooltip={`Letzter Scan: ${new Date(
-                                domain.lastScan
-                              ).toLocaleString()}`}
+                              tooltip={
+                                domain.lastScan !== null
+                                  ? `Letzter Scan: ${new Date(
+                                      domain.lastScan
+                                    ).toLocaleString()}${
+                                      domain.errorCount !== null &&
+                                      domain.errorCount > 0
+                                        ? ` (${domain.errorCount} Fehler)`
+                                        : ""
+                                    }`
+                                  : "Noch nicht gescannt"
+                              }
                             >
                               <FontAwesomeIcon
                                 className="opacity-50"

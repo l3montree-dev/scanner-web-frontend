@@ -20,7 +20,8 @@ export interface IReport {
 export interface IDomain {
   fqdn: string;
   ipV4Address: string;
-  lastScan: number;
+  lastScan: number | null;
+  errorCount: number | null;
   // save the number representation of the v4 address as well
   // to make it easier to query for ranges
   ipV4AddressNumber: number;
