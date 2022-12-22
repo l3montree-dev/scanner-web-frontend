@@ -42,7 +42,6 @@ const CreateUserForm: FunctionComponent<Props> = ({ onCreateUser }) => {
 
       createRequest.success();
     } catch (e: any) {
-      console.error("ERROR", e.toString());
       createRequest.error(e.toString());
     }
   };

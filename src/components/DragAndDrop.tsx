@@ -48,7 +48,6 @@ export const DragAndDrop: FunctionComponent<PropsWithChildren<Props>> = ({
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      console.log(e.target.files);
       onDrop(e.target.files);
     }
   };

@@ -37,7 +37,6 @@ export default decorate(
 
       res.end(JSON.stringify({ success: true }));
     } catch (e) {
-      console.log(e);
       res.end(JSON.stringify({ error: e }));
     }
   },

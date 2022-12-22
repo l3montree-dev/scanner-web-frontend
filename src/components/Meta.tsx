@@ -1,6 +1,7 @@
-import { useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import Head from "next/head";
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useEffect } from "react";
+import { useSession } from "../hooks/useSession";
 
 export interface Props {
   title?: string;
@@ -8,6 +9,13 @@ export interface Props {
   keywords?: string;
 }
 const Meta: FunctionComponent<Props> = ({ title, description, keywords }) => {
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    if (session?.error === "RefreshAccessTokenError") {
+      signIn("keycloak"); // Force sign in to hopefully resolve error
+    }
+  }, [session]);
   return (
     <Head>
       <title>{title ?? "OZG Security Challenge 2023"}</title>

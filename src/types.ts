@@ -78,10 +78,12 @@ export interface ISession {
       roles: string[];
     };
   };
+  error?: string;
 }
 
 export interface IToken extends ISession {
   accessToken: string;
+  refreshToken: string;
 }
 
 export interface ICreateUserDTO {
@@ -121,4 +123,17 @@ export interface PaginateResult<T> {
   total: number;
   page: number;
   pageSize: number;
+}
+
+export interface IKcUser {
+  id: string;
+  createdTimestamp: number;
+  username: string;
+  enabled: boolean;
+  totp: boolean;
+  emailVerified: boolean;
+  firstName: string;
+  lastName: string;
+  attributes?: { role: string[] };
+  notBefore: number;
 }

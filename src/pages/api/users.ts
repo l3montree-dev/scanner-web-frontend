@@ -55,7 +55,6 @@ export default decorate(
         res.end(JSON.stringify({ success: true, password }));
         // request the domain lookup for each network.
       } catch (e) {
-        console.log(e);
         // Rollback keycloak if this fails.
         await kcClient.users.del({ id, realm: getRealmName() });
         res.status(500).end(JSON.stringify({ error: e }));

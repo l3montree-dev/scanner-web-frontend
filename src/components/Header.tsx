@@ -18,7 +18,7 @@ const getInitials = (name: string) => {
 const Header = () => {
   const session = useSession();
   const router = useRouter();
-  console.log(session);
+
   const handleSignOut = () => {
     signOut({
       redirect: false,

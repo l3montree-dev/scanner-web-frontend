@@ -6,7 +6,13 @@ import CreateUserForm from "../../components/CreateUserForm";
 import DashboardPage from "../../components/DashboardPage";
 import Modal from "../../components/Modal";
 import SideNavigation from "../../components/SideNavigation";
+import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
+import {
+  withToken,
+  withTokenServerSideProps,
+} from "../../decorators/withToken";
 import { clientHttpClient } from "../../services/clientHttpClient";
+import { getKcAdminClient } from "../../services/keycloak";
 import { ICreateUserDTO, ISession } from "../../types";
 import { isAdmin, parseNetworkString } from "../../utils/common";
 import { authOptions } from "../api/auth/[...nextauth]";
@@ -59,9 +65,6 @@ const Users = () => {
     });
     const body = await res.json();
     return body.password;
-    if (!res.ok) {
-      throw new Error(await res.text());
-    }
   };
   return (
     <DashboardPage>
@@ -97,27 +100,37 @@ const Users = () => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = (await unstable_getServerSession(
-    context.req,
-    context.res,
-    authOptions
-  )) as ISession;
+export const getServerSideProps = decorateServerSideProps(
+  async (context, [token]) => {
+    const session = (await unstable_getServerSession(
+      context.req,
+      context.res,
+      authOptions
+    )) as ISession;
 
-  // check if the user is an admin
-  // if not, redirect him to the dashboard page.
-  if (!isAdmin(session)) {
+    // check if the user is an admin
+    // if not, redirect him to the dashboard page.
+    if (!isAdmin(session)) {
+      return {
+        redirect: {
+          destination: "/dashboard",
+          permanent: false,
+        },
+      };
+    }
+
+    // fetch all users from keycloak
+    const kcAdminClient = getKcAdminClient(token.accessToken);
+
+    // const users = await kcAdminClient.users.find();
+    const users: any[] = [];
     return {
-      redirect: {
-        destination: "/dashboard",
-        permanent: false,
+      props: {
+        users,
       },
     };
-  }
-
-  return {
-    props: {},
-  };
-};
+  },
+  withTokenServerSideProps
+);
 
 export default Users;
