@@ -2,9 +2,9 @@ import React from "react";
 
 const Imprint = () => {
   return (
-    <div className="text-white pb-5 px-5 md:px-14 md:pb-14 pt-0">
+    <div className="text-white pb-5 px-5 pt-0">
+      <h2 className="text-2xl font-bold">Impressum</h2>
       <p>
-        <h2 className="text-2xl font-bold">Impressum</h2>
         <br />
         <br />
         Das Internetangebot wird herausgegeben vom
@@ -169,74 +169,76 @@ const Imprint = () => {
         <br />
         <br />
         6. Nutzungsbedingungen für Bilder
-        <ol>
-          <li>
-            Das Bundesministerium des Innern und für Heimat (nachfolgend BMI)
-            hat für die Bundesrepublik Deutschland alle Nutzungsrechte von den
-            Urhebern der digitalen Bilder erworben, soweit nichts Gegenteiliges,
-            z.B. in den begleitenden Bildinformationen, angegeben ist.
-          </li>
-          <li>
-            Die Bildinformationen und die darin enthaltenen Nutzungs- und
-            Verwendungsbeschränkungen sind zu beachten. Für die aus der
-            Nichtbeachtung resultierenden Schäden haftet der Nutzer. Er hat das
-            BMI insoweit von Ansprüchen Dritter freizustellen.
-          </li>
-          <li>
-            Mit dem Quellennachweis &quot;BMI&quot; ausgezeichnete Bilder können
-            grundsätzlich kostenfrei heruntergeladen und im Rahmen der
-            Berichterstattung für folgende Zwecke genutzt werden:
-            <ul>
-              <li>Presseveröffentlichungen</li>
-              <li>Veröffentlichungen in Printmedien</li>
-              <li>Veröffentlichungen durch Film und Fernsehen</li>
-              <li>Online- und multimediale Veröffentlichungen</li>
-            </ul>
-            Eine darüber hinausgehende Nutzung für kommerzielle Zwecke,
-            insbesondere für Werbezwecke, ist nicht zulässig. Bilder mit einem
-            anderen Quellennachweis als &quot;BMI&quot; sind für eine Nutzung
-            durch Dritte nicht freigegeben.
-          </li>
-          <li>
-            Jegliche Bearbeitung, Umgestaltung oder Manipulation der digitalen
-            Bilder, die über Farbkorrekturen, Ausschnitte und Verkleinerungen
-            hinausgehen, ist unzulässig und nur mit vorheriger schriftlicher
-            Zustimmung seitens des BMI erlaubt. Ebenso darf das digitale Bild
-            nicht in einem sinnentstellten Zusammenhang wiedergegeben werden.
-          </li>
-          <li>
-            Eine Entstellung des urheberrechtlichen geschützten Werks in Bild,
-            Wort bzw. jeglicher anderen Form, z.B. durch Nachfotografieren,
-            zeichnerische Verfälschung, Fotocomposing oder elektronische
-            Hilfsmittel ist nicht zulässig. Der Nutzer trägt die Verantwortung
-            für die Betextung.
-          </li>
-          <li>
-            Die Presse ist insbesondere zur Beachtung der publizistischen
-            Grundsätze des Deutschen Presserates (Pressekodex) verpflichtet. Die
-            Zustimmung zur Nutzung des Bildmaterials umfasst nicht die
-            Zusicherung, dass die abgebildeten Personen, die Inhaber der Rechte
-            an abgebildeten Werken oder die Inhaber von Marken- und sonstigen
-            Schutzrechten die Einwilligung zu einer öffentlichen Wiedergabe
-            erteilt haben. Die Einholung der im Einzelfall notwendigen
-            Einwilligunge Dritter obliegt dem Nutzer. Er hat die
-            Persönlichkeits-, Urheber-, Marken- und sonstigen Schutzrechte von
-            abgebildeten Personen, Werken, Gegenständen oder Zeichen selbst zu
-            beachten. Bei Missachtung solcher Rechte ist allein der Nutzer
-            etwaigen Dritten gegenüber schadenersatzpflichtig.
-          </li>
-          <li>
-            Das BMI behält sich vor, dem Verdacht einer missbräuchlichen Nutzung
-            oder einer wesentlichen Nutzungsverletzung nachzugehen.
-          </li>
-          <li>
-            Bei Verwendung des digitalen Bildes ist die Quelle
-            &quot;Bundesministerium des Innern und für Heimat&quot; anzugeben.
-            Dies gilt auch für elektronische Publikationen (z.B. Webseiten). Von
-            jeder Veröffentlichung im Druck ist dem BMI ein Belegexemplar
-            unaufgefordert und kostenfrei zuzusenden:
-          </li>
-        </ol>
+      </p>
+      <ol>
+        <li>
+          Das Bundesministerium des Innern und für Heimat (nachfolgend BMI) hat
+          für die Bundesrepublik Deutschland alle Nutzungsrechte von den
+          Urhebern der digitalen Bilder erworben, soweit nichts Gegenteiliges,
+          z.B. in den begleitenden Bildinformationen, angegeben ist.
+        </li>
+        <li>
+          Die Bildinformationen und die darin enthaltenen Nutzungs- und
+          Verwendungsbeschränkungen sind zu beachten. Für die aus der
+          Nichtbeachtung resultierenden Schäden haftet der Nutzer. Er hat das
+          BMI insoweit von Ansprüchen Dritter freizustellen.
+        </li>
+        <li>
+          Mit dem Quellennachweis &quot;BMI&quot; ausgezeichnete Bilder können
+          grundsätzlich kostenfrei heruntergeladen und im Rahmen der
+          Berichterstattung für folgende Zwecke genutzt werden:
+          <ul>
+            <li>Presseveröffentlichungen</li>
+            <li>Veröffentlichungen in Printmedien</li>
+            <li>Veröffentlichungen durch Film und Fernsehen</li>
+            <li>Online- und multimediale Veröffentlichungen</li>
+          </ul>
+          Eine darüber hinausgehende Nutzung für kommerzielle Zwecke,
+          insbesondere für Werbezwecke, ist nicht zulässig. Bilder mit einem
+          anderen Quellennachweis als &quot;BMI&quot; sind für eine Nutzung
+          durch Dritte nicht freigegeben.
+        </li>
+        <li>
+          Jegliche Bearbeitung, Umgestaltung oder Manipulation der digitalen
+          Bilder, die über Farbkorrekturen, Ausschnitte und Verkleinerungen
+          hinausgehen, ist unzulässig und nur mit vorheriger schriftlicher
+          Zustimmung seitens des BMI erlaubt. Ebenso darf das digitale Bild
+          nicht in einem sinnentstellten Zusammenhang wiedergegeben werden.
+        </li>
+        <li>
+          Eine Entstellung des urheberrechtlichen geschützten Werks in Bild,
+          Wort bzw. jeglicher anderen Form, z.B. durch Nachfotografieren,
+          zeichnerische Verfälschung, Fotocomposing oder elektronische
+          Hilfsmittel ist nicht zulässig. Der Nutzer trägt die Verantwortung für
+          die Betextung.
+        </li>
+        <li>
+          Die Presse ist insbesondere zur Beachtung der publizistischen
+          Grundsätze des Deutschen Presserates (Pressekodex) verpflichtet. Die
+          Zustimmung zur Nutzung des Bildmaterials umfasst nicht die
+          Zusicherung, dass die abgebildeten Personen, die Inhaber der Rechte an
+          abgebildeten Werken oder die Inhaber von Marken- und sonstigen
+          Schutzrechten die Einwilligung zu einer öffentlichen Wiedergabe
+          erteilt haben. Die Einholung der im Einzelfall notwendigen
+          Einwilligunge Dritter obliegt dem Nutzer. Er hat die Persönlichkeits-,
+          Urheber-, Marken- und sonstigen Schutzrechte von abgebildeten
+          Personen, Werken, Gegenständen oder Zeichen selbst zu beachten. Bei
+          Missachtung solcher Rechte ist allein der Nutzer etwaigen Dritten
+          gegenüber schadenersatzpflichtig.
+        </li>
+        <li>
+          Das BMI behält sich vor, dem Verdacht einer missbräuchlichen Nutzung
+          oder einer wesentlichen Nutzungsverletzung nachzugehen.
+        </li>
+        <li>
+          Bei Verwendung des digitalen Bildes ist die Quelle
+          &quot;Bundesministerium des Innern und für Heimat&quot; anzugeben.
+          Dies gilt auch für elektronische Publikationen (z.B. Webseiten). Von
+          jeder Veröffentlichung im Druck ist dem BMI ein Belegexemplar
+          unaufgefordert und kostenfrei zuzusenden:
+        </li>
+      </ol>
+      <p>
         <br />
         <br />
         Bundesministerium des Innern und für Heimat, Alt-Moabit 140, 10557

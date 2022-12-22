@@ -9,9 +9,9 @@ export const getHSTSReportMessage = (report: IReport) => {
     return "Strict-Transport-Security Header vorhanden und korrekt konfiguriert.";
   } else {
     switch (true) {
-      case inspection.errors.includes(HSTSValidationError.MissingHeader):
+      case inspection.errors?.includes(HSTSValidationError.MissingHeader):
         return "Der Strict-Transport-Security Header ist nicht vorhanden.";
-      case inspection.errors.includes(HSTSValidationError.MissingMaxAge):
+      case inspection.errors?.includes(HSTSValidationError.MissingMaxAge):
         return "Der Strict-Transport-Security Header ist vorhanden, enthält aber keinen max-age Parameter.";
       default:
         return "Strict-Transport-Security Header nicht vorhanden oder nicht korrekt konfiguriert.";

@@ -9,25 +9,24 @@ export const getResponsibleDisclosureReportMessage = (report: IReport) => {
     return `Die Datei ${report.fqdn}/.well-known/security.txt ist vorhanden und enthält die nötigen Einträge.`;
   } else {
     switch (true) {
-      case inspection.errors.includes(
-        ResponsibleDisclosureValidationError.MissingResponsibleDisclosure
-      ):
-        return `Die Datei ${report.fqdn}/.well-known/security.txt ist nicht vorhanden.`;
-      case inspection.errors.includes(
+      case inspection.errors?.includes(
         ResponsibleDisclosureValidationError.MissingContactField
       ):
         return `Die Datei ${report.fqdn}/.well-known/security.txt ist vorhanden, enthält aber keinen Kontakt.`;
-      case inspection.errors.includes(
+      case inspection.errors?.includes(
         ResponsibleDisclosureValidationError.InvalidExpiresField
       ):
         return `Die Datei ${report.fqdn}/.well-known/security.txt ist vorhanden, enthält aber keinen gültigen Expires Eintrag.`;
-      case inspection.errors.includes(
+      case inspection.errors?.includes(
         ResponsibleDisclosureValidationError.Expired
       ):
         return `Die Datei ${report.fqdn}/.well-known/security.txt ist vorhanden, aber abgelaufen.`;
 
+      case inspection.errors?.includes(
+        ResponsibleDisclosureValidationError.MissingResponsibleDisclosure
+      ):
       default:
-        return `Die Datei ${report.fqdn}/.well-known/security.txt ist nicht vorhanden oder enthält nicht die nötigen Einträge.`;
+        return `Die Datei ${report.fqdn}/.well-known/security.txt ist nicht vorhanden.`;
     }
   }
 };

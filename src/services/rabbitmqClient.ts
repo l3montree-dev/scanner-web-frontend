@@ -45,7 +45,8 @@ export class RabbitMQClient {
     queueOptions?: amqp.Options.AssertQueue
   ) {
     const channel = await this.getSubscribeChannel();
-    channel.assertQueue(queue, queueOptions);
+    await channel.assertQueue(queue, queueOptions);
+    await channel.prefetch(1);
     await channel.consume(queue, async (msg) => {
       if (msg) {
         try {
@@ -62,14 +63,17 @@ export class RabbitMQClient {
           channel.ack(msg);
         } catch (e: any) {
           if (e) {
-            logger.error(e);
-          } else {
-            console.log(e);
+            logger.error({ err: e.message }, "error while processing message");
           }
         }
         return;
       }
     });
+  }
+
+  async assertQueue(queue: string, queueOptions?: amqp.Options.AssertQueue) {
+    const channel = await this.getPublishChannel();
+    return channel.assertQueue(queue, queueOptions);
   }
 
   async publish(

@@ -1,8 +1,8 @@
-{{- if .Values.ingress.enabled -}}
+{{- if .Values.quicktestIngress.enabled -}}
 {{- $svcPort := 4000 -}}
-{{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
-  {{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
-  {{- $_ := set .Values.ingress.annotations "kubernetes.io/ingress.class" .Values.ingress.className}}
+{{- if and .Values.quicktestIngress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
+  {{- if not (hasKey .Values.quicktestIngress.annotations "kubernetes.io/ingress.class") }}
+  {{- $_ := set .Values.quicktestIngress.annotations "kubernetes.io/ingress.class" .Values.quicktestIngress.className}}
   {{- end }}
 {{- end }}
 {{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
@@ -17,17 +17,17 @@ metadata:
   name: quicktest-ingress
   labels:
     {{- include "ozgsec.labels" . | nindent 4 }}
-  {{- with .Values.ingress.annotations }}
+  {{- with .Values.quicktestIngress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  {{- if and .Values.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
-  ingressClassName: {{ .Values.ingress.className }}
+  {{- if and .Values.quicktestIngress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
+  ingressClassName: {{ .Values.quicktestIngress.className }}
   {{- end }}
-  {{- if .Values.ingress.tls }}
+  {{- if .Values.quicktestIngress.tls }}
   tls:
-    {{- range .Values.ingress.tls }}
+    {{- range .Values.quicktestIngress.tls }}
     - hosts:
         {{- range .hosts }}
         - {{ . | quote }}
@@ -36,7 +36,7 @@ spec:
     {{- end }}
   {{- end }}
   rules:
-    {{- range .Values.ingress.hosts }}
+    {{- range .Values.quicktestIngress.hosts }}
     - host: {{ .host | quote }}
       http:
         paths:
@@ -51,12 +51,11 @@ spec:
 {{- end }}
 
 ---
-
-{{- if .Values.ingress.auth.enabled -}}
+{{- if .Values.authIngress.enabled -}}
 {{- $svcPort := 4000 -}}
-{{- if and .Values.ingress.auth.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
-  {{- if not (hasKey .Values.ingress.auth.annotations "kubernetes.io/ingress.class") }}
-  {{- $_ := set .Values.ingress.auth.annotations "kubernetes.io/ingress.class" .Values.ingress.auth.className}}
+{{- if and .Values.authIngress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
+  {{- if not (hasKey .Values.authIngress.annotations "kubernetes.io/ingress.class") }}
+  {{- $_ := set .Values.authIngress.annotations "kubernetes.io/ingress.class" .Values.authIngress.className}}
   {{- end }}
 {{- end }}
 {{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
@@ -71,17 +70,17 @@ metadata:
   name: auth-ingress
   labels:
     {{- include "ozgsec.labels" . | nindent 4 }}
-  {{- with .Values.ingress.auth.annotations }}
+  {{- with .Values.authIngress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  {{- if and .Values.ingress.auth.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
-  ingressClassName: {{ .Values.ingress.auth.className }}
+  {{- if and .Values.authIngress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
+  ingressClassName: {{ .Values.authIngress.className }}
   {{- end }}
-  {{- if .Values.ingress.auth.tls }}
+  {{- if .Values.authIngress.tls }}
   tls:
-    {{- range .Values.ingress.auth.tls }}
+    {{- range .Values.authIngress.tls }}
     - hosts:
         {{- range .hosts }}
         - {{ . | quote }}
@@ -90,7 +89,7 @@ spec:
     {{- end }}
   {{- end }}
   rules:
-    {{- range .Values.ingress.auth.hosts }}
+    {{- range .Values.authIngress.hosts }}
     - host: {{ .host | quote }}
       http:
         paths:
@@ -103,3 +102,56 @@ spec:
                   number: 80
     {{- end }}
 {{- end }}
+---
+{{- if .Values.monitoringIngress.enabled -}}
+{{- $svcPort := 4000 -}}
+{{- if and .Values.monitoringIngress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
+  {{- if not (hasKey .Values.monitoringIngress.annotations "kubernetes.io/ingress.class") }}
+  {{- $_ := set .Values.monitoringIngress.annotations "kubernetes.io/ingress.class" .Values.monitoringIngress.className}}
+  {{- end }}
+{{- end }}
+{{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1
+{{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1beta1
+{{- else -}}
+apiVersion: extensions/v1beta1
+{{- end }}
+kind: Ingress
+metadata:
+  name: monitoring-ingress
+  labels:
+    {{- include "ozgsec.labels" . | nindent 4 }}
+  {{- with .Values.monitoringIngress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if and .Values.monitoringIngress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
+  ingressClassName: {{ .Values.monitoringIngress.className }}
+  {{- end }}
+  {{- if .Values.monitoringIngress.tls }}
+  tls:
+    {{- range .Values.monitoringIngress.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
+  rules:
+    {{- range .Values.monitoringIngress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+              service:
+                name: {{ $.Release.Namespace }}-influxdb
+                port:
+                  number: 8086
+    {{- end }}
+{{- end }}
+---

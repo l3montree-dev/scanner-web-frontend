@@ -23,11 +23,15 @@ services:
       - mongo-config:/data/configdb
 
   influxdb:
-    image: influxdb:1.8
+    image: influxdb:latest
     ports:
       - "8086:8086"
+    volumes:
+      - influxdb-storage:/var/lib/influxdb
     environment:
-      - INFLUXDB_DB=k6
+      - INFLUXDB_DB=db0
+      - INFLUXDB_ADMIN_USER=ozgsec
+      - INFLUXDB_ADMIN_PASSWORD=secret
 
   grafana:
     image: grafana/grafana:latest
@@ -57,3 +61,4 @@ volumes:
   db-data:
   mongo-config:
   grafana:
+  influxdb-storage:

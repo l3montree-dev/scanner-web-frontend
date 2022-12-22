@@ -76,6 +76,6 @@ export interface InspectResultDTO {
   type: InspectionType;
   didPass: boolean | null;
   actualValue: Record<string, any>;
-  errors: string[];
-  recommendations: string[];
+  errors?: string[];
+  recommendations?: string[];
 }

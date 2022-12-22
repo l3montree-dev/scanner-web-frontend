@@ -2,7 +2,14 @@ import {
   IIpLookupProgressUpdateMsg,
   IIpLookupReportDTO,
   IIpLookupReportMsg,
+  INetwork,
+  IScanErrorResponse,
+  IScanResponse,
+  ISession,
 } from "../types";
+
+import ip from "ip";
+import { isValidIp, isValidMask } from "./validator";
 
 export const serverOnly = <T>(fn: () => T): T | null => {
   if (typeof window === "undefined") {
@@ -33,8 +40,13 @@ export const transformIpLookupMsg2DTO = (
   };
 };
 
-export const isAdmin = (session: any): boolean => {
-  return session?.roles?.includes("admin");
+export const isAdmin = (session: ISession | null | undefined): boolean => {
+  if (!session || !session.resource_access) {
+    return false;
+  }
+  return session?.resource_access["realm-management"]?.roles.includes(
+    "realm-admin"
+  );
 };
 
 export const promise2Boolean = async (promise: Promise<any>) => {
@@ -85,4 +97,45 @@ export const classNames = (
   ...args: Array<string | boolean | undefined>
 ): string => {
   return args.filter(Boolean).join(" ");
+};
+
+export const parseNetwork = (cidr: string): INetwork => {
+  const subnet = ip.cidrSubnet(cidr);
+
+  return {
+    prefixLength: subnet.subnetMaskLength,
+    networkAddress: subnet.networkAddress,
+    startAddress: subnet.firstAddress,
+    endAddress: subnet.lastAddress,
+    cidr,
+    startAddressNumber: ip.toLong(subnet.firstAddress),
+    endAddressNumber: ip.toLong(subnet.lastAddress),
+  };
+};
+
+export const parseNetworkString = (networks: string | string[]): string[] => {
+  // parse the networks - they are line separated
+  const networksArray =
+    networks instanceof Array ? networks : networks.trim().split("\n");
+  // check if each network is in cidr notation.
+
+  const networksValid = networksArray.every((network) => {
+    const [ip, mask] = network.split("/");
+    if (ip === undefined || mask === undefined) {
+      return false;
+    }
+    const ipValid = isValidIp(ip);
+    const maskValid = isValidMask(mask);
+    return ipValid && maskValid;
+  });
+  if (!networksValid) {
+    throw new Error("Bitte trage gültige Netzwerke ein.");
+  }
+  return networksArray;
+};
+
+export const isScanError = (
+  response: IScanResponse
+): response is IScanErrorResponse => {
+  return "error" in response.result;
 };

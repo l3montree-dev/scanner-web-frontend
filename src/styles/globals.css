@@ -70,3 +70,27 @@ pre {
 .no-hyphens {
     hyphens: none;
 }
+
+.draganddrop {
+    min-height: 200px;
+}
+
+th > div {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
+
+.menu {
+    min-width: 200px;
+}
+
+.tooltip-container:hover .tooltip {
+    opacity: 1;
+    transform: scale(1);
+ 
+}
+
+.tooltip {
+    min-width: 300px;
+}

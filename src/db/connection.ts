@@ -44,6 +44,15 @@ async function connect() {
   connection = (await connectionPromise).connection;
   connection = addModels(connection);
 
+  connection.db.createIndex(
+    "domains",
+    {
+      fqdn: 1,
+      ipV4AddressNumber: 1,
+    },
+    { unique: true }
+  );
+
   return connection;
 }
 
