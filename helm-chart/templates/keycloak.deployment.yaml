@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: keycloak
   labels:
-    {{- include "keycloak.labels" . | nindent 4 }}
+    {{- include "ozgsec.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.keycloak.replicaCount }}
   selector:
@@ -66,7 +66,7 @@ spec:
                   name: {{ .Values.keycloak.config.existingSecret.name | default "keycloak" }}
                   key: {{ .Values.keycloak.config.existingSecret.dbPassKey | default "db-password" }}
             - name: KC_DB_URL
-              value: {{ .Values.keycloak.config.db.url | default "jdbc:mysql://mysql.{{.Release.Namespace}}.svc.cluster.local:3306/keycloak" }}
+              value: {{ .Values.keycloak.config.db.url | default "jdbc:mysql://{{.Release.Namespace}}-mysql.{{.Release.Namespace}}.svc.cluster.local:3306/keycloak" }}
             - name: KEYCLOAK_ADMIN
               valueFrom:
                 secretKeyRef:
