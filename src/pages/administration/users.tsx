@@ -1,6 +1,7 @@
+import UserRepresentation from "@keycloak/keycloak-admin-client/lib/defs/userRepresentation";
 import { GetServerSideProps } from "next";
 import { unstable_getServerSession } from "next-auth";
-import { useState } from "react";
+import { FunctionComponent, useState } from "react";
 import Button from "../../components/Button";
 import CreateUserForm from "../../components/CreateUserForm";
 import DashboardPage from "../../components/DashboardPage";
@@ -44,7 +45,10 @@ export const parseCreateUserForm = ({
   };
 };
 
-const Users = () => {
+interface Props {
+  users: UserRepresentation[];
+}
+const Users: FunctionComponent<Props> = ({ users }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleCreateUser = async (
@@ -69,19 +73,47 @@ const Users = () => {
   return (
     <DashboardPage>
       <SideNavigation />
-      <div className="flex-1">
-        <div className="flex flex-row w-full justfy-between">
-          <h1 className="text-4xl flex-1 mb-3 text-white font-bold">
-            Nutzerverwaltung
-          </h1>
-          <Button
-            className="bg-deepblue-200 px-5 text-white"
-            type="button"
-            loading={false}
-            onClick={() => setIsOpen(true)}
-          >
-            Nutzer erstellen
-          </Button>
+      <>
+        <div className="flex-1">
+          <div className="flex flex-row w-full justfy-between">
+            <h1 className="text-4xl flex-1 mb-3 text-white font-bold">
+              Nutzerverwaltung
+            </h1>
+            <Button
+              className="bg-deepblue-200 px-5 text-white"
+              type="button"
+              loading={false}
+              onClick={() => setIsOpen(true)}
+            >
+              Nutzer erstellen
+            </Button>
+          </div>
+
+          <table className="w-full text-left text-white border-2 w-full border-deepblue-200 mt-10">
+            <thead>
+              <tr className="bg-deepblue-300 text-sm border-b border-b-deepblue-500 text-left">
+                <th className="p-2">Nutzername</th>
+                <th className="p-2">Vorname</th>
+                <th className="p-2">Nachname</th>
+                <th className="p-2">Rolle</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((user) => (
+                <tr
+                  className="border-b border-b-deepblue-300 transition-all"
+                  key={user.id}
+                >
+                  <td className="p-2">{user.username}</td>
+                  <td className="p-2">{user.firstName}</td>
+                  <td className="p-2">{user.lastName}</td>
+                  <td className="p-2">
+                    {user.attributes ? user.attributes["role"] : ""}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
         <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
           <div className="w-full mx-auto">
@@ -95,7 +127,7 @@ const Users = () => {
             </div>
           </div>
         </Modal>
-      </div>
+      </>
     </DashboardPage>
   );
 };
@@ -122,8 +154,8 @@ export const getServerSideProps = decorateServerSideProps(
     // fetch all users from keycloak
     const kcAdminClient = getKcAdminClient(token.accessToken);
 
-    // const users = await kcAdminClient.users.find();
-    const users: any[] = [];
+    const users = await kcAdminClient.users.find();
+
     return {
       props: {
         users,
