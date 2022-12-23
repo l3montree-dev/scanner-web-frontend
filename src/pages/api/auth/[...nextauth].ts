@@ -75,12 +75,13 @@ export const authOptions: AuthOptions = {
       }
       if (params.account) {
         params.token.accessToken = params.account.access_token;
-        params.token.accessTokenExpires = params.account.expires_at;
+        params.token.expiresAt = params.account.expires_at * 1000;
         params.token.refreshToken = params.account.refresh_token;
+
         return params.token;
       }
 
-      if (Date.now() < params.token.accessTokenExpires) {
+      if (Date.now() < params.token.expiresAt) {
         return params.token;
       }
       return refreshAccessToken(params.token);

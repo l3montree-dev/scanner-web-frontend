@@ -87,7 +87,7 @@ spec:
             - name: NEXTAUTH_URL
               value: "https://{{ index (index .Values.quicktestIngress.tls 0).hosts 0 }}"
             - name: KEYCLOAK_ISSUER
-              value: "https://{{ index (index .Values.authIngress.tls 0).hosts 0 }}/realms/OZGSec"
+              value: "https://{{ index (index .Values.authIngress.tls 0).hosts 0 }}/realms/ozgsec"
             - name: KEYCLOAK_SECRET
               valueFrom:
                 secretKeyRef:
