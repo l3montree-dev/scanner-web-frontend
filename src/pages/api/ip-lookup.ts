@@ -25,7 +25,6 @@ export default async function handler(
     "ip-lookup",
     {
       cidr,
-      sendProgress: false,
     },
     {
       messageId: requestId,

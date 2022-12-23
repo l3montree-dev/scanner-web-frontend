@@ -25,10 +25,9 @@ if (podName && leaderElectorUrl) {
       logger.error(e, "Leader election failed");
       process.exit(1);
     });
-  setInterval(() => updateMaster(leaderElectorUrl), 5_000);
+  setInterval(() => updateMaster(leaderElectorUrl), 60_000);
 }
 
 export const isMaster = () => {
-  return true;
   return master.name === process.env.POD_NAME;
 };

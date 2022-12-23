@@ -2,12 +2,14 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { decorate } from "../../decorators/decorate";
 import { tryDB } from "../../decorators/tryDB";
 import { withToken } from "../../decorators/withToken";
+import { lookupNetwork } from "../../services/ipService";
 import { getKcAdminClient, getRealmName } from "../../services/keycloak";
 import { ICreateUserDTO } from "../../types";
 import { parseNetwork } from "../../utils/common";
 
 export default decorate(
   async (req: NextApiRequest, res: NextApiResponse, [db, token]) => {
+    const requestId = req.headers["x-request-id"] as string;
     if (!token) {
       res.statusCode = 401;
       res.end();
@@ -54,6 +56,9 @@ export default decorate(
         });
         res.end(JSON.stringify({ success: true, password }));
         // request the domain lookup for each network.
+        user.networks.forEach((network) => {
+          lookupNetwork(network, requestId);
+        });
       } catch (e) {
         // Rollback keycloak if this fails.
         await kcClient.users.del({ id, realm: getRealmName() });

@@ -1,11 +1,11 @@
 import { Server as HttpServer } from "http";
+import ip from "ip";
 import { Server } from "socket.io";
 import getConnection from "../db/connection";
 import { once } from "../decorators/once";
 import {
   IIpLookupProgressUpdateMsg,
   IIpLookupReportMsg,
-  IReport,
   IScanResponse,
 } from "../types";
 import {
@@ -13,12 +13,10 @@ import {
   isScanError,
   transformIpLookupMsg2DTO,
 } from "../utils/common";
+import { handleNewDomain } from "./domainService";
 import { getLogger } from "./logger";
 import { rabbitMQClient, rabbitMQRPCClient } from "./rabbitmqClient";
 import { handleNewScanReport } from "./reportService";
-import ip from "ip";
-import { handleNewDomain } from "./domainService";
-import { inspect } from "../inspection/inspect";
 
 const logger = getLogger(__filename);
 
@@ -81,19 +79,13 @@ export const startLookupResponseLoop = once(() => {
             ipV4Address: string;
           };
           try {
-            const res = await handleNewDomain(
-              content,
-              connection.models.Domain
-            );
-            // request a scan of the new domain
-            // in the future, the scanner could listen on the response queue as well.
-            await inspect("auto", res.fqdn);
-          } catch (e) {
+            await handleNewDomain(content, connection.models.Domain);
+          } catch (e: any) {
             // always ack the message - catch the error.
-            logger.error(e);
+            logger.error({ err: e.message });
           }
         },
-        { durable: true }
+        { durable: true, maxPriority: 10 }
       );
     })
     .catch((err) => {
