@@ -8,8 +8,8 @@ dependencies:
 - name: rabbitmq
   repository: https://charts.bitnami.com/bitnami
   version: 11.1.5
-- name: keycloak
+- name: mysql
   repository: https://charts.bitnami.com/bitnami
-  version: 12.2.0
-digest: sha256:08a3c99dd40f6f3d0de60ea4fb7f167e74426392b3d2b68b43879e7e49c76428
-generated: "2022-12-19T09:15:29.695824+01:00"
+  version: 9.4.5
+digest: sha256:17a5f11070ea1f55f33b39640199ae9f7c41ff107d890bef1221d9efa15dea4c
+generated: "2022-12-22T15:50:59.666979+01:00"

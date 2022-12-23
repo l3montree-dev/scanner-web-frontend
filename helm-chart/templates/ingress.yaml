@@ -93,13 +93,42 @@ spec:
     - host: {{ .host | quote }}
       http:
         paths:
-        - path: /
-          pathType: Prefix
-          backend:
+          # Disable if not needed
+          - pathType: Prefix
+            path: /
+            backend:
               service:
-                name: {{ $.Release.Namespace }}-keycloak
+                name: keycloak
                 port:
-                  number: 80
+                  number: 8443
+          - pathType: Prefix
+            path: /realms/
+            backend:
+              service:
+                name: keycloak
+                port:
+                  number: 8443
+          - pathType: Prefix
+            path: /resources/
+            backend:
+              service:
+                name: keycloak
+                port:
+                  number: 8443
+          - pathType: Prefix
+            path: /robots.txt
+            backend:
+              service:
+                name: keycloak
+                port:
+                  number: 8443
+          - pathType: Prefix
+            path: /js
+            backend:
+              service:
+                name: keycloak
+                port:
+                  number: 8443
     {{- end }}
 {{- end }}
 ---

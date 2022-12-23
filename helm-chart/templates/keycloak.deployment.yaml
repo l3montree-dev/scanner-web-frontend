@@ -1,0 +1,114 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  labels:
+    {{- include "ozgsec.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.keycloak.replicaCount }}
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      {{- with .Values.keycloak.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: keycloak
+    spec:
+      {{- with .Values.keycloak.image.pullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.keycloak.podSecurityContext | nindent 8 }}
+      volumes:
+        - name: keycloak-truststore
+          projected:
+            sources:
+              - secret:
+                  name: {{ .Values.keycloak.config.truststoreSecretName }}
+      containers:
+        - name: keycloak
+          securityContext:
+            {{- toYaml .Values.keycloak.securityContext | nindent 12 }}
+          image: "registry.gitlab.com/ozg-security/keycloak:{{ .Values.keycloak.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.keycloak.image.pullPolicy }}
+          args:
+            [
+              "start",
+              "--optimized",
+              "--hostname={{ .Values.keycloak.config.hostname }}",
+              "--proxy=passthrough",
+              "--http-enabled=true",
+              "--https-key-store-file=/opt/keycloak/conf/keycloak.truststore.jks",
+              "--https-port=8443",
+            ]
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+            - name: https
+              containerPort: 8443
+              protocol: TCP
+          env:
+            - name: KC_DB
+              value: "mysql"
+            - name: KC_DB_SCHEMA
+              value: {{ .Values.keycloak.config.db.schema | default "keycloak" }}
+            - name: KC_DB_USERNAME
+              value: {{ .Values.keycloak.config.db.username | default "keycloak" }}
+            - name: KC_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.keycloak.config.existingSecret.name | default "keycloak" }}
+                  key: {{ .Values.keycloak.config.existingSecret.dbPassKey | default "db-password" }}
+            - name: KC_DB_URL
+              value: {{ .Values.keycloak.config.db.url | default "jdbc:mysql://{{.Release.Namespace}}-mysql.{{.Release.Namespace}}.svc.cluster.local:3306/keycloak" }}
+            - name: KEYCLOAK_ADMIN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.keycloak.config.existingSecret.name | default "keycloak" }}
+                  key: {{ .Values.keycloak.config.existingSecret.adminUsernameKey | default "admin-username" }}
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.keycloak.config.existingSecret.name | default "keycloak" }}
+                  key: {{ .Values.keycloak.config.existingSecret.adminPassKey | default "admin-pass" }}
+            - name: KC_HTTPS_KEY_STORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.keycloak.config.existingSecret.name | default "keycloak" }}
+                  key: {{ .Values.keycloak.config.existingSecret.keystorePassKey | default "keystore-pass" }}
+          volumeMounts:
+            - mountPath: "/opt/keycloak/conf/"
+              name: keycloak-truststore
+          readinessProbe:
+            httpGet:
+              scheme: HTTP
+              path: "/health/ready"
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              scheme: HTTP
+              path: "/health/live"
+              port: 8080
+            initialDelaySeconds: 40
+          resources:
+            {{- toYaml .Values.keycloak.resources | nindent 12 }}
+      {{- with .Values.keycloak.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.keycloak.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.keycloak.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

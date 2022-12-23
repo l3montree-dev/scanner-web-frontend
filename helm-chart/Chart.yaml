@@ -23,7 +23,6 @@ version: 1.0.2
 # It is recommended to use it with quotes.
 appVersion: "1.0.2"
 
-
 dependencies:
   - name: influxdb
     version: 5.4.13
@@ -34,7 +33,6 @@ dependencies:
   - name: rabbitmq
     version: 11.1.5
     repository: https://charts.bitnami.com/bitnami
-
-  - name: keycloak
-    version: 12.2.0
+  - name: mysql
+    version: 9.4.5
     repository: https://charts.bitnami.com/bitnami
