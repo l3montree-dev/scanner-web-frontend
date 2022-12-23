@@ -221,6 +221,12 @@ const Dashboard: FunctionComponent<Props> = (props) => {
               Domains auf einen Blick. Hier können Sie schnell und einfach
               vergleichen, wie gut die verschiedenen Domains in Bezug auf die
               verschiedenen ausgeführten Sicherheitstest abschneiden.
+              <br />
+              <br />
+              Im Augenblick haben Sie Zugriff auf <b>
+                {props.domains.total}
+              </b>{" "}
+              Domains
             </p>
             <div className="overflow-hidden w-full border-deepblue-500 bg-deepblue-400">
               <div className="p-5">
