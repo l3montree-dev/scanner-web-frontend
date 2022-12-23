@@ -6,10 +6,8 @@ import PQueue from "p-queue";
 import { decorate } from "../../decorators/decorate";
 import { withDB } from "../../decorators/withDB";
 import { withSession } from "../../decorators/withSession";
-import {
-  filterToIpInNetwork,
-  handleNewFQDN,
-} from "../../services/domainService";
+import { handleNewFQDN } from "../../services/domainService";
+import { filterToIpInNetwork } from "../../services/ipService";
 import { getLogger } from "../../services/logger";
 import { timeout } from "../../utils/common";
 import { stream2buffer } from "../../utils/server";
