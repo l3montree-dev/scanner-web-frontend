@@ -30,10 +30,9 @@ export const handleNewDomain = async (
 
 export const handleNewFQDN = async (
   fqdn: string,
+  ipAddress: string,
   model: Model<IDomain>
 ): Promise<{ fqdn: string }> => {
-  // resolve v4
-  const [ipAddress] = await resolve4(fqdn);
   let payload = {
     fqdn: fqdn,
     ipV4Address: ipAddress,
@@ -123,4 +122,19 @@ export const getDomainsOfNetworksWithLatestTestResult = async (
     pageSize: paginateRequest.pageSize,
     data: domains.data,
   };
+};
+
+export const filterToIpInNetwork = (
+  ipAddresses: string[],
+  networks: INetwork[]
+) => {
+  return ipAddresses.filter((ipAddress) => {
+    const ipNumber = ip.toLong(ipAddress);
+    return networks.some((network) => {
+      return (
+        ipNumber >= network.startAddressNumber &&
+        ipNumber <= network.endAddressNumber
+      );
+    });
+  });
 };

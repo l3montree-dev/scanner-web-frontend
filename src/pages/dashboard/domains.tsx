@@ -7,10 +7,9 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
-import { FormEvent, FunctionComponent, useEffect, useState } from "react";
-import Button from "../../components/Button";
+import { FunctionComponent, useEffect, useState } from "react";
 import DashboardPage from "../../components/DashboardPage";
-import FormInput from "../../components/FormInput";
+import DomainOverviewForm from "../../components/DomainOverviewForm";
 import Menu from "../../components/Menu";
 import MenuItem from "../../components/MenuItem";
 import MenuList from "../../components/MenuList";
@@ -69,129 +68,6 @@ const SortButton: FunctionComponent<{
     >
       <FontAwesomeIcon icon={getIcon()} />
     </button>
-  );
-};
-
-const DomainOverviewForm: FunctionComponent<{
-  onSearch: (search: string) => Promise<void>;
-  onNewDomain: (domain: string) => Promise<void>;
-}> = ({ onSearch, onNewDomain }) => {
-  const [search, setSearch] = useState("");
-  const [newDomain, setNewDomain] = useState("");
-  const searchRequest = useLoading();
-  const createRequest = useLoading();
-
-  const [addDomainIsOpen, setAddDomainIsOpen] = useState(false);
-
-  const handleSearch = (e: FormEvent) => {
-    e.preventDefault();
-    searchRequest.loading();
-    onSearch(search)
-      .catch(() => {
-        searchRequest.error("Leider ist ein Fehler bei der Suche aufgetreten.");
-      })
-      .then(() => searchRequest.success());
-  };
-
-  const handleAddRecord = (e: FormEvent) => {
-    e.preventDefault();
-    createRequest.loading();
-    onNewDomain(newDomain)
-      .catch((err) => {
-        createRequest.error("Leider ist ein Fehler aufgetreten.");
-      })
-      .then(() => {
-        setNewDomain("");
-        createRequest.success();
-      });
-  };
-  return (
-    <div>
-      <div className="flex flex-row items-end">
-        <form
-          className="flex flex-1 flex-row items-end"
-          onSubmit={handleSearch}
-        >
-          <div className="flex-1">
-            <FormInput
-              onChange={setSearch}
-              label="Suche nach Domains"
-              value={search}
-              placeholder="example.com"
-            />
-          </div>
-          <div>
-            <Button
-              spinnerSize={32}
-              className="bg-deepblue-100 border border-deepblue-100 ml-5 hover:bg-deepblue-300 text-white p-2"
-              type="submit"
-              spinnerColor="white"
-              loading={searchRequest.isLoading}
-            >
-              Suchen
-            </Button>
-          </div>
-        </form>
-        <div>
-          <Button
-            className={classNames(
-              "border border-deepblue-100 ml-5 transition-all text-white p-2",
-              addDomainIsOpen
-                ? "bg-deepblue-100 hover:bg-deepblue-300"
-                : "hover:bg-deepblue-200"
-            )}
-            type="submit"
-            loading={false}
-            onClick={() => setAddDomainIsOpen((prev) => !prev)}
-          >
-            Eintrag hinzufügen
-          </Button>
-        </div>
-      </div>
-      {!searchRequest.errored && (
-        <span className="text-red-500 mt-2">{searchRequest.errorMessage}</span>
-      )}
-      {
-        // Add domain form
-        addDomainIsOpen && (
-          <form
-            onSubmit={handleAddRecord}
-            className="flex flex-row border-t pt-2 border-t-deepblue-200 items-end mt-5"
-          >
-            <div className="flex-1">
-              <FormInput
-                onChange={setNewDomain}
-                label="Domain hinzufügen"
-                value={newDomain}
-                placeholder="example.com"
-              />
-            </div>
-            <div className="flex flex-row items-end">
-              <Button
-                spinnerSize={32}
-                spinnerColor="white"
-                className="bg-deepblue-100 ml-5 text-white border border-deepblue-100 p-2 transition-all hover:bg-deepblue-300"
-                type="submit"
-                loading={createRequest.isLoading}
-              >
-                Hinzufügen
-              </Button>
-              <Button
-                className="border hover:bg-deepblue-200 transition-all border-deepblue-100 ml-5 text-white p-2"
-                type="submit"
-                loading={createRequest.isLoading}
-                onClick={() => setAddDomainIsOpen(false)}
-              >
-                Schliessen
-              </Button>
-            </div>
-          </form>
-        )
-      }
-      {createRequest.errored && (
-        <span className="text-red-500 mt-2">{createRequest.errorMessage}</span>
-      )}
-    </div>
   );
 };
 
@@ -302,13 +178,32 @@ const Dashboard: FunctionComponent<Props> = (props) => {
   };
 
   const handleAddRecord = async (domain: string) => {
-    await clientHttpClient(`/api/domains`, crypto.randomUUID(), {
+    const res = await clientHttpClient(`/api/domains`, crypto.randomUUID(), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ domain }),
     });
+    console.log(res);
+    if (!res.ok) {
+      throw res;
+    }
+  };
+
+  const handleFileFormSubmit = async (files: File[]) => {
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append("files", file);
+    });
+
+    const res = await clientHttpClient("/api/domains", crypto.randomUUID(), {
+      method: "POST",
+      body: formData,
+    });
+    if (!res.ok) {
+      throw res;
+    }
   };
 
   return (
@@ -331,6 +226,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                   <DomainOverviewForm
                     onSearch={handleSearch}
                     onNewDomain={handleAddRecord}
+                    onFileFormSubmit={handleFileFormSubmit}
                   />
                 </div>
               </div>

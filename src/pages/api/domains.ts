@@ -1,13 +1,18 @@
+import { resolve4 } from "dns/promises";
 import formidable from "formidable";
 import fs from "fs/promises";
 import { NextApiRequest, NextApiResponse } from "next";
+import PQueue from "p-queue";
 import { decorate } from "../../decorators/decorate";
 import { withDB } from "../../decorators/withDB";
 import { withSession } from "../../decorators/withSession";
-import { inspect } from "../../inspection/inspect";
-import { handleNewFQDN } from "../../services/domainService";
+import {
+  filterToIpInNetwork,
+  handleNewFQDN,
+} from "../../services/domainService";
 import { getLogger } from "../../services/logger";
-import { promiseExecutor, stream2buffer } from "../../utils/server";
+import { timeout } from "../../utils/common";
+import { stream2buffer } from "../../utils/server";
 
 const logger = getLogger(__filename);
 
@@ -19,6 +24,7 @@ export const config = {
 
 export default decorate(
   async (req: NextApiRequest, res: NextApiResponse, [db, session]) => {
+    const requestId = req.headers["x-request-id"] as string;
     if (!session) {
       res.status(401).end();
       return;
@@ -37,7 +43,17 @@ export default decorate(
         (await stream2buffer(req)).toString()
       );
 
-      const { fqdn } = await handleNewFQDN(domain, db.Domain);
+      const ips = await resolve4(domain);
+      const ipsInSubnet = filterToIpInNetwork(ips, session.user.networks);
+      if (ipsInSubnet.length === 0) {
+        logger.warn(
+          `Domain ${domain} does not have an ip address in the users subnet. Skipping.`
+        );
+        res.status(400).send({ success: false, reason: "not_in_subnet" });
+        return;
+      }
+
+      const { fqdn } = await handleNewFQDN(domain, ipsInSubnet[0], db.Domain);
       // the domain will automatically be inspected.
       return res.send({ success: true, fqdn });
     }
@@ -52,7 +68,7 @@ export default decorate(
       }
     );
 
-    const csvs = await Promise.all(
+    const files = await Promise.all(
       Object.entries(data.files)
         .map(([_, value]) => {
           return value;
@@ -71,27 +87,70 @@ export default decorate(
           return data.toString();
         })
     );
-    const promiseFactories = csvs
-      .map((csv) => {
-        return csv.split("\n");
-      })
-      .flat()
-      .filter((domain) => domain.length > 0)
-      .map((domain, i) => {
-        return async () => {
-          try {
-            const { fqdn } = await handleNewFQDN(domain, db.Domain);
-            await inspect("csv-import", fqdn);
-          } catch (err: any) {
-            logger.error(
-              { err: err?.message },
-              `Error while importing domain from csv: ${domain}`
-            );
-          }
-        };
-      });
+    const entries = files.map((file) => file.split("\n")).flat();
 
-    promiseExecutor(promiseFactories, 1);
+    const promiseQueue = new PQueue({ concurrency: 5, timeout: 5_000 });
+    promiseQueue
+      .addAll(
+        entries
+          .filter((domain) => domain.length > 0)
+          .map((domain) => {
+            return async () => {
+              try {
+                const ips = await timeout(resolve4(domain));
+                const ipsInSubnet = filterToIpInNetwork(
+                  ips,
+                  session.user.networks
+                );
+                if (ipsInSubnet.length === 0) {
+                  logger.warn(
+                    {
+                      requestId,
+                      userId: session.user.id,
+                    },
+                    `Domain ${domain} does not have an ip address in the users subnet. Skipping.`
+                  );
+                  return null;
+                }
+
+                return {
+                  domain,
+                  ipAddress: ipsInSubnet[0],
+                };
+              } catch (err: any) {
+                return null;
+              }
+            };
+          })
+      )
+      .then(async (domainAndIp) => {
+        const filteredDomains = domainAndIp.filter(
+          (domain): domain is { domain: string; ipAddress: string } => {
+            return domain !== null;
+          }
+        );
+        await promiseQueue.addAll(
+          filteredDomains.map(({ domain: domain_1, ipAddress }) => {
+            return async () => {
+              try {
+                await handleNewFQDN(domain_1, ipAddress, db.Domain);
+              } catch (err: any) {
+                logger.error(
+                  { err: err?.message },
+                  `Error while importing domain from file: ${domain_1}`
+                );
+              }
+            };
+          })
+        );
+        logger.info(
+          {
+            requestId,
+            userId: session.user.id,
+          },
+          `Finished importing domains from file. (${filteredDomains.length}/${entries.length})`
+        );
+      });
 
     res.status(200).end();
   },

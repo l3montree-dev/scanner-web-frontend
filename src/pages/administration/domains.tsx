@@ -30,6 +30,7 @@ const Network = () => {
         method: "POST",
         body: formData,
       });
+      setFiles([]);
       request.success();
     } catch (e: any) {
       request.error(e.toString());

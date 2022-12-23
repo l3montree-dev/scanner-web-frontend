@@ -72,7 +72,13 @@ export type IIpLookupReportDTO = Omit<IIpLookupReportMsg, "results"> & {
 };
 
 export interface ISession {
-  user: { name: string; email: string; image: string; id: string };
+  user: {
+    name: string;
+    email: string;
+    image: string;
+    id: string;
+    networks: INetwork[];
+  };
   resource_access: {
     [clientId: string]: {
       roles: string[];
