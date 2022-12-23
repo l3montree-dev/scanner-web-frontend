@@ -128,26 +128,46 @@ export const getDomains2Scan = async (domain: Model<IDomain>) => {
   // get all domains which have not been scanned in the last 24 hours
   const domains = await domain
     .find({
-      $or: [
+      $and: [
         {
-          errorCount: {
-            $eq: null,
-          },
+          $or: [
+            {
+              errorCount: {
+                $eq: null,
+              },
+            },
+            {
+              errorCount: {
+                $lt: 5,
+              },
+            },
+          ],
         },
         {
-          errorCount: {
-            $lt: 5,
-          },
+          $or: [
+            {
+              lastScan: {
+                $eq: null,
+              },
+            },
+            {
+              lastScan: {
+                $lt: new Date(
+                  new Date().getTime() - 24 * 60 * 60 * 1000
+                ).getTime(),
+              },
+            },
+          ],
         },
       ],
-      lastScan: {
-        $lt: new Date(new Date().getTime() - 24 * 60 * 60 * 1000).getTime(),
-      },
       queued: {
         $ne: true,
       },
     })
-    // limit to 1000 domains - this is to prevent the service from scanning too many domains at once
+    .sort({
+      lastScan: 1,
+    })
+    // limit to 1000 domains - this is to prevent the service from overloading the memory
     .limit(1000)
     .lean();
 
