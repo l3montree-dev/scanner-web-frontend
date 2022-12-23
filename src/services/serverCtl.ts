@@ -89,7 +89,7 @@ export const startLookupResponseLoop = once(() => {
             logger.error({ err: e.message });
           }
         },
-        { durable: true, maxPriority: 10 }
+        { durable: true }
       );
     })
     .catch((err) => {
