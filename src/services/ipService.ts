@@ -9,7 +9,7 @@ export const lookupNetwork = async (cidr: string, requestId: string) => {
     {
       cidr,
     },
-    { durable: true, maxPriority: 10 },
+    { durable: true },
     {
       messageId: requestId,
       replyTo: "ip-lookup-response",
