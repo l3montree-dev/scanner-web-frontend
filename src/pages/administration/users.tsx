@@ -2,20 +2,22 @@ import UserRepresentation from "@keycloak/keycloak-admin-client/lib/defs/userRep
 import { GetServerSideProps } from "next";
 import { unstable_getServerSession } from "next-auth";
 import { FunctionComponent, useState } from "react";
+import AdministrationPage from "../../components/AdministrationPage";
 import Button from "../../components/Button";
 import CreateUserForm from "../../components/CreateUserForm";
 import DashboardPage from "../../components/DashboardPage";
 import Modal from "../../components/Modal";
 import SideNavigation from "../../components/SideNavigation";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
+import { withDB } from "../../decorators/withDB";
 import {
   withToken,
   withTokenServerSideProps,
 } from "../../decorators/withToken";
 import { clientHttpClient } from "../../services/clientHttpClient";
 import { getKcAdminClient } from "../../services/keycloak";
-import { ICreateUserDTO, ISession } from "../../types";
-import { isAdmin, parseNetworkString } from "../../utils/common";
+import { ICreateUserDTO, INetwork, ISession } from "../../types";
+import { classNames, isAdmin, parseNetworkString } from "../../utils/common";
 import { authOptions } from "../api/auth/[...nextauth]";
 
 export const parseCreateUserForm = ({
@@ -46,7 +48,7 @@ export const parseCreateUserForm = ({
 };
 
 interface Props {
-  users: UserRepresentation[];
+  users: Array<UserRepresentation & { networks: INetwork[] }>;
 }
 const Users: FunctionComponent<Props> = ({ users }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -71,16 +73,22 @@ const Users: FunctionComponent<Props> = ({ users }) => {
     return body.password;
   };
   return (
-    <DashboardPage>
+    <AdministrationPage title="Nutzerverwaltung">
       <SideNavigation />
       <>
         <div className="flex-1">
-          <div className="flex flex-row w-full justfy-between">
-            <h1 className="text-4xl flex-1 mb-3 text-white font-bold">
-              Nutzerverwaltung
-            </h1>
+          <div className="flex flex-row w-full items-start justfy-between">
+            <div className="flex-1">
+              <h1 className="text-4xl mb-5 text-white font-bold">
+                Nutzerverwaltung
+              </h1>
+              <p className="text-white w-1/2">
+                In der Nutzerverwaltung lassen sich die Nutzer des Systems
+                einsehen, verwalten und löschen.
+              </p>
+            </div>
             <Button
-              className="bg-deepblue-200 px-5 text-white"
+              className="bg-deepblue-200 border-deepblue-200 border hover:bg-deepblue-300 transition-all py-3 px-5 text-white"
               type="button"
               loading={false}
               onClick={() => setIsOpen(true)}
@@ -89,19 +97,23 @@ const Users: FunctionComponent<Props> = ({ users }) => {
             </Button>
           </div>
 
-          <table className="w-full text-left text-white border-2 w-full border-deepblue-200 mt-10">
+          <table className="w-full text-left text-white w-full border-deepblue-500 mt-10 bg-deepblue-400">
             <thead>
-              <tr className="bg-deepblue-300 text-sm border-b border-b-deepblue-500 text-left">
-                <th className="p-2">Nutzername</th>
-                <th className="p-2">Vorname</th>
-                <th className="p-2">Nachname</th>
-                <th className="p-2">Rolle</th>
+              <tr className="bg-deepblue-100  text-sm border-b border-b-deepblue-500 text-left">
+                <th className="p-2 py-4">Nutzername</th>
+                <th className="p-2 py-4">Vorname</th>
+                <th className="p-2 py-4">Nachname</th>
+                <th className="p-2 py-4">Rolle</th>
+                <th className="p-2 py-4">Netzwerke</th>
               </tr>
             </thead>
             <tbody>
-              {users.map((user) => (
+              {users.map((user, i) => (
                 <tr
-                  className="border-b border-b-deepblue-300 transition-all"
+                  className={classNames(
+                    i + 1 !== users.length ? "border-bg" : "",
+                    "border-b border-b-deepblue-500 transition-all"
+                  )}
                   key={user.id}
                 >
                   <td className="p-2">{user.username}</td>
@@ -109,6 +121,13 @@ const Users: FunctionComponent<Props> = ({ users }) => {
                   <td className="p-2">{user.lastName}</td>
                   <td className="p-2">
                     {user.attributes ? user.attributes["role"] : ""}
+                  </td>
+                  <td className="p-2">
+                    {user.networks.map((network) => (
+                      <span className="mr-2" key={network.cidr}>
+                        {network.cidr}
+                      </span>
+                    ))}
                   </td>
                 </tr>
               ))}
@@ -128,12 +147,12 @@ const Users: FunctionComponent<Props> = ({ users }) => {
           </div>
         </Modal>
       </>
-    </DashboardPage>
+    </AdministrationPage>
   );
 };
 
 export const getServerSideProps = decorateServerSideProps(
-  async (context, [token]) => {
+  async (context, [token, db]) => {
     const session = (await unstable_getServerSession(
       context.req,
       context.res,
@@ -154,15 +173,35 @@ export const getServerSideProps = decorateServerSideProps(
     // fetch all users from keycloak
     const kcAdminClient = getKcAdminClient(token.accessToken);
 
-    const users = await kcAdminClient.users.find();
+    try {
+      const [kcUsers, users] = await Promise.all([
+        kcAdminClient.users.find(),
+        db.User.find().lean(),
+      ]);
 
-    return {
-      props: {
-        users,
-      },
-    };
+      // attach the networks to the kc users.
+      return {
+        props: {
+          users: kcUsers.map((user) => {
+            const userFromDB = users.find((u) => u._id === user.id);
+            return {
+              ...user,
+              networks: userFromDB?.networks ?? [],
+            };
+          }),
+        },
+      };
+    } catch (e) {
+      // log the user out and redirect to keycloak
+      return {
+        props: {
+          users: [],
+        },
+      };
+    }
   },
-  withTokenServerSideProps
+  withTokenServerSideProps,
+  withDB
 );
 
 export default Users;

@@ -123,7 +123,7 @@ const DomainOverviewForm: FunctionComponent<{
           <div>
             <Button
               spinnerSize={32}
-              className="bg-deepblue-100 border border-deepblue-100 ml-5 text-white p-2"
+              className="bg-deepblue-100 border border-deepblue-100 ml-5 hover:bg-deepblue-300 text-white p-2"
               type="submit"
               spinnerColor="white"
               loading={searchRequest.isLoading}
@@ -135,8 +135,10 @@ const DomainOverviewForm: FunctionComponent<{
         <div>
           <Button
             className={classNames(
-              "border border-deepblue-100 ml-5 text-white p-2",
-              addDomainIsOpen && "bg-deepblue-100"
+              "border border-deepblue-100 ml-5 transition-all text-white p-2",
+              addDomainIsOpen
+                ? "bg-deepblue-100 hover:bg-deepblue-300"
+                : "hover:bg-deepblue-200"
             )}
             type="submit"
             loading={false}
@@ -154,7 +156,7 @@ const DomainOverviewForm: FunctionComponent<{
         addDomainIsOpen && (
           <form
             onSubmit={handleAddRecord}
-            className="flex flex-row border-t pt-2 border-t-deepblue-100 items-end mt-5"
+            className="flex flex-row border-t pt-2 border-t-deepblue-200 items-end mt-5"
           >
             <div className="flex-1">
               <FormInput
@@ -168,14 +170,14 @@ const DomainOverviewForm: FunctionComponent<{
               <Button
                 spinnerSize={32}
                 spinnerColor="white"
-                className="bg-deepblue-100 ml-5 text-white border border-deepblue-100 p-2"
+                className="bg-deepblue-100 ml-5 text-white border border-deepblue-100 p-2 transition-all hover:bg-deepblue-300"
                 type="submit"
                 loading={createRequest.isLoading}
               >
                 Hinzufügen
               </Button>
               <Button
-                className="border border-deepblue-100 ml-5 text-white p-2"
+                className="border hover:bg-deepblue-200 transition-all border-deepblue-100 ml-5 text-white p-2"
                 type="submit"
                 loading={createRequest.isLoading}
                 onClick={() => setAddDomainIsOpen(false)}
@@ -323,7 +325,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
               vergleichen, wie gut die verschiedenen Domains in Bezug auf die
               verschiedenen ausgeführten Sicherheitstest abschneiden.
             </p>
-            <div className="border-2 w-full border-deepblue-200">
+            <div className="overflow-hidden w-full border-deepblue-500 bg-deepblue-400">
               <div className="p-5">
                 <div className="text-black">
                   <DomainOverviewForm
@@ -334,7 +336,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
               </div>
               <table className="w-full">
                 <thead>
-                  <tr className="bg-deepblue-300 text-sm border-b border-b-deepblue-500 text-left">
+                  <tr className="bg-deepblue-100 text-sm border-b border-b-deepblue-500 text-left">
                     <th className="p-2">
                       <div>
                         <span>Domain</span>
@@ -450,7 +452,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                   {domains.map((domain) => {
                     return (
                       <tr
-                        className="border-b border-b-deepblue-300 transition-all"
+                        className="border-b border-b-deepblue-500 transition-all"
                         key={domain.id}
                       >
                         <td className="p-2">

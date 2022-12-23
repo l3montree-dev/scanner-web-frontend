@@ -1,6 +1,7 @@
 import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { signOut } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 import { useSession } from "../hooks/useSession";
@@ -26,26 +27,28 @@ const Header = () => {
     router.push("/");
   };
   return (
-    <div className="bg-deepblue-400 h-14 border-b text-white border-deepblue-400">
+    <div className="bg-deepblue-500 h-14 border-b text-white border-deepblue-500">
       {session.status === "authenticated" && session.data && (
         <div className="flex items-center justify-between h-full px-4">
           <div className="flex items-center">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              width={70}
-              height={50}
-              src={"/assets/ozg-logo.svg"}
-              alt="Logo BMI"
-            />
-            <div className="text-xl font-bold ml-2 relative top-1">
-              Security
-            </div>
+            <Link href="/" className="flex items-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                width={70}
+                height={50}
+                src={"/assets/ozg-logo.svg"}
+                alt="Logo BMI"
+              />
+              <div className="text-xl font-bold ml-2 relative top-1">
+                Security
+              </div>
+            </Link>
           </div>
           <div className="flex items-center">
             <div className="ml-2">
               <Menu
                 Button={
-                  <div className="bg-lightning-900 text-black rounded-full h-9 w-9 flex items-center justify-center">
+                  <div className="bg-white text-black rounded-full h-8 w-8 flex items-center justify-center">
                     {getInitials(session.data.user.name)}
                   </div>
                 }

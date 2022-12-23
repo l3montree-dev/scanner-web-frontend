@@ -72,6 +72,17 @@ export type InspectionType =
   | ContentInspectionType
   | HeaderInspectionType;
 
+export const InspectionTypeEnum = {
+  ...HttpInspectionType,
+  ...TLSInspectionType,
+  ...CertificateInspectionType,
+  ...CookieInspectionType,
+  ...NetworkInspectionType,
+  ...DomainInspectionType,
+  ...OrganizationalInspectionType,
+  ...ContentInspectionType,
+  ...HeaderInspectionType,
+};
 export interface InspectResultDTO {
   type: InspectionType;
   didPass: boolean | null;

@@ -9,6 +9,7 @@ interface Props extends MetaProps {
 const DashboardPage: FunctionComponent<Props> = (props) => {
   const { children, ...rest } = props;
   const [left, main] = React.Children.toArray(children);
+
   return (
     <>
       <Meta {...rest} />
@@ -16,7 +17,7 @@ const DashboardPage: FunctionComponent<Props> = (props) => {
       <div className="flex-row min-h-screen flex w-full flex-1">
         <div className="w-56">{left}</div>
         <div className="flex-1 flex flex-col">
-          <main className="p-10  bg-deepblue-500 flex flex-1">{main}</main>
+          <main className="p-10  bg-deepblue-300 flex flex-1">{main}</main>
         </div>
       </div>
       <Footer />
