@@ -20,6 +20,8 @@ spec:
       labels:
         app: quicktest
     spec:
+      automountServiceAccountToken: true
+      serviceAccount: leaderelection-sa
       {{- with .Values.quicktest.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -46,6 +48,26 @@ spec:
             - mountPath: "/go/src/app/config"
               name: request-montioring-config
           imagePullPolicy: {{ .Values.requestMonitoringSidecar.image.pullPolicy }}
+        - name: leader-elector-sidecar
+          image: k8s.gcr.io/leader-elector:0.5
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
+          args:
+            - "--election=ozgsec"
+            - "--election-namespace={{ .Release.Namespace }}"
+            - "--http=0.0.0.0:4040"
+          ports:
+            - containerPort: 4040
+          resources:
+            requests:
+              memory: 150Mi
+              cpu: "0.001"
+            limits:
+              memory: 300Mi
+              cpu: "1"
         - name: quicktest
           securityContext:
             {{- toYaml .Values.quicktest.securityContext | nindent 12 }}
@@ -84,6 +106,8 @@ spec:
                 secretKeyRef:
                   name: quicktest-credentials
                   key: nextauth-secret
+            - name: LEADER_ELECTOR_URL
+              value: "http://localhost:4040"
             - name: NEXTAUTH_URL
               value: "https://{{ index (index .Values.quicktestIngress.tls 0).hosts 0 }}"
             - name: KEYCLOAK_ISSUER
@@ -95,6 +119,16 @@ spec:
                   key: keycloak-secret
             - name: KEYCLOAK_ID
               value: quicktest
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
           livenessProbe:
             initialDelaySeconds: 10
             periodSeconds: 30

@@ -1,8 +1,12 @@
+import { randomUUID } from "crypto";
 import { Server as HttpServer } from "http";
 import ip from "ip";
 import { Server } from "socket.io";
+
 import getConnection from "../db/connection";
 import { once } from "../decorators/once";
+import { inspect } from "../inspection/inspect";
+import { isMaster } from "../leaderelection/leaderelection";
 import {
   IIpLookupProgressUpdateMsg,
   IIpLookupReportMsg,
@@ -13,7 +17,7 @@ import {
   isScanError,
   transformIpLookupMsg2DTO,
 } from "../utils/common";
-import { handleNewDomain } from "./domainService";
+import { getDomains2Scan, handleNewDomain } from "./domainService";
 import { getLogger } from "./logger";
 import { rabbitMQClient, rabbitMQRPCClient } from "./rabbitmqClient";
 import { handleNewScanReport } from "./reportService";
@@ -117,6 +121,7 @@ export const startScanResponseLoop = once(() => {
               },
               {
                 lastScan: content.timestamp,
+                queued: false,
                 // increment the error count property by 1
                 $inc: { errorCount: 1 },
               }
@@ -149,6 +154,7 @@ export const startScanResponseLoop = once(() => {
               },
               {
                 lastScan: content.timestamp,
+                queued: false,
               }
             ),
           ]);
@@ -157,6 +163,46 @@ export const startScanResponseLoop = once(() => {
           logger.error(e);
         }
       });
+    })
+    .catch((err) => {
+      logger.error(err);
+    });
+});
+
+export const startScanLoop = once(() => {
+  let running = false;
+  getConnection()
+    .then((connection) => {
+      setInterval(async () => {
+        try {
+          if (running || !isMaster()) {
+            logger.warn("scan loop is already running or not master");
+            return;
+          }
+          running = true;
+          const domains = await getDomains2Scan(connection.models.Domain);
+
+          if (domains.length === 0) {
+            running = false;
+            logger.info({ component: "SCAN_LOOP" }, "no domains to scan");
+            return;
+          }
+          const requestId = randomUUID();
+          logger.info(
+            { requestId, component: "SCAN_LOOP" },
+            `found ${domains.length} domains to scan - sending scan request with id: ${requestId}`
+          );
+          await Promise.all(
+            domains.map((domain) => {
+              inspect(requestId, domain.fqdn);
+            })
+          );
+          running = false;
+        } catch (e) {
+          running = false;
+          logger.error(e);
+        }
+      }, +(process.env.SCAN_INTERVAL ?? 10 * 1000));
     })
     .catch((err) => {
       logger.error(err);

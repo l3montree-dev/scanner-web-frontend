@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import {
   startLookupResponseLoop,
+  startScanLoop,
   startScanResponseLoop,
   startSocketIOServer,
 } from "../../services/serverCtl";
@@ -13,6 +14,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   startSocketIOServer(res.socket.server);
   startScanResponseLoop();
   startLookupResponseLoop();
+  startScanLoop();
 
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json");

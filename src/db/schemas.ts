@@ -29,6 +29,7 @@ export const domainSchema = new Schema(
     lastScan: { type: SchemaTypes.Number, index: true, default: null },
     ipV4AddressNumber: { type: SchemaTypes.Number, index: true },
     errorCount: SchemaTypes.Number,
+    queued: { type: SchemaTypes.Boolean, default: false },
   },
   { strict: true, timestamps: true }
 );

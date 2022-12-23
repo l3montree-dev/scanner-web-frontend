@@ -29,5 +29,9 @@ if (podName && leaderElectorUrl) {
 }
 
 export const isMaster = () => {
+  if (process.env.POD_NAME == undefined) {
+    logger.warn("POD_NAME is not set - always master");
+    return true;
+  }
   return master.name === process.env.POD_NAME;
 };
