@@ -22,6 +22,8 @@ import { WithId } from "../../db/models";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
 import { withCurrentUser } from "../../decorators/withCurrentUser";
 import { withDB } from "../../decorators/withDB";
+import { withSession } from "../../decorators/withSession";
+import { withTokenServerSideProps } from "../../decorators/withToken";
 import useLoading from "../../hooks/useLoading";
 import {
   DomainInspectionType,
@@ -33,7 +35,7 @@ import {
 import { clientHttpClient } from "../../services/clientHttpClient";
 import { getDomainsOfNetworksWithLatestTestResult } from "../../services/domainService";
 import { IDomain, IReport, PaginateResult } from "../../types";
-import { classNames } from "../../utils/common";
+import { classNames, isAdmin } from "../../utils/common";
 
 interface Props {
   domains: PaginateResult<WithId<IDomain> & { report?: WithId<IReport> }>;
@@ -455,12 +457,13 @@ const Dashboard: FunctionComponent<Props> = (props) => {
 };
 
 export const getServerSideProps = decorateServerSideProps(
-  async (context, [currentUser, db]) => {
+  async (context, [currentUser, token, db]) => {
     // get the query params.
     const page = +(context.query["page"] ?? 0);
     const search = context.query["search"] as string | undefined;
 
     const domains = await getDomainsOfNetworksWithLatestTestResult(
+      isAdmin(token),
       currentUser.networks,
       { pageSize: 50, page, search },
       db.Domain
@@ -473,6 +476,7 @@ export const getServerSideProps = decorateServerSideProps(
     };
   },
   withCurrentUser,
+  withTokenServerSideProps,
   withDB
 );
 

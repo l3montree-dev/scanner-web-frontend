@@ -8,6 +8,7 @@ import {
   PaginateRequest,
   PaginateResult,
 } from "../types";
+import { isAdmin } from "../utils/common";
 import { jsonSerializableStage } from "../utils/dbUtils";
 // only create a new report if the didPass property changed.
 export const handleNewDomain = async (
@@ -47,6 +48,7 @@ export const handleNewFQDN = async (
 };
 
 export const getDomainsOfNetworksWithLatestTestResult = async (
+  isAdmin: boolean,
   networks: INetwork[],
   paginateRequest: PaginateRequest & { search?: string },
   domain: Model<IDomain>
@@ -65,16 +67,20 @@ export const getDomainsOfNetworksWithLatestTestResult = async (
           },
         ]
       : []),
-    {
-      $match: {
-        $or: networks.map((network) => ({
-          ipV4AddressNumber: {
-            $gte: network.startAddressNumber,
-            $lte: network.endAddressNumber,
+    ...(!isAdmin
+      ? [
+          {
+            $match: {
+              $or: networks.map((network) => ({
+                ipV4AddressNumber: {
+                  $gte: network.startAddressNumber,
+                  $lte: network.endAddressNumber,
+                },
+              })),
+            },
           },
-        })),
-      },
-    },
+        ]
+      : []),
     {
       $facet: {
         data: [
