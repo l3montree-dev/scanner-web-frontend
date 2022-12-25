@@ -5,6 +5,7 @@ import { INetwork, IReport } from "../types";
 const keys = Object.keys(InspectionTypeEnum);
 
 export const getFailedSuccessPercentage = async (
+  isAdmin: boolean,
   networks: INetwork[],
   report: Model<IReport>
 ): Promise<{
@@ -13,18 +14,29 @@ export const getFailedSuccessPercentage = async (
     [key in InspectionType]: number;
   };
 }> => {
+  if (!isAdmin && networks.length === 0) {
+    return {
+      totalCount: 0,
+      data: keys.reduce((acc, cur) => ({ ...acc, [cur]: 0 }), {}) as any,
+    };
+  }
+
   // get all domains of the network
   const [res] = (await report.aggregate([
-    {
-      $match: {
-        $or: networks.map((network) => ({
-          ipV4AddressNumber: {
-            $gte: network.startAddressNumber,
-            $lte: network.endAddressNumber,
+    ...(isAdmin
+      ? []
+      : [
+          {
+            $match: {
+              $or: networks.map((network) => ({
+                ipV4AddressNumber: {
+                  $gte: network.startAddressNumber,
+                  $lte: network.endAddressNumber,
+                },
+              })),
+            },
           },
-        })),
-      },
-    },
+        ]),
     {
       $group: {
         _id: "$fqdn",

@@ -7,6 +7,7 @@ import SideNavigation from "../../components/SideNavigation";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
 import { withCurrentUser } from "../../decorators/withCurrentUser";
 import { withDB } from "../../decorators/withDB";
+import { withTokenServerSideProps } from "../../decorators/withToken";
 import {
   CertificateInspectionType,
   ContentInspectionType,
@@ -20,6 +21,7 @@ import {
   TLSInspectionType,
 } from "../../inspection/scans";
 import { getFailedSuccessPercentage } from "../../services/statService";
+import { isAdmin } from "../../utils/common";
 interface Props {
   totalCount: number;
   data: {
@@ -134,7 +136,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
 };
 
 export const getServerSideProps = decorateServerSideProps(
-  async (context, [currentUser, db]) => {
+  async (context, [currentUser, token, db]) => {
     // get the query params.
     const page = +(context.query["page"] ?? 0);
     const search = context.query["search"] as string | undefined;
@@ -142,11 +144,16 @@ export const getServerSideProps = decorateServerSideProps(
     console.log(currentUser.networks);
     return {
       props: {
-        ...(await getFailedSuccessPercentage(currentUser.networks, db.Report)),
+        ...(await getFailedSuccessPercentage(
+          isAdmin(token),
+          currentUser.networks,
+          db.Report
+        )),
       },
     };
   },
   withCurrentUser,
+  withTokenServerSideProps,
   withDB
 );
 
