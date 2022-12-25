@@ -1,21 +1,33 @@
 import { GetServerSideProps } from "next";
 import { unstable_getServerSession } from "next-auth";
-import React, { useState } from "react";
+import React, { FunctionComponent, useState } from "react";
 import DashboardPage from "../../components/DashboardPage";
 import FormTextarea from "../../components/FormTextarea";
 import Meta from "../../components/Meta";
 import Page from "../../components/Page";
 import PrimaryButton from "../../components/PrimaryButton";
 import SideNavigation from "../../components/SideNavigation";
+import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
+import { withDB } from "../../decorators/withDB";
+import { withSession } from "../../decorators/withSession";
+import {
+  withToken,
+  withTokenServerSideProps,
+} from "../../decorators/withToken";
 import useLoading from "../../hooks/useLoading";
 import { clientHttpClient } from "../../services/clientHttpClient";
-import { ISession } from "../../types";
+import { getAll } from "../../services/networkService";
+import { INetwork, ISession } from "../../types";
 import { isAdmin, parseNetworkString } from "../../utils/common";
 import { isValidIp, isValidMask } from "../../utils/validator";
 import { authOptions } from "../api/auth/[...nextauth]";
 
-const Network = () => {
+interface Props {
+  networks: Array<INetwork & { users: Array<{ id: string }> }>;
+}
+const Network: FunctionComponent<Props> = (props) => {
   const request = useLoading();
+  console.log(props.networks);
 
   const [networks, setNetworks] = useState("");
 
@@ -104,27 +116,27 @@ const Network = () => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = (await unstable_getServerSession(
-    context.req,
-    context.res,
-    authOptions
-  )) as ISession;
+export const getServerSideProps: GetServerSideProps = decorateServerSideProps(
+  async (context, [db, token]) => {
+    // check if the user is an admin
+    // if not, redirect him to the dashboard page.
+    if (!isAdmin(token)) {
+      return {
+        redirect: {
+          destination: "/dashboard",
+          permanent: false,
+        },
+      };
+    }
 
-  // check if the user is an admin
-  // if not, redirect him to the dashboard page.
-  if (!isAdmin(session)) {
     return {
-      redirect: {
-        destination: "/dashboard",
-        permanent: false,
+      props: {
+        networks: await getAll(db),
       },
     };
-  }
-
-  return {
-    props: {},
-  };
-};
+  },
+  withDB,
+  withTokenServerSideProps
+);
 
 export default Network;
