@@ -2,8 +2,7 @@ import React from "react";
 
 const Imprint = () => {
   return (
-    <div className="text-white pb-5 px-5 pt-0">
-      <h2 className="text-2xl font-bold">Impressum</h2>
+    <div className="text-white">
       <p>
         <br />
         <br />
@@ -12,7 +11,7 @@ const Imprint = () => {
         <br />
         Bundesministerium des Innern und für Heimat
         <br />
-        Referat DV3
+        Referat DV II 2
         <br />
         Alt-Moabit 140
         <br />

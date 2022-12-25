@@ -133,7 +133,7 @@ export interface PaginateResult<T> {
   pageSize: number;
 }
 
-export type WithoutId<T> = Omit<T, "_id">;
+export type WithoutId<T> = Omit<T, "_id" | "id">;
 export interface IKcUser {
   id: string;
   createdTimestamp: number;

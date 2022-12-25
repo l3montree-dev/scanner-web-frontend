@@ -6,6 +6,7 @@ import {
   IScanErrorResponse,
   IScanResponse,
   ISession,
+  WithoutId,
 } from "../types";
 
 import ip from "ip";
@@ -99,7 +100,7 @@ export const classNames = (
   return args.filter(Boolean).join(" ");
 };
 
-export const parseNetwork = (cidr: string): INetwork => {
+export const parseNetwork = (cidr: string): WithoutId<INetwork> => {
   const subnet = ip.cidrSubnet(cidr);
 
   return {

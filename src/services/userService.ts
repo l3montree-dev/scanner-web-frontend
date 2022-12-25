@@ -1,6 +1,6 @@
 import getConnection from "../db/connection";
 import { ModelsType } from "../db/models";
-import { IUser, INetwork } from "../types";
+import { IUser, INetwork, WithoutId } from "../types";
 import { jsonSerializableStage } from "../utils/dbUtils";
 
 export const findUserById = async (id: string) => {
@@ -28,9 +28,9 @@ export const findUserById = async (id: string) => {
 };
 
 export const createUser = async (
-  user: IUser,
+  user: Omit<IUser, "networks"> & { networks: WithoutId<INetwork>[] },
   db: ModelsType
-): Promise<[IUser, INetwork[]]> => {
+): Promise<[IUser, WithoutId<INetwork>[]]> => {
   // first create all the networks.
   // check which networks do already exist based on the cidr
   const existingNetworks = await db.Network.find({

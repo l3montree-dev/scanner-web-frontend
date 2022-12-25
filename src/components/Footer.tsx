@@ -81,7 +81,7 @@ const Footer = () => {
           </div>
         </div>
       </footer>
-      <Modal onClose={() => setIsOpen(false)} isOpen={isOpen}>
+      <Modal title="Impressum" onClose={() => setIsOpen(false)} isOpen={isOpen}>
         <Imprint />
       </Modal>
     </>
