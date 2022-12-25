@@ -1,6 +1,6 @@
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { FunctionComponent, useEffect, useRef, useState } from "react";
+import React, { FunctionComponent, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import useDelayChange from "../hooks/useDelayChange";
 import { classNames } from "../utils/common";
@@ -9,6 +9,7 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
+  title: string;
 }
 const Modal: FunctionComponent<Props> = (props) => {
   const ref = useRef<HTMLElement | null>(null);
@@ -37,17 +38,20 @@ const Modal: FunctionComponent<Props> = (props) => {
         >
           <div className="backdrop absolute top-0 bottom-0 left-0 right-0 bg-black opacity-50" />
           <div className="flex justify-center relative h-full overflow-auto z-10">
-            <div className="py-10 h-max">
+            <div className="py-5 h-max">
               <div className="relative">
                 <div
                   className={classNames(
-                    "max-w-screen-lg bg-deepblue-500 p-10 transition-all border border-deepblue-100",
+                    "max-w-screen-lg bg-deepblue-500 p-5 transition-all border border-deepblue-100",
                     props.isOpen ? "scale-100" : "scale-50"
                   )}
                 >
-                  <div className="flex flex-row justify-end">
+                  <div className="flex flex-row items-center justify-between">
+                    <h5 className="text-white text-xl font-bold">
+                      {props.title}
+                    </h5>
                     <button
-                      className="w-10 h-10 flex flex-col justify-center items-center m-3 bg-deepblue-200"
+                      className="w-10 h-10 flex flex-col justify-center items-center bg-deepblue-200"
                       onClick={props.onClose}
                     >
                       <FontAwesomeIcon

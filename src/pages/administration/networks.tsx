@@ -1,118 +1,100 @@
 import { GetServerSideProps } from "next";
-import { unstable_getServerSession } from "next-auth";
-import React, { FunctionComponent, useState } from "react";
-import DashboardPage from "../../components/DashboardPage";
-import FormTextarea from "../../components/FormTextarea";
-import Meta from "../../components/Meta";
-import Page from "../../components/Page";
-import PrimaryButton from "../../components/PrimaryButton";
+import { FunctionComponent, useState } from "react";
+import AdministrationPage from "../../components/AdministrationPage";
+import Button from "../../components/Button";
+import CreateNetworkForm from "../../components/CreateNetworkForm";
+import Modal from "../../components/Modal";
 import SideNavigation from "../../components/SideNavigation";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
 import { withDB } from "../../decorators/withDB";
-import { withSession } from "../../decorators/withSession";
-import {
-  withToken,
-  withTokenServerSideProps,
-} from "../../decorators/withToken";
-import useLoading from "../../hooks/useLoading";
+import { withTokenServerSideProps } from "../../decorators/withToken";
 import { clientHttpClient } from "../../services/clientHttpClient";
 import { getAll } from "../../services/networkService";
-import { INetwork, ISession } from "../../types";
-import { isAdmin, parseNetworkString } from "../../utils/common";
-import { isValidIp, isValidMask } from "../../utils/validator";
-import { authOptions } from "../api/auth/[...nextauth]";
+import { INetwork } from "../../types";
+import { classNames, isAdmin } from "../../utils/common";
 
 interface Props {
   networks: Array<INetwork & { users: Array<{ id: string }> }>;
 }
 const Network: FunctionComponent<Props> = (props) => {
-  const request = useLoading();
-  console.log(props.networks);
-
-  const [networks, setNetworks] = useState("");
-
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      const n = parseNetworkString(networks);
-      request.loading();
-      await clientHttpClient("/api/networks", crypto.randomUUID(), {
-        method: "POST",
-        body: JSON.stringify(n),
-      });
-      request.success();
-    } catch (e: any) {
-      request.error(e.toString());
+  const [isOpen, setIsOpen] = useState(false);
+  const [networks, setNetworks] = useState(props.networks);
+  const onSubmit = async (networks: string[]) => {
+    const res = await clientHttpClient("/api/networks", crypto.randomUUID(), {
+      method: "POST",
+      body: JSON.stringify(networks),
+    });
+    if (!res.ok) {
+      throw res;
     }
+    const newNetworks = await res.json();
+    setNetworks((prev) => [...newNetworks, ...prev]);
+    setIsOpen(false);
   };
   return (
-    <DashboardPage>
-      <SideNavigation />
-      <div>
-        <div className="mb-5">
-          <h1 className="text-4xl text-white font-bold">
-            Netzwerke hinzufügen
-          </h1>
-        </div>
-        <p className="text-white w-1/2">
-          Füge neue Netzwerke dem System hinzu. Diese müssen nicht zwingend von
-          einem CISO verwaltet werden. Alle nicht verwalteten Netzwerke werden
-          verwendet um einen Vergleich mit den Netzwerken der CISOs zu
-          ermöglichen.
-        </p>
+    <>
+      <AdministrationPage>
+        <SideNavigation />
         <div>
-          <div className="pb-14">
-            <form onSubmit={onSubmit} className="pt-10  flex">
-              <div className="flex flex-col flex-1">
-                <div className="flex-col flex">
-                  <FormTextarea
-                    label="Netzwerke (CIDR-Notation) *"
-                    onChange={setNetworks}
-                    value={networks}
-                    validator={(value) => {
-                      const networksArray = value.trim().split("\n");
-                      // check if each network is in cidr notation.
-
-                      const networksValid = networksArray.every((network) => {
-                        const [ip, mask] = network.split("/");
-                        if (ip === undefined || mask === undefined) {
-                          return false;
-                        }
-                        const ipValid = isValidIp(ip);
-                        const maskValid = isValidMask(mask);
-                        return ipValid && maskValid;
-                      });
-                      if (!networksValid) {
-                        return "Bitte trage gültige Netzwerke ein.";
-                      }
-                      return true;
-                    }}
-                    placeholder={`45.10.26.0/24
-45.12.32.0/16
-                        `}
-                  />
-                  <span className="text-white text-right text-sm mt-1">
-                    Mehrere Netzwerke können durch Zeilenumbrüche getrennt
-                    werden.
-                  </span>
-                </div>
-                <div className="flex flex-row justify-end mt-5">
-                  <PrimaryButton loading={request.isLoading} type="submit">
-                    Netzwerke dem System hinzufügen
-                  </PrimaryButton>
-                </div>
-              </div>
-            </form>
-
-            {request.errored && (
-              <span className="text-red-600 absolute text-sm mt-3 block">
-                {request.errorMessage}
-              </span>
-            )}
+          <div className="flex items-start flex-row">
+            <div>
+              <h1 className="text-4xl mb-5 text-white font-bold">
+                Netzwerkverwaltung
+              </h1>
+              <p className="text-white w-1/2">
+                Füge neue Netzwerke dem System hinzu. Diese müssen nicht
+                zwingend von einem CISO verwaltet werden. Alle nicht verwalteten
+                Netzwerke werden verwendet um einen Vergleich mit den Netzwerken
+                der CISOs zu ermöglichen.
+              </p>
+            </div>
+            <Button
+              className="bg-deepblue-200 border-deepblue-200 border hover:bg-deepblue-300 transition-all py-3 px-5 text-white"
+              type="button"
+              loading={false}
+              onClick={() => setIsOpen(true)}
+            >
+              Netzwerk hinzufügen
+            </Button>
           </div>
+          <table className="w-full text-left text-white w-full border-deepblue-500 mt-10 bg-deepblue-400">
+            <thead>
+              <tr className="bg-deepblue-100  text-sm border-b border-b-deepblue-500 text-left">
+                <th className="p-2 py-4">CIDR</th>
+                <th className="p-2 py-4">Verwaltet</th>
+                <th className="p-2 py-4">Kommentar</th>
+              </tr>
+            </thead>
+            <tbody>
+              {networks.map((network, i) => (
+                <tr
+                  className={classNames(
+                    i + 1 !== networks.length ? "border-bg" : "",
+                    "border-b border-b-deepblue-500 transition-all"
+                  )}
+                  key={network.id}
+                >
+                  <td className="p-2">{network.cidr}</td>
+                  <td className="p-2">
+                    {network.users.length > 0
+                      ? `ja (${network.users.length})`
+                      : "nein"}
+                  </td>
+                  <td className="p-2">{network.comment}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-      </div>
-    </DashboardPage>
+      </AdministrationPage>
+      <Modal
+        title="Netzwerk hinzufügen"
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+      >
+        <CreateNetworkForm onSubmit={onSubmit} />
+      </Modal>
+    </>
   );
 };
 

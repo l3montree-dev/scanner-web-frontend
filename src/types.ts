@@ -35,6 +35,7 @@ export interface INetwork {
   endAddressNumber: number;
   cidr: string;
   comment?: string;
+  id: string;
 }
 
 export interface IUser {

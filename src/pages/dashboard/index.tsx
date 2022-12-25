@@ -141,7 +141,6 @@ export const getServerSideProps = decorateServerSideProps(
     const page = +(context.query["page"] ?? 0);
     const search = context.query["search"] as string | undefined;
 
-    console.log(currentUser.networks);
     return {
       props: {
         ...(await getFailedSuccessPercentage(

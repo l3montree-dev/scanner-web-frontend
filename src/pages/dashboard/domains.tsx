@@ -187,7 +187,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
       },
       body: JSON.stringify({ domain }),
     });
-    console.log(res);
+
     if (!res.ok) {
       throw res;
     }

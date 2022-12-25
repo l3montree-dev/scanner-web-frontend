@@ -5,7 +5,8 @@ import { withToken } from "../../decorators/withToken";
 import { lookupNetwork } from "../../services/ipService";
 import { getKcAdminClient, getRealmName } from "../../services/keycloak";
 import { getLogger } from "../../services/logger";
-import { createUser } from "../../services/usersService";
+import { createUser } from "../../services/userService";
+
 import { ICreateUserDTO } from "../../types";
 import { parseNetwork } from "../../utils/common";
 
@@ -65,7 +66,6 @@ export default decorate(
 
         // request the domain lookup for each network.
         newNetworks.forEach((network) => {
-          console.log(network);
           lookupNetwork(network.cidr, requestId);
         });
         res.end(
@@ -89,7 +89,6 @@ export default decorate(
         return;
       }
     } catch (e: any) {
-      console.log(e);
       logger.error({ error: e.message }, "Error creating user");
       res.status(500).end(JSON.stringify({ error: e.message }));
     }

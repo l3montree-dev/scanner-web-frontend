@@ -47,96 +47,88 @@ const CreateUserForm: FunctionComponent<Props> = ({ onCreateUser }) => {
   };
   return (
     <div>
-      <div className="pb-14">
-        <form onSubmit={onSubmit} className="pt-10  flex">
-          <div className="flex flex-col flex-1">
+      <form onSubmit={onSubmit} className="pt-10  flex">
+        <div className="flex flex-col flex-1">
+          <FormInput
+            label="Nutzername *"
+            validator={(value) => {
+              if (value.length === 0) {
+                return "Bitte trage einen Nutzernamen ein.";
+              }
+              return true;
+            }}
+            onChange={setUsername}
+            value={username}
+          />
+          <div className="mt-4 flex-col flex">
             <FormInput
-              label="Nutzername *"
+              label="Vorname"
+              onChange={setFirstName}
+              value={firstName}
+            />
+          </div>
+          <div className="mt-4 flex-col flex">
+            <FormInput
+              label="Nachname"
+              onChange={setLastName}
+              value={lastName}
+            />
+          </div>
+          <div className="mt-4 flex-col flex">
+            <FormInput label="Rolle" onChange={setRole} value={role} />
+          </div>
+          <div className="mt-4 flex-col flex">
+            <FormTextarea
+              label="Netzwerke (CIDR-Notation) *"
+              onChange={setNetworks}
+              value={networks}
               validator={(value) => {
-                if (value.length === 0) {
-                  return "Bitte trage einen Nutzernamen ein.";
+                const networksArray = value.trim().split("\n");
+                // check if each network is in cidr notation.
+
+                const networksValid = networksArray.every((network) => {
+                  const [ip, mask] = network.split("/");
+                  if (ip === undefined || mask === undefined) {
+                    return false;
+                  }
+                  const ipValid = isValidIp(ip);
+                  const maskValid = isValidMask(mask);
+                  return ipValid && maskValid;
+                });
+                if (!networksValid) {
+                  return "Bitte trage gültige Netzwerke ein.";
                 }
                 return true;
               }}
-              onChange={setUsername}
-              value={username}
-            />
-            <div className="mt-4 flex-col flex">
-              <FormInput
-                label="Vorname"
-                onChange={setFirstName}
-                value={firstName}
-              />
-            </div>
-            <div className="mt-4 flex-col flex">
-              <FormInput
-                label="Nachname"
-                onChange={setLastName}
-                value={lastName}
-              />
-            </div>
-            <div className="mt-4 flex-col flex">
-              <FormInput label="Rolle" onChange={setRole} value={role} />
-            </div>
-            <div className="mt-4 flex-col flex">
-              <FormTextarea
-                label="Netzwerke (CIDR-Notation) *"
-                onChange={setNetworks}
-                value={networks}
-                validator={(value) => {
-                  const networksArray = value.trim().split("\n");
-                  // check if each network is in cidr notation.
-
-                  const networksValid = networksArray.every((network) => {
-                    const [ip, mask] = network.split("/");
-                    if (ip === undefined || mask === undefined) {
-                      return false;
-                    }
-                    const ipValid = isValidIp(ip);
-                    const maskValid = isValidMask(mask);
-                    return ipValid && maskValid;
-                  });
-                  if (!networksValid) {
-                    return "Bitte trage gültige Netzwerke ein.";
-                  }
-                  return true;
-                }}
-                placeholder={`45.10.26.0/24
+              placeholder={`45.10.26.0/24
 45.12.32.0/16
                   `}
-              />
-              <span className="text-white text-right text-sm mt-1">
-                Mehrere Netzwerke können durch Zeilenumbrüche getrennt werden.
-              </span>
-            </div>
-            <div className="flex flex-row justify-end mt-5">
-              <PrimaryButton loading={createRequest.isLoading} type="submit">
-                Nutzer anlegen
-              </PrimaryButton>
-            </div>
+            />
+            <span className="text-white text-right text-sm mt-1">
+              Mehrere Netzwerke können durch Zeilenumbrüche getrennt werden.
+            </span>
           </div>
-        </form>
+          <div className="flex flex-row justify-end mt-5">
+            <PrimaryButton loading={createRequest.isLoading} type="submit">
+              Nutzer anlegen
+            </PrimaryButton>
+          </div>
+        </div>
+      </form>
 
-        {createRequest.errored && (
-          <span className="text-red-600 absolute text-sm mt-3 block">
-            {createRequest.errorMessage}
-          </span>
-        )}
-        {userPassword && (
-          <div className="mt-5 text-right border-yellow-500 border bg-deepblue-600 p-2">
-            <p className="text-white">
-              Nutzer wurde mit folgendem initialen Password angelegt:
-            </p>
-            <p className="font-bold text-white">{userPassword}</p>
-          </div>
-        )}
-      </div>
-      <p className="text-white">
-        Mit Abschicken des Formulars wird ein neuer Nutzer angelegt. Der Nutzer
-        erhält eine E-Mail mit einem Link, über den er sein Passwort setzen
-        kann. Der Nutzer erhält Zugriff auf die Netzwerke, die hier eingegeben
-        werden.
-      </p>
+      {createRequest.errored && (
+        <span className="text-red-600 absolute text-sm mt-3 block">
+          {createRequest.errorMessage}
+        </span>
+      )}
+      {userPassword && (
+        <div className="mt-5 text-right border-yellow-500 border bg-deepblue-600 p-2">
+          <p className="text-white">
+            Nutzer wurde mit folgendem initialen Password angelegt:
+          </p>
+          <p className="font-bold text-white">{userPassword}</p>
+        </div>
+      )}
     </div>
   );
 };

@@ -11,7 +11,7 @@ import { withDB } from "../../decorators/withDB";
 import { withTokenServerSideProps } from "../../decorators/withToken";
 import { clientHttpClient } from "../../services/clientHttpClient";
 import { getKcAdminClient } from "../../services/keycloak";
-import { getAll } from "../../services/usersService";
+import { getAll } from "../../services/userService";
 import { ICreateUserDTO, INetwork, ISession, IUser } from "../../types";
 import { classNames, isAdmin, parseNetworkString } from "../../utils/common";
 import { authOptions } from "../api/auth/[...nextauth]";
@@ -136,17 +136,12 @@ const Users: FunctionComponent<Props> = (props) => {
             </tbody>
           </table>
         </div>
-        <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
-          <div className="w-full mx-auto">
-            <div>
-              <div className="flex flex-wrap sm:flex-nowrap flex-row items-start justify-between">
-                <h1 className="text-4xl sm:order-1 order-2 mb-3 text-white font-bold">
-                  Nutzer erstellen
-                </h1>
-              </div>
-              <CreateUserForm onCreateUser={handleCreateUser} />
-            </div>
-          </div>
+        <Modal
+          title="Nutzer erstellen"
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
+        >
+          <CreateUserForm onCreateUser={handleCreateUser} />
         </Modal>
       </>
     </AdministrationPage>
