@@ -2,6 +2,7 @@ import {
   faChartLine,
   faGauge,
   faListCheck,
+  faNetworkWired,
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -32,6 +33,11 @@ const getLinks = (isAdmin: boolean) => {
       icon: faUsers,
       name: "Nuterverwaltung",
       path: "/administration/users",
+    },
+    {
+      icon: faNetworkWired,
+      name: "Netzwerkverwaltung",
+      path: "/administration/networks",
     },
   ]);
 };

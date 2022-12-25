@@ -1,10 +1,6 @@
 import { Model } from "mongoose";
-import {
-  HttpInspectionType,
-  InspectionType,
-  InspectionTypeEnum,
-} from "../inspection/scans";
-import { IDomain, INetwork, IReport, PaginateResult } from "../types";
+import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
+import { INetwork, IReport } from "../types";
 
 const keys = Object.keys(InspectionTypeEnum);
 

@@ -1,22 +1,18 @@
 import UserRepresentation from "@keycloak/keycloak-admin-client/lib/defs/userRepresentation";
-import { GetServerSideProps } from "next";
 import { unstable_getServerSession } from "next-auth";
 import { FunctionComponent, useState } from "react";
 import AdministrationPage from "../../components/AdministrationPage";
 import Button from "../../components/Button";
 import CreateUserForm from "../../components/CreateUserForm";
-import DashboardPage from "../../components/DashboardPage";
 import Modal from "../../components/Modal";
 import SideNavigation from "../../components/SideNavigation";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
 import { withDB } from "../../decorators/withDB";
-import {
-  withToken,
-  withTokenServerSideProps,
-} from "../../decorators/withToken";
+import { withTokenServerSideProps } from "../../decorators/withToken";
 import { clientHttpClient } from "../../services/clientHttpClient";
 import { getKcAdminClient } from "../../services/keycloak";
-import { ICreateUserDTO, INetwork, ISession } from "../../types";
+import { getAll } from "../../services/usersService";
+import { ICreateUserDTO, INetwork, ISession, IUser } from "../../types";
 import { classNames, isAdmin, parseNetworkString } from "../../utils/common";
 import { authOptions } from "../api/auth/[...nextauth]";
 
@@ -50,8 +46,9 @@ export const parseCreateUserForm = ({
 interface Props {
   users: Array<UserRepresentation & { networks: INetwork[] }>;
 }
-const Users: FunctionComponent<Props> = ({ users }) => {
+const Users: FunctionComponent<Props> = (props) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [users, setUser] = useState(props.users);
 
   const handleCreateUser = async (
     form: Omit<ICreateUserDTO, "networks"> & { networks: string }
@@ -69,7 +66,12 @@ const Users: FunctionComponent<Props> = ({ users }) => {
       method: "POST",
       body: JSON.stringify(createUserDTO),
     });
+    if (!res.ok) {
+      throw res;
+    }
     const body = await res.json();
+    const user: IUser = body.user;
+    setUser((users) => [user, ...users]);
     return body.password;
   };
   return (
@@ -176,7 +178,7 @@ export const getServerSideProps = decorateServerSideProps(
     try {
       const [kcUsers, users] = await Promise.all([
         kcAdminClient.users.find(),
-        db.User.find().lean(),
+        getAll(db),
       ]);
 
       // attach the networks to the kc users.

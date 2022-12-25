@@ -52,6 +52,7 @@ async function connect() {
     },
     { unique: true }
   );
+  connection.db.createIndex("networks", { cidr: 1 }, { unique: true });
 
   return connection;
 }

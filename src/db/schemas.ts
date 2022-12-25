@@ -1,5 +1,5 @@
 import { Schema, SchemaTypes } from "mongoose";
-import { IReport, IUser } from "../types";
+import { INetwork, IReport, IUser } from "../types";
 
 export const reportSchema = new Schema<IReport>(
   {
@@ -17,7 +17,21 @@ export const reportSchema = new Schema<IReport>(
 export const userSchema = new Schema<IUser>(
   {
     _id: { type: SchemaTypes.String },
-    networks: SchemaTypes.Mixed,
+    networks: [{ type: SchemaTypes.ObjectId, ref: "Network" }],
+  },
+  { strict: true, timestamps: true }
+);
+
+export const networkSchema = new Schema<INetwork>(
+  {
+    prefixLength: SchemaTypes.Number,
+    networkAddress: SchemaTypes.String,
+    startAddress: SchemaTypes.String,
+    endAddress: SchemaTypes.String,
+    startAddressNumber: SchemaTypes.String,
+    endAddressNumber: SchemaTypes.String,
+    cidr: { type: SchemaTypes.String, index: true, unique: true },
+    comment: SchemaTypes.String,
   },
   { strict: true, timestamps: true }
 );

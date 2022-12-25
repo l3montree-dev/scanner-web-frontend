@@ -1,8 +1,9 @@
 import { FunctionComponent } from "react";
-import { VictoryChart, VictoryPie, VictoryTooltip } from "victory";
+import resolveConfig from "tailwindcss/resolveConfig";
+import { VictoryPie, VictoryTooltip } from "victory";
+import tailwindConfig from "../../../tailwind.config.js";
 import DashboardPage from "../../components/DashboardPage";
 import SideNavigation from "../../components/SideNavigation";
-import { WithId } from "../../db/models";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
 import { withCurrentUser } from "../../decorators/withCurrentUser";
 import { withDB } from "../../decorators/withDB";
@@ -18,11 +19,7 @@ import {
   OrganizationalInspectionType,
   TLSInspectionType,
 } from "../../inspection/scans";
-import { getDomainsOfNetworksWithLatestTestResult } from "../../services/domainService";
 import { getFailedSuccessPercentage } from "../../services/statService";
-import { IDomain, IReport, PaginateResult } from "../../types";
-import resolveConfig from "tailwindcss/resolveConfig";
-import tailwindConfig from "../../../tailwind.config.js";
 interface Props {
   totalCount: number;
   data: {
@@ -142,6 +139,7 @@ export const getServerSideProps = decorateServerSideProps(
     const page = +(context.query["page"] ?? 0);
     const search = context.query["search"] as string | undefined;
 
+    console.log(currentUser.networks);
     return {
       props: {
         ...(await getFailedSuccessPercentage(currentUser.networks, db.Report)),

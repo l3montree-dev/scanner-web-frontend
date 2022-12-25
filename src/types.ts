@@ -34,6 +34,7 @@ export interface INetwork {
   startAddressNumber: number;
   endAddressNumber: number;
   cidr: string;
+  comment?: string;
 }
 
 export interface IUser {
@@ -131,6 +132,7 @@ export interface PaginateResult<T> {
   pageSize: number;
 }
 
+export type WithoutId<T> = Omit<T, "_id">;
 export interface IKcUser {
   id: string;
   createdTimestamp: number;
