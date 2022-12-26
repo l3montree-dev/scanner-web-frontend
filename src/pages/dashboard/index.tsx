@@ -1,6 +1,6 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import resolveConfig from "tailwindcss/resolveConfig";
-import { VictoryPie, VictoryTooltip } from "victory";
+import { VictoryLabel, VictoryPie, VictoryTooltip } from "victory";
 import tailwindConfig from "../../../tailwind.config.js";
 import DashboardPage from "../../components/DashboardPage";
 import SideNavigation from "../../components/SideNavigation";
@@ -77,55 +77,82 @@ const displayKey: Array<InspectionType> = [
 ];
 
 const Dashboard: FunctionComponent<Props> = (props) => {
+  const [data, setData] = useState({
+    totalCount: props.totalCount,
+    data: Object.fromEntries(Object.keys(props.data).map((key) => [key, 0])),
+  });
+
+  useEffect(() => {
+    setData(props);
+  }, []);
+
   return (
     <>
       <DashboardPage title="Dashboard">
         <SideNavigation />
         <div className="flex-1 text-white">
           <h1 className="text-4xl font-bold">Dashboard</h1>
-          <div className="flex mt-5 justify-center items-center flex-wrap bg-deepblue-400 p-2 w-1/2 flex-row">
+
+          <div className="flex mt-5 justify-center items-start flex-wrap p-2 flex-row">
             {displayKey.map((key) => (
-              <div className="w-40" key={key}>
-                <h2 className="font-bold text-center">{mapping[key]}</h2>
-                <VictoryPie
-                  width={200}
-                  height={200}
-                  labelComponent={
-                    <VictoryTooltip
-                      cornerRadius={0}
-                      style={{
-                        fill: "white",
-                      }}
-                      flyoutStyle={{
-                        stroke: "none",
-                        fill: (fullConfig.theme?.colors as any).deepblue["50"],
-                      }}
-                      dx={10}
-                      pointerLength={0}
-                    />
-                  }
-                  colorScale={[
-                    (fullConfig.theme?.colors as any).lightning["500"],
-                    (fullConfig.theme?.colors as any).deepblue["800"],
-                  ]}
-                  data={[
-                    {
-                      x: `Implementiert (${(
-                        (props.data[key] / props.totalCount) *
-                        100
-                      ).toFixed(1)}%)`,
-                      y: props.data[key],
-                    },
-                    {
-                      x: `Fehlerhaft (${(
-                        ((props.totalCount - props.data[key]) /
-                          props.totalCount) *
-                        100
-                      ).toFixed(1)}%)`,
-                      y: props.totalCount - props.data[key],
-                    },
-                  ]}
-                />
+              <div className="flex-1" key={key}>
+                <svg viewBox="0 0 300 300">
+                  <VictoryPie
+                    standalone={false}
+                    width={300}
+                    height={300}
+                    animate={true}
+                    innerRadius={60}
+                    labelComponent={
+                      <VictoryTooltip
+                        cornerRadius={0}
+                        style={{
+                          fill: "white",
+                        }}
+                        flyoutStyle={{
+                          stroke: "none",
+                          fill: (fullConfig.theme?.colors as any).deepblue[
+                            "50"
+                          ],
+                        }}
+                        dx={10}
+                        pointerLength={0}
+                      />
+                    }
+                    colorScale={[
+                      (fullConfig.theme?.colors as any).lightning["500"],
+                      (fullConfig.theme?.colors as any).slate["600"],
+                    ]}
+                    data={[
+                      {
+                        x: `Implementiert (${(
+                          (data.data[key] / data.totalCount) *
+                          100
+                        ).toFixed(1)}%)`,
+                        y: data.data[key],
+                      },
+                      {
+                        x: `Fehlerhaft (${(
+                          ((data.totalCount - data.data[key]) /
+                            data.totalCount) *
+                          100
+                        ).toFixed(1)}%)`,
+                        y: data.totalCount - data.data[key],
+                      },
+                    ]}
+                  />
+                  <VictoryLabel
+                    textAnchor="middle"
+                    style={{ fontSize: 24, fill: "white" }}
+                    x={150}
+                    y={150}
+                    text={`${(
+                      (props.data[key] / props.totalCount) *
+                      100
+                    ).toFixed(0)}%`}
+                  />
+                </svg>
+                <h2 className="text-center">{mapping[key]}</h2>
               </div>
             ))}
           </div>

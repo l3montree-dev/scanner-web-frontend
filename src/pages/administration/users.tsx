@@ -1,6 +1,7 @@
 import UserRepresentation from "@keycloak/keycloak-admin-client/lib/defs/userRepresentation";
 import { unstable_getServerSession } from "next-auth";
-import { FunctionComponent, useState } from "react";
+import { signIn } from "next-auth/react";
+import { FunctionComponent, useEffect, useState } from "react";
 import AdministrationPage from "../../components/AdministrationPage";
 import Button from "../../components/Button";
 import CreateUserForm from "../../components/CreateUserForm";
@@ -50,6 +51,7 @@ export const parseCreateUserForm = ({
 };
 
 interface Props {
+  error: boolean;
   users: Array<UserRepresentation & { networks: WithoutId<INetwork>[] }>;
 }
 const Users: FunctionComponent<Props> = (props) => {
@@ -80,6 +82,12 @@ const Users: FunctionComponent<Props> = (props) => {
     setUser((users) => [user, ...users]);
     return body.password;
   };
+
+  useEffect(() => {
+    if (props.error) {
+      signIn("keycloak");
+    }
+  }, [props.error]);
   return (
     <AdministrationPage title="Nutzerverwaltung">
       <SideNavigation />
@@ -185,6 +193,7 @@ export const getServerSideProps = decorateServerSideProps(
       // attach the networks to the kc users.
       return {
         props: {
+          error: false,
           users: kcUsers.map((user) => {
             const userFromDB = users.find((u) => u._id === user.id);
             return {
@@ -197,10 +206,9 @@ export const getServerSideProps = decorateServerSideProps(
     } catch (e) {
       // log the user out and redirect to keycloak
       return {
-        redirect: {
-          destination:
-            "/auth/keycloak-sign-in?redirectTo=/administration/users",
-          permanent: false,
+        props: {
+          error: true,
+          users: [],
         },
       };
     }
