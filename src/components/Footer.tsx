@@ -13,19 +13,13 @@ const Footer = () => {
   return (
     <>
       <footer className="bg-white md:text-md text-sm px-5 md:px-10 pb-10">
-        <div className="flex flex-row p-5">
+        <div className="sm:flex flex-wrap flex-row p-5">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img width={200} src={"/assets/bmi-logo.svg"} alt="Logo BMI" />
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            width={200}
-            height={50}
-            src={"/assets/bmi-logo.svg"}
-            alt="Logo BMI"
-          />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            width={210}
-            height={50}
-            className="ml-5"
+            width={205}
+            className="sm:ml-5 ml-0 mt-5 sm:mt-0"
             src={"/assets/bsi-logo.svg"}
             alt="Logo BSI"
           />
@@ -62,7 +56,7 @@ const Footer = () => {
               </a>
             </span>
           </div>
-          <div className="p-2 flex-row flex">
+          <div className="p-2 flex-row flex-wrap sm:flex">
             <div className="mr-2">
               {session.status === "authenticated" ? (
                 <>
@@ -77,7 +71,9 @@ const Footer = () => {
                 <Link href="/dashboard">Login</Link>
               )}
             </div>
-            <span>© Bundesministerium des Innern und für Heimat, 2022</span>
+            <span className="mt-5 sm:mt-0">
+              © Bundesministerium des Innern und für Heimat, 2022
+            </span>
           </div>
         </div>
       </footer>

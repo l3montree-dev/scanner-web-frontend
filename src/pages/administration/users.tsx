@@ -12,7 +12,13 @@ import { withTokenServerSideProps } from "../../decorators/withToken";
 import { clientHttpClient } from "../../services/clientHttpClient";
 import { getKcAdminClient } from "../../services/keycloak";
 import { getAll } from "../../services/userService";
-import { ICreateUserDTO, INetwork, ISession, IUser } from "../../types";
+import {
+  ICreateUserDTO,
+  INetwork,
+  ISession,
+  IUser,
+  WithoutId,
+} from "../../types";
 import { classNames, isAdmin, parseNetworkString } from "../../utils/common";
 import { authOptions } from "../api/auth/[...nextauth]";
 
@@ -44,7 +50,7 @@ export const parseCreateUserForm = ({
 };
 
 interface Props {
-  users: Array<UserRepresentation & { networks: INetwork[] }>;
+  users: Array<UserRepresentation & { networks: WithoutId<INetwork>[] }>;
 }
 const Users: FunctionComponent<Props> = (props) => {
   const [isOpen, setIsOpen] = useState(false);
