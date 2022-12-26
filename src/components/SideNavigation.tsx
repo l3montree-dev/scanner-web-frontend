@@ -53,12 +53,12 @@ const SideNavigation = () => {
           <Link key={name} href={path}>
             <div
               className={classNames(
-                "py-2 px-4 flex flex-row text-white hover:bg-deepblue-300 border-t border-b border-transparent transition-all cursor-pointer",
+                "py-4 px-4 flex flex-row text-white hover:bg-deepblue-300 border-t border-b border-transparent transition-all cursor-pointer",
                 pathname === path &&
                   "bg-deepblue-300 border-t border-b border-deepblue-500"
               )}
             >
-              <div className="mr-2">
+              <div className="mr-4">
                 <FontAwesomeIcon
                   className="opacity-75"
                   fontSize={20}

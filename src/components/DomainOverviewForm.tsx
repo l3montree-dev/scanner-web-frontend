@@ -1,7 +1,7 @@
 import { FormEvent, FunctionComponent, useState } from "react";
 import useLoading from "../hooks/useLoading";
 import { useSession } from "../hooks/useSession";
-import { classNames } from "../utils/common";
+import { classNames, isAdmin } from "../utils/common";
 import Button from "./Button";
 import DragAndDrop from "./DragAndDrop";
 import FormInput from "./FormInput";
@@ -120,9 +120,13 @@ const DomainOverviewForm: FunctionComponent<{
               <div className="flex-1">
                 <FormInput
                   onChange={setNewDomain}
-                  label={`Domain hinzufügen (Es werden nur Domains hinzugefügt, die sich in folgenden Netzwerken befinden: ${session?.user.networks
-                    .map((n) => n.cidr)
-                    .join(", ")})`}
+                  label={`Domain hinzufügen ${
+                    !isAdmin(session)
+                      ? `(Es werden nur Domains hinzugefügt, die sich in folgenden Netzwerken befinden: ${session?.user.networks
+                          .map((n) => n.cidr)
+                          .join(", ")})`
+                      : ""
+                  }`}
                   value={newDomain}
                   placeholder="example.com"
                 />

@@ -38,6 +38,10 @@ export interface INetwork {
   id: string;
 }
 
+export interface INetworkPatchDTO {
+  comment?: string;
+}
+
 export interface IUser {
   _id: string; // match it with the id of the user inside the authorization server
   networks: INetwork[];

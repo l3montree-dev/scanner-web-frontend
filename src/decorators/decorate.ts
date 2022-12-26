@@ -1,11 +1,13 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import _logger from "next-auth/utils/logger";
+
+import HttpError from "../errors/HttpError";
+import { getLogger } from "../services/logger";
 
 export type DecoratedHandler<T> = (
   req: NextApiRequest,
   res: NextApiResponse,
   additionalData: T
-) => void | Promise<void>;
+) => void | Promise<void> | Promise<Record<string, any> | null>;
 
 type Extract<
   T extends ReadonlyArray<
@@ -25,14 +27,27 @@ export type Decorator<T extends Record<string, any>> = (
   res: NextApiResponse
 ) => Promise<T>;
 
+const logger = getLogger(__filename);
+
 export const decorate = <Decorators extends Decorator<any>[]>(
   handler: DecoratedHandler<Extract<Decorators>>,
   ...decorators: Decorators
 ) => {
   return async (req: NextApiRequest, res: NextApiResponse) => {
-    const obj = (await Promise.all(
-      decorators.map((fn) => fn(req, res))
-    )) as Extract<Decorators>;
-    return handler(req, res, obj);
+    try {
+      const obj = (await Promise.all(
+        decorators.map((fn) => fn(req, res))
+      )) as Extract<Decorators>;
+      const returnValue = await handler(req, res, obj);
+      if (returnValue) {
+        return res.status(200).json(returnValue);
+      }
+    } catch (e: any) {
+      logger.error({ err: e.message }, "decorate error");
+      if (e instanceof HttpError) {
+        return res.status(e.status).json({ message: e.message });
+      }
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
   };
 };

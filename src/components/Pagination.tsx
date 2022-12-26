@@ -27,14 +27,14 @@ const Pagination: FunctionComponent<Props> = (props) => {
 
   return (
     <div>
-      {props.page !== 0 && (
+      {props.page > 2 && (
         <button
           onClick={() => props.onPageChange(0)}
           className={classNames(
-            "h-8 w-8 mx-1 border border-deepblue-100 transition-all hover:bg-deepblue-100"
+            "h-8 w-8 mx-1 mr-5 border border-deepblue-100 transition-all hover:bg-deepblue-100"
           )}
         >
-          <FontAwesomeIcon icon={faArrowLeft} />
+          1
         </button>
       )}
       {pages.map((i) => {
@@ -57,10 +57,10 @@ const Pagination: FunctionComponent<Props> = (props) => {
             props.onPageChange(Math.floor(props.total / props.pageSize))
           }
           className={classNames(
-            "h-8 w-8 mx-1 border border-deepblue-100 transition-all hover:bg-deepblue-100"
+            "h-8 ml-5 w-8 mx-1 border border-deepblue-100 transition-all hover:bg-deepblue-100"
           )}
         >
-          <FontAwesomeIcon icon={faArrowRight} />
+          {Math.floor(props.total / props.pageSize) + 1}
         </button>
       )}
     </div>

@@ -3,6 +3,7 @@ import {
   GetServerSidePropsResult,
   GetServerSideProps,
 } from "next";
+import HttpError from "../errors/HttpError";
 import { getLogger } from "../services/logger";
 
 const logger = getLogger(__filename);
@@ -40,6 +41,16 @@ export const decorateServerSideProps = <
       return handler(ctx, params);
     } catch (e: any) {
       logger.error({ err: e?.message }, "decorateServerSideProps error");
+      if (e instanceof HttpError) {
+        return {
+          props: {},
+          redirect: {
+            destination: e.redirectUrl,
+            permanent: false,
+          },
+        };
+      }
+
       return {
         props: {},
         redirect: {

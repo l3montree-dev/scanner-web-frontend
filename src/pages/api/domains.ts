@@ -9,7 +9,7 @@ import { withSession } from "../../decorators/withSession";
 import { handleNewFQDN } from "../../services/domainService";
 import { filterToIpInNetwork } from "../../services/ipService";
 import { getLogger } from "../../services/logger";
-import { timeout } from "../../utils/common";
+import { isAdmin, timeout } from "../../utils/common";
 import { stream2buffer } from "../../utils/server";
 
 const logger = getLogger(__filename);
@@ -96,6 +96,12 @@ export default decorate(
             return async () => {
               try {
                 const ips = await timeout(resolve4(domain));
+                if (isAdmin(session) && ips.length > 0) {
+                  return {
+                    domain,
+                    ipAddress: ips[0],
+                  };
+                }
                 const ipsInSubnet = filterToIpInNetwork(
                   ips,
                   session.user.networks

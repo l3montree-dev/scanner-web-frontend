@@ -197,8 +197,10 @@ export const getServerSideProps = decorateServerSideProps(
     } catch (e) {
       // log the user out and redirect to keycloak
       return {
-        props: {
-          users: [],
+        redirect: {
+          destination:
+            "/auth/keycloak-sign-in?redirectTo=/administration/users",
+          permanent: false,
         },
       };
     }

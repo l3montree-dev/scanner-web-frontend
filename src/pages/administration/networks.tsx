@@ -1,8 +1,13 @@
+import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { GetServerSideProps } from "next";
 import { FunctionComponent, useState } from "react";
 import AdministrationPage from "../../components/AdministrationPage";
 import Button from "../../components/Button";
 import CreateNetworkForm from "../../components/CreateNetworkForm";
+import Menu from "../../components/Menu";
+import MenuItem from "../../components/MenuItem";
+import MenuList from "../../components/MenuList";
 import Modal from "../../components/Modal";
 import SideNavigation from "../../components/SideNavigation";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
@@ -33,7 +38,7 @@ const Network: FunctionComponent<Props> = (props) => {
   };
   return (
     <>
-      <AdministrationPage>
+      <AdministrationPage title="Netzwerkverwaltung">
         <SideNavigation />
         <div>
           <div className="flex items-start flex-row">
@@ -63,6 +68,7 @@ const Network: FunctionComponent<Props> = (props) => {
                 <th className="p-2 py-4">CIDR</th>
                 <th className="p-2 py-4">Verwaltet</th>
                 <th className="p-2 py-4">Kommentar</th>
+                <th className="p-2 py-4">Aktionen</th>
               </tr>
             </thead>
             <tbody>
@@ -81,6 +87,25 @@ const Network: FunctionComponent<Props> = (props) => {
                       : "nein"}
                   </td>
                   <td className="p-2">{network.comment}</td>
+                  <td className="p-2 w-20 text-right">
+                    <Menu
+                      Button={
+                        <div className="p-2 h-8 w-8 flex flex-row items-center justify-center">
+                          <FontAwesomeIcon icon={faEllipsisVertical} />
+                        </div>
+                      }
+                      Menu={
+                        <MenuList>
+                          <MenuItem onClick={() => console.log("scannen")}>
+                            Bearbeiten
+                          </MenuItem>
+                          <MenuItem onClick={() => console.log("scannen")}>
+                            Löschen
+                          </MenuItem>
+                        </MenuList>
+                      }
+                    />
+                  </td>
                 </tr>
               ))}
             </tbody>
