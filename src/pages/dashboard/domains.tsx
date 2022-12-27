@@ -214,7 +214,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
       <div className="flex-1">
         <div className="text-white">
           <h1 className="text-4xl mb-5 font-bold">Domainübersicht</h1>
-          <p className="mb-10 w-1/2">
+          <p className="mb-10 w-1/2 text-slate-300">
             Auf der Domainübersicht finden Sie alle Testergebnisse für Ihre
             Domains auf einen Blick. Hier können Sie schnell und einfach
             vergleichen, wie gut die verschiedenen Domains in Bezug auf die
@@ -226,7 +226,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
             </b>{" "}
             Domains
           </p>
-          <div className="overflow-hidden w-full border-deepblue-500 bg-deepblue-400">
+          <div className="w-full border-deepblue-200 border bg-deepblue-500">
             <div className="p-5">
               <div className="text-black">
                 <DomainOverviewForm
@@ -237,7 +237,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
               </div>
             </div>
             <table className="w-full">
-              <thead>
+              <thead className="">
                 <tr className="bg-deepblue-100 text-sm border-b border-b-deepblue-500 text-left">
                   <th className="p-2">
                     <div>

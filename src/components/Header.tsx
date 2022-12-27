@@ -27,28 +27,27 @@ const Header = () => {
     router.push("/");
   };
   return (
-    <div className="bg-deepblue-500 h-14 border-b text-white border-deepblue-500">
+    <div className="bg-deepblue-700 h-14 border-b text-black border-deepblue-200">
       {session.status === "authenticated" && session.data && (
-        <div className="flex items-center justify-between h-full px-4">
-          <div className="flex items-center">
-            <Link href="/" className="flex items-center">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                width={70}
-                height={50}
-                src={"/assets/ozg-logo.svg"}
-                alt="Logo BMI"
-              />
-              <div className="text-xl font-bold ml-2 relative top-1">
-                Security
-              </div>
-            </Link>
+        <div className="flex flex-row items-center h-full">
+          <div className="flex w-56 border-r border-deepblue-500 bg-white h-full items-center">
+            <div className="px-4">
+              <Link href="/" className="flex items-center">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  width={55}
+                  height={55}
+                  src={"/assets/ozg-logo-colored.svg"}
+                  alt="Logo BMI"
+                />
+              </Link>
+            </div>
           </div>
-          <div className="flex items-center">
-            <div className="ml-2">
+          <div className="flex flex-1 px-4 flex-row justify-end items-center">
+            <div className="ml-2 text-white">
               <Menu
                 Button={
-                  <div className="bg-white text-black rounded-full h-8 w-8 flex items-center justify-center">
+                  <div className="bg-deepblue-100 rounded-full text-white h-10 w-10 flex items-center justify-center">
                     {getInitials(session.data.user.name)}
                   </div>
                 }
@@ -56,12 +55,12 @@ const Header = () => {
                   <MenuList>
                     <MenuItem onClick={handleSignOut}>
                       <FontAwesomeIcon
-                        className="mr-2"
+                        className="mr-2 text-white"
                         icon={faArrowRightFromBracket}
                       />
                       Ausloggen
                     </MenuItem>
-                    <div className="p-2 text-sm border-t border-t-deepblue-200 bg-deepblue-300">
+                    <div className="p-2 text-white text-sm border-t border-t-deepblue-200 bg-deepblue-300">
                       Eingeloggt als: {session.data.user.name}
                     </div>
                   </MenuList>

@@ -47,15 +47,16 @@ const SideNavigation = () => {
   const { pathname } = useRouter();
 
   return (
-    <div className="bg-deepblue-500 h-full">
+    <div className="bg-deepblue-700 border-r border-deepblue-200 h-full">
       <div className="sticky top-0 pt-10">
         {getLinks(isAdmin(session.data)).map(({ path, name, icon }) => (
           <Link key={name} href={path}>
             <div
               className={classNames(
-                "py-4 px-4 flex flex-row text-white hover:bg-deepblue-300 border-t border-b border-transparent transition-all cursor-pointer",
-                pathname === path &&
-                  "bg-deepblue-300 border-t border-b border-deepblue-500"
+                "py-2 px-4 m-2 flex flex-row border hover:bg-deepblue-300 transition-all hover:text-white cursor-pointer",
+                pathname === path
+                  ? "bg-deepblue-300 border border-deepblue-300 text-white"
+                  : "text-slate-400 border-transparent"
               )}
             >
               <div className="mr-4">
@@ -65,7 +66,12 @@ const SideNavigation = () => {
                   icon={icon}
                 />
               </div>
-              {name}
+              <span
+                title={name}
+                className="whitespace-nowrap overflow-hidden text-ellipsis"
+              >
+                {name}
+              </span>
             </div>
           </Link>
         ))}

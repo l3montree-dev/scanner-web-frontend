@@ -8,7 +8,7 @@ import { getTLSv1_1_DeactivatedReportMessage } from "../messages/tlsv1_1_Deactiv
 
 import { getTLSv1_3ReportMessage } from "../messages/tlsv1_3";
 import { IReport } from "../types";
-import { classNames } from "../utils/common";
+import { classNames, linkMapper } from "../utils/common";
 
 import ResultBox from "./ResultBox";
 
@@ -60,7 +60,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
           <ResultBox
             title="Responsible Disclosure"
             description={getDescription(report, "ResponsibleDisclosure")}
-            link={"/one-pager/Responsible_Disclosure-One-Pager.pdf"}
+            link={linkMapper["ResponsibleDisclosure"]}
             didPass={report.result.ResponsibleDisclosure.didPass}
           />
         </div>
@@ -75,7 +75,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
           <ResultBox
             title="TLS 1.3"
             description={getDescription(report, "TLSv1_3")}
-            link={"/one-pager/TLS1_3-One-Pager.pdf"}
+            link={linkMapper["TLSv1_3"]}
             didPass={report.result.TLSv1_3.didPass}
           />
         </div>
@@ -84,14 +84,20 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
         <div
           className={classNames(
             "bg-deepblue-400 border h-full p-4",
-            borderClass(report.result.TLSv1_1_Deactivated.didPass)
+            borderClass(
+              report.result.TLSv1_1_Deactivated.didPass &&
+                report.result.SSLDeactivated.didPass
+            )
           )}
         >
           <ResultBox
             title="Deaktivierung von veralteten TLS/ SSL Protokollen"
             description={getDescription(report, "TLSv1_1_Deactivated")}
-            link={"/one-pager/TLS1_1_off-One-Pager.pdf"}
-            didPass={report.result.TLSv1_1_Deactivated.didPass}
+            link={linkMapper["TLSv1_1_Deactivated"]}
+            didPass={
+              report.result.TLSv1_1_Deactivated.didPass &&
+              report.result.SSLDeactivated.didPass
+            }
           />
         </div>
       </div>
@@ -105,7 +111,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
           <ResultBox
             title="HSTS"
             description={getDescription(report, "HSTS")}
-            link={"/one-pager/HSTS-One-Pager.pdf"}
+            link={linkMapper["HSTS"]}
             didPass={report.result.HSTS.didPass}
           />
         </div>
@@ -120,7 +126,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
           <ResultBox
             title="DNSSEC"
             description={getDescription(report, "DNSSec")}
-            link="/one-pager/DNSSEC-One-Pager.pdf"
+            link={linkMapper["DNSSec"]}
             didPass={report.result.DNSSec.didPass}
           />
         </div>

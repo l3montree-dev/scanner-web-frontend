@@ -11,6 +11,18 @@ import {
 
 import ip from "ip";
 import { isValidIp, isValidMask } from "./validator";
+import {
+  CertificateInspectionType,
+  ContentInspectionType,
+  CookieInspectionType,
+  DomainInspectionType,
+  HeaderInspectionType,
+  HttpInspectionType,
+  InspectionType,
+  NetworkInspectionType,
+  OrganizationalInspectionType,
+  TLSInspectionType,
+} from "../inspection/scans";
 
 export const serverOnly = <T>(fn: () => T): T | null => {
   if (typeof window === "undefined") {
@@ -139,4 +151,40 @@ export const isScanError = (
   response: IScanResponse
 ): response is IScanErrorResponse => {
   return "error" in response.result;
+};
+
+export const linkMapper: { [key in InspectionType]: string } = {
+  [HttpInspectionType.HTTP]: "",
+  [HttpInspectionType.HTTP308]: "",
+  [HttpInspectionType.HTTPRedirectsToHttps]: "",
+  [TLSInspectionType.TLSv1_2]: "",
+  [TLSInspectionType.TLSv1_3]: "/one-pager/TLS1_3-One-Pager.pdf",
+  [TLSInspectionType.SSLDeactivated]: "",
+  [TLSInspectionType.TLSv1_1_Deactivated]:
+    "/one-pager/TLS1_1_off-One-Pager.pdf",
+  [TLSInspectionType.StrongKeyExchange]: "",
+  [TLSInspectionType.StrongCipherSuites]: "",
+  [CertificateInspectionType.ValidCertificate]: "",
+  [CertificateInspectionType.StrongPrivateKey]: "",
+  [CertificateInspectionType.StrongSignatureAlgorithm]: "",
+  [CertificateInspectionType.MatchesHostname]: "",
+  [CertificateInspectionType.NotRevoked]: "",
+  [CertificateInspectionType.CertificateTransparency]: "",
+  [CertificateInspectionType.ValidCertificateChain]: "",
+  [CookieInspectionType.SecureSessionCookies]: "",
+  [NetworkInspectionType.IPv6]: "",
+  [NetworkInspectionType.RPKI]: "",
+  [DomainInspectionType.DNSSec]: "/one-pager/DNSSEC-One-Pager.pdf",
+  [DomainInspectionType.CAA]: "",
+  [OrganizationalInspectionType.ResponsibleDisclosure]:
+    "/one-pager/Responsible_Disclosure-One-Pager.pdf",
+  [ContentInspectionType.SubResourceIntegrity]: "",
+  [ContentInspectionType.NoMixedContent]: "",
+  [HeaderInspectionType.HTTPS]: "",
+  [HeaderInspectionType.HSTS]: "/one-pager/HSTS-One-Pager.pdf",
+  [HeaderInspectionType.HSTSPreloaded]: "",
+  [HeaderInspectionType.ContentSecurityPolicy]: "",
+  [HeaderInspectionType.XFrameOptions]: "",
+  [HeaderInspectionType.XSSProtection]: "",
+  [HeaderInspectionType.ContentTypeOptions]: "",
 };

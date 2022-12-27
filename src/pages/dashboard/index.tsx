@@ -1,3 +1,6 @@
+import { faNetworkWired, faServer } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Link from "next/link.js";
 import { FunctionComponent, useEffect, useState } from "react";
 import resolveConfig from "tailwindcss/resolveConfig";
 import { VictoryLabel, VictoryPie, VictoryTooltip } from "victory";
@@ -8,6 +11,7 @@ import { decorateServerSideProps } from "../../decorators/decorateServerSideProp
 import { withCurrentUser } from "../../decorators/withCurrentUser";
 import { withDB } from "../../decorators/withDB";
 import { withTokenServerSideProps } from "../../decorators/withToken";
+import { useSession } from "../../hooks/useSession";
 import {
   CertificateInspectionType,
   ContentInspectionType,
@@ -20,10 +24,15 @@ import {
   OrganizationalInspectionType,
   TLSInspectionType,
 } from "../../inspection/scans";
-import { getFailedSuccessPercentage } from "../../services/statService";
-import { isAdmin } from "../../utils/common";
+import {
+  getFailedSuccessPercentage,
+  getTotals,
+} from "../../services/statService";
+import { isAdmin, linkMapper } from "../../utils/common";
 interface Props {
   totalCount: number;
+  hosts: number;
+  ipAddresses: number;
   data: {
     [key in InspectionType]: number;
   };
@@ -79,80 +88,176 @@ const displayKey: Array<InspectionType> = [
 const Dashboard: FunctionComponent<Props> = (props) => {
   const [data, setData] = useState({
     totalCount: props.totalCount,
+    hosts: props.hosts,
+    ipAddresses: props.ipAddresses,
     data: Object.fromEntries(Object.keys(props.data).map((key) => [key, 0])),
   });
+
+  const user = useSession();
 
   useEffect(() => {
     setData(props);
   }, []);
 
+  console.log(user);
   return (
     <>
       <DashboardPage title="Dashboard">
         <SideNavigation />
-        <div className="flex-1 text-white">
-          <h1 className="text-4xl font-bold">Dashboard</h1>
-
-          <div className="flex mt-5 justify-center items-start flex-wrap p-2 flex-row">
+        <div className="flex-1 text-white mb-10">
+          <h1 className="text-4xl mb-5 font-bold">Dashboard</h1>
+          <p className="w-1/2 text-slate-300">
+            Das Dashboard zeigt Ihnen aggregierte Informationen über den
+            Sicherheitszustand der von Ihnen verwalteten OZG-Dienste.
+          </p>
+          <div>
+            <h2 className="text-2xl mt-10">Gesamtanzahl der Dienste</h2>
+            <div className="flex mt-5 justify-start flex-wrap flex-wrap flex-row">
+              <div className="mr-2">
+                <div className="bg-deepblue-500 flex-row flex items-center p-5 border border-deepblue-200">
+                  <FontAwesomeIcon
+                    className="text-slate-400 mx-2"
+                    fontSize={75}
+                    icon={faNetworkWired}
+                  />
+                  <div className="ml-5 text-xl">
+                    <b className="text-5xl">{data.hosts}</b>
+                    <br />
+                    DNS-Einträge
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div className="bg-deepblue-500 flex-row flex items-center p-5 border border-deepblue-200">
+                  <FontAwesomeIcon
+                    className="text-slate-400 mx-2"
+                    fontSize={75}
+                    icon={faServer}
+                  />
+                  <div className="ml-5 text-xl">
+                    <b className="text-5xl">{data.ipAddresses}</b>
+                    <br />
+                    IP-Adressen
+                  </div>
+                </div>
+              </div>
+              {user.data?.user.networks.map((network) => (
+                <div key={network.id} className="mr-2">
+                  <div className="bg-deepblue-500 flex-row flex items-center p-5 border border-deepblue-200">
+                    <FontAwesomeIcon
+                      className="text-slate-400 mx-2"
+                      fontSize={75}
+                      icon={faNetworkWired}
+                    />
+                    <div className="ml-5 text-xl">
+                      <b className="text-5xl">{network.cidr}</b>
+                      <br />
+                      DNS-Einträge
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <h2 className="text-2xl mt-10 mb-5">Testergebnisse</h2>
+          <p className="w-1/2 text-slate-300">
+            Ausschlie&szlig;lich erreichbare Domains können getestet werden. Die
+            Anfrage muss vom Server in maximal zehn Sekunden beantwortet werden,
+            damit eine Domain als erreichbar gilt. Derzeit sind{" "}
+            {props.totalCount} von {props.hosts} erreichbar.
+          </p>
+          <div className="flex mt-5 justify-start gap-2 flex-wrap flex-wrap flex-row">
             {displayKey.map((key) => (
-              <div className="flex-1" key={key}>
-                <svg viewBox="0 0 300 300">
-                  <VictoryPie
-                    standalone={false}
-                    width={300}
-                    height={300}
-                    animate={true}
-                    innerRadius={60}
-                    labelComponent={
-                      <VictoryTooltip
-                        cornerRadius={0}
-                        style={{
-                          fill: "white",
-                        }}
-                        flyoutStyle={{
-                          stroke: "none",
-                          fill: (fullConfig.theme?.colors as any).deepblue[
-                            "50"
-                          ],
-                        }}
-                        dx={10}
-                        pointerLength={0}
-                      />
-                    }
-                    colorScale={[
-                      (fullConfig.theme?.colors as any).lightning["500"],
-                      (fullConfig.theme?.colors as any).slate["600"],
-                    ]}
-                    data={[
-                      {
-                        x: `Implementiert (${(
-                          (data.data[key] / data.totalCount) *
-                          100
-                        ).toFixed(1)}%)`,
-                        y: data.data[key],
-                      },
-                      {
-                        x: `Fehlerhaft (${(
-                          ((data.totalCount - data.data[key]) /
-                            data.totalCount) *
-                          100
-                        ).toFixed(1)}%)`,
-                        y: data.totalCount - data.data[key],
-                      },
-                    ]}
-                  />
-                  <VictoryLabel
-                    textAnchor="middle"
-                    style={{ fontSize: 24, fill: "white" }}
-                    x={150}
-                    y={150}
-                    text={`${(
-                      (props.data[key] / props.totalCount) *
-                      100
-                    ).toFixed(0)}%`}
-                  />
-                </svg>
-                <h2 className="text-center">{mapping[key]}</h2>
+              <div
+                className="w-56 bg-deepblue-500 border flex-col flex border-deepblue-200"
+                key={key}
+              >
+                <div className="flex-1 pt-5 relative">
+                  {linkMapper[key] !== "" && (
+                    <Link
+                      target={"_blank"}
+                      href={linkMapper[key]}
+                      className="text-sm absolute top-1 underline right-0 mt-2 mr-3"
+                    >
+                      Mehr Informationen
+                    </Link>
+                  )}
+                  <svg viewBox="0 0 300 300">
+                    <VictoryPie
+                      standalone={false}
+                      width={300}
+                      height={300}
+                      animate={{
+                        duration: 500,
+                      }}
+                      padAngle={3}
+                      innerRadius={90}
+                      labelComponent={
+                        <VictoryTooltip
+                          cornerRadius={0}
+                          style={{
+                            fill: "white",
+                          }}
+                          flyoutStyle={{
+                            stroke: "none",
+                            fill: (fullConfig.theme?.colors as any).deepblue[
+                              "50"
+                            ],
+                          }}
+                          dx={10}
+                          pointerLength={0}
+                        />
+                      }
+                      colorScale={[
+                        (fullConfig.theme?.colors as any).lightning["500"],
+                        (fullConfig.theme?.colors as any).slate["600"],
+                      ]}
+                      data={[
+                        {
+                          x: `Implementiert (${(
+                            (data.data[key] / data.totalCount) *
+                            100
+                          ).toFixed(1)}%)`,
+                          y: data.data[key],
+                        },
+                        {
+                          x: `Fehlerhaft (${(
+                            ((data.totalCount - data.data[key]) /
+                              data.totalCount) *
+                            100
+                          ).toFixed(1)}%)`,
+                          y: data.totalCount - data.data[key],
+                        },
+                      ]}
+                    />
+                    <VictoryLabel
+                      textAnchor="middle"
+                      style={{ fontSize: 30, fill: "white" }}
+                      x={150}
+                      y={150}
+                      text={`${(
+                        (props.data[key] / props.totalCount) *
+                        100
+                      ).toFixed(0)}%`}
+                    />
+                    <VictoryLabel
+                      textAnchor="middle"
+                      style={{
+                        fontSize: 20,
+                        fill: (fullConfig.theme?.colors as any).slate["400"],
+                      }}
+                      x={150}
+                      y={180}
+                      text={`${props.data[key]} von ${props.totalCount}`}
+                    />
+                  </svg>
+                </div>
+                <h2
+                  title={mapping[key]}
+                  className="text-center whitespace-nowrap text-ellipsis overflow-hidden bg-deepblue-200 mt-1 p-3"
+                >
+                  {mapping[key]}
+                </h2>
               </div>
             ))}
           </div>
@@ -164,17 +269,16 @@ const Dashboard: FunctionComponent<Props> = (props) => {
 
 export const getServerSideProps = decorateServerSideProps(
   async (context, [currentUser, token, db]) => {
-    // get the query params.
-    const page = +(context.query["page"] ?? 0);
-    const search = context.query["search"] as string | undefined;
-
+    const admin = isAdmin(token);
+    const [data, { hosts, ipAddresses }] = await Promise.all([
+      getFailedSuccessPercentage(admin, currentUser.networks, db.Report),
+      getTotals(admin, currentUser.networks, db.Domain),
+    ]);
     return {
       props: {
-        ...(await getFailedSuccessPercentage(
-          isAdmin(token),
-          currentUser.networks,
-          db.Report
-        )),
+        ...data,
+        hosts,
+        ipAddresses,
       },
     };
   },

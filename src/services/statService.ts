@@ -1,9 +1,57 @@
 import { Model } from "mongoose";
 import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
-import { INetwork, IReport } from "../types";
+import { IDomain, INetwork, IReport } from "../types";
 
 const keys = Object.keys(InspectionTypeEnum);
 
+export const getTotals = async (
+  isAdmin: boolean,
+  networks: INetwork[],
+  domain: Model<IDomain>
+): Promise<{ hosts: number; ipAddresses: number }> => {
+  if (!isAdmin && networks.length === 0) {
+    return {
+      hosts: 0,
+      ipAddresses: 0,
+    };
+  }
+
+  const [hosts, ipAddresses] = await Promise.all([
+    domain
+      .distinct("fqdn", {
+        ...(isAdmin
+          ? {}
+          : {
+              $or: networks.map((network) => ({
+                ipV4AddressNumber: {
+                  $gte: network.startAddressNumber,
+                  $lte: network.endAddressNumber,
+                },
+              })),
+            }),
+      })
+      .countDocuments(),
+    domain
+      .distinct("ipV4AddressNumber", {
+        ...(isAdmin
+          ? {}
+          : {
+              $or: networks.map((network) => ({
+                ipV4AddressNumber: {
+                  $gte: network.startAddressNumber,
+                  $lte: network.endAddressNumber,
+                },
+              })),
+            }),
+      })
+      .countDocuments(),
+  ]);
+
+  return {
+    hosts,
+    ipAddresses,
+  };
+};
 export const getFailedSuccessPercentage = async (
   isAdmin: boolean,
   networks: INetwork[],

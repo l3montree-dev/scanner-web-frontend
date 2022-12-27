@@ -54,6 +54,10 @@ nav {
     min-width: 270px;
 }
 
+.branding {
+    min-width: 270px;
+}
+
 
 pre {
     background-color: transparent!important;

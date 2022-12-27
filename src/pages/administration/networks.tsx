@@ -54,7 +54,7 @@ const Network: FunctionComponent<Props> = (props) => {
               </p>
             </div>
             <Button
-              className="bg-deepblue-200 border-deepblue-200 border hover:bg-deepblue-300 transition-all py-3 px-5 text-white"
+              className="bg-lightning-500 hover:bg-lightning-900 font-bold transition-all py-3 px-5 text-black"
               type="button"
               loading={false}
               onClick={() => setIsOpen(true)}
@@ -62,7 +62,7 @@ const Network: FunctionComponent<Props> = (props) => {
               Netzwerk hinzufügen
             </Button>
           </div>
-          <table className="w-full text-left text-white w-full border-deepblue-500 mt-10 bg-deepblue-400">
+          <table className="w-full text-left text-white border-deepblue-100 mt-10 border bg-deepblue-500">
             <thead>
               <tr className="bg-deepblue-100  text-sm border-b border-b-deepblue-500 text-left">
                 <th className="p-2 py-4">CIDR</th>
@@ -75,8 +75,8 @@ const Network: FunctionComponent<Props> = (props) => {
               {networks.map((network, i) => (
                 <tr
                   className={classNames(
-                    i + 1 !== networks.length ? "border-bg" : "",
-                    "border-b border-b-deepblue-500 transition-all"
+                    i + 1 !== networks.length ? "border-b" : "",
+                    " border-b-deepblue-500 transition-all"
                   )}
                   key={network.id}
                 >
