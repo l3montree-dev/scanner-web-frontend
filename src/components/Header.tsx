@@ -43,11 +43,11 @@ const Header = () => {
               </Link>
             </div>
           </div>
-          <div className="flex flex-1 px-4 flex-row justify-end items-center">
+          <div className="flex flex-1 px-2 flex-row justify-end items-center">
             <div className="ml-2 text-white">
               <Menu
                 Button={
-                  <div className="bg-deepblue-100 rounded-full text-white h-10 w-10 flex items-center justify-center">
+                  <div className="bg-deepblue-100 text-white h-10 w-10 flex items-center justify-center">
                     {getInitials(session.data.user.name)}
                   </div>
                 }
