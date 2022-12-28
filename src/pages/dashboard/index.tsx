@@ -1,4 +1,8 @@
-import { faNetworkWired, faServer } from "@fortawesome/free-solid-svg-icons";
+import {
+  faListCheck,
+  faNetworkWired,
+  faServer,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link.js";
 import { FunctionComponent, useEffect, useState } from "react";
@@ -110,17 +114,6 @@ const Dashboard: FunctionComponent<Props> = (props) => {
             Sicherheitszustand der von Ihnen verwalteten OZG-Dienste.
           </p>
           <div>
-            <h2 className="text-2xl mt-10">Verwaltete Netzwerke</h2>
-            <div className="flex gap-5 mt-4 flex-row">
-              {user.data?.user.networks.map((network) => (
-                <div className="bg-deepblue-500 px-2 py-1" key={network.id}>
-                  <div>
-                    <b>{network.cidr}</b>
-                    <br />
-                  </div>
-                </div>
-              ))}
-            </div>
             <h2 className="text-2xl mt-10">Gesamtanzahl der Dienste</h2>
             <div className="flex mt-5 justify-start flex-wrap flex-wrap flex-row">
               <div className="mr-2">
@@ -128,7 +121,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                   <FontAwesomeIcon
                     className="text-slate-400 mx-2"
                     fontSize={75}
-                    icon={faNetworkWired}
+                    icon={faListCheck}
                   />
                   <div className="ml-5 text-xl">
                     <b className="text-5xl">{data.hosts}</b>
@@ -138,7 +131,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                 </div>
               </div>
               <div>
-                <div className="bg-deepblue-500 flex-row flex items-center p-5 border border-deepblue-200">
+                <div className="bg-deepblue-500 flex-row flex mr-2 items-center p-5 border border-deepblue-200">
                   <FontAwesomeIcon
                     className="text-slate-400 mx-2"
                     fontSize={75}
@@ -148,6 +141,32 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                     <b className="text-5xl">{data.ipAddresses}</b>
                     <br />
                     IP-Adressen
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div className="bg-deepblue-500 h-full flex-row flex items-center p-5 border border-deepblue-200">
+                  <FontAwesomeIcon
+                    className="text-slate-400 mx-2"
+                    fontSize={75}
+                    icon={faNetworkWired}
+                  />
+                  <div className="ml-5">
+                    <div className="flex mb-2 gap-2 flex-wrap flex-row">
+                      {user.data?.user.networks.map((network) => (
+                        <div
+                          className="bg-deepblue-200 border border-deepblue-200 px-2 py-1"
+                          key={network.id}
+                        >
+                          <div>
+                            <b>{network.cidr}</b>
+                            <br />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <span className="text-xl">Verwaltete Netzwerke</span>
                   </div>
                 </div>
               </div>

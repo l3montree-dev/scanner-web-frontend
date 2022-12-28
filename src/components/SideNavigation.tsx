@@ -1,6 +1,5 @@
 import {
   faChartLine,
-  faGauge,
   faListCheck,
   faNetworkWired,
   faUsers,
@@ -8,7 +7,6 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React from "react";
 import { useSession } from "../hooks/useSession";
 import { classNames, isAdmin } from "../utils/common";
 
