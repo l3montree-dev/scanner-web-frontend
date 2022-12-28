@@ -31,7 +31,7 @@ const Pagination: FunctionComponent<Props> = (props) => {
         <button
           onClick={() => props.onPageChange(0)}
           className={classNames(
-            "h-8 w-8 mx-1 mr-5 border border-deepblue-100 transition-all hover:bg-deepblue-100"
+            "h-8 w-8 mx-1 mr-5 border border-deepblue-50 transition-all hover:bg-deepblue-500"
           )}
         >
           1
@@ -42,8 +42,8 @@ const Pagination: FunctionComponent<Props> = (props) => {
           <button
             onClick={() => props.onPageChange(i)}
             className={classNames(
-              "h-8 w-8 mx-1 border border-deepblue-100 transition-all hover:bg-deepblue-100",
-              i === props.page && "bg-deepblue-100"
+              "h-8 w-8 mx-1 border border-deepblue-50 transition-all hover:bg-deepblue-500",
+              i === props.page && "bg-deepblue-500"
             )}
             key={i}
           >
@@ -57,7 +57,7 @@ const Pagination: FunctionComponent<Props> = (props) => {
             props.onPageChange(Math.floor(props.total / props.pageSize))
           }
           className={classNames(
-            "h-8 ml-5 w-8 mx-1 border border-deepblue-100 transition-all hover:bg-deepblue-100"
+            "h-8 ml-5 w-8 mx-1 border border-deepblue-50 transition-all hover:bg-deepblue-500"
           )}
         >
           {Math.floor(props.total / props.pageSize) + 1}

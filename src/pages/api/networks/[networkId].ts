@@ -37,9 +37,22 @@ const handleDelete = async (
   if (!networkId) {
     throw new NotFoundException();
   }
-  const network = await db.Network.findOneAndDelete({
-    _id: networkId,
-  }).lean();
+  const network = await Promise.all([
+    db.Network.findOneAndDelete({
+      _id: networkId,
+    }).lean(),
+
+    // iterate over all users and delete the network from their list
+    db.User.updateMany(
+      {},
+      {
+        $pull: {
+          networks: networkId,
+        },
+      }
+    ),
+  ]);
+
   return network;
 };
 

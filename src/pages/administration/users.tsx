@@ -1,3 +1,5 @@
+import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import UserRepresentation from "@keycloak/keycloak-admin-client/lib/defs/userRepresentation";
 import { unstable_getServerSession } from "next-auth";
 import { signIn } from "next-auth/react";
@@ -5,6 +7,10 @@ import { FunctionComponent, useEffect, useState } from "react";
 import AdministrationPage from "../../components/AdministrationPage";
 import Button from "../../components/Button";
 import CreateUserForm from "../../components/CreateUserForm";
+import EditUserForm from "../../components/EditUserForm";
+import Menu from "../../components/Menu";
+import MenuItem from "../../components/MenuItem";
+import MenuList from "../../components/MenuList";
 import Modal from "../../components/Modal";
 import SideNavigation from "../../components/SideNavigation";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
@@ -52,11 +58,15 @@ export const parseCreateUserForm = ({
 
 interface Props {
   error: boolean;
-  users: Array<UserRepresentation & { networks: WithoutId<INetwork>[] }>;
+  users: Array<
+    UserRepresentation &
+      Omit<IUser, "_id"> & { networks: WithoutId<INetwork>[] } & { id: string }
+  >;
 }
 const Users: FunctionComponent<Props> = (props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [users, setUser] = useState(props.users);
+  const [edit, setEdit] = useState<Props["users"][0] | null>(null);
 
   const handleCreateUser = async (
     form: Omit<ICreateUserDTO, "networks"> & { networks: string }
@@ -79,7 +89,8 @@ const Users: FunctionComponent<Props> = (props) => {
     }
     const body = await res.json();
     const user: IUser = body.user;
-    setUser((users) => [user, ...users]);
+
+    setUser((users) => [{ ...user, id: user._id }, ...users]);
     return body.password;
   };
 
@@ -88,6 +99,49 @@ const Users: FunctionComponent<Props> = (props) => {
       signIn("keycloak");
     }
   }, [props.error]);
+
+  const handleDelete = async (id: string) => {
+    const res = await clientHttpClient(
+      `/api/users/${id}`,
+      crypto.randomUUID(),
+      {
+        method: "DELETE",
+      }
+    );
+    if (!res.ok) {
+      throw res;
+    }
+    setUser((users) => users.filter((user) => user.id !== id));
+    setEdit(null);
+  };
+
+  const handleUpdateUser = async (
+    user: Omit<IUser, "_id" | "networks"> & { id: string; networks: string }
+  ) => {
+    const res = await clientHttpClient(
+      `/api/users/${user.id}`,
+      crypto.randomUUID(),
+      {
+        method: "PUT",
+        body: JSON.stringify({
+          ...user,
+          networks: parseNetworkString(user.networks),
+        }),
+      }
+    );
+    if (!res.ok) {
+      throw res;
+    }
+    const body: IUser = await res.json();
+
+    setUser((users) =>
+      users.map((u) =>
+        u.id === body._id ? { ...body, username: u.username, id: body._id } : u
+      )
+    );
+    setEdit(null);
+  };
+
   return (
     <AdministrationPage title="Nutzerverwaltung">
       <SideNavigation />
@@ -136,15 +190,35 @@ const Users: FunctionComponent<Props> = (props) => {
                   <td className="p-2">{user.username}</td>
                   <td className="p-2">{user.firstName}</td>
                   <td className="p-2">{user.lastName}</td>
-                  <td className="p-2">
-                    {user.attributes ? user.attributes["role"] : ""}
-                  </td>
+                  <td className="p-2">{user.role ? user.role : ""}</td>
                   <td className="p-2">
                     {user.networks.map((network) => (
-                      <span className="mr-2" key={network.cidr}>
+                      <span
+                        className="mr-2 bg-deepblue-200 px-2 py-1"
+                        key={network.cidr}
+                      >
                         {network.cidr}
                       </span>
                     ))}
+                  </td>
+                  <td className="p-2 w-20 text-right">
+                    <Menu
+                      Button={
+                        <div className="p-2 h-8 w-8 flex flex-row items-center justify-center">
+                          <FontAwesomeIcon icon={faEllipsisVertical} />
+                        </div>
+                      }
+                      Menu={
+                        <MenuList>
+                          <MenuItem onClick={() => setEdit(user)}>
+                            Bearbeiten
+                          </MenuItem>
+                          <MenuItem onClick={() => handleDelete(user.id)}>
+                            Löschen
+                          </MenuItem>
+                        </MenuList>
+                      }
+                    />
                   </td>
                 </tr>
               ))}
@@ -157,6 +231,13 @@ const Users: FunctionComponent<Props> = (props) => {
           onClose={() => setIsOpen(false)}
         >
           <CreateUserForm onCreateUser={handleCreateUser} />
+        </Modal>
+        <Modal
+          title="Nutzer bearbeiten"
+          isOpen={!!edit}
+          onClose={() => setEdit(null)}
+        >
+          {edit && <EditUserForm {...edit} onSave={handleUpdateUser} />}
         </Modal>
       </>
     </AdministrationPage>
@@ -199,6 +280,7 @@ export const getServerSideProps = decorateServerSideProps(
             const userFromDB = users.find((u) => u._id === user.id);
             return {
               ...user,
+              role: userFromDB?.role ?? "",
               networks: userFromDB?.networks ?? [],
             };
           }),

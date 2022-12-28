@@ -14,9 +14,10 @@ export const reportSchema = new Schema<IReport>(
   { strict: true, timestamps: true }
 );
 
-export const userSchema = new Schema<IUser>(
+export const userSchema = new Schema<Omit<IUser, "id"> & { _id: string }>(
   {
     _id: { type: SchemaTypes.String },
+    role: SchemaTypes.String,
     networks: [{ type: SchemaTypes.ObjectId, ref: "Network" }],
   },
   { strict: true, timestamps: true }

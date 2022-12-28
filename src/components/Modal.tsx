@@ -36,13 +36,16 @@ const Modal: FunctionComponent<Props> = (props) => {
             !props.isOpen && "opacity-0 pointer-events-none"
           )}
         >
-          <div className="backdrop absolute top-0 bottom-0 left-0 right-0 bg-black opacity-50" />
+          <div
+            onClick={props.onClose}
+            className="backdrop absolute top-0 bottom-0 left-0 right-0 bg-black opacity-50"
+          />
           <div className="flex justify-center relative h-full overflow-auto z-10">
             <div className="py-5 h-max">
               <div className="relative">
                 <div
                   className={classNames(
-                    "max-w-screen-lg bg-deepblue-500 p-5 transition-all border border-deepblue-100",
+                    "max-w-screen-lg bg-deepblue-500 modal p-5 transition-all border border-deepblue-100",
                     props.isOpen ? "scale-100" : "scale-50"
                   )}
                 >

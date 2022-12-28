@@ -42,9 +42,12 @@ export interface INetworkPatchDTO {
   comment?: string;
 }
 
+export type IUserPutDTO = ICreateUserDTO;
+
 export interface IUser {
   _id: string; // match it with the id of the user inside the authorization server
   networks: INetwork[];
+  role: string;
 }
 
 export type IIpLookupReportMsg = {
@@ -84,6 +87,7 @@ export interface ISession {
     image: string;
     id: string;
     networks: INetwork[];
+    role: string;
   };
   resource_access: {
     [clientId: string]: {

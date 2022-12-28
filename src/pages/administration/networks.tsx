@@ -5,6 +5,7 @@ import { FunctionComponent, useState } from "react";
 import AdministrationPage from "../../components/AdministrationPage";
 import Button from "../../components/Button";
 import CreateNetworkForm from "../../components/CreateNetworkForm";
+import EditNetworkForm from "../../components/EditNetworkForm";
 import Menu from "../../components/Menu";
 import MenuItem from "../../components/MenuItem";
 import MenuList from "../../components/MenuList";
@@ -23,6 +24,7 @@ interface Props {
 }
 const Network: FunctionComponent<Props> = (props) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [edit, setEdit] = useState<INetwork | null>(null);
   const [networks, setNetworks] = useState(props.networks);
   const onSubmit = async (networks: string[]) => {
     const res = await clientHttpClient("/api/networks", crypto.randomUUID(), {
@@ -36,6 +38,54 @@ const Network: FunctionComponent<Props> = (props) => {
     setNetworks((prev) => [...newNetworks, ...prev]);
     setIsOpen(false);
   };
+
+  const handleDelete = async (id: string) => {
+    const res = await clientHttpClient(
+      `/api/networks/${id}`,
+      crypto.randomUUID(),
+      {
+        method: "DELETE",
+      }
+    );
+    if (!res.ok) {
+      throw res;
+    }
+    setNetworks((prev) => prev.filter((network) => network.id !== id));
+    setEdit(null);
+  };
+
+  const handleUpdateNetwork = async (newComment: string) => {
+    if (!edit) {
+      return;
+    }
+    const res = await clientHttpClient(
+      `/api/networks/${edit.id}`,
+      crypto.randomUUID(),
+      {
+        method: "PATCH",
+        body: JSON.stringify({
+          comment: newComment,
+        }),
+      }
+    );
+    if (!res.ok) {
+      throw res;
+    }
+    setNetworks((prev) => {
+      const index = prev.findIndex((network) => network.id === edit.id);
+      if (index === -1) {
+        return prev;
+      }
+      const newNetworks = [...prev];
+      newNetworks[index] = {
+        ...newNetworks[index],
+        comment: newComment,
+      };
+      return newNetworks;
+    });
+    setEdit(null);
+  };
+
   return (
     <>
       <AdministrationPage title="Netzwerkverwaltung">
@@ -66,7 +116,7 @@ const Network: FunctionComponent<Props> = (props) => {
             <thead>
               <tr className="bg-deepblue-100  text-sm border-b border-b-deepblue-500 text-left">
                 <th className="p-2 py-4">CIDR</th>
-                <th className="p-2 py-4">Verwaltet</th>
+                <th className="p-2 py-4">Wird Verwaltet</th>
                 <th className="p-2 py-4">Kommentar</th>
                 <th className="p-2 py-4">Aktionen</th>
               </tr>
@@ -96,10 +146,10 @@ const Network: FunctionComponent<Props> = (props) => {
                       }
                       Menu={
                         <MenuList>
-                          <MenuItem onClick={() => console.log("scannen")}>
+                          <MenuItem onClick={() => setEdit(network)}>
                             Bearbeiten
                           </MenuItem>
-                          <MenuItem onClick={() => console.log("scannen")}>
+                          <MenuItem onClick={() => handleDelete(network.id)}>
                             Löschen
                           </MenuItem>
                         </MenuList>
@@ -118,6 +168,19 @@ const Network: FunctionComponent<Props> = (props) => {
         onClose={() => setIsOpen(false)}
       >
         <CreateNetworkForm onSubmit={onSubmit} />
+      </Modal>
+      <Modal
+        title="Netzwerk bearbeiten"
+        isOpen={Boolean(edit)}
+        onClose={() => setEdit(null)}
+      >
+        {edit && (
+          <EditNetworkForm
+            {...edit}
+            onDelete={() => handleDelete(edit.id)}
+            onSubmit={handleUpdateNetwork}
+          />
+        )}
       </Modal>
     </>
   );

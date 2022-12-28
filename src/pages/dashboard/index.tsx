@@ -99,7 +99,6 @@ const Dashboard: FunctionComponent<Props> = (props) => {
     setData(props);
   }, []);
 
-  console.log(user);
   return (
     <>
       <DashboardPage title="Dashboard">
@@ -111,6 +110,17 @@ const Dashboard: FunctionComponent<Props> = (props) => {
             Sicherheitszustand der von Ihnen verwalteten OZG-Dienste.
           </p>
           <div>
+            <h2 className="text-2xl mt-10">Verwaltete Netzwerke</h2>
+            <div className="flex gap-5 mt-4 flex-row">
+              {user.data?.user.networks.map((network) => (
+                <div className="bg-deepblue-500 px-2 py-1" key={network.id}>
+                  <div>
+                    <b>{network.cidr}</b>
+                    <br />
+                  </div>
+                </div>
+              ))}
+            </div>
             <h2 className="text-2xl mt-10">Gesamtanzahl der Dienste</h2>
             <div className="flex mt-5 justify-start flex-wrap flex-wrap flex-row">
               <div className="mr-2">
@@ -141,22 +151,6 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                   </div>
                 </div>
               </div>
-              {user.data?.user.networks.map((network) => (
-                <div key={network.id} className="mr-2">
-                  <div className="bg-deepblue-500 flex-row flex items-center p-5 border border-deepblue-200">
-                    <FontAwesomeIcon
-                      className="text-slate-400 mx-2"
-                      fontSize={75}
-                      icon={faNetworkWired}
-                    />
-                    <div className="ml-5 text-xl">
-                      <b className="text-5xl">{network.cidr}</b>
-                      <br />
-                      DNS-Einträge
-                    </div>
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
           <h2 className="text-2xl mt-10 mb-5">Testergebnisse</h2>

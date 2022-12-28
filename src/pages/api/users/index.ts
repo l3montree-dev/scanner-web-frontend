@@ -1,14 +1,14 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { decorate } from "../../decorators/decorate";
-import { withDB } from "../../decorators/withDB";
-import { withToken } from "../../decorators/withToken";
-import { lookupNetwork } from "../../services/ipService";
-import { getKcAdminClient, getRealmName } from "../../services/keycloak";
-import { getLogger } from "../../services/logger";
-import { createUser } from "../../services/userService";
+import { decorate } from "../../../decorators/decorate";
+import { withDB } from "../../../decorators/withDB";
+import { withToken } from "../../../decorators/withToken";
+import { lookupNetwork } from "../../../services/ipService";
+import { getKcAdminClient, getRealmName } from "../../../services/keycloak";
+import { getLogger } from "../../../services/logger";
+import { createUser } from "../../../services/userService";
 
-import { ICreateUserDTO } from "../../types";
-import { parseNetwork } from "../../utils/common";
+import { ICreateUserDTO } from "../../../types";
+import { parseNetwork } from "../../../utils/common";
 
 const logger = getLogger(__filename);
 export default decorate(
@@ -45,9 +45,6 @@ export default decorate(
         emailVerified: true,
         enabled: true,
         requiredActions: ["UPDATE_PASSWORD"],
-        attributes: {
-          role: user.role,
-        },
         credentials: [
           {
             type: "password",
@@ -76,9 +73,6 @@ export default decorate(
               ...user,
               _id: id,
               networks: user.networks.map(parseNetwork),
-              attributes: {
-                role: user.role,
-              },
             },
           })
         );

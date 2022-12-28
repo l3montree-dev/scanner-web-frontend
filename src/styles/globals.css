@@ -92,9 +92,12 @@ th > div {
 .tooltip-container:hover .tooltip {
     opacity: 1;
     transform: scale(1);
- 
 }
 
 .tooltip {
     min-width: 300px;
+}
+
+.modal {
+    min-width: 600px;
 }
