@@ -17,7 +17,11 @@ import {
   isScanError,
   transformIpLookupMsg2DTO,
 } from "../utils/common";
-import { getDomains2Scan, handleNewDomain } from "./domainService";
+import {
+  getDomains2Scan,
+  handleDomainScanError,
+  handleNewDomain,
+} from "./domainService";
 import { getLogger } from "./logger";
 import { rabbitMQClient, rabbitMQRPCClient } from "./rabbitmqClient";
 import { handleNewScanReport } from "./reportService";
@@ -114,18 +118,7 @@ export const startScanResponseLoop = once(() => {
         const ipV4AddressNumber = ip.toLong(address);
         if (isScanError(content)) {
           try {
-            await connection.models.Domain.updateOne(
-              {
-                fqdn: content.fqdn,
-                ipV4AddressNumber,
-              },
-              {
-                lastScan: content.timestamp,
-                queued: false,
-                // increment the error count property by 1
-                $inc: { errorCount: 1 },
-              }
-            );
+            await handleDomainScanError(content, connection.models.Domain);
           } finally {
             logger.error({ fqdn: content.fqdn }, content.result.error);
             return;
@@ -145,17 +138,7 @@ export const startScanResponseLoop = once(() => {
                 version: 1,
                 ipV4AddressNumber,
               },
-              connection.models.Report
-            ),
-            connection.models.Domain.updateOne(
-              {
-                fqdn: content.fqdn,
-                ipV4AddressNumber,
-              },
-              {
-                lastScan: content.timestamp,
-                queued: false,
-              }
+              connection.models
             ),
           ]);
         } catch (e) {

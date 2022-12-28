@@ -4,7 +4,7 @@ import {
   startScanLoop,
   startScanResponseLoop,
   startSocketIOServer,
-} from "../../services/serverCtl";
+} from "../../services/serverCtrl";
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   // use the health route handler as initial setup as well.

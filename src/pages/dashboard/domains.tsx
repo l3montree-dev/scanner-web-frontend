@@ -142,35 +142,49 @@ const Dashboard: FunctionComponent<Props> = (props) => {
 
   const scanFQDN = async (fqdn: string) => {
     scanRequest.loading(fqdn);
-    try {
-      const response = await clientHttpClient(
-        `/api/scan?site=${fqdn}&refresh=true`,
-        crypto.randomUUID()
-      );
 
-      if (response.ok) {
-        const data: WithId<IReport> = await response.json();
-        // inject it into the domains
-        setDomains((prev) => {
-          const index = prev.findIndex((d) => d.fqdn === fqdn);
-          if (index === -1) {
-            return prev;
-          }
-          const newDomains = [...prev];
-          newDomains[index] = {
-            ...newDomains[index],
-            lastScan: data.lastScan,
-            report: {
-              ...data,
-            },
-          };
-          return newDomains;
-        });
-      } else {
-        scanRequest.error("Fehler beim Scannen der Domain.", fqdn);
-      }
+    const response = await clientHttpClient(
+      `/api/scan?site=${fqdn}&refresh=true`,
+      crypto.randomUUID()
+    );
+
+    if (response.ok) {
+      const data: WithId<IReport> = await response.json();
+      // inject it into the domains
+      setDomains((prev) => {
+        const index = prev.findIndex((d) => d.fqdn === fqdn);
+        if (index === -1) {
+          return prev;
+        }
+        const newDomains = [...prev];
+        newDomains[index] = {
+          ...newDomains[index],
+          lastScan: data.lastScan,
+          report: {
+            ...data,
+          },
+        };
+        return newDomains;
+      });
       scanRequest.success();
-    } catch (error) {
+    } else {
+      const data: { error: string; fqdn: string; ipAddress: string } =
+        await response.json();
+      setDomains((prev) => {
+        const index = prev.findIndex(
+          (d) => d.fqdn === data.fqdn && d.ipV4Address === data.ipAddress
+        );
+        if (index === -1) {
+          return prev;
+        }
+        const newDomains = [...prev];
+        newDomains[index] = {
+          ...newDomains[index],
+          lastScan: Date.now(),
+          errorCount: (newDomains[index].errorCount || 0) + 1,
+        };
+        return newDomains;
+      });
       scanRequest.error("Fehler beim Scannen der Domain.", fqdn);
     }
   };
@@ -354,7 +368,12 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                 {domains.map((domain) => {
                   return (
                     <tr
-                      className="border-b border-b-deepblue-500 transition-all"
+                      className={classNames(
+                        "border-b border-b-deepblue-500 transition-all",
+                        domain.errorCount !== null && domain.errorCount >= 5
+                          ? "line-through"
+                          : ""
+                      )}
                       key={domain.id}
                     >
                       <td className="p-2">
@@ -369,6 +388,11 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                                     domain.errorCount !== null &&
                                     domain.errorCount > 0
                                       ? ` (${domain.errorCount} Fehler)`
+                                      : ""
+                                  }${
+                                    domain.errorCount !== null &&
+                                    domain.errorCount >= 5
+                                      ? " Domain wird nicht mehr automatisiert gescanned, da 5 Fehler überschritten wurden"
                                       : ""
                                   }`
                                 : "Noch nicht gescannt"
@@ -432,7 +456,14 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                                 }
                                 onClick={() => scanFQDN(domain.fqdn)}
                               >
-                                Erneut scannen
+                                <div>
+                                  <div>Erneut scannen</div>
+                                  {scanRequest.key === domain.fqdn && (
+                                    <span className="block text-red-500 text-sm">
+                                      {scanRequest.errorMessage}
+                                    </span>
+                                  )}
+                                </div>
                               </MenuItem>
                             </MenuList>
                           }

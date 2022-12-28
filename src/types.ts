@@ -114,7 +114,7 @@ export type IScanSuccessResponse = {
   result: IReport["result"];
   fqdn: string;
   icon: string;
-  ipAddress?: string;
+  ipAddress: string;
   duration: number;
   timestamp: number;
 };

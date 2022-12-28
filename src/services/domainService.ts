@@ -1,14 +1,13 @@
-import { resolve4 } from "dns/promises";
 import ip from "ip";
 import { Model } from "mongoose";
 import {
   IDomain,
   INetwork,
   IReport,
+  IScanErrorResponse,
   PaginateRequest,
   PaginateResult,
 } from "../types";
-import { isAdmin } from "../utils/common";
 import { jsonSerializableStage } from "../utils/dbUtils";
 // only create a new report if the didPass property changed.
 export const handleNewDomain = async (
@@ -45,6 +44,33 @@ export const handleNewFQDN = async (
     // probably unique key index error
   }
   return payload;
+};
+
+export const handleDomainScanError = async (
+  content: IScanErrorResponse,
+  domain: Model<IDomain>
+) => {
+  const ipV4AddressNumber = ip.toLong(content.ipAddress);
+
+  const res = await domain
+    .updateOne(
+      {
+        fqdn: content.fqdn,
+        ipV4AddressNumber,
+      },
+      {
+        lastScan: content.timestamp ?? Date.now(),
+        queued: false,
+        // increment the error count property by 1
+        $inc: { errorCount: 1 },
+      },
+      {
+        new: true,
+        upsert: true,
+      }
+    )
+    .lean();
+  return res;
 };
 
 export const getDomainsOfNetworksWithLatestTestResult = async (

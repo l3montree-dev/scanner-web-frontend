@@ -3,15 +3,16 @@ import { randomUUID } from "crypto";
 import { Model } from "mongoose";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { toDTO } from "../../db/models";
+import { ModelsType, toDTO } from "../../db/models";
 import { tryDB } from "../../decorators/tryDB";
 import { inspectRPC } from "../../inspection/inspect";
 import { getLogger } from "../../services/logger";
 import { handleNewScanReport } from "../../services/reportService";
 import { IReport } from "../../types";
-import { sanitizeFQDN } from "../../utils/common";
+import { isScanError, sanitizeFQDN } from "../../utils/common";
 import ip from "ip";
 import { decorate } from "../../decorators/decorate";
+import { handleDomainScanError } from "../../services/domainService";
 
 const logger = getLogger(__filename);
 
@@ -73,9 +74,34 @@ export default decorate(
       }
     }
 
-    try {
-      const result = await inspectRPC(requestId, siteToScan);
-
+    const result = await inspectRPC(requestId, siteToScan);
+    if (isScanError(result) && db.Domain !== undefined) {
+      if (result.result.error === "fetch failed") {
+        logger.error(
+          { err: result.result.error, duration: Date.now() - start, requestId },
+          `failed to fetch site: ${siteToScan}`
+        );
+        return res.status(400).json({
+          error:
+            "Invalid site provided. Please provide a valid fully qualified domain name as site query parameter. Example: ?site=example.com",
+        });
+      } else {
+        await handleDomainScanError(result, db.Domain);
+        logger.error(
+          {
+            err: result.result.error.message,
+            duration: Date.now() - start,
+            requestId,
+          },
+          `failed to scan site: ${siteToScan}`
+        );
+        return res.status(500).json({
+          error: "Error happened...",
+          fqdn: result.fqdn,
+          ipAddress: result.ipAddress,
+        });
+      }
+    } else if (!isScanError(result)) {
       logger.info(
         { duration: Date.now() - start, requestId },
         `successfully scanned site: ${siteToScan}`
@@ -94,33 +120,13 @@ export default decorate(
         ipV4AddressNumber: ip.toLong(result.ipAddress),
       };
 
-      if (db.Report) {
-        return res.json(toDTO(await handleNewScanReport(data, db.Report)));
+      if (db) {
+        return res.json(
+          toDTO(await handleNewScanReport(data, db as ModelsType))
+        );
       } else {
         return res.json(data);
       }
-    } catch (error: unknown) {
-      if (error instanceof Error && error.message === "fetch failed") {
-        logger.error(
-          { err: error.message, duration: Date.now() - start, requestId },
-          `failed to fetch site: ${siteToScan}`
-        );
-        return res.status(400).json({
-          error:
-            "Invalid site provided. Please provide a valid fully qualified domain name as site query parameter. Example: ?site=example.com",
-        });
-      } else if (error instanceof Error) {
-        logger.error(
-          { err: error.message, duration: Date.now() - start, requestId },
-          `timeout while scanning site: ${siteToScan}`
-        );
-        return res.status(500).json({ error: "Error happened..." });
-      }
-      logger.error(
-        { duration: Date.now() - start, requestId },
-        "unknown error happened while scanning site"
-      );
-      return res.status(500).json({ error: "Unknown error" });
     }
   },
   tryDB

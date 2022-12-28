@@ -1,4 +1,5 @@
 import { Model } from "mongoose";
+import { ModelsType } from "../db/models";
 import { InspectionType } from "../inspection/scans";
 import { IReport } from "../types";
 
@@ -15,11 +16,13 @@ const reportDidChange = (
 // only create a new report if the didPass property changed.
 export const handleNewScanReport = async (
   newReport: Omit<IReport, "createdAt" | "updatedAt">,
-  model: Model<IReport>
+  db: ModelsType
 ) => {
   // fetch the last existing report and check if we only need to update that one.
-  const lastReport = await model
-    .findOne({ fqdn: newReport.fqdn })
+  const lastReport = await db.Report.findOne({
+    fqdn: newReport.fqdn,
+    ipV4AddressNumber: newReport.ipV4AddressNumber,
+  })
     .sort({
       lastScan: -1,
     })
@@ -27,12 +30,18 @@ export const handleNewScanReport = async (
 
   if (!lastReport || reportDidChange(lastReport, newReport)) {
     // if the report changed, we need to create a new one.
-    const report = new model(newReport);
+    const report = new db.Report(newReport);
     return (await report.save()).toObject();
   }
   // mark the last report valid until the next scan.
   const now = newReport.validFrom;
-  await model.updateOne({ _id: lastReport._id }, { lastScan: now }).lean();
+  await Promise.all([
+    db.Report.updateOne({ _id: lastReport._id }, { lastScan: now }).lean(),
+    db.Domain.updateOne(
+      { fqdn: newReport.fqdn, ipV4AddressNumber: newReport.ipV4AddressNumber },
+      { lastScan: now, queued: false }
+    ).lean(),
+  ]);
   return {
     ...lastReport,
     lastScan: now,
