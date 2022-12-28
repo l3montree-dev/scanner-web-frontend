@@ -30,7 +30,7 @@ export const getTotals = async (
               })),
             }),
       })
-      .countDocuments(),
+      .lean(),
     domain
       .distinct("ipV4AddressNumber", {
         ...(isAdmin
@@ -44,12 +44,12 @@ export const getTotals = async (
               })),
             }),
       })
-      .countDocuments(),
+      .lean(),
   ]);
 
   return {
-    hosts,
-    ipAddresses,
+    hosts: hosts.length,
+    ipAddresses: ipAddresses.length,
   };
 };
 export const getFailedSuccessPercentage = async (
