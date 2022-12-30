@@ -34,7 +34,7 @@ spec:
           imagePullPolicy: {{ .Values.secScanner.image.pullPolicy }}
           env:
             - name: INFLUX_URL
-              value: http://{{ .Release.Namespace }}-influxdb:8086  
+              value: http://{{ .Release.Name }}-influxdb:8086  
             - name: SERVER_TIMEOUT
               value: {{ .Values.secScanner.serverTimeout | default "3000" | quote }}
             - name: SERVER_RETRIES
