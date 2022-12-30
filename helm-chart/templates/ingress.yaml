@@ -178,7 +178,7 @@ spec:
           pathType: Prefix
           backend:
               service:
-                name: {{ $.Release.Namespace }}-influxdb
+                name: {{ $.Release.Name }}-influxdb
                 port:
                   number: 8086
     {{- end }}

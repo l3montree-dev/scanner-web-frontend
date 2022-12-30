@@ -40,7 +40,7 @@ spec:
             - name: SERVER_RETRIES
               value: {{ .Values.secScanner.serverRetries | default "0" | quote }}
             - name: RABBITMQ_HOST
-              value: {{.Release.Namespace}}-rabbitmq
+              value: {{.Release.Name}}-rabbitmq
             - name : RABBITMQ_PORT
               value: "5672"
             - name: RABBITMQ_USER
@@ -61,7 +61,7 @@ spec:
             - name: UV_THREADPOOL_SIZE
               value: {{ .Values.secScanner.uvThreadpoolSize | default "4" | quote }}
             - name: REDIS_HOST
-              value: {{ .Release.Namespace }}-redis-master
+              value: {{ .Release.Name }}-redis-master
             - name: INFLUX_TOKEN
               valueFrom:
                 secretKeyRef:

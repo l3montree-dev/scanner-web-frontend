@@ -85,13 +85,13 @@ spec:
             - name: MONGODB_USER
               value: ozgsec
             - name: MONGODB_HOST
-              value: {{.Release.Namespace}}-mongodb
+              value: {{.Release.Name}}-mongodb
             - name: MONGODB_PORT
               value: "27017"
             - name: MONGODB_DATABASE  
               value: "ozgsec"
             - name: RABBITMQ_HOST
-              value: {{.Release.Namespace}}-rabbitmq
+              value: {{.Release.Name}}-rabbitmq
             - name : RABBITMQ_PORT
               value: "5672"
             - name: RABBITMQ_USER
