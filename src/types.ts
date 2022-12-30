@@ -4,7 +4,6 @@ export interface IReport {
   result: {
     [key in InspectionType]: InspectResultDTO;
   };
-  iconBase64: string | null;
   validFrom: number;
   lastScan: number;
   fqdn: string;
@@ -113,7 +112,6 @@ export interface ICreateUserDTO {
 export type IScanSuccessResponse = {
   result: IReport["result"];
   fqdn: string;
-  icon: string;
   ipAddress: string;
   duration: number;
   timestamp: number;

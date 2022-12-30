@@ -133,7 +133,6 @@ export const startScanResponseLoop = once(() => {
                 ipAddress: address,
                 validFrom: content.timestamp,
                 lastScan: content.timestamp,
-                iconBase64: content.icon,
                 automated: true,
                 version: 1,
                 ipV4AddressNumber,

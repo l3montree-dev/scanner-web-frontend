@@ -176,19 +176,6 @@ const SideNav: FunctionComponent<IReport> = (props) => {
           <span className="ml-4 relative top-1">Website Scanner</span>
         </div>
         <div className="px-5 py-3 items-center flex flex-row">
-          {props.iconBase64 && (
-            <div className="p-0 rounded-sm flex mr-4 flex-row items-center justify-center">
-              <div className="flex flex-row items-center justify-center">
-                <Image
-                  src={props.iconBase64}
-                  width={32}
-                  height={32}
-                  alt={`${props.fqdn} icon`}
-                />
-              </div>
-            </div>
-          )}
-
           <div>
             <h2 className="text-2xl font-bold">{props.fqdn}</h2>
             <p className="opacity-75 text-sm">

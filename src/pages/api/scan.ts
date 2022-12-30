@@ -111,7 +111,6 @@ export default decorate(
         ...result,
         duration: Date.now() - start,
         version: 1,
-        iconBase64: result.icon,
         lastScan: result.timestamp,
         validFrom: result.timestamp,
         createdAt: result.timestamp,
