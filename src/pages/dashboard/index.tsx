@@ -50,7 +50,6 @@ const mapping: { [key in InspectionType]: string } = {
   [HttpInspectionType.HTTPRedirectsToHttps]: "",
   [TLSInspectionType.TLSv1_2]: "",
   [TLSInspectionType.TLSv1_3]: "TLS 1.3",
-  [TLSInspectionType.SSLDeactivated]: "",
   [TLSInspectionType.TLSv1_1_Deactivated]:
     "Deaktivierung von veralteten TLS/ SSL Protokollen",
   [TLSInspectionType.StrongKeyExchange]: "",

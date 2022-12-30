@@ -41,7 +41,6 @@ export enum CookieInspectionType {
 export enum TLSInspectionType {
   TLSv1_2 = "TLSv1_2",
   TLSv1_3 = "TLSv1_3",
-  SSLDeactivated = "SSLDeactivated",
   // make sure, that TLS v.1.1 and older is not supported
   TLSv1_1_Deactivated = "TLSv1_1_Deactivated",
   // string Key-Exchange (min. 2048 bit for DHE; min. 256 bit for

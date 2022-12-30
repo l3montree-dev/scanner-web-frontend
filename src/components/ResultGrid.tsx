@@ -84,20 +84,14 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
         <div
           className={classNames(
             "bg-deepblue-400 border h-full p-4",
-            borderClass(
-              report.result.TLSv1_1_Deactivated.didPass &&
-                report.result.SSLDeactivated.didPass
-            )
+            borderClass(report.result.TLSv1_1_Deactivated.didPass)
           )}
         >
           <ResultBox
             title="Deaktivierung von veralteten TLS/ SSL Protokollen"
             description={getDescription(report, "TLSv1_1_Deactivated")}
             link={linkMapper["TLSv1_1_Deactivated"]}
-            didPass={
-              report.result.TLSv1_1_Deactivated.didPass &&
-              report.result.SSLDeactivated.didPass
-            }
+            didPass={report.result.TLSv1_1_Deactivated.didPass}
           />
         </div>
       </div>

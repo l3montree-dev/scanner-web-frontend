@@ -159,7 +159,6 @@ export const linkMapper: { [key in InspectionType]: string } = {
   [HttpInspectionType.HTTPRedirectsToHttps]: "",
   [TLSInspectionType.TLSv1_2]: "",
   [TLSInspectionType.TLSv1_3]: "/one-pager/TLS1_3-One-Pager.pdf",
-  [TLSInspectionType.SSLDeactivated]: "",
   [TLSInspectionType.TLSv1_1_Deactivated]:
     "/one-pager/TLS1_1_off-One-Pager.pdf",
   [TLSInspectionType.StrongKeyExchange]: "",
