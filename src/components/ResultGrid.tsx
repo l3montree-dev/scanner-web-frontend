@@ -13,7 +13,7 @@ import { classNames, linkMapper } from "../utils/common";
 import ResultBox from "./ResultBox";
 
 const borderClass = (didPass: boolean | null) => {
-  return didPass === null
+  return didPass === null || didPass === undefined
     ? "border-white"
     : didPass
     ? "border-lightning-500"
@@ -54,14 +54,14 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
         <div
           className={classNames(
             "bg-deepblue-400 border h-full p-5",
-            borderClass(report.result.ResponsibleDisclosure.didPass)
+            borderClass(report.result.ResponsibleDisclosure?.didPass ?? null)
           )}
         >
           <ResultBox
             title="Responsible Disclosure"
             description={getDescription(report, "ResponsibleDisclosure")}
             link={linkMapper["ResponsibleDisclosure"]}
-            didPass={report.result.ResponsibleDisclosure.didPass}
+            didPass={report.result.ResponsibleDisclosure?.didPass ?? null}
           />
         </div>
       </div>
@@ -69,14 +69,14 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
         <div
           className={classNames(
             "bg-deepblue-400 border h-full p-4",
-            borderClass(report.result.TLSv1_3.didPass)
+            borderClass(report.result.TLSv1_3?.didPass ?? null)
           )}
         >
           <ResultBox
             title="TLS 1.3"
             description={getDescription(report, "TLSv1_3")}
             link={linkMapper["TLSv1_3"]}
-            didPass={report.result.TLSv1_3.didPass}
+            didPass={report.result.TLSv1_3?.didPass ?? null}
           />
         </div>
       </div>
@@ -84,14 +84,14 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
         <div
           className={classNames(
             "bg-deepblue-400 border h-full p-4",
-            borderClass(report.result.TLSv1_1_Deactivated.didPass)
+            borderClass(report.result.TLSv1_1_Deactivated?.didPass ?? null)
           )}
         >
           <ResultBox
             title="Deaktivierung von veralteten TLS/ SSL Protokollen"
             description={getDescription(report, "TLSv1_1_Deactivated")}
             link={linkMapper["TLSv1_1_Deactivated"]}
-            didPass={report.result.TLSv1_1_Deactivated.didPass}
+            didPass={report.result.TLSv1_1_Deactivated?.didPass ?? null}
           />
         </div>
       </div>
@@ -99,14 +99,14 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
         <div
           className={classNames(
             "bg-deepblue-400 border h-full p-4",
-            borderClass(report.result.HSTS.didPass)
+            borderClass(report.result.HSTS?.didPass ?? null)
           )}
         >
           <ResultBox
             title="HSTS"
             description={getDescription(report, "HSTS")}
             link={linkMapper["HSTS"]}
-            didPass={report.result.HSTS.didPass}
+            didPass={report.result.HSTS?.didPass ?? null}
           />
         </div>
       </div>
@@ -114,14 +114,14 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
         <div
           className={classNames(
             "bg-deepblue-400 border h-full p-4",
-            borderClass(report.result.DNSSec.didPass)
+            borderClass(report.result.DNSSec?.didPass ?? null)
           )}
         >
           <ResultBox
             title="DNSSEC"
             description={getDescription(report, "DNSSec")}
             link={linkMapper["DNSSec"]}
-            didPass={report.result.DNSSec.didPass}
+            didPass={report.result.DNSSec?.didPass ?? null}
           />
         </div>
       </div>
@@ -129,13 +129,13 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
         <div
           className={classNames(
             "bg-deepblue-400 border h-full p-4",
-            borderClass(report.result.RPKI.didPass)
+            borderClass(report.result.RPKI?.didPass ?? null)
           )}
         >
           <ResultBox
             title="RPKI"
             description={getDescription(report, "RPKI")}
-            didPass={report.result.RPKI.didPass}
+            didPass={report.result.RPKI?.didPass ?? null}
           />
         </div>
       </div>

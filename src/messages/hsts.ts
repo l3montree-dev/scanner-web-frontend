@@ -3,7 +3,7 @@ import { IReport } from "../types";
 
 export const getHSTSReportMessage = (report: IReport) => {
   const inspection = report.result["HSTS"];
-  if (inspection.didPass === null) {
+  if (inspection?.didPass === null || inspection?.didPass === undefined) {
     return "Die Überprüfung des Strict-Transport-Security Headers konnte nicht durchgeführt werden.";
   } else if (inspection.didPass) {
     return "Strict-Transport-Security Header vorhanden und korrekt konfiguriert.";

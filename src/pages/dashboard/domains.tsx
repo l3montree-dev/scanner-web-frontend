@@ -90,8 +90,8 @@ const sortDomains = (
       );
     }
     return (
-      (didPass2Number(a.report?.result[instructions.key].didPass) -
-        didPass2Number(b.report?.result[instructions.key].didPass)) *
+      (didPass2Number(a.report?.result[instructions.key]?.didPass) -
+        didPass2Number(b.report?.result[instructions.key]?.didPass)) *
       instructions.direction
     );
   });
@@ -409,35 +409,35 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                       <td className="p-2">
                         <ResultIcon
                           didPass={
-                            domain.report?.result.ResponsibleDisclosure.didPass
+                            domain.report?.result.ResponsibleDisclosure?.didPass
                           }
                         />
                       </td>
                       <td className="p-2">
                         <ResultIcon
-                          didPass={domain.report?.result.TLSv1_3.didPass}
+                          didPass={domain.report?.result.TLSv1_3?.didPass}
                         />
                       </td>
                       <td className="p-2">
                         <ResultIcon
                           didPass={
-                            domain.report?.result.TLSv1_1_Deactivated.didPass
+                            domain.report?.result.TLSv1_1_Deactivated?.didPass
                           }
                         />
                       </td>
                       <td className="p-2">
                         <ResultIcon
-                          didPass={domain.report?.result.HSTS.didPass}
+                          didPass={domain.report?.result.HSTS?.didPass}
                         />
                       </td>
                       <td className="p-2">
                         <ResultIcon
-                          didPass={domain.report?.result.DNSSec.didPass}
+                          didPass={domain.report?.result.DNSSec?.didPass}
                         />
                       </td>
                       <td className="p-2">
                         <ResultIcon
-                          didPass={domain.report?.result.RPKI.didPass}
+                          didPass={domain.report?.result.RPKI?.didPass}
                         />
                       </td>
                       <td className="text-right p-2">

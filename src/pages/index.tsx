@@ -144,7 +144,7 @@ const Home: NextPage = () => {
         ).includes(key)
       )
       .map((key) => report.result[key as InspectionType])
-      .filter((inspection) => inspection.didPass).length;
+      .filter((inspection) => inspection?.didPass).length;
   }, [report]);
 
   const dateString = report ? new Date(report.lastScan).toLocaleString() : "";

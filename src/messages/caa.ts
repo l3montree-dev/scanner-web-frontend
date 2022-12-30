@@ -2,7 +2,7 @@ import { IReport } from "../types";
 
 export const getCAAReportMessage = (report: IReport) => {
   const inspection = report.result["CAA"];
-  if (inspection.didPass === null) {
+  if (inspection?.didPass === null || inspection?.didPass === undefined) {
     return `Die Überprüfung nach CAA Einträgen für die Domain ${report.fqdn} konnte nicht durchgeführt werden.`;
   } else if (inspection.didPass) {
     return `CAA Einträge sind für die Domain ${report.fqdn} eingerichtet.`;

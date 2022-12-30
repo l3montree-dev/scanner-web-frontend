@@ -9,7 +9,7 @@ const reportDidChange = (
 ) => {
   // check if the didPass property changed.
   return Object.entries(lastReport.result).some(([key, value]) => {
-    return newReport.result[key as InspectionType].didPass !== value.didPass;
+    return newReport.result[key as InspectionType]?.didPass !== value.didPass;
   });
 };
 

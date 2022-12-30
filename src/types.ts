@@ -1,9 +1,9 @@
 import { InspectionType, InspectResultDTO } from "./inspection/scans";
 
 export interface IReport {
-  result: {
+  result: Partial<{
     [key in InspectionType]: InspectResultDTO;
-  };
+  }>;
   validFrom: number;
   lastScan: number;
   fqdn: string;

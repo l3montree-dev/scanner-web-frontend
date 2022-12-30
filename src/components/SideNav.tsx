@@ -159,7 +159,7 @@ const SectionGroup: FunctionComponent<
 };
 const SideNav: FunctionComponent<IReport> = (props) => {
   const didPass = (inspections: InspectionType[]) => {
-    return inspections.every((inspection) => props.result[inspection].didPass);
+    return inspections.every((inspection) => props.result[inspection]?.didPass);
   };
   const date = new Date(props.createdAt);
 

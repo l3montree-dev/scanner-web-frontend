@@ -1,6 +1,14 @@
 version: '3'
 
 services:    
+  redis:
+    image: bitnami/redis
+    ports:
+      - "6379:6379"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - redis_data:/bitnami/redis/data
   test-server:
     build: test-server/
     volumes:
@@ -62,3 +70,4 @@ volumes:
   mongo-config:
   grafana:
   influxdb-storage:
+  redis_data:
