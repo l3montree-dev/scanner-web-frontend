@@ -60,6 +60,8 @@ spec:
               value: {{ .Values.secScanner.prefetchCount | default "5" | quote }}
             - name: UV_THREADPOOL_SIZE
               value: {{ .Values.secScanner.uvThreadpoolSize | default "4" | quote }}
+            - name: REDIS_HOST
+              value: {{ .Release.Namespace }}-redis-master
             - name: INFLUX_TOKEN
               valueFrom:
                 secretKeyRef:
