@@ -185,7 +185,8 @@ export const getDomains2Scan = async (domain: Model<IDomain>) => {
             {
               lastScan: {
                 $lt: new Date(
-                  new Date().getTime() - 24 * 60 * 60 * 1000
+                  new Date().getTime() -
+                    +(process.env.SCAN_INTERVAL_DAYS ?? 7) * 24 * 60 * 60 * 1000
                 ).getTime(),
               },
             },

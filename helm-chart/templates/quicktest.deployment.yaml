@@ -129,6 +129,8 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: metadata.namespace
+            - name: SCAN_INTERVAL_DAYS
+              value: {{.Values.quicktest.scanInterval | default "7"}}
           livenessProbe:
             initialDelaySeconds: 10
             periodSeconds: 30
