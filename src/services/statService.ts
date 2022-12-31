@@ -24,8 +24,8 @@ export const getTotals = async (
           : {
               $or: networks.map((network) => ({
                 ipV4AddressNumber: {
-                  $gte: network.startAddressNumber,
-                  $lte: network.endAddressNumber,
+                  $gte: +network.startAddressNumber,
+                  $lte: +network.endAddressNumber,
                 },
               })),
             }),
@@ -38,8 +38,8 @@ export const getTotals = async (
           : {
               $or: networks.map((network) => ({
                 ipV4AddressNumber: {
-                  $gte: network.startAddressNumber,
-                  $lte: network.endAddressNumber,
+                  $gte: +network.startAddressNumber,
+                  $lte: +network.endAddressNumber,
                 },
               })),
             }),
@@ -132,6 +132,8 @@ export const getFailedSuccessPercentage = async (
   ])) as any;
   return {
     totalCount: res.totalCount[0]?.total ?? 0,
-    data: res.data[0],
+    data: res.data[0] ?? {
+      ...keys.reduce((acc, cur) => ({ ...acc, [cur]: 0 }), {}),
+    },
   };
 };

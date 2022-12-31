@@ -248,7 +248,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                       x={150}
                       y={150}
                       text={`${(
-                        (props.data[key] / props.totalCount) *
+                        (props.data[key] / (props.totalCount || 1)) *
                         100
                       ).toFixed(0)}%`}
                     />
@@ -286,6 +286,7 @@ export const getServerSideProps = decorateServerSideProps(
       getFailedSuccessPercentage(admin, currentUser.networks, db.Report),
       getTotals(admin, currentUser.networks, db.Domain),
     ]);
+
     return {
       props: {
         ...data,

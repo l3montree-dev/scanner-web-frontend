@@ -99,8 +99,8 @@ export const getDomainsOfNetworksWithLatestTestResult = async (
             $match: {
               $or: networks.map((network) => ({
                 ipV4AddressNumber: {
-                  $gte: network.startAddressNumber,
-                  $lte: network.endAddressNumber,
+                  $gte: +network.startAddressNumber,
+                  $lte: +network.endAddressNumber,
                 },
               })),
             },
@@ -149,7 +149,7 @@ export const getDomainsOfNetworksWithLatestTestResult = async (
   ])) as any;
 
   return {
-    total: domains.totalCount[0].total,
+    total: domains.totalCount.length === 1 ? domains.totalCount[0].total : 0,
     page: paginateRequest.page,
     pageSize: paginateRequest.pageSize,
     data: domains.data,
