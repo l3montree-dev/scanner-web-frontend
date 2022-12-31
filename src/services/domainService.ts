@@ -79,6 +79,14 @@ export const getDomainsOfNetworksWithLatestTestResult = async (
   paginateRequest: PaginateRequest & { search?: string },
   domain: Model<IDomain>
 ): Promise<PaginateResult<IDomain & { report?: IReport }>> => {
+  if (!isAdmin && networks.length === 0) {
+    return {
+      total: 0,
+      page: 0,
+      pageSize: paginateRequest.pageSize,
+      data: [],
+    };
+  }
   // get all domains of the network
   const [domains] = (await domain.aggregate([
     ...(paginateRequest.search
