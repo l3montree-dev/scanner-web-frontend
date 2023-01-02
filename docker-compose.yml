@@ -1,6 +1,23 @@
 version: '3'
 
-services:    
+services:
+  scanner:
+    image: registry.gitlab.com/ozg-security/sec-scanner:unstable@sha256:eedb1f369aee026f94a979c76d7aa07f8c6667a341edc7cdee7f0e6005aead6d
+    environment:
+      REDIS_HOST: redis
+      INFLUX_URL: http://influxdb:8086
+      INFLUX_ORG: ozgsec
+      INFLUX_BUCKET: ozgsec
+      INFLUX_TOKEN: secret
+      RABBITMQ_PASS: rabbitmq
+      RABBITMQ_USER: rabbitmq
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      SERVER_TIMEOUT: 10000
+      RIPE_SOURCE_APP: "quicktest-bmi-germany"
+    volumes:
+      - ../sec-scanner:/usr/app
+    entrypoint: ["npm", "run", "start:dev"]
   redis:
     image: bitnami/redis
     ports:
@@ -31,26 +48,15 @@ services:
       - mongo-config:/data/configdb
 
   influxdb:
-    image: influxdb:latest
+    image: influxdb:2.6
     ports:
       - "8086:8086"
-    volumes:
-      - influxdb-storage:/var/lib/influxdb
     environment:
-      - INFLUXDB_DB=db0
-      - INFLUXDB_ADMIN_USER=ozgsec
-      - INFLUXDB_ADMIN_PASSWORD=secret
-
-  grafana:
-    image: grafana/grafana:latest
-    ports:
-      - "3001:3000"
-    environment:
-      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
-      - GF_AUTH_ANONYMOUS_ENABLED=true
-      - GF_AUTH_BASIC_ENABLED=false
-    volumes:
-      - grafana:/etc/grafana/provisioning/
+      - DOCKER_INFLUXDB_INIT_USERNAME=ozgsec
+      - DOCKER_INFLUXDB_INIT_PASSWORD=secret
+      - DOCKER_INFLUXDB_INIT_ORG=ozgsec
+      - DOCKER_INFLUXDB_INIT_BUCKET=ozgsec
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=secret
 
   rabbitmq:
     image: "rabbitmq:3-management"
@@ -68,6 +74,4 @@ services:
 volumes:
   db-data:
   mongo-config:
-  grafana:
-  influxdb-storage:
   redis_data:
