@@ -1,4 +1,4 @@
-import { resolve4 } from "dns/promises";
+import { resolve4, lookup } from "dns/promises";
 import formidable from "formidable";
 import fs from "fs/promises";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -9,7 +9,7 @@ import { withSession } from "../../decorators/withSession";
 import { handleNewFQDN } from "../../services/domainService";
 import { filterToIpInNetwork } from "../../services/ipService";
 import { getLogger } from "../../services/logger";
-import { isAdmin, timeout } from "../../utils/common";
+import { isAdmin } from "../../utils/common";
 import { stream2buffer } from "../../utils/server";
 
 const logger = getLogger(__filename);
@@ -94,15 +94,16 @@ export default decorate(
       `starting domain import of ${entries.length} domains.`
     );
     let count = 0;
+    let imported = 0;
     promiseQueue.on("active", () => {
       count++;
-      if (count % 1000 === 0) {
+      if (count % 100 === 0) {
         logger.info(
           {
             requestId,
             userId: session.user.id,
           },
-          `Working on item #${count}.  Size: ${promiseQueue.size}  Pending: ${promiseQueue.pending}`
+          `Working on item #${count}.  Size: ${promiseQueue.size} Imported: ${imported}  Pending: ${promiseQueue.pending}`
         );
       }
     });
@@ -114,15 +115,14 @@ export default decorate(
           .map((domain) => {
             return async () => {
               try {
-                const ips = await timeout(resolve4(domain));
-                if (isAdmin(session) && ips.length > 0) {
-                  return {
-                    domain,
-                    ipAddress: ips[0],
-                  };
+                const ip = (await lookup(domain, 4)).address;
+                if (isAdmin(session) && ip) {
+                  await handleNewFQDN(domain, ip, db.Domain);
+                  imported++;
+                  return;
                 }
                 const ipsInSubnet = filterToIpInNetwork(
-                  ips,
+                  [ip],
                   session.user.networks
                 );
                 if (ipsInSubnet.length === 0) {
@@ -133,48 +133,26 @@ export default decorate(
                     },
                     `Domain ${domain} does not have an ip address in the users subnet. Skipping.`
                   );
-                  return null;
+                  return;
                 }
 
-                return {
-                  domain,
-                  ipAddress: ipsInSubnet[0],
-                };
+                await handleNewFQDN(domain, ipsInSubnet[0], db.Domain);
+                imported++;
               } catch (err: any) {
-                return null;
+                return;
               }
             };
           })
       )
-      .then(async (domainAndIp) => {
-        const filteredDomains = domainAndIp.filter(
-          (domain): domain is { domain: string; ipAddress: string } => {
-            return domain !== null;
-          }
-        );
-        await promiseQueue.addAll(
-          filteredDomains.map(({ domain: domain_1, ipAddress }) => {
-            return async () => {
-              try {
-                await handleNewFQDN(domain_1, ipAddress, db.Domain);
-              } catch (err: any) {
-                logger.error(
-                  { err: err?.message },
-                  `Error while importing domain from file: ${domain_1}`
-                );
-              }
-            };
-          })
-        );
+      .then(() => {
         logger.info(
           {
             requestId,
             userId: session.user.id,
           },
-          `Finished importing domains from file. (${filteredDomains.length}/${entries.length})`
+          `Finished importing domains from file. (${imported}/${entries.length})`
         );
       });
-
     res.status(200).end();
   },
   withDB,
