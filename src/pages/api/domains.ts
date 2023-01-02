@@ -88,6 +88,25 @@ export default decorate(
     const entries = files.map((file) => file.split("\n")).flat();
 
     const promiseQueue = new PQueue({ concurrency: 5, timeout: 5_000 });
+
+    logger.info(
+      { requestId, userId: session.user.id },
+      `starting domain import of ${entries.length} domains.`
+    );
+    let count = 0;
+    promiseQueue.on("active", () => {
+      count++;
+      if (count % 1000 === 0) {
+        logger.info(
+          {
+            requestId,
+            userId: session.user.id,
+          },
+          `Working on item #${count}.  Size: ${promiseQueue.size}  Pending: ${promiseQueue.pending}`
+        );
+      }
+    });
+
     promiseQueue
       .addAll(
         entries
