@@ -6,3 +6,8 @@ export enum HSTSValidationError {
 export enum HSTSRecommendation {
   MissingIncludeSubDomains = "MissingIncludeSubDomains",
 }
+
+export enum ContentSecurityPolicyValidationError {
+  MissingHeader = "MissingHeader",
+  MissingDefaultSrc = "MissingDefaultSrc",
+}

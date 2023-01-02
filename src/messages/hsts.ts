@@ -1,4 +1,4 @@
-import { HSTSValidationError } from "../inspection/result-enums/hsts.typings";
+import { HSTSValidationError } from "../inspection/result-enums/header.typings";
 import { IReport } from "../types";
 
 export const getHSTSReportMessage = (report: IReport) => {
