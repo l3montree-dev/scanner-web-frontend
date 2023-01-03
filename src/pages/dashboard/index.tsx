@@ -7,7 +7,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link.js";
 import { FunctionComponent, useEffect, useState } from "react";
 import resolveConfig from "tailwindcss/resolveConfig";
-import { VictoryLabel, VictoryPie, VictoryTooltip } from "victory";
+import {
+  VictoryAxis,
+  VictoryChart,
+  VictoryLabel,
+  VictoryLine,
+  VictoryPie,
+  VictoryTooltip,
+  VictoryVoronoiContainer,
+} from "victory";
 import tailwindConfig from "../../../tailwind.config.js";
 import DashboardPage from "../../components/DashboardPage";
 import SideNavigation from "../../components/SideNavigation";
@@ -29,14 +37,22 @@ import {
   TLSInspectionType,
 } from "../../inspection/scans";
 import { statService } from "../../services/statService";
+import { theme } from "../../styles/victory-theme";
 import { isAdmin, linkMapper } from "../../utils/common";
-interface Props {
-  totalCount: number;
-  hosts: number;
-  ipAddresses: number;
+
+interface ChartData {
   data: {
     [key in InspectionType]: number;
   };
+  totalCount: number;
+}
+interface Props {
+  totals: {
+    hosts: number;
+    ipAddresses: number;
+  };
+  currentState: ChartData;
+  historicalData: Array<ChartData & { date: number }>;
 }
 
 const fullConfig = resolveConfig(tailwindConfig);
@@ -85,19 +101,30 @@ const displayKey: Array<InspectionType> = [
   NetworkInspectionType.RPKI,
 ];
 
+const chartTheme = {
+  axis: {
+    style: {
+      tickLabels: {
+        // this changed the color of my numbers to white
+        fill: "white",
+      },
+    },
+  },
+};
+
 const Dashboard: FunctionComponent<Props> = (props) => {
   const [data, setData] = useState({
-    totalCount: props.totalCount,
-    hosts: props.hosts,
-    ipAddresses: props.ipAddresses,
-    data: Object.fromEntries(Object.keys(props.data).map((key) => [key, 0])),
+    totalCount: props.currentState.totalCount,
+    data: Object.fromEntries(
+      Object.keys(props.currentState.data).map((key) => [key, 0])
+    ),
   });
 
   const user = useSession();
 
   useEffect(() => {
-    setData(props);
-  }, []);
+    setData(props.currentState);
+  }, [props.currentState]);
 
   return (
     <>
@@ -120,7 +147,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                     icon={faListCheck}
                   />
                   <div className="ml-5 text-xl">
-                    <b className="text-5xl">{data.hosts}</b>
+                    <b className="text-5xl">{props.totals.hosts}</b>
                     <br />
                     DNS-Einträge
                   </div>
@@ -134,7 +161,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                     icon={faServer}
                   />
                   <div className="ml-5 text-xl">
-                    <b className="text-5xl">{data.ipAddresses}</b>
+                    <b className="text-5xl">{props.totals.ipAddresses}</b>
                     <br />
                     IP-Adressen
                   </div>
@@ -175,12 +202,14 @@ const Dashboard: FunctionComponent<Props> = (props) => {
             Ausschlie&szlig;lich erreichbare Domains können getestet werden. Die
             Anfrage muss vom Server in maximal zehn Sekunden beantwortet werden,
             damit eine Domain als erreichbar gilt. Derzeit sind{" "}
-            {props.totalCount} von {props.hosts} erreichbar.
+            {props.currentState.totalCount} von {props.totals.hosts} erreichbar.
           </p>
           <div className="flex mt-5 justify-start gap-2 flex-wrap flex-wrap flex-row">
             {displayKey.map((key) => {
               const percentage =
-                (props.data[key] / (props.totalCount || 1)) * 100;
+                (props.currentState.data[key] /
+                  (props.currentState.totalCount || 1)) *
+                100;
               let padAngle = 3;
 
               // If the percentage is too small, don't show the padAngle
@@ -257,7 +286,8 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                         x={150}
                         y={145}
                         text={`${(
-                          (props.data[key] / (props.totalCount || 1)) *
+                          (props.currentState.data[key] /
+                            (props.currentState.totalCount || 1)) *
                           100
                         ).toFixed(0)}%`}
                       />
@@ -269,9 +299,87 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                         }}
                         x={150}
                         y={175}
-                        text={`${props.data[key]} von ${props.totalCount}`}
+                        text={`${props.currentState.data[key]} von ${props.currentState.totalCount}`}
                       />
                     </svg>
+                  </div>
+                  <h2
+                    title={mapping[key]}
+                    className="text-center whitespace-nowrap text-ellipsis overflow-hidden bg-deepblue-200 mt-1 p-3"
+                  >
+                    {mapping[key]}
+                  </h2>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="flex mt-5 justify-start flex-wrap flex-row">
+            {displayKey.map((key) => {
+              const data = props.historicalData.map((item) => {
+                return {
+                  y: (item.data[key] / (item.totalCount || 1)) * 100,
+                  x: new Date(item.date).toLocaleDateString(),
+                };
+              });
+              return (
+                <div
+                  className="bg-deepblue-500 historical-chart border flex-col flex border-deepblue-200"
+                  key={key}
+                >
+                  <div className="flex-1 pt-5 relative">
+                    {linkMapper[key] !== "" && (
+                      <Link
+                        target={"_blank"}
+                        href={linkMapper[key]}
+                        className="text-sm absolute top-1 underline right-0 mt-2 mr-3"
+                      >
+                        Mehr Informationen
+                      </Link>
+                    )}
+                    <VictoryChart
+                      containerComponent={
+                        <VictoryVoronoiContainer voronoiDimension="x" />
+                      }
+                      theme={theme}
+                      domainPadding={15}
+                    >
+                      <VictoryAxis fixLabelOverlap />
+                      <VictoryAxis
+                        tickFormat={(t) => `${t}%`}
+                        dependentAxis
+                        fixLabelOverlap
+                      />
+                      <VictoryLine
+                        interpolation={"catmullRom"}
+                        animate={{
+                          duration: 250,
+                        }}
+                        labels={({ datum }) => `${datum.y.toFixed(1)}%`}
+                        labelComponent={
+                          <VictoryTooltip
+                            constrainToVisibleArea
+                            cornerRadius={0}
+                            style={{
+                              fill: "white",
+                            }}
+                            flyoutStyle={{
+                              stroke: "none",
+                              fill: (fullConfig.theme?.colors as any).deepblue[
+                                "50"
+                              ],
+                            }}
+                            dx={0}
+                            pointerLength={0}
+                          />
+                        }
+                        colorScale={[
+                          (fullConfig.theme?.colors as any).lightning["500"],
+                          (fullConfig.theme?.colors as any).slate["600"],
+                        ]}
+                        data={data}
+                      />
+                    </VictoryChart>
                   </div>
                   <h2
                     title={mapping[key]}
@@ -289,23 +397,56 @@ const Dashboard: FunctionComponent<Props> = (props) => {
   );
 };
 
+const eachWeek = (start: Date, end: Date) => {
+  const dates: number[] = [];
+  const currentDate = new Date(start);
+  while (currentDate <= end) {
+    dates.push(new Date(currentDate).getTime());
+    currentDate.setDate(currentDate.getDate() + 3);
+  }
+  return dates;
+};
+
 export const getServerSideProps = decorateServerSideProps(
   async (context, [currentUser, token, db]) => {
     const admin = isAdmin(token);
-    const [data, { hosts, ipAddresses }] = await Promise.all([
+    const [data, { hosts, ipAddresses }, historicalData] = await Promise.all([
       statService.getFailedSuccessPercentage(
         admin,
         currentUser.networks,
         db.Report
       ),
       statService.getTotals(admin, currentUser.networks, db.Domain),
+      await Promise.all(
+        eachWeek(
+          new Date(Date.now() - 1000 * 60 * 60 * 24 * 14),
+          new Date()
+        ).map(async (_, i, arr) => {
+          const res = await statService.getFailedSuccessPercentage(
+            admin,
+            currentUser.networks,
+            db.Report,
+            {
+              start: arr[i - 1] || 0,
+              end: arr[i],
+            }
+          );
+          return {
+            ...res,
+            date: arr[i],
+          };
+        })
+      ),
     ]);
 
     return {
       props: {
-        ...data,
-        hosts,
-        ipAddresses,
+        currentState: data,
+        historicalData,
+        totals: {
+          hosts,
+          ipAddresses,
+        },
       },
     };
   },

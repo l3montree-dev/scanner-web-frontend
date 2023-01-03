@@ -55,7 +55,8 @@ const getTotals = async (
 const getFailedSuccessPercentage = async (
   isAdmin: boolean,
   networks: INetwork[],
-  report: Model<IReport>
+  report: Model<IReport>,
+  timeQuery?: { start: number; end: number }
 ): Promise<{
   totalCount: number;
   data: {
@@ -85,6 +86,18 @@ const getFailedSuccessPercentage = async (
             },
           },
         ]),
+    ...(timeQuery
+      ? [
+          {
+            $match: {
+              validFrom: {
+                $gte: timeQuery.start,
+                $lte: timeQuery.end,
+              },
+            },
+          },
+        ]
+      : []),
     {
       $group: {
         _id: "$fqdn",
