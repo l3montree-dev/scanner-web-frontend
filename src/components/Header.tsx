@@ -47,7 +47,7 @@ const Header = () => {
             <div className="ml-2 text-white">
               <Menu
                 Button={
-                  <div className="bg-deepblue-100 text-white h-10 w-10 flex items-center justify-center">
+                  <div className="bg-deepblue-100 rounded-full text-white h-10 w-10 flex items-center justify-center text-sm">
                     {getInitials(session.data.user.name)}
                   </div>
                 }

@@ -17,8 +17,9 @@ import { decorateServerSideProps } from "../../decorators/decorateServerSideProp
 import { withDB } from "../../decorators/withDB";
 import { withTokenServerSideProps } from "../../decorators/withToken";
 import { clientHttpClient } from "../../services/clientHttpClient";
-import { getKcAdminClient } from "../../services/keycloak";
-import { getAll } from "../../services/userService";
+import { keycloak } from "../../services/keycloak";
+import { userService } from "../../services/userService";
+
 import {
   ICreateUserDTO,
   INetwork,
@@ -264,12 +265,12 @@ export const getServerSideProps = decorateServerSideProps(
     }
 
     // fetch all users from keycloak
-    const kcAdminClient = getKcAdminClient(token.accessToken);
+    const kcAdminClient = keycloak.getKcAdminClient(token.accessToken);
 
     try {
       const [kcUsers, users] = await Promise.all([
         kcAdminClient.users.find(),
-        getAll(db),
+        userService.getAll(db),
       ]);
 
       // attach the networks to the kc users.

@@ -28,10 +28,7 @@ import {
   OrganizationalInspectionType,
   TLSInspectionType,
 } from "../../inspection/scans";
-import {
-  getFailedSuccessPercentage,
-  getTotals,
-} from "../../services/statService";
+import { statService } from "../../services/statService";
 import { isAdmin, linkMapper } from "../../utils/common";
 interface Props {
   totalCount: number;
@@ -143,32 +140,34 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                   </div>
                 </div>
               </div>
-              <div>
-                <div className="bg-deepblue-500 h-full flex-row flex items-center p-5 border border-deepblue-200">
-                  <FontAwesomeIcon
-                    className="text-slate-400 mx-2"
-                    fontSize={75}
-                    icon={faNetworkWired}
-                  />
-                  <div className="ml-5">
-                    <div className="flex mb-2 gap-2 flex-wrap flex-row">
-                      {user.data?.user.networks.map((network) => (
-                        <div
-                          className="bg-deepblue-200 border border-deepblue-200 px-2 py-1"
-                          key={network.id}
-                        >
-                          <div>
-                            <b>{network.cidr}</b>
-                            <br />
+              {user.data?.user.networks.length !== 0 && (
+                <div>
+                  <div className="bg-deepblue-500 h-full flex-row flex items-center p-5 border border-deepblue-200">
+                    <FontAwesomeIcon
+                      className="text-slate-400 mx-2"
+                      fontSize={75}
+                      icon={faNetworkWired}
+                    />
+                    <div className="ml-5">
+                      <div className="flex mb-2 gap-2 flex-wrap flex-row">
+                        {user.data?.user.networks.map((network) => (
+                          <div
+                            className="bg-deepblue-200 border border-deepblue-200 px-2 py-1"
+                            key={network.id}
+                          >
+                            <div>
+                              <b>{network.cidr}</b>
+                              <br />
+                            </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
+                        ))}
+                      </div>
 
-                    <span className="text-xl">Verwaltete Netzwerke</span>
+                      <span className="text-xl">Verwaltete Netzwerke</span>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
           <h2 className="text-2xl mt-10 mb-5">Testergebnisse</h2>
@@ -179,100 +178,110 @@ const Dashboard: FunctionComponent<Props> = (props) => {
             {props.totalCount} von {props.hosts} erreichbar.
           </p>
           <div className="flex mt-5 justify-start gap-2 flex-wrap flex-wrap flex-row">
-            {displayKey.map((key) => (
-              <div
-                className="w-56 bg-deepblue-500 border flex-col flex border-deepblue-200"
-                key={key}
-              >
-                <div className="flex-1 pt-5 relative">
-                  {linkMapper[key] !== "" && (
-                    <Link
-                      target={"_blank"}
-                      href={linkMapper[key]}
-                      className="text-sm absolute top-1 underline right-0 mt-2 mr-3"
-                    >
-                      Mehr Informationen
-                    </Link>
-                  )}
-                  <svg viewBox="0 0 300 300">
-                    <VictoryPie
-                      standalone={false}
-                      width={300}
-                      height={300}
-                      animate={{
-                        duration: 500,
-                      }}
-                      padAngle={3}
-                      innerRadius={90}
-                      labelComponent={
-                        <VictoryTooltip
-                          constrainToVisibleArea
-                          cornerRadius={0}
-                          style={{
-                            fill: "white",
-                          }}
-                          flyoutStyle={{
-                            stroke: "none",
-                            fill: (fullConfig.theme?.colors as any).deepblue[
-                              "50"
-                            ],
-                          }}
-                          dx={0}
-                          pointerLength={0}
-                        />
-                      }
-                      colorScale={[
-                        (fullConfig.theme?.colors as any).lightning["500"],
-                        (fullConfig.theme?.colors as any).slate["600"],
-                      ]}
-                      data={[
-                        {
-                          x: `Implementiert (${(
-                            (data.data[key] / data.totalCount) *
-                            100
-                          ).toFixed(1)}%)`,
-                          y: data.data[key],
-                        },
-                        {
-                          x: `Fehlerhaft (${(
-                            ((data.totalCount - data.data[key]) /
-                              data.totalCount) *
-                            100
-                          ).toFixed(1)}%)`,
-                          y: data.totalCount - data.data[key],
-                        },
-                      ]}
-                    />
-                    <VictoryLabel
-                      textAnchor="middle"
-                      style={{ fontSize: 30, fill: "white" }}
-                      x={150}
-                      y={150}
-                      text={`${(
-                        (props.data[key] / (props.totalCount || 1)) *
-                        100
-                      ).toFixed(0)}%`}
-                    />
-                    <VictoryLabel
-                      textAnchor="middle"
-                      style={{
-                        fontSize: 20,
-                        fill: (fullConfig.theme?.colors as any).slate["400"],
-                      }}
-                      x={150}
-                      y={180}
-                      text={`${props.data[key]} von ${props.totalCount}`}
-                    />
-                  </svg>
-                </div>
-                <h2
-                  title={mapping[key]}
-                  className="text-center whitespace-nowrap text-ellipsis overflow-hidden bg-deepblue-200 mt-1 p-3"
+            {displayKey.map((key) => {
+              const percentage =
+                (props.data[key] / (props.totalCount || 1)) * 100;
+              let padAngle = 3;
+
+              // If the percentage is too small, don't show the padAngle
+              if (100 - percentage < 1.5 || percentage < 1.5) {
+                padAngle = 0;
+              }
+              return (
+                <div
+                  className="w-56 bg-deepblue-500 border flex-col flex border-deepblue-200"
+                  key={key}
                 >
-                  {mapping[key]}
-                </h2>
-              </div>
-            ))}
+                  <div className="flex-1 pt-5 relative">
+                    {linkMapper[key] !== "" && (
+                      <Link
+                        target={"_blank"}
+                        href={linkMapper[key]}
+                        className="text-sm absolute top-1 underline right-0 mt-2 mr-3"
+                      >
+                        Mehr Informationen
+                      </Link>
+                    )}
+                    <svg viewBox="0 0 300 300">
+                      <VictoryPie
+                        standalone={false}
+                        width={300}
+                        height={300}
+                        animate={{
+                          duration: 500,
+                        }}
+                        padAngle={padAngle}
+                        innerRadius={90}
+                        labelComponent={
+                          <VictoryTooltip
+                            constrainToVisibleArea
+                            cornerRadius={0}
+                            style={{
+                              fill: "white",
+                            }}
+                            flyoutStyle={{
+                              stroke: "none",
+                              fill: (fullConfig.theme?.colors as any).deepblue[
+                                "50"
+                              ],
+                            }}
+                            dx={0}
+                            pointerLength={0}
+                          />
+                        }
+                        colorScale={[
+                          (fullConfig.theme?.colors as any).lightning["500"],
+                          (fullConfig.theme?.colors as any).slate["600"],
+                        ]}
+                        data={[
+                          {
+                            x: `Implementiert (${(
+                              (data.data[key] / data.totalCount) *
+                              100
+                            ).toFixed(1)}%)`,
+                            y: data.data[key],
+                          },
+                          {
+                            x: `Fehlerhaft (${(
+                              ((data.totalCount - data.data[key]) /
+                                data.totalCount) *
+                              100
+                            ).toFixed(1)}%)`,
+                            y: data.totalCount - data.data[key],
+                          },
+                        ]}
+                      />
+                      <VictoryLabel
+                        textAnchor="middle"
+                        style={{ fontSize: 30, fill: "white" }}
+                        x={150}
+                        y={145}
+                        text={`${(
+                          (props.data[key] / (props.totalCount || 1)) *
+                          100
+                        ).toFixed(0)}%`}
+                      />
+                      <VictoryLabel
+                        textAnchor="middle"
+                        style={{
+                          fontSize: 20,
+                          fill: (fullConfig.theme?.colors as any).slate["400"],
+                        }}
+                        x={150}
+                        y={175}
+                        text={`${props.data[key]} von ${props.totalCount}`}
+                      />
+                    </svg>
+                  </div>
+                  <h2
+                    title={mapping[key]}
+                    className="text-center whitespace-nowrap text-ellipsis overflow-hidden bg-deepblue-200 mt-1 p-3"
+                  >
+                    {mapping[key]}
+                  </h2>
+                </div>
+              );
+            })}
           </div>
         </div>
       </DashboardPage>
@@ -284,8 +293,12 @@ export const getServerSideProps = decorateServerSideProps(
   async (context, [currentUser, token, db]) => {
     const admin = isAdmin(token);
     const [data, { hosts, ipAddresses }] = await Promise.all([
-      getFailedSuccessPercentage(admin, currentUser.networks, db.Report),
-      getTotals(admin, currentUser.networks, db.Domain),
+      statService.getFailedSuccessPercentage(
+        admin,
+        currentUser.networks,
+        db.Report
+      ),
+      statService.getTotals(admin, currentUser.networks, db.Domain),
     ]);
 
     return {

@@ -3,7 +3,7 @@ import { ModelsType } from "../db/models";
 import { IUser, INetwork, WithoutId } from "../types";
 import { jsonSerializableStage } from "../utils/dbUtils";
 
-export const findUserById = async (id: string) => {
+const findUserById = async (id: string) => {
   const { models } = await getConnection();
 
   const res = await models.User.aggregate([
@@ -27,7 +27,7 @@ export const findUserById = async (id: string) => {
   return res[0];
 };
 
-export const createUser = async (
+const createUser = async (
   user: Omit<IUser, "networks"> & { networks: WithoutId<INetwork>[] },
   db: ModelsType
 ): Promise<[IUser, WithoutId<INetwork>[]]> => {
@@ -54,7 +54,7 @@ export const createUser = async (
   return [createdUser, newNetworks];
 };
 
-export const updateUser = async (
+const updateUser = async (
   id: string,
   user: Omit<IUser, "networks"> & { networks: WithoutId<INetwork>[] },
   db: ModelsType
@@ -88,7 +88,7 @@ export const updateUser = async (
   return [updatedUser, newNetworks];
 };
 
-export const getAll = async (db: ModelsType): Promise<IUser[]> => {
+const getAll = async (db: ModelsType): Promise<IUser[]> => {
   const users = await db.User.aggregate([
     {
       $lookup: {
@@ -101,4 +101,11 @@ export const getAll = async (db: ModelsType): Promise<IUser[]> => {
     },
   ]);
   return users;
+};
+
+export const userService = {
+  findUserById,
+  createUser,
+  updateUser,
+  getAll,
 };

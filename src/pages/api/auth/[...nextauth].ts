@@ -1,6 +1,7 @@
 import NextAuth, { AuthOptions } from "next-auth";
 import KeycloakProvider from "next-auth/providers/keycloak";
-import { findUserById } from "../../../services/userService";
+import { userService } from "../../../services/userService";
+
 import { INetwork, IToken } from "../../../types";
 
 /**
@@ -67,7 +68,7 @@ export const authOptions: AuthOptions = {
       let networks: INetwork[] = [];
       if (params.token.sub) {
         // fetch the user#
-        const user = await findUserById(params.token.sub);
+        const user = await userService.findUserById(params.token.sub);
         networks = user?.networks || [];
       }
       return {

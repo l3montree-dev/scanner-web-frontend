@@ -3,8 +3,9 @@ import { ModelsType } from "../../../db/models";
 import { decorate } from "../../../decorators/decorate";
 import { withDB } from "../../../decorators/withDB";
 import { withSession } from "../../../decorators/withSession";
-import { lookupNetwork } from "../../../services/ipService";
-import { createNewNetworks } from "../../../services/networkService";
+import { ipService } from "../../../services/ipService";
+import { networkService } from "../../../services/networkService";
+
 import { isAdmin, parseNetworkString } from "../../../utils/common";
 
 const handlePost = async (
@@ -20,9 +21,9 @@ const handlePost = async (
     // make sure, that we only have valid networks
     networks = parseNetworkString(networks);
 
-    const newNetworks = await createNewNetworks(networks, db);
+    const newNetworks = await networkService.createNewNetworks(networks, db);
     newNetworks.forEach((net) => {
-      lookupNetwork(net.cidr, requestId);
+      ipService.lookupNetwork(net.cidr, requestId);
     });
 
     res.statusCode = 201;

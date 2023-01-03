@@ -10,7 +10,7 @@ import {
 } from "../types";
 import { jsonSerializableStage } from "../utils/dbUtils";
 // only create a new report if the didPass property changed.
-export const handleNewDomain = async (
+const handleNewDomain = async (
   domain: { fqdn: string; ipV4Address: string },
   model: Model<IDomain>
 ): Promise<{ fqdn: string }> => {
@@ -28,7 +28,7 @@ export const handleNewDomain = async (
   return payload;
 };
 
-export const handleNewFQDN = async (
+const handleNewFQDN = async (
   fqdn: string,
   ipAddress: string,
   model: Model<IDomain>
@@ -46,7 +46,7 @@ export const handleNewFQDN = async (
   return payload;
 };
 
-export const handleDomainScanError = async (
+const handleDomainScanError = async (
   content: IScanErrorResponse,
   domain: Model<IDomain>
 ) => {
@@ -73,7 +73,7 @@ export const handleDomainScanError = async (
   return res;
 };
 
-export const getDomainsOfNetworksWithLatestTestResult = async (
+const getDomainsOfNetworksWithLatestTestResult = async (
   isAdmin: boolean,
   networks: INetwork[],
   paginateRequest: PaginateRequest & { search?: string },
@@ -164,7 +164,7 @@ export const getDomainsOfNetworksWithLatestTestResult = async (
   };
 };
 
-export const getDomains2Scan = async (domain: Model<IDomain>) => {
+const getDomains2Scan = async (domain: Model<IDomain>) => {
   // get all domains which have not been scanned in the last 24 hours
   const domains = await domain
     .find({
@@ -224,4 +224,12 @@ export const getDomains2Scan = async (domain: Model<IDomain>) => {
     }
   );
   return domains;
+};
+
+export const domainService = {
+  handleNewDomain,
+  handleNewFQDN,
+  handleDomainScanError,
+  getDomainsOfNetworksWithLatestTestResult,
+  getDomains2Scan,
 };

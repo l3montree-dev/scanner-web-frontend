@@ -17,18 +17,15 @@ import {
   isScanError,
   transformIpLookupMsg2DTO,
 } from "../utils/common";
-import {
-  getDomains2Scan,
-  handleDomainScanError,
-  handleNewDomain,
-} from "./domainService";
+import { domainService } from "./domainService";
+
 import { getLogger } from "./logger";
 import { rabbitMQClient, rabbitMQRPCClient } from "./rabbitmqClient";
-import { handleNewScanReport } from "./reportService";
+import { reportService } from "./reportService";
 
 const logger = getLogger(__filename);
 
-export const startSocketIOServer = once((server: HttpServer) => {
+const startSocketIOServer = once((server: HttpServer) => {
   // build the server
   const io = new Server(server);
   logger.info("socket.io server started");
@@ -75,7 +72,7 @@ export const startSocketIOServer = once((server: HttpServer) => {
   });
 });
 
-export const startLookupResponseLoop = once(() => {
+const startLookupResponseLoop = once(() => {
   getConnection()
     .then((connection) => {
       logger.info("connected to database - starting lookup response loop");
@@ -87,7 +84,10 @@ export const startLookupResponseLoop = once(() => {
             ipV4Address: string;
           };
           try {
-            await handleNewDomain(content, connection.models.Domain);
+            await domainService.handleNewDomain(
+              content,
+              connection.models.Domain
+            );
           } catch (e: any) {
             // always ack the message - catch the error.
             logger.error({ err: e.message });
@@ -101,7 +101,7 @@ export const startLookupResponseLoop = once(() => {
     });
 });
 
-export const startScanResponseLoop = once(() => {
+const startScanResponseLoop = once(() => {
   getConnection()
     .then((connection) => {
       logger.info("connected to database - starting scan response loop");
@@ -118,7 +118,10 @@ export const startScanResponseLoop = once(() => {
         const ipV4AddressNumber = ip.toLong(address);
         if (isScanError(content)) {
           try {
-            await handleDomainScanError(content, connection.models.Domain);
+            await domainService.handleDomainScanError(
+              content,
+              connection.models.Domain
+            );
           } finally {
             logger.error({ fqdn: content.fqdn }, content.result.error);
             return;
@@ -127,7 +130,7 @@ export const startScanResponseLoop = once(() => {
 
         try {
           await Promise.all([
-            handleNewScanReport(
+            reportService.handleNewScanReport(
               {
                 ...content,
                 ipAddress: address,
@@ -151,7 +154,7 @@ export const startScanResponseLoop = once(() => {
     });
 });
 
-export const startScanLoop = once(() => {
+const startScanLoop = once(() => {
   let running = false;
   getConnection()
     .then((connection) => {
@@ -162,7 +165,9 @@ export const startScanLoop = once(() => {
             return;
           }
           running = true;
-          const domains = await getDomains2Scan(connection.models.Domain);
+          const domains = await domainService.getDomains2Scan(
+            connection.models.Domain
+          );
 
           if (domains.length === 0) {
             running = false;
@@ -190,3 +195,10 @@ export const startScanLoop = once(() => {
       logger.error(err);
     });
 });
+
+export const serverCtrl = {
+  startSocketIOServer,
+  startLookupResponseLoop,
+  startScanResponseLoop,
+  startScanLoop,
+};

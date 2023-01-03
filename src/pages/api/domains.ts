@@ -6,8 +6,9 @@ import PQueue from "p-queue";
 import { decorate } from "../../decorators/decorate";
 import { withDB } from "../../decorators/withDB";
 import { withSession } from "../../decorators/withSession";
-import { handleNewFQDN } from "../../services/domainService";
-import { filterToIpInNetwork } from "../../services/ipService";
+import { domainService } from "../../services/domainService";
+import { ipService } from "../../services/ipService";
+
 import { getLogger } from "../../services/logger";
 import { isAdmin } from "../../utils/common";
 import { stream2buffer } from "../../utils/server";
@@ -42,7 +43,10 @@ export default decorate(
       );
 
       const ips = await resolve4(domain);
-      const ipsInSubnet = filterToIpInNetwork(ips, session.user.networks);
+      const ipsInSubnet = ipService.filterToIpInNetwork(
+        ips,
+        session.user.networks
+      );
       if (ipsInSubnet.length === 0) {
         logger.warn(
           `Domain ${domain} does not have an ip address in the users subnet. Skipping.`
@@ -51,7 +55,11 @@ export default decorate(
         return;
       }
 
-      const { fqdn } = await handleNewFQDN(domain, ipsInSubnet[0], db.Domain);
+      const { fqdn } = await domainService.handleNewFQDN(
+        domain,
+        ipsInSubnet[0],
+        db.Domain
+      );
       // the domain will automatically be inspected.
       return res.send({ success: true, fqdn });
     }
@@ -117,11 +125,11 @@ export default decorate(
               try {
                 const ip = (await lookup(domain, 4)).address;
                 if (isAdmin(session) && ip) {
-                  await handleNewFQDN(domain, ip, db.Domain);
+                  await domainService.handleNewFQDN(domain, ip, db.Domain);
                   imported++;
                   return;
                 }
-                const ipsInSubnet = filterToIpInNetwork(
+                const ipsInSubnet = ipService.filterToIpInNetwork(
                   [ip],
                   session.user.networks
                 );
@@ -136,7 +144,11 @@ export default decorate(
                   return;
                 }
 
-                await handleNewFQDN(domain, ipsInSubnet[0], db.Domain);
+                await domainService.handleNewFQDN(
+                  domain,
+                  ipsInSubnet[0],
+                  db.Domain
+                );
                 imported++;
               } catch (err: any) {
                 return;

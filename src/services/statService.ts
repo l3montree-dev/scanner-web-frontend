@@ -4,7 +4,7 @@ import { IDomain, INetwork, IReport } from "../types";
 
 const keys = Object.keys(InspectionTypeEnum);
 
-export const getTotals = async (
+const getTotals = async (
   isAdmin: boolean,
   networks: INetwork[],
   domain: Model<IDomain>
@@ -52,7 +52,7 @@ export const getTotals = async (
     ipAddresses: ipAddresses.length,
   };
 };
-export const getFailedSuccessPercentage = async (
+const getFailedSuccessPercentage = async (
   isAdmin: boolean,
   networks: INetwork[],
   report: Model<IReport>
@@ -136,4 +136,9 @@ export const getFailedSuccessPercentage = async (
       ...keys.reduce((acc, cur) => ({ ...acc, [cur]: 0 }), {}),
     },
   };
+};
+
+export const statService = {
+  getTotals,
+  getFailedSuccessPercentage,
 };

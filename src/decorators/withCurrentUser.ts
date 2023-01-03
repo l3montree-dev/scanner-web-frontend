@@ -1,6 +1,7 @@
 import { GetServerSidePropsContext } from "next";
 import { authOptions } from "../pages/api/auth/[...nextauth]";
-import { findUserById } from "../services/userService";
+import { userService } from "../services/userService";
+
 import { IUser } from "../types";
 import { getServerSession } from "../utils/server";
 
@@ -21,7 +22,7 @@ export const withCurrentUser = async (
     throw new Error("session or user undefined");
   }
 
-  const currentUser = await findUserById(session.user.id);
+  const currentUser = await userService.findUserById(session.user.id);
   if (!currentUser) {
     throw new Error(`currentUser with id: ${session.user.id} not found`);
   }

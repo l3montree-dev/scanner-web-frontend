@@ -13,7 +13,6 @@ import DomainOverviewForm from "../../components/DomainOverviewForm";
 import Menu from "../../components/Menu";
 import MenuItem from "../../components/MenuItem";
 import MenuList from "../../components/MenuList";
-import Meta from "../../components/Meta";
 import Pagination from "../../components/Pagination";
 import ResultIcon from "../../components/ResultIcon";
 import SideNavigation from "../../components/SideNavigation";
@@ -22,7 +21,6 @@ import { WithId } from "../../db/models";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
 import { withCurrentUser } from "../../decorators/withCurrentUser";
 import { withDB } from "../../decorators/withDB";
-import { withSession } from "../../decorators/withSession";
 import { withTokenServerSideProps } from "../../decorators/withToken";
 import useLoading from "../../hooks/useLoading";
 import {
@@ -33,7 +31,8 @@ import {
   TLSInspectionType,
 } from "../../inspection/scans";
 import { clientHttpClient } from "../../services/clientHttpClient";
-import { getDomainsOfNetworksWithLatestTestResult } from "../../services/domainService";
+import { domainService } from "../../services/domainService";
+
 import { IDomain, IReport, PaginateResult } from "../../types";
 import { classNames, isAdmin } from "../../utils/common";
 
@@ -495,12 +494,13 @@ export const getServerSideProps = decorateServerSideProps(
     const page = +(context.query["page"] ?? 0);
     const search = context.query["search"] as string | undefined;
 
-    const domains = await getDomainsOfNetworksWithLatestTestResult(
-      isAdmin(token),
-      currentUser.networks,
-      { pageSize: 50, page, search },
-      db.Domain
-    );
+    const domains =
+      await domainService.getDomainsOfNetworksWithLatestTestResult(
+        isAdmin(token),
+        currentUser.networks,
+        { pageSize: 50, page, search },
+        db.Domain
+      );
 
     return {
       props: {

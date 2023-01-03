@@ -2,7 +2,7 @@ import { INetwork } from "../types";
 import { rabbitMQRPCClient } from "./rabbitmqClient";
 import ip from "ip";
 
-export const lookupNetwork = async (cidr: string, requestId: string) => {
+const lookupNetwork = async (cidr: string, requestId: string) => {
   // does a fire and forget. The response will be sent to the queue "ip-lookup-response"
   return rabbitMQRPCClient.publish(
     "ip-lookup",
@@ -17,10 +17,7 @@ export const lookupNetwork = async (cidr: string, requestId: string) => {
   );
 };
 
-export const filterToIpInNetwork = (
-  ipAddresses: string[],
-  networks: INetwork[]
-) => {
+const filterToIpInNetwork = (ipAddresses: string[], networks: INetwork[]) => {
   return ipAddresses.filter((ipAddress) => {
     const ipNumber = ip.toLong(ipAddress);
     return networks.some((network) => {
@@ -30,4 +27,9 @@ export const filterToIpInNetwork = (
       );
     });
   });
+};
+
+export const ipService = {
+  lookupNetwork,
+  filterToIpInNetwork,
 };

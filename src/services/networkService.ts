@@ -2,7 +2,7 @@ import { ModelsType } from "../db/models";
 import { parseNetwork } from "../utils/common";
 import { jsonSerializableStage } from "../utils/dbUtils";
 
-export const getAll = async (db: ModelsType) => {
+const getAll = async (db: ModelsType) => {
   const networks = await db.Network.aggregate([
     {
       $lookup: {
@@ -25,7 +25,7 @@ export const getAll = async (db: ModelsType) => {
   return networks;
 };
 
-export const createNewNetworks = async (networks: string[], db: ModelsType) => {
+const createNewNetworks = async (networks: string[], db: ModelsType) => {
   // first create all the networks.
   // check which networks do already exist based on the cidr
   const existingNetworks = await db.Network.find({
@@ -40,4 +40,9 @@ export const createNewNetworks = async (networks: string[], db: ModelsType) => {
   );
   // create the new networks.
   return await db.Network.create(newNetworks.map(parseNetwork));
+};
+
+export const networkService = {
+  getAll,
+  createNewNetworks,
 };

@@ -10,7 +10,7 @@ const getBaseUrl = () => {
   return `${url.protocol}//${url.hostname}`;
 };
 
-export const getRealmName = () => {
+const getRealmName = () => {
   if (!process.env.KEYCLOAK_ISSUER) {
     throw new Error("KEYCLOAK_ISSUER is not defined");
   }
@@ -18,7 +18,7 @@ export const getRealmName = () => {
   return issuer.substring(issuer.lastIndexOf("/") + 1);
 };
 
-export const getKcAdminClient = (accessToken: string) => {
+const getKcAdminClient = (accessToken: string) => {
   const kcAdminClient = new KcAdminClient({
     // the issuer contains the realm as well.
     baseUrl: getBaseUrl(),
@@ -28,4 +28,10 @@ export const getKcAdminClient = (accessToken: string) => {
   // set the access token
   kcAdminClient.setAccessToken(accessToken);
   return kcAdminClient;
+};
+
+export const keycloak = {
+  getBaseUrl,
+  getRealmName,
+  getKcAdminClient,
 };

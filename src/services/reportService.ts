@@ -14,7 +14,7 @@ const reportDidChange = (
 };
 
 // only create a new report if the didPass property changed.
-export const handleNewScanReport = async (
+const handleNewScanReport = async (
   newReport: Omit<IReport, "createdAt" | "updatedAt">,
   db: ModelsType
 ) => {
@@ -46,4 +46,8 @@ export const handleNewScanReport = async (
     ...lastReport,
     lastScan: now,
   };
+};
+
+export const reportService = {
+  handleNewScanReport,
 };

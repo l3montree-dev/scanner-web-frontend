@@ -6,8 +6,8 @@ import { withDB } from "../../../decorators/withDB";
 import { withToken } from "../../../decorators/withToken";
 import MethodNotAllowed from "../../../errors/MethodNotAllowed";
 import NotFoundException from "../../../errors/NotFoundException";
-import { getKcAdminClient, getRealmName } from "../../../services/keycloak";
-import { updateUser } from "../../../services/userService";
+import { keycloak } from "../../../services/keycloak";
+import { userService } from "../../../services/userService";
 import { IToken, IUserPutDTO } from "../../../types";
 import { parseNetwork } from "../../../utils/common";
 
@@ -23,11 +23,11 @@ const handlePut = async (
   }
   const putRequest: IUserPutDTO = JSON.parse(req.body);
 
-  const kcClient = getKcAdminClient(token.accessToken);
+  const kcClient = keycloak.getKcAdminClient(token.accessToken);
   await kcClient.users.update(
     {
       id: userId,
-      realm: getRealmName(),
+      realm: keycloak.getRealmName(),
     },
     {
       firstName: putRequest.firstName,
@@ -35,7 +35,7 @@ const handlePut = async (
     }
   );
 
-  const [user, _] = await updateUser(
+  const [user, _] = await userService.updateUser(
     userId,
     {
       ...putRequest,
@@ -64,8 +64,8 @@ const handleDelete = async (
   if (!userId) {
     throw new NotFoundException();
   }
-  const kcClient = getKcAdminClient(token.accessToken);
-  await kcClient.users.del({ id: userId, realm: getRealmName() });
+  const kcClient = keycloak.getKcAdminClient(token.accessToken);
+  await kcClient.users.del({ id: userId, realm: keycloak.getRealmName() });
   const user = await db.User.findOneAndDelete({
     _id: userId,
   });

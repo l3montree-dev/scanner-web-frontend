@@ -1,18 +1,17 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { randomUUID } from "crypto";
-import { Model } from "mongoose";
 import type { NextApiRequest, NextApiResponse } from "next";
 
+import ip from "ip";
 import { ModelsType, toDTO } from "../../db/models";
+import { decorate } from "../../decorators/decorate";
 import { tryDB } from "../../decorators/tryDB";
 import { inspectRPC } from "../../inspection/inspect";
+import { domainService } from "../../services/domainService";
 import { getLogger } from "../../services/logger";
-import { handleNewScanReport } from "../../services/reportService";
+import { reportService } from "../../services/reportService";
 import { IReport } from "../../types";
 import { isScanError, sanitizeFQDN } from "../../utils/common";
-import ip from "ip";
-import { decorate } from "../../decorators/decorate";
-import { handleDomainScanError } from "../../services/domainService";
 
 const logger = getLogger(__filename);
 
@@ -86,7 +85,7 @@ export default decorate(
             "Invalid site provided. Please provide a valid fully qualified domain name as site query parameter. Example: ?site=example.com",
         });
       } else {
-        await handleDomainScanError(result, db.Domain);
+        await domainService.handleDomainScanError(result, db.Domain);
         logger.error(
           {
             err: result.result.error.message,
@@ -121,7 +120,7 @@ export default decorate(
 
       if (db) {
         return res.json(
-          toDTO(await handleNewScanReport(data, db as ModelsType))
+          toDTO(await reportService.handleNewScanReport(data, db as ModelsType))
         );
       } else {
         return res.json(data);

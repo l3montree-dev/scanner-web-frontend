@@ -15,7 +15,7 @@ import { decorateServerSideProps } from "../../decorators/decorateServerSideProp
 import { withDB } from "../../decorators/withDB";
 import { withTokenServerSideProps } from "../../decorators/withToken";
 import { clientHttpClient } from "../../services/clientHttpClient";
-import { getAll } from "../../services/networkService";
+import { networkService } from "../../services/networkService";
 import { INetwork } from "../../types";
 import { classNames, isAdmin } from "../../utils/common";
 
@@ -201,7 +201,7 @@ export const getServerSideProps: GetServerSideProps = decorateServerSideProps(
 
     return {
       props: {
-        networks: await getAll(db),
+        networks: await networkService.getAll(db),
       },
     };
   },
