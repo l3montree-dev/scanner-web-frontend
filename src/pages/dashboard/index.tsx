@@ -206,6 +206,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                       innerRadius={90}
                       labelComponent={
                         <VictoryTooltip
+                          constrainToVisibleArea
                           cornerRadius={0}
                           style={{
                             fill: "white",
@@ -216,7 +217,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                               "50"
                             ],
                           }}
-                          dx={10}
+                          dx={0}
                           pointerLength={0}
                         />
                       }
