@@ -84,7 +84,7 @@ export const theme = {
         }),
         grid: {
           fill: "none",
-          stroke: "transparent",
+          stroke: "rgba(255,255,255,0.1)",
           strokeDasharray,
           strokeLinecap,
           strokeLinejoin,

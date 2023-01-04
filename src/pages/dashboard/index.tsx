@@ -8,6 +8,7 @@ import Link from "next/link.js";
 import { FunctionComponent, useEffect, useState } from "react";
 import resolveConfig from "tailwindcss/resolveConfig";
 import {
+  VictoryArea,
   VictoryAxis,
   VictoryChart,
   VictoryLabel,
@@ -314,7 +315,15 @@ const Dashboard: FunctionComponent<Props> = (props) => {
             })}
           </div>
 
-          <div className="flex mt-5 justify-start flex-wrap flex-row">
+          <h2 className="text-2xl mt-10 mb-5">Trendanalyse</h2>
+          <p className="w-1/2 text-slate-300">
+            Ausschlie&szlig;lich erreichbare Domains können getestet werden. Die
+            Anfrage muss vom Server in maximal zehn Sekunden beantwortet werden,
+            damit eine Domain als erreichbar gilt. Derzeit sind{" "}
+            {props.currentState.totalCount} von {props.totals.hosts} erreichbar.
+          </p>
+
+          <div className="flex mt-5 justify-start -mx-2 flex-wrap flex-row">
             {displayKey.map((key) => {
               const data = props.historicalData.map((item) => {
                 return {
@@ -323,70 +332,111 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                 };
               });
               return (
-                <div
-                  className="bg-deepblue-500 historical-chart border flex-col flex border-deepblue-200"
-                  key={key}
-                >
-                  <div className="flex-1 pt-5 relative">
-                    {linkMapper[key] !== "" && (
-                      <Link
-                        target={"_blank"}
-                        href={linkMapper[key]}
-                        className="text-sm absolute top-1 underline right-0 mt-2 mr-3"
-                      >
-                        Mehr Informationen
-                      </Link>
-                    )}
-                    <VictoryChart
-                      containerComponent={
-                        <VictoryVoronoiContainer voronoiDimension="x" />
-                      }
-                      theme={theme}
-                      domainPadding={15}
-                    >
-                      <VictoryAxis fixLabelOverlap />
-                      <VictoryAxis
-                        tickFormat={(t) => `${t}%`}
-                        dependentAxis
-                        fixLabelOverlap
-                      />
-                      <VictoryLine
-                        interpolation={"basis"}
-                        animate={{
-                          duration: 250,
-                        }}
-                        labels={({ datum }) => `${datum.y.toFixed(1)}%`}
-                        labelComponent={
-                          <VictoryTooltip
-                            constrainToVisibleArea
-                            cornerRadius={0}
-                            style={{
-                              fill: "white",
-                            }}
-                            flyoutStyle={{
-                              stroke: "none",
-                              fill: (fullConfig.theme?.colors as any).deepblue[
-                                "50"
-                              ],
-                            }}
-                            dx={0}
-                            pointerLength={0}
-                          />
+                <div className="w-1/3 mb-5" key={key}>
+                  <div className="bg-deepblue-500 mx-2 historical-chart border flex-col flex border-deepblue-200">
+                    <div className="flex-1 pt-5 relative">
+                      {linkMapper[key] !== "" && (
+                        <Link
+                          target={"_blank"}
+                          href={linkMapper[key]}
+                          className="text-sm absolute top-1 underline right-0 mt-2 mr-3"
+                        >
+                          Mehr Informationen
+                        </Link>
+                      )}
+                      <svg style={{ height: 0 }}>
+                        <defs>
+                          <linearGradient x2="0%" y2="100%" id="myGradient">
+                            <stop
+                              offset="0%"
+                              stopColor={"rgba(172,252,207,0.2)"}
+                            />
+
+                            <stop offset="100%" stopColor="rgba(0,0,0,0)" />
+                          </linearGradient>
+                        </defs>
+                      </svg>
+                      <VictoryChart
+                        containerComponent={
+                          <VictoryVoronoiContainer voronoiDimension="x" />
                         }
-                        colorScale={[
-                          (fullConfig.theme?.colors as any).lightning["500"],
-                          (fullConfig.theme?.colors as any).slate["600"],
-                        ]}
-                        data={data}
-                      />
-                    </VictoryChart>
+                        theme={theme}
+                        domainPadding={[0, 10]}
+                      >
+                        <VictoryAxis fixLabelOverlap />
+                        <VictoryAxis
+                          tickFormat={(t) => `${t}%`}
+                          dependentAxis
+                          fixLabelOverlap
+                        />
+                        <VictoryLine
+                          interpolation={"basis"}
+                          animate={{
+                            duration: 250,
+                          }}
+                          labels={({ datum }) => `${datum.y.toFixed(1)}%`}
+                          labelComponent={
+                            <VictoryTooltip
+                              constrainToVisibleArea
+                              cornerRadius={0}
+                              style={{
+                                fill: "white",
+                              }}
+                              flyoutStyle={{
+                                stroke: "none",
+                                fill: (fullConfig.theme?.colors as any)
+                                  .deepblue["50"],
+                              }}
+                              dx={0}
+                              pointerLength={0}
+                            />
+                          }
+                          colorScale={[
+                            (fullConfig.theme?.colors as any).lightning["500"],
+                            (fullConfig.theme?.colors as any).slate["600"],
+                          ]}
+                          data={data}
+                        />
+                        <VictoryArea
+                          style={{
+                            data: { fill: "url(#myGradient)" },
+                          }}
+                          interpolation={"basis"}
+                          animate={{
+                            duration: 250,
+                          }}
+                          labels={({ datum }) => `${datum.y.toFixed(1)}%`}
+                          labelComponent={
+                            <VictoryTooltip
+                              constrainToVisibleArea
+                              cornerRadius={0}
+                              style={{
+                                fill: "white",
+                              }}
+                              flyoutStyle={{
+                                stroke: "none",
+                                fill: (fullConfig.theme?.colors as any)
+                                  .deepblue["50"],
+                              }}
+                              dx={0}
+                              pointerLength={0}
+                            />
+                          }
+                          colorScale={[
+                            (fullConfig.theme?.colors as any).lightning["500"],
+                            (fullConfig.theme?.colors as any).slate["600"],
+                          ]}
+                          data={data}
+                        />
+                      </VictoryChart>
+                    </div>
+                    <h2
+                      title={mapping[key]}
+                      className="text-center whitespace-nowrap text-ellipsis overflow-hidden bg-deepblue-200 mt-1 p-3"
+                    >
+                      {mapping[key]}
+                    </h2>
                   </div>
-                  <h2
-                    title={mapping[key]}
-                    className="text-center whitespace-nowrap text-ellipsis overflow-hidden bg-deepblue-200 mt-1 p-3"
-                  >
-                    {mapping[key]}
-                  </h2>
                 </div>
               );
             })}
