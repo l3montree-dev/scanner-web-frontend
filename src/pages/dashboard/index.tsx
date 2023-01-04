@@ -351,7 +351,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                         fixLabelOverlap
                       />
                       <VictoryLine
-                        interpolation={"catmullRom"}
+                        interpolation={"basis"}
                         animate={{
                           duration: 250,
                         }}
