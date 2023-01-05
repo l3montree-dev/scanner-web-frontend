@@ -16,7 +16,7 @@ export interface IReport {
   ipV4AddressNumber: number;
 }
 
-export interface IDomain {
+export type IDomain = {
   fqdn: string;
   ipV4Address: string;
   lastScan: number | null;
@@ -24,7 +24,8 @@ export interface IDomain {
   // save the number representation of the v4 address as well
   // to make it easier to query for ranges
   ipV4AddressNumber: number;
-}
+} & { [key in InspectionType]: boolean | null };
+
 export interface INetwork {
   prefixLength: number;
   networkAddress: string;

@@ -1,4 +1,5 @@
 import { Schema, SchemaTypes } from "mongoose";
+import { InspectionTypeEnum } from "../inspection/scans";
 import { INetwork, IReport, IUser } from "../types";
 
 export const reportSchema = new Schema<IReport>(
@@ -37,6 +38,8 @@ export const networkSchema = new Schema<INetwork>(
   { strict: true, timestamps: true }
 );
 
+const keys = Object.keys(InspectionTypeEnum);
+
 export const domainSchema = new Schema(
   {
     fqdn: { type: SchemaTypes.String, index: true },
@@ -45,6 +48,10 @@ export const domainSchema = new Schema(
     ipV4AddressNumber: { type: SchemaTypes.Number, index: true },
     errorCount: SchemaTypes.Number,
     queued: { type: SchemaTypes.Boolean, default: false },
+    ...keys.reduce((acc, key) => {
+      acc[key] = { type: SchemaTypes.Boolean, default: null, index: true };
+      return acc;
+    }, {} as Record<string, any>),
   },
   { strict: true, timestamps: true }
 );

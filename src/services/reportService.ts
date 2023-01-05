@@ -31,7 +31,26 @@ const handleNewScanReport = async (
   if (!lastReport || reportDidChange(lastReport, newReport)) {
     // if the report changed, we need to create a new one.
     const report = new db.Report(newReport);
-    return (await report.save()).toObject();
+    // update the domain as well.
+    const [_, res] = await Promise.all([
+      db.Domain.updateOne(
+        {
+          fqdn: newReport.fqdn,
+          ipV4AddressNumber: newReport.ipV4AddressNumber,
+        },
+        {
+          lastScan: newReport.validFrom,
+          queued: false,
+          ...Object.fromEntries(
+            Object.entries(newReport.result).map(([key, value]) => {
+              return [key, value.didPass];
+            })
+          ),
+        }
+      ).lean(),
+      report.save(),
+    ]);
+    return res.toObject();
   }
   // mark the last report valid until the next scan.
   const now = newReport.validFrom;
