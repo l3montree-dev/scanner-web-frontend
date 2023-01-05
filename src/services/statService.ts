@@ -91,7 +91,6 @@ const getFailedSuccessPercentage = async (
           {
             $match: {
               validFrom: {
-                $gte: timeQuery.start,
                 $lte: timeQuery.end,
               },
             },
