@@ -49,7 +49,8 @@ interface ChartData {
 }
 interface Props {
   totals: {
-    hosts: number;
+    uniqueDomains: number;
+    dns: number;
     ipAddresses: number;
   };
   currentState: ChartData;
@@ -148,7 +149,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                     icon={faListCheck}
                   />
                   <div className="ml-5 text-xl">
-                    <b className="text-5xl">{props.totals.hosts}</b>
+                    <b className="text-5xl">{props.totals.dns}</b>
                     <br />
                     DNS-Einträge
                   </div>
@@ -165,6 +166,20 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                     <b className="text-5xl">{props.totals.ipAddresses}</b>
                     <br />
                     IP-Adressen
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div className="bg-deepblue-500 flex-row flex mr-2 items-center p-5 border border-deepblue-200">
+                  <FontAwesomeIcon
+                    className="text-slate-400 mx-2"
+                    fontSize={75}
+                    icon={faServer}
+                  />
+                  <div className="ml-5 text-xl">
+                    <b className="text-5xl">{props.totals.uniqueDomains}</b>
+                    <br />
+                    Eindeutige Domain-Namen
                   </div>
                 </div>
               </div>
@@ -203,7 +218,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
             Ausschlie&szlig;lich erreichbare Domains können getestet werden. Die
             Anfrage muss vom Server in maximal zehn Sekunden beantwortet werden,
             damit eine Domain als erreichbar gilt. Derzeit sind{" "}
-            {props.currentState.totalCount} von {props.totals.hosts} erreichbar.
+            {props.currentState.totalCount} von {props.totals.dns} erreichbar.
           </p>
           <div className="flex mt-5 justify-start gap-2 flex-wrap flex-wrap flex-row">
             {displayKey.map((key) => {
@@ -320,7 +335,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
             Ausschlie&szlig;lich erreichbare Domains können getestet werden. Die
             Anfrage muss vom Server in maximal zehn Sekunden beantwortet werden,
             damit eine Domain als erreichbar gilt. Derzeit sind{" "}
-            {props.currentState.totalCount} von {props.totals.hosts} erreichbar.
+            {props.currentState.totalCount} von {props.totals.dns} erreichbar.
           </p>
 
           <div className="flex mt-5 justify-start -mx-2 flex-wrap flex-row">
@@ -460,41 +475,45 @@ const eachWeek = (start: Date, end: Date) => {
 export const getServerSideProps = decorateServerSideProps(
   async (context, [currentUser, token, db]) => {
     const admin = isAdmin(token);
-    const [data, { hosts, ipAddresses }, historicalData] = await Promise.all([
-      statService.getFailedSuccessPercentage(
-        admin,
-        currentUser.networks,
-        db.Report
-      ),
-      statService.getTotals(admin, currentUser.networks, db.Domain),
-      await Promise.all(
-        eachWeek(
-          new Date(Date.now() - 1000 * 60 * 60 * 24 * 14),
-          new Date()
-        ).map(async (_, i, arr) => {
-          const res = await statService.getFailedSuccessPercentage(
-            admin,
-            currentUser.networks,
-            db.Report,
-            {
-              start: arr[i - 1] || 0,
-              end: arr[i],
-            }
-          );
-          return {
-            ...res,
-            date: arr[i],
-          };
-        })
-      ),
-    ]);
+    const [data, { uniqueDomains, dns, ipAddresses }, historicalData] =
+      await Promise.all([
+        statService.getCurrentStatePercentage(
+          admin,
+          currentUser.networks,
+          db.Domain
+        ),
+        statService.getTotals(admin, currentUser.networks, db.Domain),
+        await Promise.all(
+          eachWeek(
+            new Date(Date.now() - 1000 * 60 * 60 * 24 * 14),
+            new Date()
+          ).map(async (_, i, arr) => {
+            const res = await statService.getFailedSuccessPercentage(
+              admin,
+              currentUser.networks,
+              db.Report,
+              {
+                start: arr[i - 1] || 0,
+                end: arr[i],
+              }
+            );
+            return {
+              ...res,
+              date: arr[i],
+            };
+          })
+        ),
+      ]);
+
+    console.log(data);
 
     return {
       props: {
         currentState: data,
         historicalData,
         totals: {
-          hosts,
+          uniqueDomains,
+          dns,
           ipAddresses,
         },
       },

@@ -141,36 +141,12 @@ const getDomainsOfNetworksWithLatestTestResult = async (
     {
       $facet: {
         data: [
-          { $skip: paginateRequest.page * paginateRequest.pageSize },
-          { $limit: paginateRequest.pageSize },
-          {
-            $lookup: {
-              from: "reports",
-              localField: "ipV4AddressNumber",
-              foreignField: "ipV4AddressNumber",
-              as: "report",
-              pipeline: [
-                {
-                  $sort: {
-                    lastScan: -1,
-                  },
-                },
-                { $limit: 1 },
-                ...jsonSerializableStage,
-              ],
-            },
-          },
-          {
-            $unwind: {
-              path: "$report",
-              preserveNullAndEmptyArrays: true,
-            },
-          },
           paginateRequest.sort
             ? {
                 $sort: {
-                  [`report.result.${paginateRequest.sort}.didPass`]:
-                    +paginateRequest.sortDirection! as 1 | -1,
+                  [paginateRequest.sort]: +paginateRequest.sortDirection! as
+                    | 1
+                    | -1,
                 },
               }
             : {
@@ -178,7 +154,8 @@ const getDomainsOfNetworksWithLatestTestResult = async (
                   fqdn: 1,
                 },
               },
-
+          { $skip: paginateRequest.page * paginateRequest.pageSize },
+          { $limit: paginateRequest.pageSize },
           ...jsonSerializableStage,
         ],
         totalCount: [{ $count: "total" }],

@@ -97,9 +97,9 @@ const sortDomains = (
 };
 
 const Dashboard: FunctionComponent<Props> = (props) => {
-  const [domains, setDomains] = useState<
-    Array<WithId<IDomain> & { report?: WithId<IReport> }>
-  >(props.domains.data);
+  const [domains, setDomains] = useState<Array<WithId<IDomain>>>(
+    props.domains.data
+  );
 
   const scanRequest = useLoading();
   const router = useRouter();
@@ -156,9 +156,6 @@ const Dashboard: FunctionComponent<Props> = (props) => {
         newDomains[index] = {
           ...newDomains[index],
           lastScan: data.lastScan,
-          report: {
-            ...data,
-          },
         };
         return newDomains;
       });
@@ -274,11 +271,6 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                         active={sort.key === "ipV4Address"}
                         getIcon={() => getIcon("ipV4Address")}
                       />
-                    </div>
-                  </th>
-                  <th className="p-2">
-                    <div>
-                      <span>IPv6 Adressen</span>
                     </div>
                   </th>
                   <th className="p-2">
@@ -412,44 +404,24 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                         </div>
                       </td>
                       <td className="p-2">{domain.ipV4Address}</td>
+
                       <td className="p-2">
-                        {domain.report?.result.IPv6?.actualValue.addresses.join(
-                          ", "
-                        )}
+                        <ResultIcon didPass={domain.ResponsibleDisclosure} />
                       </td>
                       <td className="p-2">
-                        <ResultIcon
-                          didPass={
-                            domain.report?.result.ResponsibleDisclosure?.didPass
-                          }
-                        />
+                        <ResultIcon didPass={domain.TLSv1_3} />
                       </td>
                       <td className="p-2">
-                        <ResultIcon
-                          didPass={domain.report?.result.TLSv1_3?.didPass}
-                        />
+                        <ResultIcon didPass={domain.TLSv1_1_Deactivated} />
                       </td>
                       <td className="p-2">
-                        <ResultIcon
-                          didPass={
-                            domain.report?.result.TLSv1_1_Deactivated?.didPass
-                          }
-                        />
+                        <ResultIcon didPass={domain.HSTS} />
                       </td>
                       <td className="p-2">
-                        <ResultIcon
-                          didPass={domain.report?.result.HSTS?.didPass}
-                        />
+                        <ResultIcon didPass={domain.DNSSec} />
                       </td>
                       <td className="p-2">
-                        <ResultIcon
-                          didPass={domain.report?.result.DNSSec?.didPass}
-                        />
-                      </td>
-                      <td className="p-2">
-                        <ResultIcon
-                          didPass={domain.report?.result.RPKI?.didPass}
-                        />
+                        <ResultIcon didPass={domain.RPKI} />
                       </td>
                       <td className="text-right p-2">
                         <Menu

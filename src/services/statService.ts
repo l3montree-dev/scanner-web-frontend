@@ -8,15 +8,16 @@ const getTotals = async (
   isAdmin: boolean,
   networks: INetwork[],
   domain: Model<IDomain>
-): Promise<{ hosts: number; ipAddresses: number }> => {
+): Promise<{ uniqueDomains: number; ipAddresses: number; dns: number }> => {
   if (!isAdmin && networks.length === 0) {
     return {
-      hosts: 0,
+      uniqueDomains: 0,
       ipAddresses: 0,
+      dns: 0,
     };
   }
 
-  const [hosts, ipAddresses] = await Promise.all([
+  const [uniqueDomains, ipAddresses, dns] = await Promise.all([
     domain
       .distinct("fqdn", {
         ...(isAdmin
@@ -45,11 +46,97 @@ const getTotals = async (
             }),
       })
       .lean(),
+    domain.countDocuments().lean(),
   ]);
 
   return {
-    hosts: hosts.length,
+    uniqueDomains: uniqueDomains.length,
     ipAddresses: ipAddresses.length,
+    dns: dns,
+  };
+};
+
+const getCurrentStatePercentage = async (
+  isAdmin: boolean,
+  networks: INetwork[],
+  domain: Model<IDomain>
+): Promise<{
+  totalCount: number;
+  data: {
+    [key in InspectionType]: number;
+  };
+}> => {
+  if (!isAdmin && networks.length === 0) {
+    return {
+      totalCount: 0,
+      data: keys.reduce((acc, cur) => ({ ...acc, [cur]: 0 }), {}) as any,
+    };
+  }
+
+  // get all domains of the network
+  const [res] = (await domain.aggregate([
+    ...(isAdmin
+      ? []
+      : [
+          {
+            $match: {
+              $or: networks.map((network) => ({
+                ipV4AddressNumber: {
+                  $gte: network.startAddressNumber,
+                  $lte: network.endAddressNumber,
+                },
+              })),
+            },
+          },
+        ]),
+    {
+      $match: {
+        $or: [
+          {
+            errorCount: {
+              $eq: null,
+            },
+          },
+          {
+            errorCount: {
+              $eq: 0,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $facet: {
+        totalCount: [{ $count: "total" }],
+        data: [
+          {
+            $group: {
+              _id: null,
+              ...keys
+                .map((key) => ({
+                  [key]: {
+                    $sum: {
+                      $cond: [`$${key}`, 1, 0],
+                    },
+                  },
+                }))
+                .reduce((acc, cur) => ({ ...acc, ...cur }), {}),
+            },
+          },
+          {
+            $project: {
+              _id: 0,
+            },
+          },
+        ],
+      },
+    },
+  ])) as any;
+  return {
+    totalCount: res.totalCount[0]?.total ?? 0,
+    data: res.data[0] ?? {
+      ...keys.reduce((acc, cur) => ({ ...acc, [cur]: 0 }), {}),
+    },
   };
 };
 const getFailedSuccessPercentage = async (
@@ -152,5 +239,6 @@ const getFailedSuccessPercentage = async (
 
 export const statService = {
   getTotals,
+  getCurrentStatePercentage,
   getFailedSuccessPercentage,
 };

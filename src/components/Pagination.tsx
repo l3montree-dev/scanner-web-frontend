@@ -1,6 +1,4 @@
-import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { FunctionComponent, useMemo } from "react";
+import { FunctionComponent, useMemo } from "react";
 import { PaginateResult } from "../types";
 import { classNames } from "../utils/common";
 
@@ -51,7 +49,7 @@ const Pagination: FunctionComponent<Props> = (props) => {
           </button>
         );
       })}
-      {props.page !== lastPage && (
+      {props.page + 2 < lastPage && (
         <button
           onClick={() =>
             props.onPageChange(Math.floor(props.total / props.pageSize))
