@@ -141,6 +141,8 @@ const getDomainsOfNetworksWithLatestTestResult = async (
     {
       $facet: {
         data: [
+          { $skip: paginateRequest.page * paginateRequest.pageSize },
+          { $limit: paginateRequest.pageSize },
           {
             $lookup: {
               from: "reports",
@@ -176,8 +178,7 @@ const getDomainsOfNetworksWithLatestTestResult = async (
                   fqdn: 1,
                 },
               },
-          { $skip: paginateRequest.page * paginateRequest.pageSize },
-          { $limit: paginateRequest.pageSize },
+
           ...jsonSerializableStage,
         ],
         totalCount: [{ $count: "total" }],
