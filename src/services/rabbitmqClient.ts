@@ -10,8 +10,8 @@ const logger = getLogger(__filename);
 export class RabbitMQClient {
   protected instanceId = randomUUID();
   private connection: Promise<amqp.Connection> | null = null;
-  private publishChannel: amqp.Channel | null = null;
-  private subscribeChannel: amqp.Channel | null = null;
+  private publishChannel: Promise<amqp.Channel> | null = null;
+  private subscribeChannel: Promise<amqp.Channel> | null = null;
   constructor(protected rabbitmqConnString: string) {}
 
   public getInstanceId() {
@@ -27,14 +27,18 @@ export class RabbitMQClient {
 
   protected async getPublishChannel() {
     if (!this.publishChannel) {
-      this.publishChannel = await (await this.connect()).createChannel();
+      this.publishChannel = this.connect().then((connection) => {
+        return connection.createChannel();
+      });
     }
     return this.publishChannel;
   }
 
   protected async getSubscribeChannel() {
     if (!this.subscribeChannel) {
-      this.subscribeChannel = await (await this.connect()).createChannel();
+      this.subscribeChannel = this.connect().then((connection) =>
+        connection.createChannel()
+      );
     }
     return this.subscribeChannel;
   }
