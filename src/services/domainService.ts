@@ -19,6 +19,7 @@ const handleNewDomain = async (
     fqdn: domain.fqdn,
     ipV4Address: domain.ipV4Address,
     ipV4AddressNumber: ip.toLong(domain.ipV4Address),
+    lastScan: null,
   };
   try {
     await model.create(payload);
@@ -37,6 +38,7 @@ const handleNewFQDN = async (
     fqdn: fqdn,
     ipV4Address: ipAddress,
     ipV4AddressNumber: ip.toLong(ipAddress),
+    lastScan: null,
   };
   try {
     await model.create(payload);
@@ -61,6 +63,7 @@ const handleDomainScanError = async (
       {
         lastScan: content.timestamp ?? Date.now(),
         queued: false,
+        ipV4Address: content.ipAddress,
         // increment the error count property by 1
         $inc: { errorCount: 1 },
       },
@@ -76,7 +79,10 @@ const handleDomainScanError = async (
 const getDomainsOfNetworksWithLatestTestResult = async (
   isAdmin: boolean,
   networks: INetwork[],
-  paginateRequest: PaginateRequest & { search?: string },
+  paginateRequest: PaginateRequest & { search?: string } & {
+    sort?: string;
+    sortDirection?: string;
+  },
   domain: Model<IDomain>
 ): Promise<PaginateResult<IDomain & { report?: IReport }>> => {
   if (!isAdmin && networks.length === 0) {
@@ -87,8 +93,25 @@ const getDomainsOfNetworksWithLatestTestResult = async (
       data: [],
     };
   }
+
   // get all domains of the network
   const [domains] = (await domain.aggregate([
+    {
+      $match: {
+        $or: [
+          {
+            errorCount: {
+              $eq: null,
+            },
+          },
+          {
+            errorCount: {
+              $lt: 5,
+            },
+          },
+        ],
+      },
+    },
     ...(paginateRequest.search
       ? [
           {
@@ -119,18 +142,10 @@ const getDomainsOfNetworksWithLatestTestResult = async (
       $facet: {
         data: [
           {
-            $sort: {
-              fqdn: 1,
-            },
-          },
-          { $skip: paginateRequest.page * paginateRequest.pageSize },
-          { $limit: paginateRequest.pageSize },
-
-          {
             $lookup: {
               from: "reports",
-              localField: "fqdn",
-              foreignField: "fqdn",
+              localField: "ipV4AddressNumber",
+              foreignField: "ipV4AddressNumber",
               as: "report",
               pipeline: [
                 {
@@ -149,6 +164,20 @@ const getDomainsOfNetworksWithLatestTestResult = async (
               preserveNullAndEmptyArrays: true,
             },
           },
+          paginateRequest.sort
+            ? {
+                $sort: {
+                  [`report.result.${paginateRequest.sort}.didPass`]:
+                    +paginateRequest.sortDirection! as 1 | -1,
+                },
+              }
+            : {
+                $sort: {
+                  fqdn: 1,
+                },
+              },
+          { $skip: paginateRequest.page * paginateRequest.pageSize },
+          { $limit: paginateRequest.pageSize },
           ...jsonSerializableStage,
         ],
         totalCount: [{ $count: "total" }],

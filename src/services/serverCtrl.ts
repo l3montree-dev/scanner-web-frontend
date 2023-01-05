@@ -1,6 +1,8 @@
 import { randomUUID } from "crypto";
+import { resolve4 } from "dns/promises";
 import { Server as HttpServer } from "http";
 import ip from "ip";
+import PQueue from "p-queue";
 import { Server } from "socket.io";
 
 import getConnection from "../db/connection";
@@ -156,6 +158,10 @@ const startScanResponseLoop = once(() => {
 
 const startScanLoop = once(() => {
   let running = false;
+  const promiseQueue = new PQueue({
+    concurrency: 5,
+    timeout: 5 * 1000,
+  });
   getConnection()
     .then((connection) => {
       setInterval(async () => {
@@ -179,11 +185,24 @@ const startScanLoop = once(() => {
             { requestId, component: "SCAN_LOOP" },
             `found ${domains.length} domains to scan - sending scan request with id: ${requestId}`
           );
-          await Promise.all(
+          promiseQueue.addAll(
             domains.map((domain) => {
-              inspect(requestId, domain.fqdn);
+              return async () => {
+                inspect(requestId, domain.fqdn, domain.ipV4Address);
+                const addresses = await resolve4(domain.fqdn);
+                return await Promise.all(
+                  addresses.map((addr) =>
+                    domainService.handleNewFQDN(
+                      domain.fqdn,
+                      addr,
+                      connection.models.Domain
+                    )
+                  )
+                );
+              };
             })
           );
+
           running = false;
         } catch (e) {
           running = false;

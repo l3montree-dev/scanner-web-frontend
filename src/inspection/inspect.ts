@@ -16,11 +16,16 @@ export const inspectRPC = async (
   return result;
 };
 
-export const inspect = async (requestId: string, fqdn: string) => {
+export const inspect = async (
+  requestId: string,
+  fqdn: string,
+  ipV4Address: string
+) => {
   const result = await rabbitMQClient.publish(
     process.env.SCAN_REQUEST_QUEUE ?? "scan-request",
     {
       fqdn,
+      ipV4Address,
     },
     { durable: true, maxPriority: 10 },
     { messageId: requestId, priority: 1, replyTo: "scan-response" }

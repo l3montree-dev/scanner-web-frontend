@@ -104,19 +104,16 @@ const Dashboard: FunctionComponent<Props> = (props) => {
   const scanRequest = useLoading();
   const router = useRouter();
 
-  const [sort, setSort] = useState<{
-    key: "fqdn" | "ipV4Address" | keyof IReport["result"];
-    direction: 1 | -1;
-  }>({ key: "fqdn", direction: 1 });
-
   const handleSort = (key: typeof sort["key"]) => {
     // check if we should reverse the order.
     const instructions = { key, direction: 1 as 1 | -1 };
     if (key === sort.key) {
       instructions.direction = (sort.direction * -1) as 1 | -1;
     }
-    setSort(instructions);
-    setDomains((prev) => sortDomains(instructions, prev));
+    patchQuery({
+      sort: instructions.key,
+      sortDirection: instructions.direction.toString(),
+    });
   };
 
   const getIcon = (key: typeof sort["key"]) => {
@@ -221,6 +218,11 @@ const Dashboard: FunctionComponent<Props> = (props) => {
     }
   };
 
+  const sort = {
+    key: router.query.sort as "fqdn" | "ipV4Address" | keyof IReport["result"],
+    direction: parseInt(router.query.sortDirection as string) as 1 | -1,
+  };
+
   return (
     <DashboardPage title="Domainübersicht">
       <SideNavigation />
@@ -272,6 +274,11 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                         active={sort.key === "ipV4Address"}
                         getIcon={() => getIcon("ipV4Address")}
                       />
+                    </div>
+                  </th>
+                  <th className="p-2">
+                    <div>
+                      <span>IPv6 Adressen</span>
                     </div>
                   </th>
                   <th className="p-2">
@@ -368,7 +375,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                   return (
                     <tr
                       className={classNames(
-                        "border-b border-b-deepblue-500 transition-all",
+                        "border-b border-b-deepblue-200 transition-all",
                         domain.errorCount !== null && domain.errorCount >= 5
                           ? "line-through"
                           : ""
@@ -405,6 +412,11 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                         </div>
                       </td>
                       <td className="p-2">{domain.ipV4Address}</td>
+                      <td className="p-2">
+                        {domain.report?.result.IPv6?.actualValue.addresses.join(
+                          ", "
+                        )}
+                      </td>
                       <td className="p-2">
                         <ResultIcon
                           didPass={
@@ -498,7 +510,13 @@ export const getServerSideProps = decorateServerSideProps(
       await domainService.getDomainsOfNetworksWithLatestTestResult(
         isAdmin(token),
         currentUser.networks,
-        { pageSize: 50, page, search },
+        {
+          pageSize: 50,
+          page,
+          search,
+          sort: context.query["sort"] as string | undefined,
+          sortDirection: context.query["sortDirection"] as string | undefined,
+        },
         db.Domain
       );
 
