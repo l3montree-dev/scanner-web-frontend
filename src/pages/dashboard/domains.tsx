@@ -72,30 +72,6 @@ const SortButton: FunctionComponent<{
   );
 };
 
-const sortDomains = (
-  instructions: {
-    key: "fqdn" | "ipV4Address" | keyof IReport["result"];
-    direction: 1 | -1;
-  },
-  domains: Array<WithId<IDomain> & { report?: WithId<IReport> }>
-) => {
-  return domains.sort((a, b) => {
-    if (instructions.key === "fqdn") {
-      return a.fqdn.localeCompare(b.fqdn) * instructions.direction;
-    }
-    if (instructions.key === "ipV4Address") {
-      return (
-        a.ipV4Address.localeCompare(b.ipV4Address) * instructions.direction
-      );
-    }
-    return (
-      (didPass2Number(a.report?.result[instructions.key]?.didPass) -
-        didPass2Number(b.report?.result[instructions.key]?.didPass)) *
-      instructions.direction
-    );
-  });
-};
-
 const Dashboard: FunctionComponent<Props> = (props) => {
   const [domains, setDomains] = useState<Array<WithId<IDomain>>>(
     props.domains.data
@@ -133,39 +109,48 @@ const Dashboard: FunctionComponent<Props> = (props) => {
     });
 
   useEffect(() => {
-    setDomains(sortDomains(sort, props.domains.data));
+    setDomains(props.domains.data);
   }, [props.domains]);
 
-  const scanFQDN = async (fqdn: string) => {
+  const scanFQDN = async (fqdn: string, ipV4Address: string) => {
     scanRequest.loading(fqdn);
 
     const response = await clientHttpClient(
-      `/api/scan?site=${fqdn}&refresh=true`,
+      `/api/scan?site=${fqdn}&ipV4Address=${ipV4Address}&refresh=true`,
       crypto.randomUUID()
     );
 
     if (response.ok) {
       const data: WithId<IReport> = await response.json();
+
       // inject it into the domains
       setDomains((prev) => {
-        const index = prev.findIndex((d) => d.fqdn === fqdn);
+        const index = prev.findIndex(
+          (d) =>
+            d.fqdn === fqdn && d.ipV4AddressNumber === data.ipV4AddressNumber
+        );
         if (index === -1) {
           return prev;
         }
         const newDomains = [...prev];
         newDomains[index] = {
           ...newDomains[index],
+          ipV6Address: data.result.IPv6?.actualValue.addresses ?? [],
+          ...Object.fromEntries(
+            Object.entries(data.result).map(([key, value]) => [
+              key,
+              value.didPass,
+            ])
+          ),
           lastScan: data.lastScan,
         };
         return newDomains;
       });
       scanRequest.success();
     } else {
-      const data: { error: string; fqdn: string; ipAddress: string } =
-        await response.json();
       setDomains((prev) => {
         const index = prev.findIndex(
-          (d) => d.fqdn === data.fqdn && d.ipV4Address === data.ipAddress
+          (d) => d.fqdn === fqdn && d.ipV4Address === ipV4Address
         );
         if (index === -1) {
           return prev;
@@ -445,7 +430,9 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                                   scanRequest.key === domain.fqdn &&
                                   scanRequest.isLoading
                                 }
-                                onClick={() => scanFQDN(domain.fqdn)}
+                                onClick={() =>
+                                  scanFQDN(domain.fqdn, domain.ipV4Address)
+                                }
                               >
                                 <div>
                                   <div>Erneut scannen</div>

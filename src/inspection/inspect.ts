@@ -3,12 +3,14 @@ import { IScanResponse } from "../types";
 
 export const inspectRPC = async (
   requestId: string,
-  fqdn: string
+  fqdn: string,
+  ipV4Address?: string // will be determined by the scanner itself if not provided.
 ): Promise<IScanResponse> => {
   const result = await rabbitMQRPCClient.call<IScanResponse>(
     process.env.SCAN_REQUEST_QUEUE ?? "scan-request",
     {
       fqdn,
+      ipV4Address,
     },
     { messageId: requestId }
   );

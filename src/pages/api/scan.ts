@@ -73,7 +73,10 @@ export default decorate(
       }
     }
 
-    const result = await inspectRPC(requestId, siteToScan);
+    const ipV4Address = req.query.ipV4Address as string | undefined;
+
+    const result = await inspectRPC(requestId, siteToScan, ipV4Address);
+
     if (isScanError(result) && db.Domain !== undefined) {
       if (result.result.error === "fetch failed") {
         logger.error(

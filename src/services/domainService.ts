@@ -73,6 +73,7 @@ const handleDomainScanError = async (
       }
     )
     .lean();
+
   return res;
 };
 
