@@ -41,6 +41,7 @@ const handleNewScanReport = async (
         {
           lastScan: newReport.validFrom,
           queued: false,
+          ipV6Address: newReport.result.IPv6?.actualValue.addresses ?? [],
           ...Object.fromEntries(
             Object.entries(newReport.result).map(([key, value]) => {
               return [key, value.didPass];

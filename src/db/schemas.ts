@@ -53,6 +53,7 @@ export const domainSchema = new Schema(
   {
     fqdn: { type: SchemaTypes.String, index: true },
     ipV4Address: SchemaTypes.String,
+    ipV6Address: [SchemaTypes.String],
     lastScan: { type: SchemaTypes.Number, index: true, default: null },
     ipV4AddressNumber: { type: SchemaTypes.Number, index: true },
     errorCount: SchemaTypes.Number,

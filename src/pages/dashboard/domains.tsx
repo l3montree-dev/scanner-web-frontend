@@ -275,6 +275,11 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                   </th>
                   <th className="p-2">
                     <div>
+                      <span>IPv6 Adresse</span>
+                    </div>
+                  </th>
+                  <th className="p-2">
+                    <div>
                       <span>Responsible Disclosure</span>
                       <SortButton
                         sortKey={
@@ -404,6 +409,9 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                         </div>
                       </td>
                       <td className="p-2">{domain.ipV4Address}</td>
+                      <td className="p-2">
+                        {(domain.ipV6Address ?? []).join(", ")}
+                      </td>
 
                       <td className="p-2">
                         <ResultIcon didPass={domain.ResponsibleDisclosure} />

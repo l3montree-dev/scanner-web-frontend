@@ -37,6 +37,7 @@ export interface ChartData {
 export type IDomain = {
   fqdn: string;
   ipV4Address: string;
+  ipV6Address?: string[];
   lastScan: number | null;
   errorCount: number | null;
   // save the number representation of the v4 address as well
