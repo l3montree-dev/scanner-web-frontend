@@ -20,6 +20,7 @@ import {
 import tailwindConfig from "../../../tailwind.config.js";
 import DashboardPage from "../../components/DashboardPage";
 import SideNavigation from "../../components/SideNavigation";
+import { toDTO } from "../../db/models.js";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
 import { withCurrentUser } from "../../decorators/withCurrentUser";
 import { withDB } from "../../decorators/withDB";
@@ -37,25 +38,12 @@ import {
   OrganizationalInspectionType,
   TLSInspectionType,
 } from "../../inspection/scans";
-import { statService } from "../../services/statService";
+import { dashboardService } from "../../services/dashboardService";
 import { theme } from "../../styles/victory-theme";
+import { IDashboard } from "../../types";
 import { isAdmin, linkMapper } from "../../utils/common";
 
-interface ChartData {
-  data: {
-    [key in InspectionType]: number;
-  };
-  totalCount: number;
-}
-interface Props {
-  totals: {
-    uniqueDomains: number;
-    dns: number;
-    ipAddresses: number;
-  };
-  currentState: ChartData;
-  historicalData: Array<ChartData & { date: number }>;
-}
+interface Props extends IDashboard {}
 
 const fullConfig = resolveConfig(tailwindConfig);
 
@@ -102,17 +90,6 @@ const displayKey: Array<InspectionType> = [
   DomainInspectionType.DNSSec,
   NetworkInspectionType.RPKI,
 ];
-
-const chartTheme = {
-  axis: {
-    style: {
-      tickLabels: {
-        // this changed the color of my numbers to white
-        fill: "white",
-      },
-    },
-  },
-};
 
 const Dashboard: FunctionComponent<Props> = (props) => {
   const [data, setData] = useState({
@@ -462,61 +439,18 @@ const Dashboard: FunctionComponent<Props> = (props) => {
   );
 };
 
-const eachWeek = (start: Date, end: Date) => {
-  const dates: number[] = [];
-  const currentDate = new Date(start);
-  while (currentDate <= end) {
-    dates.push(new Date(currentDate).getTime());
-    currentDate.setDate(currentDate.getDate() + 3);
-  }
-  return dates;
-};
-
 export const getServerSideProps = decorateServerSideProps(
   async (context, [currentUser, token, db]) => {
     const admin = isAdmin(token);
-    const [data, { uniqueDomains, dns, ipAddresses }, historicalData] =
-      await Promise.all([
-        statService.getCurrentStatePercentage(
-          admin,
-          currentUser.networks,
-          db.Domain
-        ),
-        statService.getTotals(admin, currentUser.networks, db.Domain),
-        await Promise.all(
-          eachWeek(
-            new Date(Date.now() - 1000 * 60 * 60 * 24 * 14),
-            new Date()
-          ).map(async (_, i, arr) => {
-            const res = await statService.getFailedSuccessPercentage(
-              admin,
-              currentUser.networks,
-              db.Report,
-              {
-                start: arr[i - 1] || 0,
-                end: arr[i],
-              }
-            );
-            return {
-              ...res,
-              date: arr[i],
-            };
-          })
-        ),
-      ]);
 
-    console.log(data);
+    const dashboard = await dashboardService.staleWhileRevalidate(
+      currentUser,
+      admin,
+      db
+    );
 
     return {
-      props: {
-        currentState: data,
-        historicalData,
-        totals: {
-          uniqueDomains,
-          dns,
-          ipAddresses,
-        },
-      },
+      props: dashboard,
     };
   },
   withCurrentUser,

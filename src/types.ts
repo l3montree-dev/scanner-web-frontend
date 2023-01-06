@@ -1,3 +1,4 @@
+import { ObjectId } from "mongoose";
 import { InspectionType, InspectResultDTO } from "./inspection/scans";
 
 export interface IReport {
@@ -7,13 +8,30 @@ export interface IReport {
   validFrom: number;
   lastScan: number;
   fqdn: string;
-  ipAddress: string;
   duration: number;
   version: number;
   createdAt: number;
   updatedAt: number;
   automated: boolean;
   ipV4AddressNumber: number;
+}
+
+export interface IDashboard {
+  userId: string;
+  historicalData: Array<ChartData & { date: number }>;
+  currentState: ChartData;
+  totals: {
+    uniqueDomains: number;
+    dns: number;
+    ipAddresses: number;
+  };
+}
+
+export interface ChartData {
+  data: {
+    [key in InspectionType]: number;
+  };
+  totalCount: number;
 }
 
 export type IDomain = {
@@ -44,11 +62,19 @@ export interface INetworkPatchDTO {
 
 export type IUserPutDTO = ICreateUserDTO;
 
-export interface IUser {
-  _id: string; // match it with the id of the user inside the authorization server
+export type IUser = {
   networks: INetwork[];
   role: string;
-}
+} & (
+  | {
+      id: string;
+      _id: undefined;
+    }
+  | {
+      _id: string;
+      id: undefined;
+    }
+);
 
 export type IIpLookupReportMsg = {
   results: { [ip: string]: string[] };

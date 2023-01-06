@@ -1,6 +1,6 @@
 import { Schema, SchemaTypes } from "mongoose";
 import { InspectionTypeEnum } from "../inspection/scans";
-import { INetwork, IReport, IUser } from "../types";
+import { IDashboard, INetwork, IReport, IUser } from "../types";
 
 export const reportSchema = new Schema<IReport>(
   {
@@ -15,6 +15,15 @@ export const reportSchema = new Schema<IReport>(
   { strict: true, timestamps: true }
 );
 
+export const dashboardSchema = new Schema<IDashboard>(
+  {
+    userId: { type: SchemaTypes.String, index: true },
+    historicalData: SchemaTypes.Mixed,
+    currentState: SchemaTypes.Mixed,
+    totals: SchemaTypes.Mixed,
+  },
+  { strict: true, timestamps: true }
+);
 export const userSchema = new Schema<Omit<IUser, "id"> & { _id: string }>(
   {
     _id: { type: SchemaTypes.String },

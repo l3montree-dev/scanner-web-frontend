@@ -99,7 +99,7 @@ const getCurrentStatePercentage = async (
           },
           {
             errorCount: {
-              $eq: 0,
+              $lt: 1,
             },
           },
         ],
@@ -143,7 +143,7 @@ const getFailedSuccessPercentage = async (
   isAdmin: boolean,
   networks: INetwork[],
   report: Model<IReport>,
-  timeQuery?: { start: number; end: number }
+  timeQuery: { start: number; end: number }
 ): Promise<{
   totalCount: number;
   data: {
@@ -173,17 +173,14 @@ const getFailedSuccessPercentage = async (
             },
           },
         ]),
-    ...(timeQuery
-      ? [
-          {
-            $match: {
-              validFrom: {
-                $lte: timeQuery.end,
-              },
-            },
-          },
-        ]
-      : []),
+    {
+      $match: {
+        validFrom: {
+          $lte: timeQuery.end,
+        },
+      },
+    },
+
     {
       $group: {
         _id: "$fqdn",

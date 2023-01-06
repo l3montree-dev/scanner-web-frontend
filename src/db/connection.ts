@@ -44,15 +44,18 @@ async function connect() {
   connection = (await connectionPromise).connection;
   connection = addModels(connection);
 
-  connection.db.createIndex(
-    "domains",
-    {
-      fqdn: 1,
-      ipV4AddressNumber: 1,
-    },
-    { unique: true }
-  );
-  connection.db.createIndex("networks", { cidr: 1 }, { unique: true });
+  await Promise.all([
+    connection.db.createIndex(
+      "domains",
+      {
+        fqdn: 1,
+        ipV4AddressNumber: 1,
+      },
+      { unique: true }
+    ),
+    connection.db.createIndex("networks", { cidr: 1 }, { unique: true }),
+    connection.db.createIndex("dashboards", { userId: 1 }, { unique: true }),
+  ]);
 
   return connection;
 }

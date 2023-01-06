@@ -47,7 +47,7 @@ const createUser = async (
   const documents = await db.Network.create(newNetworks);
   // then create the user with the network ids.
   const createdUser = await db.User.create({
-    _id: user._id,
+    _id: user._id ?? user.id,
     role: user.role,
     networks: documents.concat(existingNetworks).map((doc) => doc._id),
   });
