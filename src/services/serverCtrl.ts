@@ -135,7 +135,6 @@ const startScanResponseLoop = once(() => {
             reportService.handleNewScanReport(
               {
                 ...content,
-                ipAddress: address,
                 validFrom: content.timestamp,
                 lastScan: content.timestamp,
                 automated: true,

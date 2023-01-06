@@ -2,14 +2,14 @@ import { GetServerSidePropsContext } from "next";
 import { authOptions } from "../pages/api/auth/[...nextauth]";
 import { userService } from "../services/userService";
 
-import { IUser } from "../types";
+import { AppUser, IUser } from "../types";
 import { getServerSession } from "../utils/server";
 
 import { tryDB } from "./tryDB";
 
 export const withCurrentUser = async (
   ctx: GetServerSidePropsContext
-): Promise<IUser> => {
+): Promise<AppUser> => {
   const [{ User }, session] = await Promise.all([
     tryDB(),
     getServerSession(ctx.req, ctx.res, authOptions),

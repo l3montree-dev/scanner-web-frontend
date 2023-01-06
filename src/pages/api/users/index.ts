@@ -57,7 +57,11 @@ export default decorate(
       // create a new user inside our database as well.
       try {
         const [_, newNetworks] = await userService.createUser(
-          { ...user, _id: id, networks: user.networks.map(parseNetwork) },
+          {
+            ...user,
+            _id: id,
+            networks: user.networks.map(parseNetwork),
+          },
           db
         );
 

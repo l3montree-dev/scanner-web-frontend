@@ -62,19 +62,16 @@ export interface INetworkPatchDTO {
 
 export type IUserPutDTO = ICreateUserDTO;
 
-export type IUser = {
+export interface IUser {
+  _id: string;
   networks: INetwork[];
   role: string;
-} & (
-  | {
-      id: string;
-      _id: undefined;
-    }
-  | {
-      _id: string;
-      id: undefined;
-    }
-);
+}
+
+// the user object after it was retrieved from the database.
+export interface AppUser extends Omit<IUser, "_id"> {
+  id: string;
+}
 
 export type IIpLookupReportMsg = {
   results: { [ip: string]: string[] };

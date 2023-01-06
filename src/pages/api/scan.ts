@@ -97,7 +97,6 @@ export default decorate(
         return res.status(500).json({
           error: "Error happened...",
           fqdn: result.fqdn,
-          ipAddress: result.ipAddress,
         });
       }
     } else if (!isScanError(result)) {

@@ -20,7 +20,6 @@ import {
 import tailwindConfig from "../../../tailwind.config.js";
 import DashboardPage from "../../components/DashboardPage";
 import SideNavigation from "../../components/SideNavigation";
-import { toDTO } from "../../db/models.js";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
 import { withCurrentUser } from "../../decorators/withCurrentUser";
 import { withDB } from "../../decorators/withDB";

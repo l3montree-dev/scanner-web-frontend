@@ -1,5 +1,5 @@
 import { ModelsType, toDTO } from "../db/models";
-import { IDashboard, IUser } from "../types";
+import { AppUser, IDashboard, IUser } from "../types";
 import { getLogger } from "./logger";
 import { statService } from "./statService";
 
@@ -17,7 +17,7 @@ const pointsInTime = (start: Date, end: Date, dataPoints = 5) => {
 };
 
 const staleWhileRevalidate = async (
-  currentUser: IUser,
+  currentUser: AppUser,
   admin: boolean,
   db: ModelsType
 ): Promise<IDashboard> => {
@@ -56,10 +56,10 @@ const staleWhileRevalidate = async (
       // create the new dashboard.
       const dashboard = await db.Dashboard.findOneAndUpdate(
         {
-          userId: currentUser._id ?? currentUser.id,
+          userId: currentUser.id,
         },
         {
-          userId: currentUser._id ?? currentUser.id,
+          userId: currentUser.id,
           currentState: data,
           totals: {
             uniqueDomains,
@@ -83,7 +83,7 @@ const staleWhileRevalidate = async (
 
   // check if a dashboard does already exist - otherwise we have to wait for the updatePromise
   const dashboard = await db.Dashboard.findOne({
-    userId: currentUser._id ?? currentUser.id,
+    userId: currentUser.id,
   }).lean();
   if (dashboard) {
     return toDTO(dashboard);

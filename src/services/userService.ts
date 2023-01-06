@@ -1,9 +1,9 @@
 import getConnection from "../db/connection";
 import { ModelsType } from "../db/models";
-import { IUser, INetwork, WithoutId } from "../types";
+import { IUser, INetwork, WithoutId, AppUser } from "../types";
 import { jsonSerializableStage } from "../utils/dbUtils";
 
-const findUserById = async (id: string) => {
+const findUserById = async (id: string): Promise<AppUser> => {
   const { models } = await getConnection();
 
   const res = await models.User.aggregate([
@@ -47,7 +47,7 @@ const createUser = async (
   const documents = await db.Network.create(newNetworks);
   // then create the user with the network ids.
   const createdUser = await db.User.create({
-    _id: user._id ?? user.id,
+    _id: user._id,
     role: user.role,
     networks: documents.concat(existingNetworks).map((doc) => doc._id),
   });
