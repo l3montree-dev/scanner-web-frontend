@@ -51,13 +51,17 @@ async function connect() {
         fqdn: 1,
         ipV4AddressNumber: 1,
       },
-      { unique: true }
+      { unique: true, name: "fqdn_1_ipV4AddressNumber_1" }
     ),
-    connection.db.createIndex("networks", { cidr: 1 }, { unique: true }),
+    connection.db.createIndex(
+      "networks",
+      { cidr: 1 },
+      { unique: true, name: "cidr_1" }
+    ),
     connection.db.createIndex(
       "dashboards",
       { userId: 1 },
-      { unique: true, name: "dashboardUserId" }
+      { unique: true, name: "userId_1" }
     ),
   ]);
 
