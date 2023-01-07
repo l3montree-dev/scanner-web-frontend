@@ -26,6 +26,7 @@ import useLoading from "../../hooks/useLoading";
 import {
   DomainInspectionType,
   HeaderInspectionType,
+  InspectionType,
   NetworkInspectionType,
   OrganizationalInspectionType,
   TLSInspectionType,
@@ -80,7 +81,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
   const scanRequest = useLoading();
   const router = useRouter();
 
-  const handleSort = (key: typeof sort["key"]) => {
+  const handleSort = (key: InspectionType | "fqdn" | "ipV4Address") => {
     // check if we should reverse the order.
     const instructions = { key, direction: 1 as 1 | -1 };
     if (key === sort.key) {
@@ -92,7 +93,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
     });
   };
 
-  const getIcon = (key: typeof sort["key"]) => {
+  const getIcon = (key: InspectionType | "fqdn" | "ipV4Address") => {
     if (sort.key === key) {
       return sort.direction === 1 ? faCaretUp : faCaretDown;
     }

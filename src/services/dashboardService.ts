@@ -5,13 +5,15 @@ import { statService } from "./statService";
 
 const logger = getLogger(__filename);
 
-const pointsInTime = (start: Date, end: Date, dataPoints = 5) => {
-  const timeDiff = end.getTime() - start.getTime();
+const eachWeek = (start: Date, end: Date, dataPoints = 5) => {
   const dates = [start.getTime()];
 
-  for (let i = 0; i < dataPoints; i++) {
-    dates.push(dates[i] + timeDiff / dataPoints);
+  let currentDate = start;
+  while (currentDate <= end) {
+    currentDate = new Date(currentDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+    dates.push(currentDate.getTime());
   }
+  dates.push(end.getTime());
 
   return dates;
 };
@@ -31,10 +33,10 @@ const staleWhileRevalidate = async (
     ),
     statService.getTotals(admin, currentUser.networks, db.Domain),
     Promise.all(
-      pointsInTime(
-        new Date(Date.now() - 1000 * 60 * 60 * 24 * 14),
-        new Date(),
-        2
+      eachWeek(
+        // first of january in 2023
+        new Date(2023, 0, 1),
+        new Date()
       ).map(async (_, i, arr) => {
         const res = await statService.getFailedSuccessPercentage(
           admin,
