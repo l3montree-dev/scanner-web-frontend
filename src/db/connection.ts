@@ -54,7 +54,11 @@ async function connect() {
       { unique: true }
     ),
     connection.db.createIndex("networks", { cidr: 1 }, { unique: true }),
-    connection.db.createIndex("dashboards", { userId: 1 }, { unique: true }),
+    connection.db.createIndex(
+      "dashboards",
+      { userId: 1 },
+      { unique: true, name: "dashboardUserId" }
+    ),
   ]);
 
   return connection;
