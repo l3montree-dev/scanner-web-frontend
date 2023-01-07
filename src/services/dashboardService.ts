@@ -5,15 +5,14 @@ import { statService } from "./statService";
 
 const logger = getLogger(__filename);
 
-const eachWeek = (start: Date, end: Date, dataPoints = 5) => {
+const eachWeek = (start: Date, end: Date) => {
   const dates = [start.getTime()];
 
   let currentDate = start;
   while (currentDate <= end) {
     currentDate = new Date(currentDate.getTime() + 7 * 24 * 60 * 60 * 1000);
-    dates.push(currentDate.getTime());
+    dates.push(Math.min(currentDate.getTime(), end.getTime()));
   }
-  dates.push(end.getTime());
 
   return dates;
 };

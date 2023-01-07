@@ -17,7 +17,7 @@ export const reportSchema = new Schema<IReport>(
 
 export const dashboardSchema = new Schema<IDashboard>(
   {
-    userId: { type: SchemaTypes.String, index: true },
+    userId: { type: SchemaTypes.String, index: true, unique: true },
     historicalData: SchemaTypes.Mixed,
     currentState: SchemaTypes.Mixed,
     totals: SchemaTypes.Mixed,

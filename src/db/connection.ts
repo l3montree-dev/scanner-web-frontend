@@ -53,16 +53,6 @@ async function connect() {
       },
       { unique: true, name: "fqdn_1_ipV4AddressNumber_1" }
     ),
-    connection.db.createIndex(
-      "networks",
-      { cidr: 1 },
-      { unique: true, name: "cidr_1" }
-    ),
-    connection.db.createIndex(
-      "dashboards",
-      { userId: 1 },
-      { unique: true, name: "userId_1" }
-    ),
   ]);
 
   return connection;
