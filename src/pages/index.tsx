@@ -1,13 +1,12 @@
 import { faRefresh } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { ScanReport } from "@prisma/client";
 import type { NextPage } from "next";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import Button from "../components/Button";
-import Footer from "../components/Footer";
 import Meta from "../components/Meta";
 import Page from "../components/Page";
 import ResultGrid from "../components/ResultGrid";
-import { WithId } from "../db/models";
 import useLoading from "../hooks/useLoading";
 import {
   DomainInspectionType,
@@ -19,8 +18,8 @@ import {
 } from "../inspection/scans";
 
 import { clientHttpClient } from "../services/clientHttpClient";
-import { IReport } from "../types";
-import { sanitizeFQDN, classNames } from "../utils/common";
+import { DetailedScanReport } from "../types";
+import { classNames, sanitizeFQDN } from "../utils/common";
 
 const hostnameRegex = new RegExp(
   /^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
@@ -41,7 +40,7 @@ const Home: NextPage = () => {
   const [website, setWebsite] = useState("");
   const scanRequest = useLoading();
   const refreshRequest = useLoading();
-  const [report, setReport] = useState<null | IReport>(null);
+  const [report, setReport] = useState<null | DetailedScanReport>(null);
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -72,7 +71,7 @@ const Home: NextPage = () => {
         );
       }
 
-      const obj: WithId<IReport> = await response.json();
+      const obj: DetailedScanReport = await response.json();
       setReport(obj);
       scanRequest.success();
     } catch (e) {
@@ -130,7 +129,7 @@ const Home: NextPage = () => {
 
   const amountPassed = useMemo(() => {
     if (!report) return 0;
-    return Object.keys(report.result)
+    return Object.keys(report)
       .filter((key) =>
         (
           [
@@ -143,11 +142,11 @@ const Home: NextPage = () => {
           ] as string[]
         ).includes(key)
       )
-      .map((key) => report.result[key as InspectionType])
-      .filter((inspection) => inspection?.didPass).length;
+      .map((key) => report[key as InspectionType])
+      .filter((inspection) => !!inspection).length;
   }, [report]);
 
-  const dateString = report ? new Date(report.lastScan).toLocaleString() : "";
+  const dateString = report ? new Date(report.createdAt).toLocaleString() : "";
   return (
     <Page>
       <Meta />
@@ -207,21 +206,21 @@ const Home: NextPage = () => {
                   {report.fqdn}
                 </a>
               </h2>
-              {report.createdAt !== 0 && (
-                <div className="flex items-center flex-row">
-                  <p>{dateString.substring(0, dateString.length - 3)}</p>
-                  <button
-                    onClick={handleRefresh}
-                    title="Testergebnisse aktualisieren"
-                    className={classNames("ml-2 bg-deepblue-200 w-8 h-8")}
-                  >
-                    <FontAwesomeIcon
-                      className={refreshRequest.isLoading ? "rotate" : ""}
-                      icon={faRefresh}
-                    />
-                  </button>
-                </div>
-              )}
+
+              <div className="flex items-center flex-row">
+                <p>{dateString.substring(0, dateString.length - 3)}</p>
+                <button
+                  onClick={handleRefresh}
+                  title="Testergebnisse aktualisieren"
+                  className={classNames("ml-2 bg-deepblue-200 w-8 h-8")}
+                >
+                  <FontAwesomeIcon
+                    className={refreshRequest.isLoading ? "rotate" : ""}
+                    icon={faRefresh}
+                  />
+                </button>
+              </div>
+
               {refreshRequest.errored && (
                 <p className={classNames("text-red-500")}>
                   {refreshRequest.errorMessage}

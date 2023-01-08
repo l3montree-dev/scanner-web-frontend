@@ -1,12 +1,11 @@
+import { Network } from "@prisma/client";
 import { FormEvent, FunctionComponent, useState } from "react";
 import useLoading from "../hooks/useLoading";
-import { INetwork } from "../types";
-import { isValidIp, isValidMask } from "../utils/validator";
 import Button from "./Button";
 import FormTextarea from "./FormTextarea";
 import PrimaryButton from "./PrimaryButton";
 
-interface Props extends INetwork {
+interface Props extends Network {
   onSubmit: (newComment: string) => Promise<void>;
   onDelete: () => Promise<void>;
 }

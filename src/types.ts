@@ -1,19 +1,5 @@
+import { ScanReport } from "@prisma/client";
 import { InspectionType, InspectResultDTO } from "./inspection/scans";
-
-export interface IReport {
-  result: Partial<{
-    [key in InspectionType]: InspectResultDTO;
-  }>;
-  validFrom: number;
-  lastScan: number;
-  fqdn: string;
-  duration: number;
-  version: number;
-  createdAt: number;
-  updatedAt: number;
-  automated: boolean;
-  ipV4AddressNumber: number;
-}
 
 export interface IDashboard {
   userId: string;
@@ -21,8 +7,6 @@ export interface IDashboard {
   currentState: ChartData;
   totals: {
     uniqueDomains: number;
-    dns: number;
-    ipAddresses: number;
   };
 }
 
@@ -44,33 +28,11 @@ export type IDomain = {
   ipV4AddressNumber: number;
 } & { [key in InspectionType]: boolean | null };
 
-export interface INetwork {
-  prefixLength: number;
-  networkAddress: string;
-  startAddress: string;
-  endAddress: string;
-  startAddressNumber: number;
-  endAddressNumber: number;
-  cidr: string;
-  comment?: string;
-  id: string;
-}
-
 export interface INetworkPatchDTO {
   comment?: string;
 }
 
 export type IUserPutDTO = ICreateUserDTO;
-
-export interface IUser {
-  _id: string;
-  role: string;
-}
-
-// the user object after it was retrieved from the database.
-export interface AppUser extends Omit<IUser, "_id"> {
-  id: string;
-}
 
 export type IIpLookupReportMsg = {
   results: { [ip: string]: string[] };
@@ -108,7 +70,6 @@ export interface ISession {
     email: string;
     image: string;
     id: string;
-    networks: INetwork[];
     role: string;
   };
   resource_access: {
@@ -132,11 +93,17 @@ export interface ICreateUserDTO {
 }
 
 export type IScanSuccessResponse = {
-  result: IReport["result"];
+  result: Partial<{
+    [key in InspectionType]: InspectResultDTO;
+  }>;
   fqdn: string;
   ipAddress: string;
   duration: number;
   timestamp: number;
+};
+
+export type DetailedScanReport = ScanReport & {
+  details: IScanSuccessResponse["result"];
 };
 
 export type IScanErrorResponse = {
@@ -161,7 +128,7 @@ export interface PaginateResult<T> {
   pageSize: number;
 }
 
-export type WithoutId<T> = Omit<T, "_id" | "id">;
+export type WithoutId<T> = Omit<T, "id">;
 export interface IKcUser {
   id: string;
   createdTimestamp: number;

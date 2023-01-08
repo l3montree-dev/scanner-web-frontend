@@ -6,6 +6,7 @@ import {
   faQuestionCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Domain, ScanReport } from "@prisma/client";
 import { useRouter } from "next/router";
 import { FunctionComponent, useEffect, useState } from "react";
 import DashboardPage from "../../components/DashboardPage";
@@ -17,11 +18,9 @@ import Pagination from "../../components/Pagination";
 import ResultIcon from "../../components/ResultIcon";
 import SideNavigation from "../../components/SideNavigation";
 import Tooltip from "../../components/Tooltip";
-import { WithId } from "../../db/models";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
 import { withCurrentUser } from "../../decorators/withCurrentUser";
 import { withDB } from "../../decorators/withDB";
-import { withTokenServerSideProps } from "../../decorators/withToken";
 import useLoading from "../../hooks/useLoading";
 import {
   DomainInspectionType,
@@ -34,16 +33,20 @@ import {
 import { clientHttpClient } from "../../services/clientHttpClient";
 import { domainService } from "../../services/domainService";
 
-import { IDomain, IReport, PaginateResult } from "../../types";
-import { classNames, isAdmin } from "../../utils/common";
+import {
+  DetailedScanReport,
+  IScanSuccessResponse,
+  PaginateResult,
+} from "../../types";
+import { classNames } from "../../utils/common";
 
 interface Props {
-  domains: PaginateResult<WithId<IDomain> & { report?: WithId<IReport> }>;
+  domains: PaginateResult<Domain> & { scanReport?: ScanReport };
 }
 
 const SortButton: FunctionComponent<{
-  sortKey: "fqdn" | "ipV4Address" | keyof IReport["result"];
-  onSort: (key: "fqdn" | "ipV4Address" | keyof IReport["result"]) => void;
+  sortKey: "fqdn" | keyof IScanSuccessResponse["result"];
+  onSort: (key: "fqdn" | keyof IScanSuccessResponse["result"]) => void;
   active: boolean;
   getIcon: () => IconProp;
 }> = ({ sortKey: key, onSort, active, getIcon }) => {
@@ -64,14 +67,12 @@ const SortButton: FunctionComponent<{
 };
 
 const Dashboard: FunctionComponent<Props> = (props) => {
-  const [domains, setDomains] = useState<Array<WithId<IDomain>>>(
-    props.domains.data
-  );
+  const [domains, setDomains] = useState<Array<any>>(props.domains.data);
 
   const scanRequest = useLoading();
   const router = useRouter();
 
-  const handleSort = (key: InspectionType | "fqdn" | "ipV4Address") => {
+  const handleSort = (key: InspectionType | "fqdn") => {
     // check if we should reverse the order.
     const instructions = { key, direction: 1 as 1 | -1 };
     if (key === sort.key) {
@@ -83,7 +84,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
     });
   };
 
-  const getIcon = (key: InspectionType | "fqdn" | "ipV4Address") => {
+  const getIcon = (key: InspectionType | "fqdn") => {
     if (sort.key === key) {
       return sort.direction === 1 ? faCaretUp : faCaretDown;
     }
@@ -103,46 +104,34 @@ const Dashboard: FunctionComponent<Props> = (props) => {
     setDomains(props.domains.data);
   }, [props.domains]);
 
-  const scanFQDN = async (fqdn: string, ipV4Address: string) => {
+  const scanFQDN = async (fqdn: string) => {
     scanRequest.loading(fqdn);
 
     const response = await clientHttpClient(
-      `/api/scan?site=${fqdn}&ipV4Address=${ipV4Address}&refresh=true`,
+      `/api/scan?site=${fqdn}&refresh=true`,
       crypto.randomUUID()
     );
 
     if (response.ok) {
-      const data: WithId<IReport> = await response.json();
+      const data: DetailedScanReport = await response.json();
 
       // inject it into the domains
       setDomains((prev) => {
-        const index = prev.findIndex(
-          (d) =>
-            d.fqdn === fqdn && d.ipV4AddressNumber === data.ipV4AddressNumber
-        );
+        const index = prev.findIndex((d) => d.fqdn === fqdn);
         if (index === -1) {
           return prev;
         }
         const newDomains = [...prev];
         newDomains[index] = {
           ...newDomains[index],
-          ipV6Address: data.result.IPv6?.actualValue.addresses ?? [],
-          ...Object.fromEntries(
-            Object.entries(data.result).map(([key, value]) => [
-              key,
-              value.didPass,
-            ])
-          ),
-          lastScan: data.lastScan,
+          lastScan: data.updatedAt.getTime(),
         };
         return newDomains;
       });
       scanRequest.success();
     } else {
       setDomains((prev) => {
-        const index = prev.findIndex(
-          (d) => d.fqdn === fqdn && d.ipV4Address === ipV4Address
-        );
+        const index = prev.findIndex((d) => d.fqdn === fqdn);
         if (index === -1) {
           return prev;
         }
@@ -192,7 +181,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
   };
 
   const sort = {
-    key: router.query.sort as "fqdn" | "ipV4Address" | keyof IReport["result"],
+    key: router.query.sort as "fqdn" | keyof IScanSuccessResponse["result"],
     direction: parseInt(router.query.sortDirection as string) as 1 | -1,
   };
 
@@ -236,22 +225,6 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                         active={sort.key === "fqdn"}
                         getIcon={() => getIcon("fqdn")}
                       />
-                    </div>
-                  </th>
-                  <th className="p-2">
-                    <div>
-                      <span>IP Adresse</span>
-                      <SortButton
-                        sortKey="ipV4Address"
-                        onSort={handleSort}
-                        active={sort.key === "ipV4Address"}
-                        getIcon={() => getIcon("ipV4Address")}
-                      />
-                    </div>
-                  </th>
-                  <th className="p-2">
-                    <div>
-                      <span>IPv6 Adresse</span>
                     </div>
                   </th>
                   <th className="p-2">
@@ -353,7 +326,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                           ? "line-through"
                           : ""
                       )}
-                      key={domain.id}
+                      key={domain.fqdn}
                     >
                       <td className="p-2">
                         {domain.fqdn}
@@ -384,11 +357,6 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                           </Tooltip>
                         </div>
                       </td>
-                      <td className="p-2">{domain.ipV4Address}</td>
-                      <td className="p-2">
-                        {(domain.ipV6Address ?? []).join(", ")}
-                      </td>
-
                       <td className="p-2">
                         <ResultIcon didPass={domain.ResponsibleDisclosure} />
                       </td>
@@ -421,9 +389,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                                   scanRequest.key === domain.fqdn &&
                                   scanRequest.isLoading
                                 }
-                                onClick={() =>
-                                  scanFQDN(domain.fqdn, domain.ipV4Address)
-                                }
+                                onClick={() => scanFQDN(domain.fqdn)}
                               >
                                 <div>
                                   <div>Erneut scannen</div>
@@ -459,15 +425,14 @@ const Dashboard: FunctionComponent<Props> = (props) => {
 };
 
 export const getServerSideProps = decorateServerSideProps(
-  async (context, [currentUser, token, db]) => {
+  async (context, [currentUser, prisma]) => {
     // get the query params.
     const page = +(context.query["page"] ?? 0);
     const search = context.query["search"] as string | undefined;
 
     const domains =
       await domainService.getDomainsOfNetworksWithLatestTestResult(
-        isAdmin(token),
-        currentUser.networks,
+        currentUser,
         {
           pageSize: 50,
           page,
@@ -475,7 +440,7 @@ export const getServerSideProps = decorateServerSideProps(
           sort: context.query["sort"] as string | undefined,
           sortDirection: context.query["sortDirection"] as string | undefined,
         },
-        db.Domain
+        prisma
       );
 
     return {
@@ -485,7 +450,6 @@ export const getServerSideProps = decorateServerSideProps(
     };
   },
   withCurrentUser,
-  withTokenServerSideProps,
   withDB
 );
 

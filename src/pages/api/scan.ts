@@ -2,15 +2,13 @@
 import { randomUUID } from "crypto";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import ip from "ip";
-import { ModelsType, toDTO } from "../../db/models";
+import { ScanReport } from "@prisma/client";
 import { decorate } from "../../decorators/decorate";
-import { tryDB } from "../../decorators/tryDB";
+import { withDB } from "../../decorators/withDB";
 import { inspectRPC } from "../../inspection/inspect";
 import { domainService } from "../../services/domainService";
 import { getLogger } from "../../services/logger";
 import { reportService } from "../../services/reportService";
-import { IReport } from "../../types";
 import { isScanError, sanitizeFQDN } from "../../utils/common";
 
 const logger = getLogger(__filename);
@@ -18,8 +16,8 @@ const logger = getLogger(__filename);
 export default decorate(
   async (
     req: NextApiRequest,
-    res: NextApiResponse<IReport | { error: string }>,
-    [db]
+    res: NextApiResponse<ScanReport | { error: string }>,
+    [prisma]
   ) => {
     const start = Date.now();
 
@@ -49,35 +47,31 @@ export default decorate(
 
     if (req.query.refresh !== "true") {
       // check if we already have a report for this site
-      const existingReport = await db.Report?.findOne(
-        {
+      const existingReport = await prisma.scanReport.findMany({
+        where: {
           fqdn: siteToScan,
-          lastScan: {
+          createdAt: {
             // last hour
-            $gte: new Date(Date.now() - 1000 * 60 * 60 * 1),
+            gte: new Date(Date.now() - 1000 * 60 * 60 * 1),
           },
         },
-        null,
-        {
-          sort: {
-            lastScan: -1,
-          },
-        }
-      ).lean();
-      if (existingReport) {
+        orderBy: {
+          createdAt: "desc",
+        },
+        take: 1,
+      });
+      if (existingReport.length === 1) {
         logger.info(
           { requestId },
           `found existing report for site: ${siteToScan} - returning existing report`
         );
-        return res.status(200).json(toDTO(existingReport));
+        return res.status(200).json(existingReport[0]);
       }
     }
 
-    const ipV4Address = req.query.ipV4Address as string | undefined;
+    const result = await inspectRPC(requestId, siteToScan);
 
-    const result = await inspectRPC(requestId, siteToScan, ipV4Address);
-
-    if (isScanError(result) && db.Domain !== undefined) {
+    if (isScanError(result)) {
       if (result.result.error === "fetch failed") {
         logger.error(
           { err: result.result.error, duration: Date.now() - start, requestId },
@@ -88,7 +82,7 @@ export default decorate(
             "Invalid site provided. Please provide a valid fully qualified domain name as site query parameter. Example: ?site=example.com",
         });
       } else {
-        await domainService.handleDomainScanError(result, db.Domain);
+        await domainService.handleDomainScanError(result, prisma);
         logger.error(
           {
             err: result.result.error.message,
@@ -102,32 +96,13 @@ export default decorate(
           fqdn: result.fqdn,
         });
       }
-    } else if (!isScanError(result)) {
+    } else {
       logger.info(
         { duration: Date.now() - start, requestId },
         `successfully scanned site: ${siteToScan}`
       );
-
-      const data: IReport = {
-        ...result,
-        duration: Date.now() - start,
-        version: 1,
-        lastScan: result.timestamp,
-        validFrom: result.timestamp,
-        createdAt: result.timestamp,
-        updatedAt: result.timestamp,
-        automated: false,
-        ipV4AddressNumber: ip.toLong(result.ipAddress),
-      };
-
-      if (db) {
-        return res.json(
-          toDTO(await reportService.handleNewScanReport(data, db as ModelsType))
-        );
-      } else {
-        return res.json(data);
-      }
+      return res.json(await reportService.handleNewScanReport(result, prisma));
     }
   },
-  tryDB
+  withDB
 );

@@ -15,7 +15,7 @@ model ScanReport {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  ipV4     String @db.VarChar(255)
+  ipAddress    String @db.VarChar(255)
   duration Int
 
   // the full report
@@ -108,13 +108,18 @@ model Domain {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  lastScan   DateTime
+  lastScan   Int? 
   errorCount Int      @default(0)
   queued     Boolean  @default(false)
 
+  // pretty much the reason why this domain is part of the system at all.
+  group String @db.VarChar(255)
+
   users UserDomainRelation[]
 
-  ScanReport ScanReport[]
+  scanReport ScanReport[]
+
+  @@index([group])
 }
 
 model UserDomainRelation {
@@ -129,7 +134,17 @@ model UserDomainRelation {
 model User {
   id         String               @id
   role       String?
-  name       String?
   domains    UserDomainRelation[]
   dashboards Dashboard[]
+}
+
+model Network {
+  cidr               String  @id
+  prefixLength       Int
+  networkAddress     String
+  startAddress       String
+  endAddress         String
+  startAddressNumber Int
+  endAddressNumber   Int
+  comment            String?
 }

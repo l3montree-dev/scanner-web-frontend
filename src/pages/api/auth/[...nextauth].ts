@@ -1,6 +1,5 @@
 import NextAuth, { AuthOptions } from "next-auth";
 import KeycloakProvider from "next-auth/providers/keycloak";
-import { userService } from "../../../services/userService";
 
 import { IToken } from "../../../types";
 
@@ -63,10 +62,6 @@ export const authOptions: AuthOptions = {
   ],
   callbacks: {
     async session(params: any) {
-      if (params.token.sub) {
-        // fetch the user#
-        const user = await userService.findUserById(params.token.sub);
-      }
       return {
         ...params.session,
         user: { ...params.session.user, id: params.token.sub },

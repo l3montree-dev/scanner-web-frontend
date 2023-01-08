@@ -1,18 +1,18 @@
 import UserRepresentation from "@keycloak/keycloak-admin-client/lib/defs/userRepresentation";
+import { User } from "@prisma/client";
 import React, { FunctionComponent, useState } from "react";
 import useLoading from "../hooks/useLoading";
-import { IUser, IUserPutDTO } from "../types";
+import { IUserPutDTO } from "../types";
 import FormInput from "./FormInput";
 import PrimaryButton from "./PrimaryButton";
 
-type UserType = Omit<IUser, "_id"> & { id: string } & UserRepresentation;
+type UserType = Omit<User, "_id"> & { id: string } & UserRepresentation;
 interface Props extends UserType {
   onSave: (form: IUserPutDTO & { id: string }) => Promise<void>; // should return the password of the user
 }
 const EditUserForm: FunctionComponent<Props> = (props) => {
   const createRequest = useLoading();
 
-  const [username, setUsername] = useState(props.username ?? "");
   const [firstName, setFirstName] = useState(props.firstName ?? "");
   const [lastName, setLastName] = useState(props.lastName ?? "");
   const [role, setRole] = useState(props.role ?? "");
@@ -25,7 +25,7 @@ const EditUserForm: FunctionComponent<Props> = (props) => {
         id: props.id,
         firstName,
         lastName,
-        username,
+        username: props.username ?? "",
         role,
       });
 

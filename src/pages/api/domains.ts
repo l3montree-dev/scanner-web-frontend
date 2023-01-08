@@ -20,7 +20,7 @@ export const config = {
 };
 
 export default decorate(
-  async (req: NextApiRequest, res: NextApiResponse, [db, session]) => {
+  async (req: NextApiRequest, res: NextApiResponse, [prisma, session]) => {
     const requestId = req.headers["x-request-id"] as string;
     if (!session) {
       res.status(401).end();
@@ -40,12 +40,7 @@ export default decorate(
         (await stream2buffer(req)).toString()
       );
 
-      const ips = await resolve4(domain);
-      await Promise.all(
-        ips.map((ip) => {
-          return domainService.handleNewFQDN(domain, ip, db.Domain);
-        })
-      );
+      await domainService.handleNewDomain({ fqdn: domain }, prisma);
 
       // the domain will automatically be inspected.
       return res.send({ success: true, fqdn: domain });
@@ -111,12 +106,7 @@ export default decorate(
           .map((domain) => {
             return async () => {
               try {
-                const ips = await resolve4(domain);
-                await Promise.all(
-                  ips.map((ip) => {
-                    return domainService.handleNewFQDN(domain, ip, db.Domain);
-                  })
-                );
+                await domainService.handleNewDomain({ fqdn: domain }, prisma);
                 imported++;
               } catch (err: any) {
                 return;

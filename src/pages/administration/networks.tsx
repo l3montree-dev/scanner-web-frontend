@@ -1,5 +1,6 @@
 import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Network } from "@prisma/client";
 import { GetServerSideProps } from "next";
 import { FunctionComponent, useState } from "react";
 import AdministrationPage from "../../components/AdministrationPage";
@@ -16,15 +17,14 @@ import { withDB } from "../../decorators/withDB";
 import { withTokenServerSideProps } from "../../decorators/withToken";
 import { clientHttpClient } from "../../services/clientHttpClient";
 import { networkService } from "../../services/networkService";
-import { INetwork } from "../../types";
 import { classNames, isAdmin } from "../../utils/common";
 
 interface Props {
-  networks: Array<INetwork>;
+  networks: Array<Network>;
 }
 const Network: FunctionComponent<Props> = (props) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [edit, setEdit] = useState<INetwork | null>(null);
+  const [edit, setEdit] = useState<Network | null>(null);
   const [networks, setNetworks] = useState(props.networks);
   const onSubmit = async (networks: string[]) => {
     const res = await clientHttpClient("/api/networks", crypto.randomUUID(), {
@@ -39,9 +39,9 @@ const Network: FunctionComponent<Props> = (props) => {
     setIsOpen(false);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (cidr: string) => {
     const res = await clientHttpClient(
-      `/api/networks/${id}`,
+      `/api/networks/${cidr}`,
       crypto.randomUUID(),
       {
         method: "DELETE",
@@ -50,7 +50,7 @@ const Network: FunctionComponent<Props> = (props) => {
     if (!res.ok) {
       throw res;
     }
-    setNetworks((prev) => prev.filter((network) => network.id !== id));
+    setNetworks((prev) => prev.filter((network) => network.cidr !== cidr));
     setEdit(null);
   };
 
@@ -59,7 +59,7 @@ const Network: FunctionComponent<Props> = (props) => {
       return;
     }
     const res = await clientHttpClient(
-      `/api/networks/${edit.id}`,
+      `/api/networks/${edit.cidr}`,
       crypto.randomUUID(),
       {
         method: "PATCH",
@@ -72,7 +72,7 @@ const Network: FunctionComponent<Props> = (props) => {
       throw res;
     }
     setNetworks((prev) => {
-      const index = prev.findIndex((network) => network.id === edit.id);
+      const index = prev.findIndex((network) => network.cidr === edit.cidr);
       if (index === -1) {
         return prev;
       }
@@ -127,7 +127,7 @@ const Network: FunctionComponent<Props> = (props) => {
                     i + 1 !== networks.length ? "border-b" : "",
                     "border-b-deepblue-200 transition-all"
                   )}
-                  key={network.id}
+                  key={network.cidr}
                 >
                   <td className="p-2">{network.cidr}</td>
                   <td className="p-2">{network.comment}</td>
@@ -143,7 +143,7 @@ const Network: FunctionComponent<Props> = (props) => {
                           <MenuItem onClick={() => setEdit(network)}>
                             Bearbeiten
                           </MenuItem>
-                          <MenuItem onClick={() => handleDelete(network.id)}>
+                          <MenuItem onClick={() => handleDelete(network.cidr)}>
                             Löschen
                           </MenuItem>
                         </MenuList>
@@ -171,7 +171,7 @@ const Network: FunctionComponent<Props> = (props) => {
         {edit && (
           <EditNetworkForm
             {...edit}
-            onDelete={() => handleDelete(edit.id)}
+            onDelete={() => handleDelete(edit.cidr)}
             onSubmit={handleUpdateNetwork}
           />
         )}

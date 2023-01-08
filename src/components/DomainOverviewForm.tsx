@@ -1,7 +1,6 @@
 import { FormEvent, FunctionComponent, useState } from "react";
 import useLoading from "../hooks/useLoading";
-import { useSession } from "../hooks/useSession";
-import { classNames, isAdmin } from "../utils/common";
+import { classNames } from "../utils/common";
 import Button from "./Button";
 import DragAndDrop from "./DragAndDrop";
 import FormInput from "./FormInput";
@@ -16,7 +15,6 @@ const DomainOverviewForm: FunctionComponent<{
   const searchRequest = useLoading();
   const createRequest = useLoading();
 
-  const { data: session } = useSession();
   const [addDomainIsOpen, setAddDomainIsOpen] = useState(false);
   const [f, setFiles] = useState<File[]>([]);
 
@@ -120,13 +118,7 @@ const DomainOverviewForm: FunctionComponent<{
               <div className="flex-1">
                 <FormInput
                   onChange={setNewDomain}
-                  label={`Domain hinzufügen ${
-                    !isAdmin(session)
-                      ? `(Es werden nur Domains hinzugefügt, die sich in folgenden Netzwerken befinden: ${session?.user.networks
-                          .map((n) => n.cidr)
-                          .join(", ")})`
-                      : ""
-                  }`}
+                  label={`Domain hinzufügen`}
                   value={newDomain}
                   placeholder="example.com"
                 />

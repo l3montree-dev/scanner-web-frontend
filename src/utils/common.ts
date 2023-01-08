@@ -2,7 +2,6 @@ import {
   IIpLookupProgressUpdateMsg,
   IIpLookupReportDTO,
   IIpLookupReportMsg,
-  INetwork,
   IScanErrorResponse,
   IScanResponse,
   ISession,
@@ -23,6 +22,7 @@ import {
   OrganizationalInspectionType,
   TLSInspectionType,
 } from "../inspection/scans";
+import { Network } from "@prisma/client";
 
 export const serverOnly = <T>(fn: () => T): T | null => {
   if (typeof window === "undefined") {
@@ -112,7 +112,7 @@ export const classNames = (
   return args.filter(Boolean).join(" ");
 };
 
-export const parseNetwork = (cidr: string): WithoutId<INetwork> => {
+export const parseNetwork = (cidr: string): WithoutId<Network> => {
   const subnet = ip.cidrSubnet(cidr);
 
   return {
@@ -121,6 +121,7 @@ export const parseNetwork = (cidr: string): WithoutId<INetwork> => {
     startAddress: subnet.firstAddress,
     endAddress: subnet.lastAddress,
     cidr,
+    comment: null,
     startAddressNumber: ip.toLong(subnet.firstAddress),
     endAddressNumber: ip.toLong(subnet.lastAddress),
   };

@@ -1,8 +1,4 @@
-import {
-  faListCheck,
-  faNetworkWired,
-  faServer,
-} from "@fortawesome/free-solid-svg-icons";
+import { faServer } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link.js";
 import { FunctionComponent, useEffect, useState } from "react";
@@ -98,8 +94,6 @@ const Dashboard: FunctionComponent<Props> = (props) => {
     ),
   });
 
-  const user = useSession();
-
   useEffect(() => {
     setData(props.currentState);
   }, [props.currentState]);
@@ -117,34 +111,6 @@ const Dashboard: FunctionComponent<Props> = (props) => {
           <div>
             <h2 className="text-2xl mt-10">Gesamtanzahl der Dienste</h2>
             <div className="flex mt-5 justify-start flex-wrap flex-wrap flex-row">
-              <div className="mr-2">
-                <div className="bg-deepblue-500 flex-row flex items-center p-5 border border-deepblue-200">
-                  <FontAwesomeIcon
-                    className="text-slate-400 mx-2"
-                    fontSize={75}
-                    icon={faListCheck}
-                  />
-                  <div className="ml-5 text-xl">
-                    <b className="text-5xl">{props.totals.dns}</b>
-                    <br />
-                    DNS-Einträge
-                  </div>
-                </div>
-              </div>
-              <div>
-                <div className="bg-deepblue-500 flex-row flex mr-2 items-center p-5 border border-deepblue-200">
-                  <FontAwesomeIcon
-                    className="text-slate-400 mx-2"
-                    fontSize={75}
-                    icon={faServer}
-                  />
-                  <div className="ml-5 text-xl">
-                    <b className="text-5xl">{props.totals.ipAddresses}</b>
-                    <br />
-                    IP-Adressen
-                  </div>
-                </div>
-              </div>
               <div>
                 <div className="bg-deepblue-500 flex-row flex mr-2 items-center p-5 border border-deepblue-200">
                   <FontAwesomeIcon
@@ -155,38 +121,10 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                   <div className="ml-5 text-xl">
                     <b className="text-5xl">{props.totals.uniqueDomains}</b>
                     <br />
-                    Eindeutige Domain-Namen
+                    Domains
                   </div>
                 </div>
               </div>
-              {user.data?.user.networks.length !== 0 && (
-                <div>
-                  <div className="bg-deepblue-500 h-full flex-row flex items-center p-5 border border-deepblue-200">
-                    <FontAwesomeIcon
-                      className="text-slate-400 mx-2"
-                      fontSize={75}
-                      icon={faNetworkWired}
-                    />
-                    <div className="ml-5">
-                      <div className="flex mb-2 gap-2 flex-wrap flex-row">
-                        {user.data?.user.networks.map((network) => (
-                          <div
-                            className="bg-deepblue-200 border border-deepblue-200 px-2 py-1"
-                            key={network.id}
-                          >
-                            <div>
-                              <b>{network.cidr}</b>
-                              <br />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-
-                      <span className="text-xl">Verwaltete Netzwerke</span>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
           <h2 className="text-2xl mt-10 mb-5">Testergebnisse</h2>
@@ -194,7 +132,8 @@ const Dashboard: FunctionComponent<Props> = (props) => {
             Ausschlie&szlig;lich erreichbare Domains können getestet werden. Die
             Anfrage muss vom Server in maximal zehn Sekunden beantwortet werden,
             damit eine Domain als erreichbar gilt. Derzeit sind{" "}
-            {props.currentState.totalCount} von {props.totals.dns} erreichbar.
+            {props.currentState.totalCount} von {props.totals.uniqueDomains}{" "}
+            erreichbar.
           </p>
           <div className="flex mt-5 justify-start gap-2 flex-wrap flex-wrap flex-row">
             {displayKey.map((key) => {
@@ -311,7 +250,8 @@ const Dashboard: FunctionComponent<Props> = (props) => {
             Ausschlie&szlig;lich erreichbare Domains können getestet werden. Die
             Anfrage muss vom Server in maximal zehn Sekunden beantwortet werden,
             damit eine Domain als erreichbar gilt. Derzeit sind{" "}
-            {props.currentState.totalCount} von {props.totals.dns} erreichbar.
+            {props.currentState.totalCount} von {props.totals.uniqueDomains}{" "}
+            erreichbar.
           </p>
 
           <div className="flex mt-5 justify-start -mx-2 flex-wrap flex-row">
@@ -439,13 +379,10 @@ const Dashboard: FunctionComponent<Props> = (props) => {
 };
 
 export const getServerSideProps = decorateServerSideProps(
-  async (context, [currentUser, token, db]) => {
-    const admin = isAdmin(token);
-
+  async (_context, [currentUser, prisma]) => {
     const dashboard = await dashboardService.staleWhileRevalidate(
       currentUser,
-      admin,
-      db
+      prisma
     );
 
     return {
@@ -453,7 +390,6 @@ export const getServerSideProps = decorateServerSideProps(
     };
   },
   withCurrentUser,
-  withTokenServerSideProps,
   withDB
 );
 

@@ -1,6 +1,7 @@
 import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import UserRepresentation from "@keycloak/keycloak-admin-client/lib/defs/userRepresentation";
+import { User } from "@prisma/client";
 import { signIn } from "next-auth/react";
 import { FunctionComponent, useEffect, useState } from "react";
 import AdministrationPage from "../../components/AdministrationPage";
@@ -19,7 +20,7 @@ import { clientHttpClient } from "../../services/clientHttpClient";
 import { keycloak } from "../../services/keycloak";
 import { userService } from "../../services/userService";
 
-import { ICreateUserDTO, IUser } from "../../types";
+import { ICreateUserDTO } from "../../types";
 import { classNames, isAdmin } from "../../utils/common";
 
 export const parseCreateUserForm = ({
@@ -47,7 +48,7 @@ export const parseCreateUserForm = ({
 
 interface Props {
   error: boolean;
-  users: Array<UserRepresentation & Omit<IUser, "_id"> & { id: string }>;
+  users: Array<UserRepresentation & User & { id: string }>;
 }
 const Users: FunctionComponent<Props> = (props) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -71,9 +72,9 @@ const Users: FunctionComponent<Props> = (props) => {
       throw res;
     }
     const body = await res.json();
-    const user: IUser = body.user;
+    const user: User = body.user;
 
-    setUser((users) => [{ ...user, id: user._id }, ...users]);
+    setUser((users) => [user, ...users]);
     return body.password;
   };
 
@@ -98,9 +99,7 @@ const Users: FunctionComponent<Props> = (props) => {
     setEdit(null);
   };
 
-  const handleUpdateUser = async (
-    user: Omit<IUser, "_id"> & { id: string }
-  ) => {
+  const handleUpdateUser = async (user: User) => {
     const res = await clientHttpClient(
       `/api/users/${user.id}`,
       crypto.randomUUID(),
@@ -112,11 +111,11 @@ const Users: FunctionComponent<Props> = (props) => {
     if (!res.ok) {
       throw res;
     }
-    const body: IUser = await res.json();
+    const body: User = await res.json();
 
     setUser((users) =>
       users.map((u) =>
-        u.id === body._id ? { ...body, username: u.username, id: body._id } : u
+        u.id === body.id ? { ...body, username: u.username } : u
       )
     );
     setEdit(null);
@@ -240,7 +239,7 @@ export const getServerSideProps = decorateServerSideProps(
         props: {
           error: false,
           users: kcUsers.map((user) => {
-            const userFromDB = users.find((u) => u._id === user.id);
+            const userFromDB = users.find((u) => u.id === user.id);
             return {
               ...user,
               role: userFromDB?.role ?? "",
