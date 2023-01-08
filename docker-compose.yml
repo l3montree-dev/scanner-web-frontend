@@ -35,6 +35,14 @@ services:
       - ./test-server/index.html:/html/index.html
     ports:
       - "443:443"
+  mysql:
+    image: mysql:8
+    ports:
+      - "3306:3306"
+    env_file:
+      - .env
+    volumes:
+      - mysql_data:/var/lib/mysql
   mongodb:
     image: mongo
     environment:
@@ -75,3 +83,4 @@ volumes:
   db-data:
   mongo-config:
   redis_data:
+  mysql_data:

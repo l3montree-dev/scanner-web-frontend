@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model ScanReport {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ipV4     String @db.VarChar(255)
+  duration Int
+
+  details Json
+
+  fqdn   String @db.VarChar(255)
+  domain Domain @relation(fields: [fqdn], references: [fqdn])
+
+  @@index([fqdn])
+}
+
+model Dashboard {
+  id Int @id @default(autoincrement())
+
+  content Json
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+}
+
+model Domain {
+  fqdn String @id
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lastScan   DateTime
+  errorCount Int      @default(0)
+  queued     Boolean  @default(false)
+
+  users UserDomainRelation[]
+
+  ScanReport ScanReport[]
+}
+
+model UserDomainRelation {
+  user     User   @relation(fields: [userId], references: [id])
+  userId   String
+  domain   Domain @relation(fields: [domainId], references: [fqdn])
+  domainId String
+
+  @@id([userId, domainId])
+}
+
+model User {
+  id         String               @id
+  role       String?
+  name       String?
+  domains    UserDomainRelation[]
+  dashboards Dashboard[]
+}
