@@ -1,28 +1,30 @@
+import { User } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
 import { authOptions } from "../pages/api/auth/[...nextauth]";
-import { userService } from "../services/userService";
 
-import { AppUser, IUser } from "../types";
 import { getServerSession } from "../utils/server";
-
-import { tryDB } from "./tryDB";
+import { withDB } from "./withDB";
 
 export const withCurrentUser = async (
   ctx: GetServerSidePropsContext
-): Promise<AppUser> => {
-  const [{ User }, session] = await Promise.all([
-    tryDB(),
+): Promise<User> => {
+  const [prisma, session] = await Promise.all([
+    withDB(),
     getServerSession(ctx.req, ctx.res, authOptions),
   ]);
 
-  if (!session || !User) {
+  if (!session) {
     // return 500
     ctx.res.statusCode = 500;
     ctx.res.end();
-    throw new Error("session or user undefined");
+    throw new Error("session is undefined");
   }
 
-  const currentUser = await userService.findUserById(session.user.id);
+  const currentUser = await prisma.user.findFirst({
+    where: {
+      id: session.user.id,
+    },
+  });
   if (!currentUser) {
     throw new Error(`currentUser with id: ${session.user.id} not found`);
   }

@@ -18,12 +18,79 @@ model ScanReport {
   ipV4     String @db.VarChar(255)
   duration Int
 
-  details Json
+  // the full report
+  details Json?
 
   fqdn   String @db.VarChar(255)
   domain Domain @relation(fields: [fqdn], references: [fqdn])
 
+  SubResourceIntegrity  Boolean?
+  NoMixedContent        Boolean?
+  ResponsibleDisclosure Boolean?
+  DNSSec                Boolean?
+  CAA                   Boolean?
+  IPv6                  Boolean?
+  RPKI                  Boolean?
+  HTTP                  Boolean?
+  HTTP308               Boolean?
+  HTTPRedirectsToHttps  Boolean?
+
+  HTTPS                 Boolean?
+  HSTS                  Boolean?
+  HSTSPreloaded         Boolean?
+  ContentSecurityPolicy Boolean?
+  XFrameOptions         Boolean?
+  XSSProtection         Boolean?
+  ContentTypeOptions    Boolean?
+
+  SecureSessionCookies Boolean?
+  TLSv1_2              Boolean?
+  TLSv1_3              Boolean?
+
+  TLSv1_1_Deactivated Boolean?
+  StrongKeyExchange   Boolean?
+  StrongCipherSuites  Boolean?
+
+  ValidCertificate         Boolean?
+  StrongPrivateKey         Boolean?
+  StrongSignatureAlgorithm Boolean?
+
+  MatchesHostname         Boolean?
+  NotRevoked              Boolean?
+  CertificateTransparency Boolean?
+  ValidCertificateChain   Boolean?
+
   @@index([fqdn])
+  @@index([SubResourceIntegrity])
+  @@index([NoMixedContent])
+  @@index([ResponsibleDisclosure])
+  @@index([DNSSec])
+  @@index([CAA])
+  @@index([IPv6])
+  @@index([RPKI])
+  @@index([HTTP])
+  @@index([HTTP308])
+  @@index([HTTPRedirectsToHttps])
+  @@index([HTTPS])
+  @@index([HSTS])
+  @@index([HSTSPreloaded])
+  @@index([ContentSecurityPolicy])
+  @@index([XFrameOptions])
+  @@index([XSSProtection])
+  @@index([ContentTypeOptions])
+  @@index([SecureSessionCookies])
+  @@index([TLSv1_2])
+  @@index([TLSv1_3])
+  @@index([TLSv1_1_Deactivated])
+  @@index([StrongKeyExchange])
+  @@index([StrongCipherSuites])
+  @@index([ValidCertificate])
+  @@index([StrongPrivateKey])
+  @@index([StrongSignatureAlgorithm])
+  @@index([MatchesHostname])
+  @@index([NotRevoked])
+  @@index([CertificateTransparency])
+  @@index([ValidCertificateChain])
 }
 
 model Dashboard {

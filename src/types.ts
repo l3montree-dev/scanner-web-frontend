@@ -1,4 +1,3 @@
-import { ObjectId } from "mongoose";
 import { InspectionType, InspectResultDTO } from "./inspection/scans";
 
 export interface IReport {
