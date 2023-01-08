@@ -3,25 +3,7 @@ import { parseNetwork } from "../utils/common";
 import { jsonSerializableStage } from "../utils/dbUtils";
 
 const getAll = async (db: ModelsType) => {
-  const networks = await db.Network.aggregate([
-    {
-      $lookup: {
-        from: "users",
-        localField: "_id",
-        foreignField: "networks",
-        as: "users",
-        pipeline: [
-          {
-            $project: {
-              _id: 1,
-            },
-          },
-          ...jsonSerializableStage,
-        ],
-      },
-    },
-    ...jsonSerializableStage,
-  ]);
+  const networks = await db.Network.aggregate([...jsonSerializableStage]);
   return networks;
 };
 

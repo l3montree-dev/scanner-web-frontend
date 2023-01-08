@@ -2,18 +2,15 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { decorate } from "../../../decorators/decorate";
 import { withDB } from "../../../decorators/withDB";
 import { withToken } from "../../../decorators/withToken";
-import { ipService } from "../../../services/ipService";
 import { keycloak } from "../../../services/keycloak";
 import { getLogger } from "../../../services/logger";
 import { userService } from "../../../services/userService";
 
 import { ICreateUserDTO } from "../../../types";
-import { parseNetwork } from "../../../utils/common";
 
 const logger = getLogger(__filename);
 export default decorate(
   async (req: NextApiRequest, res: NextApiResponse, [db, token]) => {
-    const requestId = req.headers["x-request-id"] as string;
     if (!token) {
       res.statusCode = 401;
       res.end();
@@ -56,19 +53,13 @@ export default decorate(
 
       // create a new user inside our database as well.
       try {
-        const [_, newNetworks] = await userService.createUser(
+        await userService.createUser(
           {
             ...user,
             _id: id,
-            networks: user.networks.map(parseNetwork),
           },
           db
         );
-
-        // request the domain lookup for each network.
-        newNetworks.forEach((network) => {
-          ipService.lookupNetwork(network.cidr, requestId);
-        });
         res.end(
           JSON.stringify({
             success: true,
@@ -76,7 +67,6 @@ export default decorate(
             user: {
               ...user,
               _id: id,
-              networks: user.networks.map(parseNetwork),
             },
           })
         );

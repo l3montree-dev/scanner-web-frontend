@@ -2,7 +2,7 @@ import NextAuth, { AuthOptions } from "next-auth";
 import KeycloakProvider from "next-auth/providers/keycloak";
 import { userService } from "../../../services/userService";
 
-import { INetwork, IToken } from "../../../types";
+import { IToken } from "../../../types";
 
 /**
  * Takes a token, and returns a new token with updated
@@ -63,17 +63,13 @@ export const authOptions: AuthOptions = {
   ],
   callbacks: {
     async session(params: any) {
-      // Send properties to the client, like an access_token and user id from a provider.
-      // check if we can fetch the current user.
-      let networks: INetwork[] = [];
       if (params.token.sub) {
         // fetch the user#
         const user = await userService.findUserById(params.token.sub);
-        networks = user?.networks || [];
       }
       return {
         ...params.session,
-        user: { ...params.session.user, id: params.token.sub, networks },
+        user: { ...params.session.user, id: params.token.sub },
         resource_access: params.token.resource_access,
         error: params.token.error,
       };

@@ -20,7 +20,7 @@ import { INetwork } from "../../types";
 import { classNames, isAdmin } from "../../utils/common";
 
 interface Props {
-  networks: Array<INetwork & { users: Array<{ id: string }> }>;
+  networks: Array<INetwork>;
 }
 const Network: FunctionComponent<Props> = (props) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -116,7 +116,6 @@ const Network: FunctionComponent<Props> = (props) => {
             <thead>
               <tr className="bg-deepblue-100  text-sm border-b border-b-deepblue-500 text-left">
                 <th className="p-2 py-4">CIDR</th>
-                <th className="p-2 py-4">Wird Verwaltet</th>
                 <th className="p-2 py-4">Kommentar</th>
                 <th className="p-2 py-4">Aktionen</th>
               </tr>
@@ -126,16 +125,11 @@ const Network: FunctionComponent<Props> = (props) => {
                 <tr
                   className={classNames(
                     i + 1 !== networks.length ? "border-b" : "",
-                    " border-b-deepblue-500 transition-all"
+                    "border-b-deepblue-200 transition-all"
                   )}
                   key={network.id}
                 >
                   <td className="p-2">{network.cidr}</td>
-                  <td className="p-2">
-                    {network.users.length > 0
-                      ? `ja (${network.users.length})`
-                      : "nein"}
-                  </td>
                   <td className="p-2">{network.comment}</td>
                   <td className="p-2 w-20 text-right">
                     <Menu

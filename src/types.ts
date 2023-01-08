@@ -65,7 +65,6 @@ export type IUserPutDTO = ICreateUserDTO;
 
 export interface IUser {
   _id: string;
-  networks: INetwork[];
   role: string;
 }
 
@@ -130,7 +129,6 @@ export interface ICreateUserDTO {
   username: string;
   firstName: string;
   lastName: string;
-  networks: string[]; // CIDR notation
   role: string;
 }
 

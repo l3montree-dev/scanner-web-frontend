@@ -9,7 +9,6 @@ import NotFoundException from "../../../errors/NotFoundException";
 import { keycloak } from "../../../services/keycloak";
 import { userService } from "../../../services/userService";
 import { IToken, IUserPutDTO } from "../../../types";
-import { parseNetwork } from "../../../utils/common";
 
 const handlePut = async (
   token: IToken,
@@ -35,12 +34,11 @@ const handlePut = async (
     }
   );
 
-  const [user, _] = await userService.updateUser(
+  const user = await userService.updateUser(
     userId,
     {
       ...putRequest,
       _id: userId,
-      networks: putRequest.networks.map(parseNetwork),
     },
     db
   );
@@ -50,7 +48,6 @@ const handlePut = async (
     _id: userId,
     firstName: putRequest.firstName,
     lastName: putRequest.lastName,
-    networks: putRequest.networks.map(parseNetwork),
   };
 };
 

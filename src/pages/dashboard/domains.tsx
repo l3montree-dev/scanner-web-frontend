@@ -41,16 +41,6 @@ interface Props {
   domains: PaginateResult<WithId<IDomain> & { report?: WithId<IReport> }>;
 }
 
-const didPass2Number = (didPass: boolean | null | undefined) => {
-  if (didPass === null || didPass === undefined) {
-    return 0;
-  }
-  if (didPass === true) {
-    return 1;
-  }
-  return -1;
-};
-
 const SortButton: FunctionComponent<{
   sortKey: "fqdn" | "ipV4Address" | keyof IReport["result"];
   onSort: (key: "fqdn" | "ipV4Address" | keyof IReport["result"]) => void;

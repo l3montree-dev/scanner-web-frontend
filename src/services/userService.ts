@@ -1,6 +1,6 @@
 import getConnection from "../db/connection";
 import { ModelsType } from "../db/models";
-import { IUser, INetwork, WithoutId, AppUser } from "../types";
+import { AppUser, IUser } from "../types";
 import { jsonSerializableStage } from "../utils/dbUtils";
 
 const findUserById = async (id: string): Promise<AppUser> => {
@@ -27,52 +27,20 @@ const findUserById = async (id: string): Promise<AppUser> => {
   return res[0];
 };
 
-const createUser = async (
-  user: Omit<IUser, "networks"> & { networks: WithoutId<INetwork>[] },
-  db: ModelsType
-): Promise<[IUser, WithoutId<INetwork>[]]> => {
-  // first create all the networks.
-  // check which networks do already exist based on the cidr
-  const existingNetworks = await db.Network.find({
-    cidr: { $in: user.networks.map((network) => network.cidr) },
-  });
-  // filter the existing networks.
-  const newNetworks = user.networks.filter(
-    (network) =>
-      !existingNetworks.find(
-        (existingNetwork) => existingNetwork.cidr === network.cidr
-      )
-  );
-  // create the new networks.
-  const documents = await db.Network.create(newNetworks);
+const createUser = async (user: IUser, db: ModelsType): Promise<IUser> => {
   // then create the user with the network ids.
   const createdUser = await db.User.create({
     _id: user._id,
     role: user.role,
-    networks: documents.concat(existingNetworks).map((doc) => doc._id),
   });
-  return [createdUser, newNetworks];
+  return createdUser;
 };
 
 const updateUser = async (
   id: string,
-  user: Omit<IUser, "networks"> & { networks: WithoutId<INetwork>[] },
+  user: IUser,
   db: ModelsType
-): Promise<[IUser | null, WithoutId<INetwork>[]]> => {
-  // first create all the networks.
-  // check which networks do already exist based on the cidr
-  const existingNetworks = await db.Network.find({
-    cidr: { $in: user.networks.map((network) => network.cidr) },
-  });
-  // filter the existing networks.
-  const newNetworks = user.networks.filter(
-    (network) =>
-      !existingNetworks.find(
-        (existingNetwork) => existingNetwork.cidr === network.cidr
-      )
-  );
-  // create the new networks.
-  const documents = await db.Network.create(newNetworks);
+): Promise<IUser | null> => {
   // then create the user with the network ids.
   const updatedUser = await db.User.findOneAndUpdate(
     {
@@ -80,12 +48,11 @@ const updateUser = async (
     },
     {
       role: user.role,
-      networks: documents.concat(existingNetworks).map((doc) => doc._id),
     },
-    { returnOriginal: false }
+    { new: true }
   ).lean();
 
-  return [updatedUser, newNetworks];
+  return updatedUser;
 };
 
 const getAll = async (db: ModelsType): Promise<IUser[]> => {

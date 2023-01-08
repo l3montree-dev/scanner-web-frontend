@@ -1,5 +1,5 @@
 import { ModelsType, toDTO } from "../db/models";
-import { AppUser, IDashboard, IUser } from "../types";
+import { AppUser, IDashboard } from "../types";
 import { getLogger } from "./logger";
 import { statService } from "./statService";
 
