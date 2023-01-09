@@ -13,15 +13,16 @@ const Footer = () => {
   return (
     <>
       <footer className="bg-white md:text-md text-sm px-5 md:px-10 pb-10">
-        <div className="sm:flex flex-wrap flex-row p-5">
+        <div className="sm:flex flex-wrap justify-between flex-row p-5">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img width={200} src={"/assets/bmi-logo.svg"} alt="Logo BMI" />
+
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            width={205}
+            width={120}
             className="sm:ml-5 ml-0 mt-5 sm:mt-0"
-            src={"/assets/bsi-logo.svg"}
-            alt="Logo BSI"
+            src={"/assets/ozg-logo-colored.svg"}
+            alt="OZG Logo"
           />
         </div>
         <div className="lg:flex justify-between">
