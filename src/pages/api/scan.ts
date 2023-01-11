@@ -2,14 +2,13 @@
 import { randomUUID } from "crypto";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { Domain } from "@prisma/client";
+import { Domain, Prisma } from "@prisma/client";
 import { decorate } from "../../decorators/decorate";
 import { withDB } from "../../decorators/withDB";
 import { inspectRPC } from "../../inspection/inspect";
 import { domainService } from "../../services/domainService";
 import { getLogger } from "../../services/logger";
 import { reportService } from "../../services/reportService";
-import { IScanSuccessResponse } from "../../types";
 import { isScanError, sanitizeFQDN } from "../../utils/common";
 
 const logger = getLogger(__filename);
@@ -55,6 +54,9 @@ export default decorate(
           lastScan: {
             // last hour
             gte: new Date(Date.now() - 1000 * 60 * 60 * 1).getTime(),
+          },
+          details: {
+            not: Prisma.JsonNull,
           },
         },
         take: 1,

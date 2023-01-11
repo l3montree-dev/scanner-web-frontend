@@ -47,21 +47,25 @@ const handleNewScanReport = async (
   if (lastReport.length !== 1 || reportDidChange(lastReport[0], newReport)) {
     // if the report changed, we need to create a new one.
 
-    const createPromise = prisma.scanReport.create({
+    const domain = await prisma.domain.upsert({
+      where: { fqdn: newReport.fqdn },
+      create: {
+        fqdn: newReport.fqdn,
+        queued: false,
+        lastScan: result.timestamp,
+        details: result.result as Record<string, any>,
+        group: "unknown",
+      },
+      update: {
+        queued: false,
+        lastScan: result.timestamp,
+        details: result.result as Record<string, any>,
+      },
+    });
+
+    await prisma.scanReport.create({
       data: { ...newReport },
     });
-    // update the domain as well.
-    const [domain] = await Promise.all([
-      prisma.domain.update({
-        where: { fqdn: newReport.fqdn },
-        data: {
-          queued: false,
-          lastScan: result.timestamp,
-          details: result.result as Record<string, any>,
-        },
-      }),
-      createPromise,
-    ]);
     return domain;
   }
 

@@ -1,5 +1,6 @@
-import { PrismaClient, User } from "@prisma/client";
+import { Prisma, PrismaClient, User } from "@prisma/client";
 import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
+import { toDTO } from "../utils/server";
 
 const keys = Object.keys(InspectionTypeEnum);
 
@@ -31,19 +32,52 @@ const getCurrentStatePercentage = async (
     [key in InspectionType]: number;
   };
 }> => {
-  console.log(
-    await prisma.userDomainRelation.findMany({
-      where: {
-        userId: user.id,
-      },
-      include: {
-        domain: true,
-      },
-    })
-  );
+  let [res] = (await prisma.$queryRaw(
+    Prisma.sql`
+SELECT AVG(SubResourceIntegrity) as SubResourceIntegrity,
+AVG(NoMixedContent) as NoMixedContent,
+AVG(ResponsibleDisclosure) as ResponsibleDisclosure,
+AVG(DNSSec) as DNSSec,
+AVG(CAA) as CAA,
+AVG(IPv6) as IPv6,
+AVG(RPKI) as RPKI,
+AVG(HTTP) as HTTP,
+AVG(HTTP308) as HTTP308,
+AVG(HTTPRedirectsToHttps) as HTTPRedirectsToHttps,
+AVG(HSTS) as HSTS, 
+AVG(HSTSPreloaded) as HSTSPreloaded,
+AVG(ContentSecurityPolicy) as ContentSecurityPolicy,
+AVG(XFrameOptions) as XFrameOptions,
+AVG(XSSProtection) as XSSProtection,
+AVG(ContentTypeOptions) as ContentTypeOptions,
+AVG(SecureSessionCookies) as SecureSessionCookies,
+AVG(TLSv1_2) as TLSv1_2,
+AVG(TLSv1_3) as TLSv1_3, 
+AVG(TLSv1_1_Deactivated) as TLSv1_1_Deactivated, 
+AVG(StrongKeyExchange) as StrongKeyExchange,
+AVG(StrongCipherSuites) as StrongCipherSuites,
+AVG(ValidCertificate) as ValidCertificate,
+AVG(StrongPrivateKey) as StrongPrivateKey,
+AVG(StrongSignatureAlgorithm) as StrongSignatureAlgorithm,
+AVG(MatchesHostname) as MatchesHostname,
+AVG(NotRevoked) as NotRevoked,
+AVG(CertificateTransparency) as CertificateTransparency,
+AVG(ValidCertificateChain) as ValidCertificateChain,
+
+COUNT(*) as totalCount
+      from user_domain_relations udr LEFT JOIN scan_reports sr1 on udr.fqdn = sr1.fqdn
+      WHERE sr1.fqdn IS NOT NULL
+        AND NOT EXISTS(
+          SELECT 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr1.createdAt > sr2.createdAt
+    ) AND udr.userId = ${user.id}`
+  )) as any;
+
+  res = toDTO(res);
+
+  const { totalCount, ...data } = res;
   return {
-    totalCount: 0,
-    data: keys.reduce((acc, cur) => ({ ...acc, [cur]: 0 }), {}) as any,
+    totalCount,
+    data,
   };
 };
 const getFailedSuccessPercentage = async (
@@ -58,9 +92,54 @@ const getFailedSuccessPercentage = async (
     [key in InspectionType]: number;
   };
 }> => {
+  let [res] = (await prisma.$queryRaw(
+    Prisma.sql`
+    SELECT AVG(SubResourceIntegrity) as SubResourceIntegrity,
+    AVG(NoMixedContent) as NoMixedContent,
+    AVG(ResponsibleDisclosure) as ResponsibleDisclosure,
+    AVG(DNSSec) as DNSSec,
+    AVG(CAA) as CAA,
+    AVG(IPv6) as IPv6,
+    AVG(RPKI) as RPKI,
+    AVG(HTTP) as HTTP,
+    AVG(HTTP308) as HTTP308,
+    AVG(HTTPRedirectsToHttps) as HTTPRedirectsToHttps,
+    AVG(HSTS) as HSTS, 
+    AVG(HSTSPreloaded) as HSTSPreloaded,
+    AVG(ContentSecurityPolicy) as ContentSecurityPolicy,
+    AVG(XFrameOptions) as XFrameOptions,
+    AVG(XSSProtection) as XSSProtection,
+    AVG(ContentTypeOptions) as ContentTypeOptions,
+    AVG(SecureSessionCookies) as SecureSessionCookies,
+    AVG(TLSv1_2) as TLSv1_2,
+    AVG(TLSv1_3) as TLSv1_3, 
+    AVG(TLSv1_1_Deactivated) as TLSv1_1_Deactivated, 
+    AVG(StrongKeyExchange) as StrongKeyExchange,
+    AVG(StrongCipherSuites) as StrongCipherSuites,
+    AVG(ValidCertificate) as ValidCertificate,
+    AVG(StrongPrivateKey) as StrongPrivateKey,
+    AVG(StrongSignatureAlgorithm) as StrongSignatureAlgorithm,
+    AVG(MatchesHostname) as MatchesHostname,
+    AVG(NotRevoked) as NotRevoked,
+    AVG(CertificateTransparency) as CertificateTransparency,
+    AVG(ValidCertificateChain) as ValidCertificateChain,
+    
+    COUNT(*) as totalCount
+          from user_domain_relations udr LEFT JOIN scan_reports sr1 on udr.fqdn = sr1.fqdn
+          WHERE sr1.fqdn IS NOT NULL
+            AND NOT EXISTS(
+              SELECT 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr1.createdAt > sr2.createdAt
+        ) AND udr.userId = ${user.id} AND sr1.createdAt < ${new Date(
+      timeQuery.end
+    )}`
+  )) as any;
+
+  res = toDTO(res);
+
+  const { totalCount, ...data } = res;
   return {
-    totalCount: 0,
-    data: keys.reduce((acc, cur) => ({ ...acc, [cur]: 0 }), {}) as any,
+    totalCount,
+    data,
   };
 };
 
