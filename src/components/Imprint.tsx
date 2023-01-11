@@ -19,7 +19,7 @@ const Imprint = () => {
         <br />
         Telefon: +49-(0)30 18 681-0
         <br />
-        E-Mail: <a href="mailto:ozg@bmi.bund.de">ozg@bmi.bund.de</a>
+        E-Mail: <a href="mailto:ozgsec@bmi.bund.de">ozgsec@bmi.bund.de</a>
         <br />
         <br />
         weitere{" "}
