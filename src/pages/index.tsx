@@ -1,6 +1,6 @@
 import { faRefresh } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { ScanReport } from "@prisma/client";
+import { Domain } from "@prisma/client";
 import type { NextPage } from "next";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import Button from "../components/Button";
@@ -18,7 +18,7 @@ import {
 } from "../inspection/scans";
 
 import { clientHttpClient } from "../services/clientHttpClient";
-import { DetailedScanReport } from "../types";
+import { IScanSuccessResponse } from "../types";
 import { classNames, sanitizeFQDN } from "../utils/common";
 
 const hostnameRegex = new RegExp(
@@ -40,7 +40,7 @@ const Home: NextPage = () => {
   const [website, setWebsite] = useState("");
   const scanRequest = useLoading();
   const refreshRequest = useLoading();
-  const [report, setReport] = useState<null | DetailedScanReport>(null);
+  const [domain, setDomain] = useState<null | Domain>(null);
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -53,7 +53,7 @@ const Home: NextPage = () => {
     }
     // react will batch those two calls anyways.
     scanRequest.loading();
-    setReport(null);
+    setDomain(null);
 
     // do the real api call.
     try {
@@ -71,8 +71,8 @@ const Home: NextPage = () => {
         );
       }
 
-      const obj: DetailedScanReport = await response.json();
-      setReport(obj);
+      const obj: Domain = await response.json();
+      setDomain(obj);
       scanRequest.success();
     } catch (e) {
       scanRequest.error(
@@ -82,7 +82,7 @@ const Home: NextPage = () => {
   };
 
   useEffect(() => {
-    if (report) {
+    if (domain) {
       const rec = document.getElementById("test-results");
 
       if (rec && !isInViewport(rec)) {
@@ -95,16 +95,16 @@ const Home: NextPage = () => {
         });
       }
     }
-  }, [report]);
+  }, [domain]);
 
   const handleRefresh = async () => {
-    if (!report) {
+    if (!domain) {
       return;
     }
     refreshRequest.loading();
     try {
       const response = await clientHttpClient(
-        `/api/scan?site=${report.fqdn}&refresh=true`,
+        `/api/scan?site=${domain.fqdn}&refresh=true`,
         crypto.randomUUID()
       );
       if (!response.ok) {
@@ -118,7 +118,7 @@ const Home: NextPage = () => {
         );
       }
       const obj = await response.json();
-      setReport(obj);
+      setDomain(obj);
       refreshRequest.success();
     } catch (e) {
       refreshRequest.error(
@@ -128,8 +128,8 @@ const Home: NextPage = () => {
   };
 
   const amountPassed = useMemo(() => {
-    if (!report) return 0;
-    return Object.keys(report)
+    if (!domain) return 0;
+    return Object.keys(domain.details as Record<string, any>)
       .filter((key) =>
         (
           [
@@ -142,11 +142,18 @@ const Home: NextPage = () => {
           ] as string[]
         ).includes(key)
       )
-      .map((key) => report[key as InspectionType])
+      .map(
+        (key) =>
+          (domain.details as IScanSuccessResponse["result"])[
+            key as InspectionType
+          ]?.didPass
+      )
       .filter((inspection) => !!inspection).length;
-  }, [report]);
+  }, [domain]);
 
-  const dateString = report ? new Date(report.createdAt).toLocaleString() : "";
+  const dateString = domain
+    ? new Date(Number(domain.lastScan)).toLocaleString()
+    : "";
   return (
     <Page>
       <Meta />
@@ -193,7 +200,7 @@ const Home: NextPage = () => {
             </p>
           </div>
 
-          {report !== null && (
+          {domain !== null && (
             <div className="mt-10 p-5 md:p-0 text-white">
               <h2 id="test-results" className="text-white text-2xl">
                 Testergebnisse für{" "}
@@ -201,9 +208,9 @@ const Home: NextPage = () => {
                   target={"_blank"}
                   className="underline"
                   rel="noopener noreferrer"
-                  href={`//${report.fqdn}`}
+                  href={`//${domain.fqdn}`}
                 >
-                  {report.fqdn}
+                  {domain.fqdn}
                 </a>
               </h2>
 
@@ -229,7 +236,7 @@ const Home: NextPage = () => {
               {!refreshRequest.isLoading && !refreshRequest.errored && (
                 <div>
                   <p>Bestanden: {amountPassed}/6</p>
-                  <ResultGrid report={report} />
+                  <ResultGrid report={domain} />
                 </div>
               )}
             </div>

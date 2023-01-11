@@ -13,13 +13,10 @@ datasource db {
 model ScanReport {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt @default(now())
 
-  ipAddress    String @db.VarChar(255)
-  duration Int
-
-  // the full report
-  details Json?
+  ipAddress String? @db.VarChar(255)
+  duration  Int
 
   fqdn   String @db.VarChar(255)
   domain Domain @relation(fields: [fqdn], references: [fqdn])
@@ -91,6 +88,7 @@ model ScanReport {
   @@index([NotRevoked])
   @@index([CertificateTransparency])
   @@index([ValidCertificateChain])
+  @@map("scan_reports")
 }
 
 model Dashboard {
@@ -100,35 +98,44 @@ model Dashboard {
 
   user   User   @relation(fields: [userId], references: [id])
   userId String
+
+  @@map("dashboards")
 }
 
 model Domain {
   fqdn String @id
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt @default(now())
 
-  lastScan   Int? 
-  errorCount Int      @default(0)
-  queued     Boolean  @default(false)
+  lastScan   BigInt?
+  errorCount Int     @default(0)
+  queued     Boolean @default(false)
 
   // pretty much the reason why this domain is part of the system at all.
   group String @db.VarChar(255)
 
   users UserDomainRelation[]
 
-  scanReport ScanReport[]
+  scanReports ScanReport[]
+
+  // the full report
+  details Json?
+
+  monitor Boolean @default(true)
 
   @@index([group])
+  @@map("domains")
 }
 
 model UserDomainRelation {
   user     User   @relation(fields: [userId], references: [id])
   userId   String
-  domain   Domain @relation(fields: [domainId], references: [fqdn])
-  domainId String
+  domain   Domain @relation(fields: [fqdn], references: [fqdn])
+  fqdn String
 
-  @@id([userId, domainId])
+  @@id([userId, fqdn])
+  @@map("user_domain_relations")
 }
 
 model User {
@@ -136,6 +143,8 @@ model User {
   role       String?
   domains    UserDomainRelation[]
   dashboards Dashboard[]
+
+  @@map("users")
 }
 
 model Network {
@@ -147,4 +156,6 @@ model Network {
   startAddressNumber Int
   endAddressNumber   Int
   comment            String?
+
+  @@map("networks")
 }

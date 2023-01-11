@@ -45,30 +45,36 @@ const staleWhileRevalidate = async (
       })
     ),
   ]).then(async ([data, { uniqueDomains }, historicalData]) => {
-    // create the new dashboard.
-    const dashboard = await prisma.dashboard.upsert({
-      // @ts-expect-error
-      where: { userId: currentUser.id },
-      create: {
+    // find the id of the last dashboard of this user.
+    let lastDashboard = await prisma.dashboard.findFirst({
+      where: {
         userId: currentUser.id,
-        content: {
-          currentState: data,
-          totals: {
-            uniqueDomains,
-          },
-          historicalData,
-        },
-      },
-      update: {
-        content: {
-          currentState: data,
-          totals: {
-            uniqueDomains,
-          },
-          historicalData,
-        },
       },
     });
+    const d = {
+      userId: currentUser.id,
+      content: {
+        currentState: data,
+        totals: {
+          uniqueDomains,
+        },
+        historicalData,
+      },
+    };
+    if (!lastDashboard) {
+      lastDashboard = await prisma.dashboard.create({
+        data: d,
+      });
+    } else {
+      await prisma.dashboard.update({
+        where: { id: lastDashboard.id },
+        data: d,
+      });
+      lastDashboard = {
+        ...lastDashboard,
+        ...d,
+      };
+    }
 
     logger.info(
       {
@@ -76,7 +82,7 @@ const staleWhileRevalidate = async (
       },
       "dashboard updated"
     );
-    return dashboard;
+    return lastDashboard;
   });
 
   // check if a dashboard does already exist - otherwise we have to wait for the updatePromise
@@ -85,7 +91,8 @@ const staleWhileRevalidate = async (
       userId: currentUser.id,
     },
   });
-  if (dashboard) {
+
+  if (dashboard && false) {
     return dashboard;
   }
   logger.info("no cached dashboard - creating it");

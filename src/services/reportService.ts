@@ -1,4 +1,4 @@
-import { PrismaClient, ScanReport } from "@prisma/client";
+import { Domain, PrismaClient, ScanReport } from "@prisma/client";
 import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
 import { IScanSuccessResponse } from "../types";
 
@@ -20,7 +20,6 @@ const scanResult2ScanReport = (
     fqdn: result.fqdn,
     ipAddress: result.ipAddress,
     duration: result.duration,
-    details: result.result as Record<string, any>,
     ...(Object.fromEntries(
       Object.entries(result.result).map(([key, value]) => [key, value.didPass])
     ) as {
@@ -33,7 +32,7 @@ const scanResult2ScanReport = (
 const handleNewScanReport = async (
   result: IScanSuccessResponse,
   prisma: PrismaClient
-): Promise<ScanReport> => {
+): Promise<Domain> => {
   // fetch the last existing report and check if we only need to update that one.
   const lastReport = await prisma.scanReport.findMany({
     where: {
@@ -49,31 +48,32 @@ const handleNewScanReport = async (
     // if the report changed, we need to create a new one.
 
     const createPromise = prisma.scanReport.create({
-      data: { ...newReport, details: newReport.details ?? undefined },
+      data: { ...newReport },
     });
     // update the domain as well.
-    const [_, res] = await Promise.all([
+    const [domain] = await Promise.all([
       prisma.domain.update({
         where: { fqdn: newReport.fqdn },
         data: {
           queued: false,
           lastScan: result.timestamp,
+          details: result.result as Record<string, any>,
         },
       }),
       createPromise,
     ]);
-    return res;
+    return domain;
   }
+
   // mark the last report valid until the next scan.
-  await prisma.domain.update({
+  return await prisma.domain.update({
     where: { fqdn: newReport.fqdn },
     data: {
       queued: false,
       lastScan: result.timestamp,
+      details: result.result as Record<string, any>,
     },
   });
-
-  return lastReport[0];
 };
 
 export const reportService = {

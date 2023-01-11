@@ -386,7 +386,7 @@ export const getServerSideProps = decorateServerSideProps(
     );
 
     return {
-      props: dashboard,
+      props: dashboard.content as unknown as IDashboard,
     };
   },
   withCurrentUser,

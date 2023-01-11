@@ -31,6 +31,16 @@ const getCurrentStatePercentage = async (
     [key in InspectionType]: number;
   };
 }> => {
+  console.log(
+    await prisma.userDomainRelation.findMany({
+      where: {
+        userId: user.id,
+      },
+      include: {
+        domain: true,
+      },
+    })
+  );
   return {
     totalCount: 0,
     data: keys.reduce((acc, cur) => ({ ...acc, [cur]: 0 }), {}) as any,
