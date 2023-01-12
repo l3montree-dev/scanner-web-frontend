@@ -152,12 +152,6 @@ const startScanLoop = once(() => {
         domains.map((domain) => {
           return async () => {
             inspect(requestId, domain.fqdn);
-            const addresses = await resolve4(domain.fqdn);
-            return await Promise.all(
-              addresses.map((addr) =>
-                domainService.handleNewDomain(domain, prisma)
-              )
-            );
           };
         })
       );
