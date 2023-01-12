@@ -1,206 +1,204 @@
-import ip from "ip";
-import { Model } from "mongoose";
+import { PrismaClient, User } from "@prisma/client";
+import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
 import {
-  IDomain,
-  INetwork,
-  IReport,
+  DomainWithScanResult,
   IScanErrorResponse,
   PaginateRequest,
   PaginateResult,
 } from "../types";
-import { jsonSerializableStage } from "../utils/dbUtils";
-// only create a new report if the didPass property changed.
+import { neverThrow } from "../utils/common";
+import { DTO, toDTO } from "../utils/server";
+
 const handleNewDomain = async (
-  domain: { fqdn: string; ipV4Address: string },
-  model: Model<IDomain>
+  domain: { fqdn: string; group?: string },
+  prisma: PrismaClient,
+  connectToUser?: User
 ): Promise<{ fqdn: string }> => {
   // fetch the last existing report and check if we only need to update that one.
   let payload = {
     fqdn: domain.fqdn,
-    ipV4Address: domain.ipV4Address,
-    ipV4AddressNumber: ip.toLong(domain.ipV4Address),
     lastScan: null,
+    group: domain.group ?? "unknown",
   };
-  try {
-    await model.create(payload);
-  } catch (e) {
-    // probably unique key index error
-  }
-  return payload;
-};
 
-const handleNewFQDN = async (
-  fqdn: string,
-  ipAddress: string,
-  model: Model<IDomain>
-): Promise<{ fqdn: string }> => {
-  let payload = {
-    fqdn: fqdn,
-    ipV4Address: ipAddress,
-    ipV4AddressNumber: ip.toLong(ipAddress),
-    lastScan: null,
-  };
-  try {
-    await model.create(payload);
-  } catch (e) {
-    // probably unique key index error
+  await neverThrow(
+    prisma.domain.create({
+      data: payload,
+    })
+  );
+  if (connectToUser) {
+    await neverThrow(
+      prisma.userDomainRelation.create({
+        data: {
+          userId: connectToUser.id,
+          fqdn: payload.fqdn,
+        },
+      })
+    );
   }
+
   return payload;
 };
 
 const handleDomainScanError = async (
   content: IScanErrorResponse,
-  domain: Model<IDomain>
+  shouldBeMonitoredIfNotExist: boolean,
+  prisma: PrismaClient
 ) => {
-  const ipV4AddressNumber = ip.toLong(content.ipAddress);
-
-  const res = await domain
-    .updateOne(
-      {
-        fqdn: content.fqdn,
-        ipV4AddressNumber,
+  const res = await prisma.domain.upsert({
+    where: {
+      fqdn: content.fqdn,
+    },
+    update: {
+      lastScan: content.timestamp ?? Date.now(),
+      queued: false,
+      errorCount: {
+        increment: 1,
       },
-      {
-        lastScan: content.timestamp ?? Date.now(),
-        queued: false,
-        ipV4Address: content.ipAddress,
-        // increment the error count property by 1
-        $inc: { errorCount: 1 },
-      },
-      {
-        new: true,
-        upsert: true,
-      }
-    )
-    .lean();
+    },
+    create: {
+      errorCount: 0,
+      fqdn: content.fqdn,
+      monitor: shouldBeMonitoredIfNotExist,
+      group: "unknown",
+      lastScan: content.timestamp ?? Date.now(),
+    },
+  });
 
   return res;
 };
 
+const translateSortDirection = (
+  direction?: string | "1" | "-1"
+): "ASC" | "DESC" => {
+  if (direction === "-1") {
+    return "DESC";
+  }
+  return "ASC";
+};
+
+const translateSort = (sort?: string): `sr.${InspectionType}` | "d.fqdn" => {
+  if (!sort) {
+    return "d.fqdn";
+  }
+
+  if (Object.keys(InspectionTypeEnum).includes(sort)) {
+    return `sr.${sort as InspectionType}`;
+  }
+
+  return "d.fqdn";
+};
+
 const getDomainsOfNetworksWithLatestTestResult = async (
-  isAdmin: boolean,
-  networks: INetwork[],
+  user: User,
   paginateRequest: PaginateRequest & { search?: string } & {
     sort?: string;
     sortDirection?: string;
   },
-  domain: Model<IDomain>
-): Promise<PaginateResult<IDomain & { report?: IReport }>> => {
-  if (!isAdmin && networks.length === 0) {
-    return {
-      total: 0,
-      page: 0,
-      pageSize: paginateRequest.pageSize,
-      data: [],
-    };
+  prisma: PrismaClient
+): Promise<PaginateResult<DTO<DomainWithScanResult>>> => {
+  const sqlValues = [
+    user.id,
+    paginateRequest.pageSize,
+    paginateRequest.page * paginateRequest.pageSize,
+  ];
+  if (paginateRequest.search !== undefined && paginateRequest.search !== "") {
+    sqlValues.unshift(
+      paginateRequest.search.endsWith("*")
+        ? paginateRequest.search
+        : `${paginateRequest.search}*`
+    );
   }
 
-  // get all domains of the network
-  const [domains] = (await domain.aggregate([
-    {
-      $match: {
-        $or: [
-          {
-            errorCount: {
-              $eq: null,
-            },
+  const [total, domains] = await Promise.all([
+    prisma.domain.count({
+      where: {
+        users: {
+          some: {
+            userId: user.id,
           },
-          {
-            errorCount: {
-              $lt: 5,
-            },
-          },
-        ],
-      },
-    },
-    ...(paginateRequest.search
-      ? [
-          {
-            $match: {
+        },
+        ...(paginateRequest.search !== undefined &&
+        paginateRequest.search !== ""
+          ? {
               fqdn: {
-                $regex: paginateRequest.search,
-                $options: "i",
+                search: sqlValues[0] as string,
               },
-            },
-          },
-        ]
-      : []),
-    ...(!isAdmin
-      ? [
-          {
-            $match: {
-              $or: networks.map((network) => ({
-                ipV4AddressNumber: {
-                  $gte: +network.startAddressNumber,
-                  $lte: +network.endAddressNumber,
-                },
-              })),
-            },
-          },
-        ]
-      : []),
-    {
-      $facet: {
-        data: [
-          paginateRequest.sort
-            ? {
-                $sort: {
-                  [paginateRequest.sort]: +paginateRequest.sortDirection! as
-                    | 1
-                    | -1,
-                },
-              }
-            : {
-                $sort: {
-                  fqdn: 1,
-                },
-              },
-          { $skip: paginateRequest.page * paginateRequest.pageSize },
-          { $limit: paginateRequest.pageSize },
-          ...jsonSerializableStage,
-        ],
-        totalCount: [{ $count: "total" }],
+            }
+          : {}),
       },
-    },
-  ])) as any;
+    }),
+
+    // subject to sql injection!!!
+    prisma.$queryRawUnsafe(
+      `
+SELECT *, d.fqdn as fqdn, d.createdAt as createdAt, d.updatedAt as updatedAt, d.details as details from user_domain_relations udr 
+    INNER JOIN domains d on udr.fqdn = d.fqdn 
+    LEFT JOIN scan_reports sr on d.fqdn = sr.fqdn  
+    WHERE NOT EXISTS(
+        SELECT 1 from scan_reports sr2 where sr.fqdn = sr2.fqdn AND sr.createdAt > sr2.createdAt
+      ) 
+      ${
+        paginateRequest.search !== undefined && paginateRequest.search !== ""
+          ? "AND MATCH (d.fqdn) AGAINST (? IN BOOLEAN MODE)"
+          : ""
+      }
+      AND userId = ?
+      ORDER BY ${translateSort(paginateRequest.sort)} ${translateSortDirection(
+        paginateRequest.sortDirection
+      )}
+      LIMIT ?
+      OFFSET ?;
+`,
+      ...sqlValues
+    ) as Promise<any[]>,
+  ]);
+
+  const data = domains.map((d) =>
+    toDTO({
+      lastScan: d.lastScan,
+      fqdn: d.fqdn,
+      group: d.group,
+      monitor: d.monitor,
+      queued: d.queued,
+      errorCount: d.errorCount,
+      createdAt: d.createdAt,
+      updatedAt: d.updatedAt,
+      details: d.details,
+      scanReport: {
+        ...(Object.fromEntries(
+          Object.keys(InspectionTypeEnum).map((key) => [
+            key,
+            d[key] === null ? null : Boolean(d[key]),
+          ])
+        ) as { [key in InspectionType]: boolean | null }),
+      },
+    })
+  );
 
   return {
-    total: domains.totalCount.length === 1 ? domains.totalCount[0].total : 0,
+    total,
     page: paginateRequest.page,
     pageSize: paginateRequest.pageSize,
-    data: domains.data,
+    data,
   };
 };
 
-const getDomains2Scan = async (domain: Model<IDomain>) => {
+const getDomains2Scan = async (prisma: PrismaClient) => {
   // get all domains which have not been scanned in the last 24 hours
-  const domains = await domain
-    .find({
-      $and: [
+  const domains = await prisma.domain.findMany({
+    where: {
+      AND: [
         {
-          $or: [
-            {
-              errorCount: {
-                $eq: null,
-              },
-            },
-            {
-              errorCount: {
-                $lt: 5,
-              },
-            },
-          ],
-        },
-        {
-          $or: [
+          OR: [
             {
               lastScan: {
-                $eq: null,
+                equals: null,
               },
             },
             {
               lastScan: {
-                $lt: new Date(
+                lt: new Date(
                   new Date().getTime() -
                     +(process.env.SCAN_INTERVAL_DAYS ?? 7) * 24 * 60 * 60 * 1000
                 ).getTime(),
@@ -208,35 +206,25 @@ const getDomains2Scan = async (domain: Model<IDomain>) => {
             },
           ],
         },
+        {
+          queued: false,
+          monitor: true,
+          errorCount: {
+            lt: 5,
+          },
+        },
       ],
-      queued: {
-        $ne: true,
-      },
-    })
-    .sort({
-      lastScan: 1,
-    })
-    // limit to 1000 domains - this is to prevent the service from overloading the memory
-    .limit(1000)
-    .lean();
-
-  // mark all domains as queued.
-  await domain.updateMany(
-    {
-      _id: {
-        $in: domains.map((domain) => domain._id),
-      },
     },
-    {
-      queued: true,
-    }
-  );
+    orderBy: {
+      lastScan: "asc",
+    },
+    take: 1_000,
+  });
   return domains;
 };
 
 export const domainService = {
   handleNewDomain,
-  handleNewFQDN,
   handleDomainScanError,
   getDomainsOfNetworksWithLatestTestResult,
   getDomains2Scan,

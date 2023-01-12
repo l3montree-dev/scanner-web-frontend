@@ -1,8 +1,6 @@
 import { signOut, useSession } from "next-auth/react";
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import Dialog from "./Dialog";
 import Imprint from "./Imprint";
 import Modal from "./Modal";
 
@@ -15,8 +13,15 @@ const Footer = () => {
       <footer className="bg-white md:text-md text-sm px-5 md:px-10 pb-10">
         <div className="sm:flex flex-wrap justify-between flex-row p-5">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img width={200} src={"/assets/bmi-logo.svg"} alt="Logo BMI" />
-
+          <div className="flex flex-row">
+            <img width={200} src={"/assets/bmi-logo.svg"} alt="Logo BMI" />
+            {/*  <img
+              width={214}
+              className="ml-5"
+              src={"/assets/bsi-logo.svg"}
+              alt="Logo BSI"
+          /> */}
+          </div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             width={120}

@@ -1,70 +1,93 @@
-import { Model } from "mongoose";
-import { ModelsType } from "../db/models";
-import { InspectionType } from "../inspection/scans";
-import { IReport } from "../types";
+import { Domain, PrismaClient, ScanReport } from "@prisma/client";
+import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
+import { DetailedDomainWithScanResult, IScanSuccessResponse } from "../types";
+import { DTO, toDTO } from "../utils/server";
 
 const reportDidChange = (
-  lastReport: Omit<IReport, "createdAt" | "updatedAt">,
-  newReport: Omit<IReport, "createdAt" | "updatedAt">
+  lastReport: ScanReport,
+  newReport: Omit<ScanReport, "createdAt" | "updatedAt" | "id">
 ) => {
-  // check if the didPass property changed.
-  return Object.entries(lastReport.result).some(([key, value]) => {
-    return newReport.result[key as InspectionType]?.didPass !== value.didPass;
+  const res = Object.keys(InspectionTypeEnum).some((key) => {
+    return (
+      lastReport[key as InspectionType] !== newReport[key as InspectionType]
+    );
   });
+
+  return res;
+};
+
+const scanResult2ScanReport = (
+  result: IScanSuccessResponse
+): Omit<ScanReport, "createdAt" | "updatedAt" | "id"> => {
+  return {
+    fqdn: result.fqdn,
+    ipAddress: result.ipAddress,
+    duration: result.duration,
+    ...(Object.fromEntries(
+      Object.entries(result.result).map(([key, value]) => [key, value.didPass])
+    ) as {
+      [key in InspectionType]: boolean;
+    }),
+  };
 };
 
 // only create a new report if the didPass property changed.
 const handleNewScanReport = async (
-  newReport: Omit<IReport, "createdAt" | "updatedAt">,
-  db: ModelsType
-) => {
+  result: IScanSuccessResponse,
+  shouldBeMonitoredIfNotExist: boolean,
+  prisma: PrismaClient
+): Promise<DTO<DetailedDomainWithScanResult>> => {
   // fetch the last existing report and check if we only need to update that one.
-  const lastReport = await db.Report.findOne({
-    fqdn: newReport.fqdn,
-    ipV4AddressNumber: newReport.ipV4AddressNumber,
-  })
-    .sort({
-      lastScan: -1,
-    })
-    .lean();
-
-  if (!lastReport || reportDidChange(lastReport, newReport)) {
+  const lastReport = await prisma.scanReport.findMany({
+    where: {
+      fqdn: result.fqdn,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    take: 1,
+  });
+  const newReport = scanResult2ScanReport(result);
+  if (lastReport.length !== 1 || reportDidChange(lastReport[0], newReport)) {
     // if the report changed, we need to create a new one.
-    const report = new db.Report(newReport);
-    // update the domain as well.
-    const [_, res] = await Promise.all([
-      db.Domain.updateOne(
-        {
-          fqdn: newReport.fqdn,
-          ipV4AddressNumber: newReport.ipV4AddressNumber,
-        },
-        {
-          lastScan: newReport.validFrom,
-          queued: false,
-          ipV6Address: newReport.result.IPv6?.actualValue.addresses ?? [],
-          ...Object.fromEntries(
-            Object.entries(newReport.result).map(([key, value]) => {
-              return [key, value.didPass];
-            })
-          ),
-        }
-      ).lean(),
-      report.save(),
-    ]);
-    return res.toObject();
+    const domain = await prisma.domain.upsert({
+      where: { fqdn: newReport.fqdn },
+      create: {
+        fqdn: newReport.fqdn,
+        queued: false,
+        lastScan: result.timestamp,
+        monitor: shouldBeMonitoredIfNotExist,
+        details: result.result as Record<string, any>,
+        group: "unknown",
+      },
+      update: {
+        queued: false,
+        lastScan: result.timestamp,
+        details: result.result as Record<string, any>,
+      },
+    });
+
+    const scanReport = await prisma.scanReport.create({
+      data: { ...newReport },
+    });
+    return {
+      ...toDTO(domain),
+      scanReport: toDTO(scanReport),
+    };
   }
-  // mark the last report valid until the next scan.
-  const now = newReport.validFrom;
-  await Promise.all([
-    db.Report.updateOne({ _id: lastReport._id }, { lastScan: now }).lean(),
-    db.Domain.updateOne(
-      { fqdn: newReport.fqdn, ipV4AddressNumber: newReport.ipV4AddressNumber },
-      { lastScan: now, queued: false }
-    ).lean(),
-  ]);
+
+  const domain = await prisma.domain.update({
+    where: { fqdn: newReport.fqdn },
+    data: {
+      queued: false,
+      lastScan: result.timestamp,
+      details: result.result as Record<string, any>,
+    },
+  });
+
   return {
-    ...lastReport,
-    lastScan: now,
+    ...toDTO(domain),
+    scanReport: toDTO(lastReport[0]),
   };
 };
 

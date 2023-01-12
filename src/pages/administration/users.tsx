@@ -1,7 +1,7 @@
 import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import UserRepresentation from "@keycloak/keycloak-admin-client/lib/defs/userRepresentation";
-import { unstable_getServerSession } from "next-auth";
+import { User } from "@prisma/client";
 import { signIn } from "next-auth/react";
 import { FunctionComponent, useEffect, useState } from "react";
 import AdministrationPage from "../../components/AdministrationPage";
@@ -20,38 +20,27 @@ import { clientHttpClient } from "../../services/clientHttpClient";
 import { keycloak } from "../../services/keycloak";
 import { userService } from "../../services/userService";
 
-import {
-  ICreateUserDTO,
-  INetwork,
-  ISession,
-  IUser,
-  WithoutId,
-} from "../../types";
-import { classNames, isAdmin, parseNetworkString } from "../../utils/common";
-import { authOptions } from "../api/auth/[...nextauth]";
+import { ICreateUserDTO } from "../../types";
+import { classNames, isAdmin } from "../../utils/common";
 
 export const parseCreateUserForm = ({
   firstName,
   lastName,
-  networks,
   username,
   role,
 }: {
   firstName: string;
   lastName: string;
   username: string;
-  networks: string;
   role: string;
 }): ICreateUserDTO => {
   if (username.length === 0) {
     throw new Error("Bitte trage einen Nutzernamen ein.");
   }
 
-  const networksArray = parseNetworkString(networks);
   return {
     firstName,
     lastName,
-    networks: networksArray,
     username,
     role,
   };
@@ -59,24 +48,18 @@ export const parseCreateUserForm = ({
 
 interface Props {
   error: boolean;
-  users: Array<
-    UserRepresentation &
-      Omit<IUser, "_id"> & { networks: WithoutId<INetwork>[] } & { id: string }
-  >;
+  users: Array<UserRepresentation & User & { id: string }>;
 }
 const Users: FunctionComponent<Props> = (props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [users, setUser] = useState(props.users);
   const [edit, setEdit] = useState<Props["users"][0] | null>(null);
 
-  const handleCreateUser = async (
-    form: Omit<ICreateUserDTO, "networks"> & { networks: string }
-  ) => {
-    const { firstName, lastName, networks, username, role } = form;
+  const handleCreateUser = async (form: ICreateUserDTO) => {
+    const { firstName, lastName, username, role } = form;
     const createUserDTO = parseCreateUserForm({
       firstName,
       lastName,
-      networks,
       username,
       role,
     });
@@ -89,9 +72,9 @@ const Users: FunctionComponent<Props> = (props) => {
       throw res;
     }
     const body = await res.json();
-    const user: IUser = body.user;
+    const user: User = body.user;
 
-    setUser((users) => [{ ...user, id: user._id }, ...users]);
+    setUser((users) => [user, ...users]);
     return body.password;
   };
 
@@ -116,28 +99,23 @@ const Users: FunctionComponent<Props> = (props) => {
     setEdit(null);
   };
 
-  const handleUpdateUser = async (
-    user: Omit<IUser, "_id" | "networks"> & { id: string; networks: string }
-  ) => {
+  const handleUpdateUser = async (user: User) => {
     const res = await clientHttpClient(
       `/api/users/${user.id}`,
       crypto.randomUUID(),
       {
         method: "PUT",
-        body: JSON.stringify({
-          ...user,
-          networks: parseNetworkString(user.networks),
-        }),
+        body: JSON.stringify(user),
       }
     );
     if (!res.ok) {
       throw res;
     }
-    const body: IUser = await res.json();
+    const body: User = await res.json();
 
     setUser((users) =>
       users.map((u) =>
-        u.id === body._id ? { ...body, username: u.username, id: body._id } : u
+        u.id === body.id ? { ...body, username: u.username } : u
       )
     );
     setEdit(null);
@@ -175,7 +153,6 @@ const Users: FunctionComponent<Props> = (props) => {
                 <th className="p-2 py-4">Vorname</th>
                 <th className="p-2 py-4">Nachname</th>
                 <th className="p-2 py-4">Rolle</th>
-                <th className="p-2 py-4">Netzwerke</th>
                 <th className="p-2 py-4">Aktionen</th>
               </tr>
             </thead>
@@ -192,16 +169,6 @@ const Users: FunctionComponent<Props> = (props) => {
                   <td className="p-2">{user.firstName}</td>
                   <td className="p-2">{user.lastName}</td>
                   <td className="p-2">{user.role ? user.role : ""}</td>
-                  <td className="p-2">
-                    {user.networks.map((network) => (
-                      <span
-                        className="mr-2 bg-deepblue-200 px-2 py-1"
-                        key={network.cidr}
-                      >
-                        {network.cidr}
-                      </span>
-                    ))}
-                  </td>
                   <td className="p-2 w-20 text-right">
                     <Menu
                       Button={
@@ -246,16 +213,10 @@ const Users: FunctionComponent<Props> = (props) => {
 };
 
 export const getServerSideProps = decorateServerSideProps(
-  async (context, [token, db]) => {
-    const session = (await unstable_getServerSession(
-      context.req,
-      context.res,
-      authOptions
-    )) as ISession;
-
+  async (_context, [token, db]) => {
     // check if the user is an admin
     // if not, redirect him to the dashboard page.
-    if (!isAdmin(session)) {
+    if (!isAdmin(token)) {
       return {
         redirect: {
           destination: "/dashboard",
@@ -278,11 +239,10 @@ export const getServerSideProps = decorateServerSideProps(
         props: {
           error: false,
           users: kcUsers.map((user) => {
-            const userFromDB = users.find((u) => u._id === user.id);
+            const userFromDB = users.find((u) => u.id === user.id);
             return {
               ...user,
               role: userFromDB?.role ?? "",
-              networks: userFromDB?.networks ?? [],
             };
           }),
         },

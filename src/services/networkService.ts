@@ -1,35 +1,23 @@
-import { ModelsType } from "../db/models";
+import { Network, PrismaClient } from "@prisma/client";
 import { parseNetwork } from "../utils/common";
-import { jsonSerializableStage } from "../utils/dbUtils";
+import { DTO, toDTO } from "../utils/server";
 
-const getAll = async (db: ModelsType) => {
-  const networks = await db.Network.aggregate([
-    {
-      $lookup: {
-        from: "users",
-        localField: "_id",
-        foreignField: "networks",
-        as: "users",
-        pipeline: [
-          {
-            $project: {
-              _id: 1,
-            },
-          },
-          ...jsonSerializableStage,
-        ],
-      },
-    },
-    ...jsonSerializableStage,
-  ]);
-  return networks;
+const getAll = async (prisma: PrismaClient) => {
+  return toDTO(await prisma.network.findMany());
 };
 
-const createNewNetworks = async (networks: string[], db: ModelsType) => {
+const createNetworks = async (
+  networks: string[],
+  prisma: PrismaClient
+): Promise<DTO<Network[]>> => {
   // first create all the networks.
   // check which networks do already exist based on the cidr
-  const existingNetworks = await db.Network.find({
-    cidr: { $in: networks },
+  const existingNetworks = await prisma.network.findMany({
+    where: {
+      cidr: {
+        in: networks,
+      },
+    },
   });
   // filter the existing networks.
   const newNetworks = networks.filter(
@@ -38,11 +26,15 @@ const createNewNetworks = async (networks: string[], db: ModelsType) => {
         (existingNetwork) => existingNetwork.cidr === network
       )
   );
+  const data = newNetworks.map(parseNetwork);
   // create the new networks.
-  return await db.Network.create(newNetworks.map(parseNetwork));
+  await prisma.network.createMany({
+    data,
+  });
+  return toDTO(data);
 };
 
 export const networkService = {
   getAll,
-  createNewNetworks,
+  createNetworks,
 };

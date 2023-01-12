@@ -1,7 +1,7 @@
-import { IReport } from "../types";
+import { DetailedDomain } from "../types";
 
-export default function getRPKIReportMessage(report: IReport) {
-  const inspection = report.result["RPKI"];
+export default function getRPKIReportMessage(report: DetailedDomain) {
+  const inspection = report.details["RPKI"];
   if (inspection?.didPass === null || inspection?.didPass === undefined) {
     return `Der RPKI Status der Domain ${report.fqdn} konnte nicht überprüft werden.`;
   } else if (inspection.didPass) {
@@ -18,14 +18,14 @@ export default function getRPKIReportMessage(report: IReport) {
       inspection.actualValue instanceof Array &&
       inspection.actualValue.length > 1
     ) {
-      return `Alle IP-Adressen Prefixe ${inspection.actualValue
+      return `Alle IP-Adressen Präfixe ${inspection.actualValue
         .map((v) => v.prefix)
         .join(", ")} (ASN: ${inspection.actualValue
         .map((v) => v.asn)
         .join(", ")}) weisen valide Signaturen auf.`;
     }
 
-    return `Der IP-Adressen Prefix ${actualValue.prefix} (ASN: ${actualValue.asn}) weist ein valide Signatur auf.`;
+    return `Das IP-Adressen Präfix ${actualValue.prefix} (ASN: ${actualValue.asn}) weist ein valide Signatur auf.`;
   } else {
     let actualValue: {
       prefix: string;
@@ -40,12 +40,12 @@ export default function getRPKIReportMessage(report: IReport) {
       inspection.actualValue instanceof Array &&
       inspection.actualValue.length > 1
     ) {
-      return `Mindestens einer der IP-Adressen Prefixe ${inspection.actualValue
+      return `Mindestens eines der IP-Adressen Präfixe ${inspection.actualValue
         .map((v) => v.prefix)
         .join(", ")} (ASN: ${inspection.actualValue
         .map((v) => v.asn)
         .join(", ")}) weist keine valide Signatur auf.`;
     }
-    return `Der IP-Adressen Prefix ${actualValue.prefix} (ASN: ${actualValue.asn}) weist keine Signatur auf.`;
+    return `Das IP-Adressen Präfix ${actualValue.prefix} (ASN: ${actualValue.asn}) weist keine Signatur auf.`;
   }
 }

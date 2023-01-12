@@ -1,5 +1,5 @@
+import { PrismaClient } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
-import { ModelsType } from "../../../db/models";
 import { decorate } from "../../../decorators/decorate";
 import { withAdmin } from "../../../decorators/withAdmin";
 import { withDB } from "../../../decorators/withDB";
@@ -9,13 +9,12 @@ import NotFoundException from "../../../errors/NotFoundException";
 import { keycloak } from "../../../services/keycloak";
 import { userService } from "../../../services/userService";
 import { IToken, IUserPutDTO } from "../../../types";
-import { parseNetwork } from "../../../utils/common";
 
 const handlePut = async (
   token: IToken,
   req: NextApiRequest,
   res: NextApiResponse,
-  db: ModelsType
+  prisma: PrismaClient
 ) => {
   const userId = req.query.userId as string;
   if (!userId) {
@@ -35,22 +34,12 @@ const handlePut = async (
     }
   );
 
-  const [user, _] = await userService.updateUser(
-    userId,
-    {
-      ...putRequest,
-      _id: userId,
-      networks: putRequest.networks.map(parseNetwork),
-    },
-    db
-  );
+  const user = await userService.updateUser(userId, putRequest, prisma);
 
   return {
     ...user,
-    _id: userId,
     firstName: putRequest.firstName,
     lastName: putRequest.lastName,
-    networks: putRequest.networks.map(parseNetwork),
   };
 };
 
@@ -58,7 +47,7 @@ const handleDelete = async (
   token: IToken,
   req: NextApiRequest,
   res: NextApiResponse,
-  db: ModelsType
+  prisma: PrismaClient
 ) => {
   const userId = req.query.userId as string;
   if (!userId) {
@@ -66,8 +55,8 @@ const handleDelete = async (
   }
   const kcClient = keycloak.getKcAdminClient(token.accessToken);
   await kcClient.users.del({ id: userId, realm: keycloak.getRealmName() });
-  const user = await db.User.findOneAndDelete({
-    _id: userId,
+  const user = await prisma.user.delete({
+    where: { id: userId },
   });
 
   return user;

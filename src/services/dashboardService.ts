@@ -1,5 +1,4 @@
-import { ModelsType, toDTO } from "../db/models";
-import { AppUser, IDashboard, IUser } from "../types";
+import { Dashboard, PrismaClient, User } from "@prisma/client";
 import { getLogger } from "./logger";
 import { statService } from "./statService";
 
@@ -18,19 +17,14 @@ const eachWeek = (start: Date, end: Date) => {
 };
 
 const staleWhileRevalidate = async (
-  currentUser: AppUser,
-  admin: boolean,
-  db: ModelsType
-): Promise<IDashboard> => {
+  currentUser: User,
+  prisma: PrismaClient
+): Promise<Dashboard> => {
   const now = Date.now();
 
   const updatePromise = Promise.all([
-    statService.getCurrentStatePercentage(
-      admin,
-      currentUser.networks,
-      db.Domain
-    ),
-    statService.getTotals(admin, currentUser.networks, db.Domain),
+    statService.getCurrentStatePercentage(currentUser, prisma),
+    statService.getTotalsOfUser(currentUser, prisma),
     Promise.all(
       eachWeek(
         // first of january in 2023
@@ -38,11 +32,9 @@ const staleWhileRevalidate = async (
         new Date()
       ).map(async (_, i, arr) => {
         const res = await statService.getFailedSuccessPercentage(
-          admin,
-          currentUser.networks,
-          db.Report,
+          currentUser,
+          prisma,
           {
-            start: arr[i - 1] || 0,
             end: arr[i],
           }
         );
@@ -52,42 +44,56 @@ const staleWhileRevalidate = async (
         };
       })
     ),
-  ]).then(
-    async ([data, { uniqueDomains, dns, ipAddresses }, historicalData]) => {
-      // create the new dashboard.
-      const dashboard = await db.Dashboard.findOneAndUpdate(
-        {
-          userId: currentUser.id,
+  ]).then(async ([data, { uniqueDomains }, historicalData]) => {
+    // find the id of the last dashboard of this user.
+    let lastDashboard = await prisma.dashboard.findFirst({
+      where: {
+        userId: currentUser.id,
+      },
+    });
+    const d = {
+      userId: currentUser.id,
+      content: {
+        currentState: data,
+        totals: {
+          uniqueDomains,
         },
-        {
-          userId: currentUser.id,
-          currentState: data,
-          totals: {
-            uniqueDomains,
-            dns,
-            ipAddresses,
-          },
-          historicalData,
-        },
-        { upsert: true, new: true }
-      ).lean();
-
-      logger.info(
-        {
-          duration: Date.now() - now,
-        },
-        "dashboard updated"
-      );
-      return toDTO(dashboard);
+        historicalData,
+      },
+    };
+    if (!lastDashboard) {
+      lastDashboard = await prisma.dashboard.create({
+        data: d,
+      });
+    } else {
+      await prisma.dashboard.update({
+        where: { id: lastDashboard.id },
+        data: d,
+      });
+      lastDashboard = {
+        ...lastDashboard,
+        ...d,
+      };
     }
-  );
+
+    logger.info(
+      {
+        duration: Date.now() - now,
+      },
+      "dashboard updated"
+    );
+    return lastDashboard;
+  });
 
   // check if a dashboard does already exist - otherwise we have to wait for the updatePromise
-  const dashboard = await db.Dashboard.findOne({
-    userId: currentUser.id,
-  }).lean();
+  const dashboard = await prisma.dashboard.findFirst({
+    where: {
+      userId: currentUser.id,
+    },
+  });
+
   if (dashboard) {
-    return toDTO(dashboard);
+    return dashboard;
   }
   logger.info("no cached dashboard - creating it");
   return updatePromise;

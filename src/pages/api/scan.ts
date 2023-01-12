@@ -2,24 +2,26 @@
 import { randomUUID } from "crypto";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import ip from "ip";
-import { ModelsType, toDTO } from "../../db/models";
+import { Prisma } from "@prisma/client";
 import { decorate } from "../../decorators/decorate";
-import { tryDB } from "../../decorators/tryDB";
+import { withDB } from "../../decorators/withDB";
 import { inspectRPC } from "../../inspection/inspect";
 import { domainService } from "../../services/domainService";
 import { getLogger } from "../../services/logger";
 import { reportService } from "../../services/reportService";
-import { IReport } from "../../types";
+import { DetailedDomainWithScanResult } from "../../types";
 import { isScanError, sanitizeFQDN } from "../../utils/common";
+import { DTO, toDTO } from "../../utils/server";
 
 const logger = getLogger(__filename);
 
 export default decorate(
   async (
     req: NextApiRequest,
-    res: NextApiResponse<IReport | { error: string }>,
-    [db]
+    res: NextApiResponse<
+      DTO<DetailedDomainWithScanResult> | { error: string; fqdn: string }
+    >,
+    [prisma]
   ) => {
     const start = Date.now();
 
@@ -44,40 +46,52 @@ export default decorate(
       );
       return res.status(400).json({
         error: `Missing site to scan or not a valid fully qualified domain name. Please provide the site you would like to scan using the site query parameter. Provided value: ?site=${req.query.site}`,
+        fqdn: req.query.site as string,
       });
     }
 
     if (req.query.refresh !== "true") {
       // check if we already have a report for this site
-      const existingReport = await db.Report?.findOne(
-        {
-          fqdn: siteToScan,
-          lastScan: {
-            // last hour
-            $gte: new Date(Date.now() - 1000 * 60 * 60 * 1),
+      const domain = toDTO(
+        await prisma.domain.findFirst({
+          where: {
+            fqdn: siteToScan,
+            lastScan: {
+              // last hour
+              gte: new Date(Date.now() - 1000 * 60 * 60 * 1).getTime(),
+            },
+            details: {
+              not: Prisma.JsonNull,
+            },
           },
-        },
-        null,
-        {
-          sort: {
-            lastScan: -1,
+          include: {
+            scanReports: {
+              orderBy: {
+                createdAt: "desc",
+              },
+              take: 1,
+            },
           },
-        }
-      ).lean();
-      if (existingReport) {
+          take: 1,
+        })
+      );
+      if (domain) {
         logger.info(
           { requestId },
           `found existing report for site: ${siteToScan} - returning existing report`
         );
-        return res.status(200).json(toDTO(existingReport));
+
+        const { scanReports, ...domainWithoutScanReports } = domain;
+        return res.status(200).json({
+          ...domainWithoutScanReports,
+          scanReport: scanReports[0],
+        });
       }
     }
 
-    const ipV4Address = req.query.ipV4Address as string | undefined;
+    const result = await inspectRPC(requestId, siteToScan);
 
-    const result = await inspectRPC(requestId, siteToScan, ipV4Address);
-
-    if (isScanError(result) && db.Domain !== undefined) {
+    if (isScanError(result)) {
       if (result.result.error === "fetch failed") {
         logger.error(
           { err: result.result.error, duration: Date.now() - start, requestId },
@@ -86,9 +100,12 @@ export default decorate(
         return res.status(400).json({
           error:
             "Invalid site provided. Please provide a valid fully qualified domain name as site query parameter. Example: ?site=example.com",
+          fqdn: result.fqdn,
         });
       } else {
-        await domainService.handleDomainScanError(result, db.Domain);
+        // do not monitor this domain if it does not exist yet - this means, that there is a user which scans the domain for the first time.
+        // it is not necessary to do any re-scans.
+        await domainService.handleDomainScanError(result, false, prisma);
         logger.error(
           {
             err: result.result.error.message,
@@ -102,32 +119,18 @@ export default decorate(
           fqdn: result.fqdn,
         });
       }
-    } else if (!isScanError(result)) {
+    } else {
       logger.info(
         { duration: Date.now() - start, requestId },
         `successfully scanned site: ${siteToScan}`
       );
-
-      const data: IReport = {
-        ...result,
-        duration: Date.now() - start,
-        version: 1,
-        lastScan: result.timestamp,
-        validFrom: result.timestamp,
-        createdAt: result.timestamp,
-        updatedAt: result.timestamp,
-        automated: false,
-        ipV4AddressNumber: ip.toLong(result.ipAddress),
-      };
-
-      if (db) {
-        return res.json(
-          toDTO(await reportService.handleNewScanReport(data, db as ModelsType))
-        );
-      } else {
-        return res.json(data);
-      }
+      const domain = await reportService.handleNewScanReport(
+        result,
+        false,
+        prisma
+      );
+      return res.json(domain);
     }
   },
-  tryDB
+  withDB
 );

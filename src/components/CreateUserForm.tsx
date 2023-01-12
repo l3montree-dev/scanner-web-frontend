@@ -77,37 +77,6 @@ const CreateUserForm: FunctionComponent<Props> = ({ onCreateUser }) => {
           <div className="mt-4 flex-col flex">
             <FormInput label="Rolle" onChange={setRole} value={role} />
           </div>
-          <div className="mt-4 flex-col flex">
-            <FormTextarea
-              label="Netzwerke (CIDR-Notation) *"
-              onChange={setNetworks}
-              value={networks}
-              validator={(value) => {
-                const networksArray = value.trim().split("\n");
-                // check if each network is in cidr notation.
-
-                const networksValid = networksArray.every((network) => {
-                  const [ip, mask] = network.split("/");
-                  if (ip === undefined || mask === undefined) {
-                    return false;
-                  }
-                  const ipValid = isValidIp(ip);
-                  const maskValid = isValidMask(mask);
-                  return ipValid && maskValid;
-                });
-                if (!networksValid) {
-                  return "Bitte trage gültige Netzwerke ein.";
-                }
-                return true;
-              }}
-              placeholder={`45.10.26.0/24
-45.12.32.0/16
-                  `}
-            />
-            <span className="text-white text-right text-sm mt-1">
-              Mehrere Netzwerke können durch Zeilenumbrüche getrennt werden.
-            </span>
-          </div>
           <div className="flex flex-row justify-end mt-5">
             <PrimaryButton loading={createRequest.isLoading} type="submit">
               Nutzer anlegen

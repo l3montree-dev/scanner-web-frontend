@@ -1,4 +1,4 @@
-import { resolve4, lookup } from "dns/promises";
+import { resolve4 } from "dns/promises";
 import formidable from "formidable";
 import fs from "fs/promises";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -7,10 +7,8 @@ import { decorate } from "../../decorators/decorate";
 import { withDB } from "../../decorators/withDB";
 import { withSession } from "../../decorators/withSession";
 import { domainService } from "../../services/domainService";
-import { ipService } from "../../services/ipService";
 
 import { getLogger } from "../../services/logger";
-import { isAdmin } from "../../utils/common";
 import { stream2buffer } from "../../utils/server";
 
 const logger = getLogger(__filename);
@@ -22,7 +20,7 @@ export const config = {
 };
 
 export default decorate(
-  async (req: NextApiRequest, res: NextApiResponse, [db, session]) => {
+  async (req: NextApiRequest, res: NextApiResponse, [prisma, session]) => {
     const requestId = req.headers["x-request-id"] as string;
     if (!session) {
       res.status(401).end();
@@ -42,28 +40,16 @@ export default decorate(
         (await stream2buffer(req)).toString()
       );
 
-      const ips = await resolve4(domain);
-      const ipsInSubnet = ipService.filterToIpInNetwork(
-        ips,
-        session.user.networks
-      );
-      if (ipsInSubnet.length === 0) {
-        logger.warn(
-          `Domain ${domain} does not have an ip address in the users subnet. Skipping.`
-        );
-        res.status(400).send({ success: false, reason: "not_in_subnet" });
-        return;
-      }
-
-      const { fqdn } = await domainService.handleNewFQDN(
-        domain,
-        ipsInSubnet[0],
-        db.Domain
+      await domainService.handleNewDomain(
+        { fqdn: domain },
+        prisma,
+        session.user
       );
       // the domain will automatically be inspected.
-      return res.send({ success: true, fqdn });
+      return res.send({ success: true, fqdn: domain });
     }
 
+    // the user uploads a file with domains.
     const data = await new Promise<{ files: formidable.Files }>(
       (resolve, reject) => {
         const form = formidable({ multiples: true });
@@ -123,31 +109,10 @@ export default decorate(
           .map((domain) => {
             return async () => {
               try {
-                const ip = (await lookup(domain, 4)).address;
-                if (isAdmin(session) && ip) {
-                  await domainService.handleNewFQDN(domain, ip, db.Domain);
-                  imported++;
-                  return;
-                }
-                const ipsInSubnet = ipService.filterToIpInNetwork(
-                  [ip],
-                  session.user.networks
-                );
-                if (ipsInSubnet.length === 0) {
-                  logger.warn(
-                    {
-                      requestId,
-                      userId: session.user.id,
-                    },
-                    `Domain ${domain} does not have an ip address in the users subnet. Skipping.`
-                  );
-                  return;
-                }
-
-                await domainService.handleNewFQDN(
-                  domain,
-                  ipsInSubnet[0],
-                  db.Domain
+                await domainService.handleNewDomain(
+                  { fqdn: domain },
+                  prisma,
+                  session.user
                 );
                 imported++;
               } catch (err: any) {

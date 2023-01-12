@@ -1,29 +1,11 @@
-import { ObjectId } from "mongoose";
+import { Domain } from "@prisma/client";
 import { InspectionType, InspectResultDTO } from "./inspection/scans";
 
-export interface IReport {
-  result: Partial<{
-    [key in InspectionType]: InspectResultDTO;
-  }>;
-  validFrom: number;
-  lastScan: number;
-  fqdn: string;
-  duration: number;
-  version: number;
-  createdAt: number;
-  updatedAt: number;
-  automated: boolean;
-  ipV4AddressNumber: number;
-}
-
 export interface IDashboard {
-  userId: string;
   historicalData: Array<ChartData & { date: number }>;
   currentState: ChartData;
   totals: {
     uniqueDomains: number;
-    dns: number;
-    ipAddresses: number;
   };
 }
 
@@ -34,45 +16,11 @@ export interface ChartData {
   totalCount: number;
 }
 
-export type IDomain = {
-  fqdn: string;
-  ipV4Address: string;
-  ipV6Address?: string[];
-  lastScan: number | null;
-  errorCount: number | null;
-  // save the number representation of the v4 address as well
-  // to make it easier to query for ranges
-  ipV4AddressNumber: number;
-} & { [key in InspectionType]: boolean | null };
-
-export interface INetwork {
-  prefixLength: number;
-  networkAddress: string;
-  startAddress: string;
-  endAddress: string;
-  startAddressNumber: number;
-  endAddressNumber: number;
-  cidr: string;
-  comment?: string;
-  id: string;
-}
-
 export interface INetworkPatchDTO {
   comment?: string;
 }
 
 export type IUserPutDTO = ICreateUserDTO;
-
-export interface IUser {
-  _id: string;
-  networks: INetwork[];
-  role: string;
-}
-
-// the user object after it was retrieved from the database.
-export interface AppUser extends Omit<IUser, "_id"> {
-  id: string;
-}
 
 export type IIpLookupReportMsg = {
   results: { [ip: string]: string[] };
@@ -110,7 +58,6 @@ export interface ISession {
     email: string;
     image: string;
     id: string;
-    networks: INetwork[];
     role: string;
   };
   resource_access: {
@@ -130,12 +77,13 @@ export interface ICreateUserDTO {
   username: string;
   firstName: string;
   lastName: string;
-  networks: string[]; // CIDR notation
   role: string;
 }
 
 export type IScanSuccessResponse = {
-  result: IReport["result"];
+  result: Partial<{
+    [key in InspectionType]: InspectResultDTO;
+  }>;
   fqdn: string;
   ipAddress: string;
   duration: number;
@@ -164,7 +112,7 @@ export interface PaginateResult<T> {
   pageSize: number;
 }
 
-export type WithoutId<T> = Omit<T, "_id" | "id">;
+export type WithoutId<T> = Omit<T, "id">;
 export interface IKcUser {
   id: string;
   createdTimestamp: number;
@@ -177,3 +125,16 @@ export interface IKcUser {
   attributes?: { role: string[] };
   notBefore: number;
 }
+
+export type DetailedDomain = Omit<Domain, "lastScan"> & {
+  details: IScanSuccessResponse["result"];
+  lastScan: number;
+};
+
+export type DomainWithScanResult = Domain & {
+  scanReport: { [key in InspectionType]: boolean | null } | null;
+};
+
+export type DetailedDomainWithScanResult = Omit<Domain, "lastScan"> & {
+  scanReport: { [key in InspectionType]: boolean | null };
+};

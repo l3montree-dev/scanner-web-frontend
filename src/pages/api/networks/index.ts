@@ -1,5 +1,5 @@
+import { PrismaClient } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
-import { ModelsType } from "../../../db/models";
 import { decorate } from "../../../decorators/decorate";
 import { withDB } from "../../../decorators/withDB";
 import { withSession } from "../../../decorators/withSession";
@@ -11,7 +11,7 @@ import { isAdmin, parseNetworkString } from "../../../utils/common";
 const handlePost = async (
   req: NextApiRequest,
   res: NextApiResponse,
-  db: ModelsType
+  prisma: PrismaClient
 ) => {
   const requestId = req.headers["x-request-id"] as string;
   let networks: string[] = JSON.parse(req.body);
@@ -21,17 +21,13 @@ const handlePost = async (
     // make sure, that we only have valid networks
     networks = parseNetworkString(networks);
 
-    const newNetworks = await networkService.createNewNetworks(networks, db);
+    const newNetworks = await networkService.createNetworks(networks, prisma);
     newNetworks.forEach((net) => {
       ipService.lookupNetwork(net.cidr, requestId);
     });
 
     res.statusCode = 201;
-    res.end(
-      JSON.stringify(
-        newNetworks.map((net) => ({ ...net.toObject(), users: [] }))
-      )
-    );
+    res.end(JSON.stringify(newNetworks.map((net) => ({ ...net, users: [] }))));
   } catch (e) {
     res.statusCode = 500;
     res.end(JSON.stringify({ error: e }));

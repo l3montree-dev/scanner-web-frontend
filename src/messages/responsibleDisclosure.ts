@@ -1,8 +1,10 @@
 import { ResponsibleDisclosureValidationError } from "../inspection/result-enums/organizational.typings";
-import { IReport } from "../types";
+import { DetailedDomain } from "../types";
 
-export const getResponsibleDisclosureReportMessage = (report: IReport) => {
-  const inspection = report.result["ResponsibleDisclosure"];
+export const getResponsibleDisclosureReportMessage = (
+  report: DetailedDomain
+) => {
+  const inspection = report.details["ResponsibleDisclosure"];
   if (inspection?.didPass === null || inspection?.didPass === undefined) {
     return `Die Datei ${report.fqdn}/.well-known/security.txt konnte nicht überprüft werden.`;
   } else if (inspection.didPass) {

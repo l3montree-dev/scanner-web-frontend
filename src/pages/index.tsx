@@ -1,13 +1,12 @@
 import { faRefresh } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Domain } from "@prisma/client";
 import type { NextPage } from "next";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import Button from "../components/Button";
-import Footer from "../components/Footer";
 import Meta from "../components/Meta";
 import Page from "../components/Page";
 import ResultGrid from "../components/ResultGrid";
-import { WithId } from "../db/models";
 import useLoading from "../hooks/useLoading";
 import {
   DomainInspectionType,
@@ -19,8 +18,8 @@ import {
 } from "../inspection/scans";
 
 import { clientHttpClient } from "../services/clientHttpClient";
-import { IReport } from "../types";
-import { sanitizeFQDN, classNames } from "../utils/common";
+import { DetailedDomain, IScanSuccessResponse } from "../types";
+import { classNames, sanitizeFQDN } from "../utils/common";
 
 const hostnameRegex = new RegExp(
   /^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
@@ -41,7 +40,7 @@ const Home: NextPage = () => {
   const [website, setWebsite] = useState("");
   const scanRequest = useLoading();
   const refreshRequest = useLoading();
-  const [report, setReport] = useState<null | IReport>(null);
+  const [domain, setDomain] = useState<null | DetailedDomain>(null);
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -54,7 +53,7 @@ const Home: NextPage = () => {
     }
     // react will batch those two calls anyways.
     scanRequest.loading();
-    setReport(null);
+    setDomain(null);
 
     // do the real api call.
     try {
@@ -72,8 +71,8 @@ const Home: NextPage = () => {
         );
       }
 
-      const obj: WithId<IReport> = await response.json();
-      setReport(obj);
+      const obj: DetailedDomain = await response.json();
+      setDomain(obj);
       scanRequest.success();
     } catch (e) {
       scanRequest.error(
@@ -83,7 +82,7 @@ const Home: NextPage = () => {
   };
 
   useEffect(() => {
-    if (report) {
+    if (domain) {
       const rec = document.getElementById("test-results");
 
       if (rec && !isInViewport(rec)) {
@@ -96,16 +95,16 @@ const Home: NextPage = () => {
         });
       }
     }
-  }, [report]);
+  }, [domain]);
 
   const handleRefresh = async () => {
-    if (!report) {
+    if (!domain) {
       return;
     }
     refreshRequest.loading();
     try {
       const response = await clientHttpClient(
-        `/api/scan?site=${report.fqdn}&refresh=true`,
+        `/api/scan?site=${domain.fqdn}&refresh=true`,
         crypto.randomUUID()
       );
       if (!response.ok) {
@@ -119,7 +118,7 @@ const Home: NextPage = () => {
         );
       }
       const obj = await response.json();
-      setReport(obj);
+      setDomain(obj);
       refreshRequest.success();
     } catch (e) {
       refreshRequest.error(
@@ -129,8 +128,8 @@ const Home: NextPage = () => {
   };
 
   const amountPassed = useMemo(() => {
-    if (!report) return 0;
-    return Object.keys(report.result)
+    if (!domain) return 0;
+    return Object.keys(domain.details as Record<string, any>)
       .filter((key) =>
         (
           [
@@ -143,11 +142,18 @@ const Home: NextPage = () => {
           ] as string[]
         ).includes(key)
       )
-      .map((key) => report.result[key as InspectionType])
-      .filter((inspection) => inspection?.didPass).length;
-  }, [report]);
+      .map(
+        (key) =>
+          (domain.details as IScanSuccessResponse["result"])[
+            key as InspectionType
+          ]?.didPass
+      )
+      .filter((inspection) => !!inspection).length;
+  }, [domain]);
 
-  const dateString = report ? new Date(report.lastScan).toLocaleString() : "";
+  const dateString = domain
+    ? new Date(Number(domain.lastScan)).toLocaleString()
+    : "";
   return (
     <Page>
       <Meta />
@@ -194,7 +200,7 @@ const Home: NextPage = () => {
             </p>
           </div>
 
-          {report !== null && (
+          {domain !== null && (
             <div className="mt-10 p-5 md:p-0 text-white">
               <h2 id="test-results" className="text-white text-2xl">
                 Testergebnisse für{" "}
@@ -202,26 +208,26 @@ const Home: NextPage = () => {
                   target={"_blank"}
                   className="underline"
                   rel="noopener noreferrer"
-                  href={`//${report.fqdn}`}
+                  href={`//${domain.fqdn}`}
                 >
-                  {report.fqdn}
+                  {domain.fqdn}
                 </a>
               </h2>
-              {report.createdAt !== 0 && (
-                <div className="flex items-center flex-row">
-                  <p>{dateString.substring(0, dateString.length - 3)}</p>
-                  <button
-                    onClick={handleRefresh}
-                    title="Testergebnisse aktualisieren"
-                    className={classNames("ml-2 bg-deepblue-200 w-8 h-8")}
-                  >
-                    <FontAwesomeIcon
-                      className={refreshRequest.isLoading ? "rotate" : ""}
-                      icon={faRefresh}
-                    />
-                  </button>
-                </div>
-              )}
+
+              <div className="flex items-center flex-row">
+                <p>{dateString.substring(0, dateString.length - 3)}</p>
+                <button
+                  onClick={handleRefresh}
+                  title="Testergebnisse aktualisieren"
+                  className={classNames("ml-2 bg-deepblue-200 w-8 h-8")}
+                >
+                  <FontAwesomeIcon
+                    className={refreshRequest.isLoading ? "rotate" : ""}
+                    icon={faRefresh}
+                  />
+                </button>
+              </div>
+
               {refreshRequest.errored && (
                 <p className={classNames("text-red-500")}>
                   {refreshRequest.errorMessage}
@@ -230,7 +236,7 @@ const Home: NextPage = () => {
               {!refreshRequest.isLoading && !refreshRequest.errored && (
                 <div>
                   <p>Bestanden: {amountPassed}/6</p>
-                  <ResultGrid report={report} />
+                  <ResultGrid report={domain} />
                 </div>
               )}
             </div>

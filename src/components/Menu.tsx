@@ -37,9 +37,7 @@ const Menu: FunctionComponent<Props> = ({ Button, Menu }) => {
   useEffect(() => {}, []);
   return (
     <div className="relative">
-      <button className="hover:bg-deepblue-300" onClick={openMenu}>
-        {Button}
-      </button>
+      <button onClick={openMenu}>{Button}</button>
       <div
         onClick={handleMenuClick}
         className={classNames(

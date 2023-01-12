@@ -1,5 +1,5 @@
+import { PrismaClient } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
-import { ModelsType } from "../../../db/models";
 import { decorate } from "../../../decorators/decorate";
 import { withAdmin } from "../../../decorators/withAdmin";
 import { withDB } from "../../../decorators/withDB";
@@ -10,50 +10,43 @@ import { INetworkPatchDTO } from "../../../types";
 const handlePatch = async (
   req: NextApiRequest,
   res: NextApiResponse,
-  db: ModelsType
+  prisma: PrismaClient
 ) => {
-  const networkId = req.query.networkId as string;
-  if (!networkId) {
+  const cidr = req.query.cidr as string;
+  if (!cidr) {
     throw new NotFoundException();
   }
   const patchRequest: INetworkPatchDTO = JSON.parse(req.body);
-  const network = await db.Network.findOneAndUpdate(
-    {
-      _id: networkId,
+  const network = await prisma.network.update({
+    where: {
+      cidr,
     },
-    {
-      comment: patchRequest.comment,
-    }
-  ).lean();
+    data: {
+      comment: patchRequest.comment ?? null,
+    },
+  });
+
   return network;
 };
 
 const handleDelete = async (
   req: NextApiRequest,
   res: NextApiResponse,
-  db: ModelsType
+  prisma: PrismaClient
 ) => {
-  const networkId = req.query.networkId as string;
-  if (!networkId) {
+  const cidr = req.query.cidr as string;
+  if (!cidr) {
     throw new NotFoundException();
   }
-  const network = await Promise.all([
-    db.Network.findOneAndDelete({
-      _id: networkId,
-    }).lean(),
+  await prisma.network.delete({
+    where: {
+      cidr,
+    },
+  });
 
-    // iterate over all users and delete the network from their list
-    db.User.updateMany(
-      {},
-      {
-        $pull: {
-          networks: networkId,
-        },
-      }
-    ),
-  ]);
-
-  return network;
+  return {
+    success: true,
+  };
 };
 
 export default decorate(

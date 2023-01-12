@@ -1,241 +1,147 @@
-import { Model } from "mongoose";
+import { Prisma, PrismaClient, User } from "@prisma/client";
 import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
-import { IDomain, INetwork, IReport } from "../types";
+import { toDTO } from "../utils/server";
 
-const keys = Object.keys(InspectionTypeEnum);
+const getTotalsOfUser = async (user: User, prisma: PrismaClient) => {
+  // count the domains this user has access to
+  return {
+    uniqueDomains: await prisma.userDomainRelation.count({
+      where: {
+        userId: user.id,
+      },
+    }),
+  };
+};
 
 const getTotals = async (
-  isAdmin: boolean,
-  networks: INetwork[],
-  domain: Model<IDomain>
-): Promise<{ uniqueDomains: number; ipAddresses: number; dns: number }> => {
-  if (!isAdmin && networks.length === 0) {
-    return {
-      uniqueDomains: 0,
-      ipAddresses: 0,
-      dns: 0,
-    };
-  }
-
-  const [uniqueDomains, ipAddresses, dns] = await Promise.all([
-    domain
-      .distinct("fqdn", {
-        ...(isAdmin
-          ? {}
-          : {
-              $or: networks.map((network) => ({
-                ipV4AddressNumber: {
-                  $gte: +network.startAddressNumber,
-                  $lte: +network.endAddressNumber,
-                },
-              })),
-            }),
-      })
-      .lean(),
-    domain
-      .distinct("ipV4AddressNumber", {
-        ...(isAdmin
-          ? {}
-          : {
-              $or: networks.map((network) => ({
-                ipV4AddressNumber: {
-                  $gte: +network.startAddressNumber,
-                  $lte: +network.endAddressNumber,
-                },
-              })),
-            }),
-      })
-      .lean(),
-    domain.countDocuments().lean(),
-  ]);
-
+  prisma: PrismaClient
+): Promise<{ uniqueDomains: number }> => {
   return {
-    uniqueDomains: uniqueDomains.length,
-    ipAddresses: ipAddresses.length,
-    dns: dns,
+    uniqueDomains: await prisma.domain.count(),
   };
 };
 
 const getCurrentStatePercentage = async (
-  isAdmin: boolean,
-  networks: INetwork[],
-  domain: Model<IDomain>
+  user: User,
+  prisma: PrismaClient
 ): Promise<{
   totalCount: number;
   data: {
     [key in InspectionType]: number;
   };
 }> => {
-  if (!isAdmin && networks.length === 0) {
-    return {
-      totalCount: 0,
-      data: keys.reduce((acc, cur) => ({ ...acc, [cur]: 0 }), {}) as any,
-    };
-  }
+  let [res] = (await prisma.$queryRaw(
+    Prisma.sql`
+SELECT AVG(SubResourceIntegrity) as SubResourceIntegrity,
+AVG(NoMixedContent) as NoMixedContent,
+AVG(ResponsibleDisclosure) as ResponsibleDisclosure,
+AVG(DNSSec) as DNSSec,
+AVG(CAA) as CAA,
+AVG(IPv6) as IPv6,
+AVG(RPKI) as RPKI,
+AVG(HTTP) as HTTP,
+AVG(HTTP308) as HTTP308,
+AVG(HTTPRedirectsToHttps) as HTTPRedirectsToHttps,
+AVG(HSTS) as HSTS, 
+AVG(HSTSPreloaded) as HSTSPreloaded,
+AVG(ContentSecurityPolicy) as ContentSecurityPolicy,
+AVG(XFrameOptions) as XFrameOptions,
+AVG(XSSProtection) as XSSProtection,
+AVG(ContentTypeOptions) as ContentTypeOptions,
+AVG(SecureSessionCookies) as SecureSessionCookies,
+AVG(TLSv1_2) as TLSv1_2,
+AVG(TLSv1_3) as TLSv1_3, 
+AVG(TLSv1_1_Deactivated) as TLSv1_1_Deactivated, 
+AVG(StrongKeyExchange) as StrongKeyExchange,
+AVG(StrongCipherSuites) as StrongCipherSuites,
+AVG(ValidCertificate) as ValidCertificate,
+AVG(StrongPrivateKey) as StrongPrivateKey,
+AVG(StrongSignatureAlgorithm) as StrongSignatureAlgorithm,
+AVG(MatchesHostname) as MatchesHostname,
+AVG(NotRevoked) as NotRevoked,
+AVG(CertificateTransparency) as CertificateTransparency,
+AVG(ValidCertificateChain) as ValidCertificateChain,
 
-  // get all domains of the network
-  const [res] = (await domain.aggregate([
-    ...(isAdmin
-      ? []
-      : [
-          {
-            $match: {
-              $or: networks.map((network) => ({
-                ipV4AddressNumber: {
-                  $gte: network.startAddressNumber,
-                  $lte: network.endAddressNumber,
-                },
-              })),
-            },
-          },
-        ]),
-    {
-      $match: {
-        $or: [
-          {
-            errorCount: {
-              $eq: null,
-            },
-          },
-          {
-            errorCount: {
-              $lt: 1,
-            },
-          },
-        ],
-      },
-    },
-    {
-      $facet: {
-        totalCount: [{ $count: "total" }],
-        data: [
-          {
-            $group: {
-              _id: null,
-              ...keys
-                .map((key) => ({
-                  [key]: {
-                    $sum: {
-                      $cond: [`$${key}`, 1, 0],
-                    },
-                  },
-                }))
-                .reduce((acc, cur) => ({ ...acc, ...cur }), {}),
-            },
-          },
-          {
-            $project: {
-              _id: 0,
-            },
-          },
-        ],
-      },
-    },
-  ])) as any;
+COUNT(*) as totalCount
+      from user_domain_relations udr INNER JOIN scan_reports sr1 on udr.fqdn = sr1.fqdn
+        WHERE NOT EXISTS(
+          SELECT 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr1.createdAt > sr2.createdAt
+    ) AND udr.userId = ${user.id}`
+  )) as any;
+
+  res = toDTO(res);
+
+  const { totalCount, ...data } = res;
   return {
-    totalCount: res.totalCount[0]?.total ?? 0,
-    data: res.data[0] ?? {
-      ...keys.reduce((acc, cur) => ({ ...acc, [cur]: 0 }), {}),
-    },
+    totalCount,
+    data,
   };
 };
 const getFailedSuccessPercentage = async (
-  isAdmin: boolean,
-  networks: INetwork[],
-  report: Model<IReport>,
-  timeQuery: { start: number; end: number }
+  user: User,
+  prisma: PrismaClient,
+  timeQuery: {
+    end: number;
+  }
 ): Promise<{
   totalCount: number;
   data: {
     [key in InspectionType]: number;
   };
 }> => {
-  if (!isAdmin && networks.length === 0) {
-    return {
-      totalCount: 0,
-      data: keys.reduce((acc, cur) => ({ ...acc, [cur]: 0 }), {}) as any,
-    };
-  }
+  let [res] = (await prisma.$queryRaw(
+    Prisma.sql`
+    SELECT AVG(SubResourceIntegrity) as SubResourceIntegrity,
+    AVG(NoMixedContent) as NoMixedContent,
+    AVG(ResponsibleDisclosure) as ResponsibleDisclosure,
+    AVG(DNSSec) as DNSSec,
+    AVG(CAA) as CAA,
+    AVG(IPv6) as IPv6,
+    AVG(RPKI) as RPKI,
+    AVG(HTTP) as HTTP,
+    AVG(HTTP308) as HTTP308,
+    AVG(HTTPRedirectsToHttps) as HTTPRedirectsToHttps,
+    AVG(HSTS) as HSTS, 
+    AVG(HSTSPreloaded) as HSTSPreloaded,
+    AVG(ContentSecurityPolicy) as ContentSecurityPolicy,
+    AVG(XFrameOptions) as XFrameOptions,
+    AVG(XSSProtection) as XSSProtection,
+    AVG(ContentTypeOptions) as ContentTypeOptions,
+    AVG(SecureSessionCookies) as SecureSessionCookies,
+    AVG(TLSv1_2) as TLSv1_2,
+    AVG(TLSv1_3) as TLSv1_3, 
+    AVG(TLSv1_1_Deactivated) as TLSv1_1_Deactivated, 
+    AVG(StrongKeyExchange) as StrongKeyExchange,
+    AVG(StrongCipherSuites) as StrongCipherSuites,
+    AVG(ValidCertificate) as ValidCertificate,
+    AVG(StrongPrivateKey) as StrongPrivateKey,
+    AVG(StrongSignatureAlgorithm) as StrongSignatureAlgorithm,
+    AVG(MatchesHostname) as MatchesHostname,
+    AVG(NotRevoked) as NotRevoked,
+    AVG(CertificateTransparency) as CertificateTransparency,
+    AVG(ValidCertificateChain) as ValidCertificateChain,
+    
+    COUNT(*) as totalCount
+          from user_domain_relations udr INNER JOIN scan_reports sr1 on udr.fqdn = sr1.fqdn
+          WHERE NOT EXISTS(
+              SELECT 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr1.createdAt > sr2.createdAt
+        ) AND udr.userId = ${user.id} AND sr1.createdAt < ${new Date(
+      timeQuery.end
+    )}`
+  )) as any;
 
-  // get all domains of the network
-  const [res] = (await report.aggregate([
-    ...(isAdmin
-      ? []
-      : [
-          {
-            $match: {
-              $or: networks.map((network) => ({
-                ipV4AddressNumber: {
-                  $gte: network.startAddressNumber,
-                  $lte: network.endAddressNumber,
-                },
-              })),
-            },
-          },
-        ]),
-    {
-      $match: {
-        validFrom: {
-          $lte: timeQuery.end,
-        },
-      },
-    },
+  res = toDTO(res);
 
-    {
-      $group: {
-        _id: "$fqdn",
-        report: { $last: "$result" },
-      },
-    },
-    {
-      $replaceRoot: {
-        newRoot: "$report",
-      },
-    },
-    {
-      $project: keys
-        .map((key) => ({
-          [key]: `$${key}.didPass`,
-        }))
-        .reduce((acc, cur) => ({ ...acc, ...cur }), {}),
-    },
-    {
-      $facet: {
-        totalCount: [{ $count: "total" }],
-        data: [
-          {
-            $group: {
-              _id: null,
-              ...keys
-                .map((key) => ({
-                  [key]: {
-                    $sum: {
-                      $cond: [`$${key}`, 1, 0],
-                    },
-                  },
-                }))
-                .reduce((acc, cur) => ({ ...acc, ...cur }), {}),
-            },
-          },
-          {
-            $project: {
-              _id: 0,
-            },
-          },
-        ],
-      },
-    },
-  ])) as any;
+  const { totalCount, ...data } = res;
   return {
-    totalCount: res.totalCount[0]?.total ?? 0,
-    data: res.data[0] ?? {
-      ...keys.reduce((acc, cur) => ({ ...acc, [cur]: 0 }), {}),
-    },
+    totalCount,
+    data,
   };
 };
 
 export const statService = {
   getTotals,
+  getTotalsOfUser,
   getCurrentStatePercentage,
   getFailedSuccessPercentage,
 };

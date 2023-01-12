@@ -1,10 +1,10 @@
-import { IReport } from "../types";
+import { DetailedDomain } from "../types";
 
-export const getDNSSecReportMessage = (report: IReport) => {
-  const inspection = report.result["DNSSec"];
-  if (inspection?.didPass === null || inspection?.didPass === undefined) {
+export const getDNSSecReportMessage = (report: DetailedDomain) => {
+  const inspection = report.details.DNSSec;
+  if (inspection === null || inspection === undefined) {
     return `DNSSEC konnte für die Domain ${report.fqdn} nicht überprüft werden.`;
-  } else if (inspection.didPass) {
+  } else if (inspection) {
     return `DNSSEC ist für die Domain ${report.fqdn} eingerichtet.`;
   } else {
     return `DNSSEC ist für die Domain ${report.fqdn} nicht eingerichtet.`;
