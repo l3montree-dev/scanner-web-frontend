@@ -6,6 +6,7 @@ ENV PORT 3000
 EXPOSE 3000
 
 COPY package.json .
+COPY ./prisma prisma
 RUN npm install
 
 COPY . .
