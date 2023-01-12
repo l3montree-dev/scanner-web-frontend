@@ -1,25 +1,25 @@
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA256
 
-Contact: mailto:opensource@neuland-homeland.de
+Contact: mailto:ozgsec@neuland-homeland.de
 Expires: 2023-12-31T23:00:00.000Z
-Encryption: https://neuland-homeland.de/opensource@neuland-homeland.de-0xDFDA25380D144F48-pub.asc
+Encryption: https://neuland-homeland.de/ozgsec@neuland-homeland.de-0x52AC2F9AABDD3852-pub.asc
 Preferred-Languages: en, de
 Canonical: https://ozgsec.de/.well-known/security.txt
 -----BEGIN PGP SIGNATURE-----
 
-iQJTBAEBCAA9FiEEk1ga5EXQ0XS7o73O39olOA0UT0gFAmNHFugfHG9wZW5zb3Vy
-Y2VAbmV1bGFuZC1ob21lbGFuZC5kZQAKCRDf2iU4DRRPSA3kD/9O35nf7sFEBXNH
-/Yor2Y0iTMMqffHIm4AX/07QpdUME4XuQXAIS4Kl8WUI5IRQ8p1LojlkpyxwKY7q
-CYF2F8XGTktBMXxDh6U1FQcOwTk+5IZUcJMLko3eqf4Isip8Cw3JpsHw47ehx0ji
-2b7xrSK9HQymW3OeSQ+MXOqU6ZQpHtl4G7+moALbCBtOAWPU8XNW4/3hdE8idtEC
-Ywq1aZDDyFFcgC7p/yh+rD2X9x4esjYk2zwKS4qmHzVckZI2hrEuJRpSKhHHlzPA
-RJnCQlaCWEZLsuTOevTMWNZPsHkmRL3xkfjRV77lPNLBk6orQalT0zHRSOeBLPtu
-7iT3VmU2PUnhz8+lzHCnfIZE2k0kxfbUiZBvsOhK7oXaPxtV+NfHRqAmSeGvSe2p
-359+vyqjV0ZOgVXe/BJ2YdSytEW9vya9GzsTjxug69u7zbC3wMjVfo7gedbzx6Ip
-jN8kMEF4WbhgG/MXCpTVCxo2aUhQwlKgq92bnSMlj99URlVPXZd8jSzaWFcp6c/A
-gzW3DZ2gpkDcJjAeBMPiC1yRcqr1YUD8qFZW2TBJXca8UA8nVungQ8ErUAb7ZgXY
-Dsv8plmIS0dZC9mgMnmPTCPgqe+XjsWGA4FtsY0T/Gt8r6DXuPCc7dyRptTnk/MQ
-KhVbt8U0BUeKRLoEjoTWJ/IKfO3qlg==
-=k2pj
+iQJPBAEBCAA5FiEEf6UQ6m1bQE+kne3dUqwvmqvdOFIFAmO/94MbHG96Z3NlY0Bu
+ZXVsYW5kLWhvbWVsYW5kLmRlAAoJEFKsL5qr3ThSFxsP/AgD4ABEEXGQbsqYjapl
+6K7Px4X8uGbp82i6Acf6wHXgjEJxHI4gQrtivRqoKihSXgHQnUb0vEwjtFnkia4O
+x2FHckZYmrVYySBcMY3IJinTVbGfiqQXWkBtIXVz2yo1W5TIefm1RO2L5OQfFarc
+iRBjela2GbFhIlrtVcZAPvXuXM+VreQkaEUL/fyAfFrF8IoJhvoUF6CGVczCAVJO
+PTao2KeuuXZ3aKH0kZyaVEZptdQFtDWDdRK/ZvqGcuymNCswxuq6ewPFYh4+4g/F
+rZ5A+3soupiLnvv9c1YRT4/IlIrf5XNZFn8LRNvXee8GNUwvFpG/JRzhENRTi6IL
+Ew2iH07QkikibpKGXsc0LG3WDKHz470hTcxRiAHd4jGsKqu1/HBfcnmNc96FQUD0
+83As9ASPrjuPEZll0E84I+3hoJtv2w8qYWdBlvweU2ahJudbLDPayq2kD4EnE7+g
+B5IZ7qrCMyYLgZajXOo+/qzPPVEq2ZVy76R38pq8/U5ntvIO+HqplnI09unOqR34
+tQTPZzxvYjmLIHHuApIKWncPC2+hY6RvRRKhYayBzhCYHGWW4e8ZE2i2ooKA5+Kp
+4FoYcHZnYiFsVbf0xiG14LpZ6nYp13lBni3BfOFG133Gwc4S3DFvfhus5TMgCAsy
+v3noR5hxHNpsASPky9qoEFYj
+=YhWm
 -----END PGP SIGNATURE-----
