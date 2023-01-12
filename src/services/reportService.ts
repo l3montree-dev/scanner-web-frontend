@@ -1,4 +1,4 @@
-import { Domain, PrismaClient, ScanReport } from "@prisma/client";
+import { PrismaClient, ScanReport } from "@prisma/client";
 import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
 import { DetailedDomainWithScanResult, IScanSuccessResponse } from "../types";
 import { DTO, toDTO } from "../utils/server";
@@ -23,6 +23,7 @@ const scanResult2ScanReport = (
     fqdn: result.fqdn,
     ipAddress: result.ipAddress,
     duration: result.duration,
+    sut: result.sut,
     ...(Object.fromEntries(
       Object.entries(result.result).map(([key, value]) => [key, value.didPass])
     ) as {
@@ -57,13 +58,21 @@ const handleNewScanReport = async (
         queued: false,
         lastScan: result.timestamp,
         monitor: shouldBeMonitoredIfNotExist,
-        details: result.result as Record<string, any>,
+        details: {
+          ...result.result,
+          // save the subject under test inside the details
+          sut: result.sut ?? result.fqdn,
+        } as Record<string, any>,
         group: "unknown",
       },
       update: {
         queued: false,
         lastScan: result.timestamp,
-        details: result.result as Record<string, any>,
+        details: {
+          ...result.result,
+          // save the subject under test inside the details
+          sut: result.sut ?? result.fqdn,
+        } as Record<string, any>,
       },
     });
 
@@ -81,7 +90,11 @@ const handleNewScanReport = async (
     data: {
       queued: false,
       lastScan: result.timestamp,
-      details: result.result as Record<string, any>,
+      details: {
+        ...result.result,
+        // save the subject under test inside the details
+        sut: result.sut ?? result.fqdn,
+      } as Record<string, any>,
     },
   });
 

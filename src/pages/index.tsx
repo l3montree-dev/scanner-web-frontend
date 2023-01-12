@@ -210,11 +210,23 @@ const Home: NextPage = () => {
                   rel="noopener noreferrer"
                   href={`//${domain.fqdn}`}
                 >
-                  {domain.fqdn}
+                  {domain.fqdn}{" "}
                 </a>
               </h2>
-
-              <div className="flex items-center flex-row">
+              {domain.fqdn !== domain.details.sut && (
+                <>
+                  Weiterleitung auf:{" "}
+                  <a
+                    target={"_blank"}
+                    className="underline"
+                    rel="noopener noreferrer"
+                    href={`//${domain.details.sut}`}
+                  >
+                    {domain.details.sut}
+                  </a>
+                </>
+              )}
+              <div className="flex items-center mt-4 flex-row">
                 <p>{dateString.substring(0, dateString.length - 3)}</p>
                 <button
                   onClick={handleRefresh}

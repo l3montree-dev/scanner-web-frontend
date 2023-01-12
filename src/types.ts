@@ -88,6 +88,7 @@ export type IScanSuccessResponse = {
   ipAddress: string;
   duration: number;
   timestamp: number;
+  sut: string;
 };
 
 export type IScanErrorResponse = {
@@ -127,7 +128,7 @@ export interface IKcUser {
 }
 
 export type DetailedDomain = Omit<Domain, "lastScan"> & {
-  details: IScanSuccessResponse["result"];
+  details: IScanSuccessResponse["result"] & { sut: string };
   lastScan: number;
 };
 

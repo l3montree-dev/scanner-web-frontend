@@ -22,6 +22,8 @@ model ScanReport {
   fqdn   String @db.VarChar(255)
   domain Domain @relation(fields: [fqdn], references: [fqdn])
 
+  sut String?
+
   SubResourceIntegrity  Boolean?
   NoMixedContent        Boolean?
   ResponsibleDisclosure Boolean?
