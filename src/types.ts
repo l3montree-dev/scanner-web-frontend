@@ -2,7 +2,6 @@ import { ScanReport } from "@prisma/client";
 import { InspectionType, InspectResultDTO } from "./inspection/scans";
 
 export interface IDashboard {
-  userId: string;
   historicalData: Array<ChartData & { date: number }>;
   currentState: ChartData;
   totals: {
@@ -100,10 +99,6 @@ export type IScanSuccessResponse = {
   ipAddress: string;
   duration: number;
   timestamp: number;
-};
-
-export type DetailedScanReport = ScanReport & {
-  details: IScanSuccessResponse["result"];
 };
 
 export type IScanErrorResponse = {

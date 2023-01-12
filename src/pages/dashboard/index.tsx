@@ -1,4 +1,4 @@
-import { faServer } from "@fortawesome/free-solid-svg-icons";
+import { faListCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link.js";
 import { FunctionComponent, useEffect, useState } from "react";
@@ -19,8 +19,6 @@ import SideNavigation from "../../components/SideNavigation";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
 import { withCurrentUser } from "../../decorators/withCurrentUser";
 import { withDB } from "../../decorators/withDB";
-import { withTokenServerSideProps } from "../../decorators/withToken";
-import { useSession } from "../../hooks/useSession";
 import {
   CertificateInspectionType,
   ContentInspectionType,
@@ -36,7 +34,7 @@ import {
 import { dashboardService } from "../../services/dashboardService";
 import { theme } from "../../styles/victory-theme";
 import { IDashboard } from "../../types";
-import { isAdmin, linkMapper } from "../../utils/common";
+import { linkMapper } from "../../utils/common";
 
 interface Props extends IDashboard {}
 
@@ -116,7 +114,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                   <FontAwesomeIcon
                     className="text-slate-400 mx-2"
                     fontSize={75}
-                    icon={faServer}
+                    icon={faListCheck}
                   />
                   <div className="ml-5 text-xl">
                     <b className="text-5xl">{props.totals.uniqueDomains}</b>
@@ -137,12 +135,8 @@ const Dashboard: FunctionComponent<Props> = (props) => {
           </p>
           <div className="flex mt-5 justify-start gap-2 flex-wrap flex-wrap flex-row">
             {displayKey.map((key) => {
-              const percentage =
-                (props.currentState.data[key] /
-                  (props.currentState.totalCount || 1)) *
-                100;
+              const percentage = props.currentState.data[key] * 100;
               let padAngle = 3;
-
               // If the percentage is too small, don't show the padAngle
               if (100 - percentage < 1.5 || percentage < 1.5) {
                 padAngle = 0;
@@ -195,19 +189,17 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                         ]}
                         data={[
                           {
-                            x: `Implementiert (${(
-                              (data.data[key] / data.totalCount) *
-                              100
-                            ).toFixed(1)}%)`,
-                            y: data.data[key],
+                            x: `Implementiert (${(data.data[key] * 100).toFixed(
+                              1
+                            )}%)`,
+                            y: data.totalCount * data.data[key],
                           },
                           {
                             x: `Fehlerhaft (${(
-                              ((data.totalCount - data.data[key]) /
-                                data.totalCount) *
+                              (1 - data.data[key]) *
                               100
                             ).toFixed(1)}%)`,
-                            y: data.totalCount - data.data[key],
+                            y: data.totalCount * (1 - data.data[key]),
                           },
                         ]}
                       />
@@ -215,22 +207,10 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                         textAnchor="middle"
                         style={{ fontSize: 30, fill: "white" }}
                         x={150}
-                        y={145}
-                        text={`${(
-                          (props.currentState.data[key] /
-                            (props.currentState.totalCount || 1)) *
-                          100
-                        ).toFixed(0)}%`}
-                      />
-                      <VictoryLabel
-                        textAnchor="middle"
-                        style={{
-                          fontSize: 20,
-                          fill: (fullConfig.theme?.colors as any).slate["400"],
-                        }}
-                        x={150}
-                        y={175}
-                        text={`${props.currentState.data[key]} von ${props.currentState.totalCount}`}
+                        y={150}
+                        text={`${(props.currentState.data[key] * 100).toFixed(
+                          0
+                        )}%`}
                       />
                     </svg>
                   </div>
@@ -258,7 +238,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
             {displayKey.map((key) => {
               const data = props.historicalData.map((item) => {
                 return {
-                  y: (item.data[key] / (item.totalCount || 1)) * 100,
+                  y: item.data[key] * 100,
                   x: new Date(item.date).toLocaleDateString(),
                 };
               });
@@ -386,7 +366,7 @@ export const getServerSideProps = decorateServerSideProps(
     );
 
     return {
-      props: dashboard,
+      props: dashboard.content as unknown as IDashboard,
     };
   },
   withCurrentUser,

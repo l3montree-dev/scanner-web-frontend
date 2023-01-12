@@ -2,7 +2,7 @@
 import { randomUUID } from "crypto";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { ScanReport } from "@prisma/client";
+import { Domain, Prisma } from "@prisma/client";
 import { decorate } from "../../decorators/decorate";
 import { withDB } from "../../decorators/withDB";
 import { inspectRPC } from "../../inspection/inspect";
@@ -16,7 +16,7 @@ const logger = getLogger(__filename);
 export default decorate(
   async (
     req: NextApiRequest,
-    res: NextApiResponse<ScanReport | { error: string }>,
+    res: NextApiResponse<Domain | { error: string; fqdn: string }>,
     [prisma]
   ) => {
     const start = Date.now();
@@ -42,30 +42,31 @@ export default decorate(
       );
       return res.status(400).json({
         error: `Missing site to scan or not a valid fully qualified domain name. Please provide the site you would like to scan using the site query parameter. Provided value: ?site=${req.query.site}`,
+        fqdn: req.query.site as string,
       });
     }
 
     if (req.query.refresh !== "true") {
       // check if we already have a report for this site
-      const existingReport = await prisma.scanReport.findMany({
+      const domain = await prisma.domain.findFirst({
         where: {
           fqdn: siteToScan,
-          createdAt: {
+          lastScan: {
             // last hour
-            gte: new Date(Date.now() - 1000 * 60 * 60 * 1),
+            gte: new Date(Date.now() - 1000 * 60 * 60 * 1).getTime(),
           },
-        },
-        orderBy: {
-          createdAt: "desc",
+          details: {
+            not: Prisma.JsonNull,
+          },
         },
         take: 1,
       });
-      if (existingReport.length === 1) {
+      if (domain) {
         logger.info(
           { requestId },
           `found existing report for site: ${siteToScan} - returning existing report`
         );
-        return res.status(200).json(existingReport[0]);
+        return res.status(200).json(domain);
       }
     }
 
@@ -80,6 +81,7 @@ export default decorate(
         return res.status(400).json({
           error:
             "Invalid site provided. Please provide a valid fully qualified domain name as site query parameter. Example: ?site=example.com",
+          fqdn: result.fqdn,
         });
       } else {
         await domainService.handleDomainScanError(result, prisma);
@@ -101,7 +103,8 @@ export default decorate(
         { duration: Date.now() - start, requestId },
         `successfully scanned site: ${siteToScan}`
       );
-      return res.json(await reportService.handleNewScanReport(result, prisma));
+      const domain = await reportService.handleNewScanReport(result, prisma);
+      return res.json(domain);
     }
   },
   withDB

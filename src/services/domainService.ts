@@ -72,7 +72,7 @@ const getDomainsOfNetworksWithLatestTestResult = async (
       include: {
         domain: {
           include: {
-            scanReport: {
+            scanReports: {
               orderBy: {
                 createdAt: "desc",
               },
