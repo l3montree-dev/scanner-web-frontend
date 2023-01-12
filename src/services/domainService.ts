@@ -220,6 +220,18 @@ const getDomains2Scan = async (prisma: PrismaClient) => {
     },
     take: 1_000,
   });
+
+  await prisma.domain.updateMany({
+    where: {
+      fqdn: {
+        in: domains.map((d) => d.fqdn),
+      },
+    },
+    data: {
+      queued: true,
+    },
+  });
+
   return domains;
 };
 
