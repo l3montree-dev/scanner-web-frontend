@@ -3,6 +3,9 @@ import { PaginateResult } from "../types";
 import { classNames } from "../utils/common";
 
 const buildArray = (length: number, currentPage: number) => {
+  if (length === 0) {
+    return [];
+  }
   const res = [];
   for (
     let i = Math.max(0, currentPage - 2);

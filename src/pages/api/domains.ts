@@ -40,8 +40,11 @@ export default decorate(
         (await stream2buffer(req)).toString()
       );
 
-      await domainService.handleNewDomain({ fqdn: domain }, prisma);
-
+      await domainService.handleNewDomain(
+        { fqdn: domain },
+        prisma,
+        session.user
+      );
       // the domain will automatically be inspected.
       return res.send({ success: true, fqdn: domain });
     }
@@ -106,7 +109,11 @@ export default decorate(
           .map((domain) => {
             return async () => {
               try {
-                await domainService.handleNewDomain({ fqdn: domain }, prisma);
+                await domainService.handleNewDomain(
+                  { fqdn: domain },
+                  prisma,
+                  session.user
+                );
                 imported++;
               } catch (err: any) {
                 return;

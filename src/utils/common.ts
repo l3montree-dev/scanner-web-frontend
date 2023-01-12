@@ -197,3 +197,11 @@ export const domainContainsDetails = (
 ): domain is DetailedDomain => {
   return "details" in domain && domain.details !== null;
 };
+
+export const neverThrow = async <T>(promise: Promise<T>): Promise<T | null> => {
+  try {
+    return await promise;
+  } catch (e) {
+    return null;
+  }
+};

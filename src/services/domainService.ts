@@ -1,4 +1,4 @@
-import { Domain, Prisma, PrismaClient, ScanReport, User } from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
 import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
 import {
   DomainWithScanResult,
@@ -6,11 +6,13 @@ import {
   PaginateRequest,
   PaginateResult,
 } from "../types";
+import { neverThrow } from "../utils/common";
 import { DTO, toDTO } from "../utils/server";
-// only create a new report if the didPass property changed.
+
 const handleNewDomain = async (
   domain: { fqdn: string; group?: string },
-  prisma: PrismaClient
+  prisma: PrismaClient,
+  connectToUser?: User
 ): Promise<{ fqdn: string }> => {
   // fetch the last existing report and check if we only need to update that one.
   let payload = {
@@ -18,13 +20,23 @@ const handleNewDomain = async (
     lastScan: null,
     group: domain.group ?? "unknown",
   };
-  try {
-    await prisma.domain.create({
+
+  await neverThrow(
+    prisma.domain.create({
       data: payload,
-    });
-  } catch (e) {
-    // probably unique key index error
+    })
+  );
+  if (connectToUser) {
+    await neverThrow(
+      prisma.userDomainRelation.create({
+        data: {
+          userId: connectToUser.id,
+          fqdn: payload.fqdn,
+        },
+      })
+    );
   }
+
   return payload;
 };
 

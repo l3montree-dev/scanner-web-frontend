@@ -114,9 +114,7 @@ const startScanResponseLoop = once(() => {
     }
 
     try {
-      await Promise.all([
-        reportService.handleNewScanReport(content, false, prisma),
-      ]);
+      await reportService.handleNewScanReport(content, false, prisma);
     } catch (e) {
       // always ack the message - catch the error.
       logger.error(e);
