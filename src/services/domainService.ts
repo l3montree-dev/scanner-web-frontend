@@ -57,7 +57,7 @@ const handleDomainScanError = async (
       },
     },
     create: {
-      errorCount: 0,
+      errorCount: 1,
       fqdn: content.fqdn,
       monitor: shouldBeMonitoredIfNotExist,
       group: "unknown",

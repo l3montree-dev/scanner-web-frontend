@@ -130,6 +130,7 @@ model Domain {
   monitor Boolean @default(true)
 
   @@index([group])
+  @@index([lastScan])
   @@map("domains")
 
   @@fulltext([fqdn])
