@@ -2,21 +2,25 @@
 import { randomUUID } from "crypto";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { Domain, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { decorate } from "../../decorators/decorate";
 import { withDB } from "../../decorators/withDB";
 import { inspectRPC } from "../../inspection/inspect";
 import { domainService } from "../../services/domainService";
 import { getLogger } from "../../services/logger";
 import { reportService } from "../../services/reportService";
+import { DetailedDomainWithScanResult } from "../../types";
 import { isScanError, sanitizeFQDN } from "../../utils/common";
+import { DTO, toDTO } from "../../utils/server";
 
 const logger = getLogger(__filename);
 
 export default decorate(
   async (
     req: NextApiRequest,
-    res: NextApiResponse<Domain | { error: string; fqdn: string }>,
+    res: NextApiResponse<
+      DTO<DetailedDomainWithScanResult> | { error: string; fqdn: string }
+    >,
     [prisma]
   ) => {
     const start = Date.now();
@@ -48,25 +52,40 @@ export default decorate(
 
     if (req.query.refresh !== "true") {
       // check if we already have a report for this site
-      const domain = await prisma.domain.findFirst({
-        where: {
-          fqdn: siteToScan,
-          lastScan: {
-            // last hour
-            gte: new Date(Date.now() - 1000 * 60 * 60 * 1).getTime(),
+      const domain = toDTO(
+        await prisma.domain.findFirst({
+          where: {
+            fqdn: siteToScan,
+            lastScan: {
+              // last hour
+              gte: new Date(Date.now() - 1000 * 60 * 60 * 1).getTime(),
+            },
+            details: {
+              not: Prisma.JsonNull,
+            },
           },
-          details: {
-            not: Prisma.JsonNull,
+          include: {
+            scanReports: {
+              orderBy: {
+                createdAt: "desc",
+              },
+              take: 1,
+            },
           },
-        },
-        take: 1,
-      });
+          take: 1,
+        })
+      );
       if (domain) {
         logger.info(
           { requestId },
           `found existing report for site: ${siteToScan} - returning existing report`
         );
-        return res.status(200).json(domain);
+
+        const { scanReports, ...domainWithoutScanReports } = domain;
+        return res.status(200).json({
+          ...domainWithoutScanReports,
+          scanReport: scanReports[0],
+        });
       }
     }
 
@@ -84,7 +103,9 @@ export default decorate(
           fqdn: result.fqdn,
         });
       } else {
-        await domainService.handleDomainScanError(result, prisma);
+        // do not monitor this domain if it does not exist yet - this means, that there is a user which scans the domain for the first time.
+        // it is not necessary to do any re-scans.
+        await domainService.handleDomainScanError(result, false, prisma);
         logger.error(
           {
             err: result.result.error.message,
@@ -103,7 +124,11 @@ export default decorate(
         { duration: Date.now() - start, requestId },
         `successfully scanned site: ${siteToScan}`
       );
-      const domain = await reportService.handleNewScanReport(result, prisma);
+      const domain = await reportService.handleNewScanReport(
+        result,
+        false,
+        prisma
+      );
       return res.json(domain);
     }
   },

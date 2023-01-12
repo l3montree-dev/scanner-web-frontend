@@ -5,9 +5,8 @@ import { getHSTSReportMessage } from "../messages/hsts";
 import { getResponsibleDisclosureReportMessage } from "../messages/responsibleDisclosure";
 import getRPKIReportMessage from "../messages/rpki";
 import { getTLSv1_1_DeactivatedReportMessage } from "../messages/tlsv1_1_Deactivated";
-
 import { getTLSv1_3ReportMessage } from "../messages/tlsv1_3";
-import { DetailedScanReport } from "../types";
+import { DetailedDomain } from "../types";
 import { classNames, linkMapper } from "../utils/common";
 
 import ResultBox from "./ResultBox";
@@ -31,7 +30,7 @@ const messages = {
 };
 
 const getDescription = (
-  report: DetailedScanReport,
+  report: DetailedDomain,
   key:
     | "DNSSec"
     | "CAA"
@@ -44,7 +43,7 @@ const getDescription = (
   return messages[key](report);
 };
 interface Props {
-  report: DetailedScanReport;
+  report: DetailedDomain;
 }
 const ResultGrid: FunctionComponent<Props> = (props) => {
   const { report } = props;

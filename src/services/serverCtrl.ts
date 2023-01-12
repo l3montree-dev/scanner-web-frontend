@@ -81,7 +81,6 @@ const startLookupResponseLoop = once(() => {
     async (msg) => {
       const content = JSON.parse(msg.content.toString()).data as {
         fqdn: string;
-        ipV4Address: string;
       };
       try {
         await domainService.handleNewDomain(content, prisma);
@@ -105,10 +104,9 @@ const startScanResponseLoop = once(() => {
       // we cannot do anything...
       return;
     }
-    const ipV4AddressNumber = ip.toLong(address);
     if (isScanError(content)) {
       try {
-        await domainService.handleDomainScanError(content, prisma);
+        await domainService.handleDomainScanError(content, false, prisma);
       } finally {
         logger.error({ fqdn: content.fqdn }, content.result.error);
         return;
@@ -116,7 +114,9 @@ const startScanResponseLoop = once(() => {
     }
 
     try {
-      await Promise.all([reportService.handleNewScanReport(content, prisma)]);
+      await Promise.all([
+        reportService.handleNewScanReport(content, false, prisma),
+      ]);
     } catch (e) {
       // always ack the message - catch the error.
       logger.error(e);

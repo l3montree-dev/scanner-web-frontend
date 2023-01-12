@@ -92,7 +92,7 @@ const staleWhileRevalidate = async (
     },
   });
 
-  if (dashboard && false) {
+  if (dashboard) {
     return dashboard;
   }
   logger.info("no cached dashboard - creating it");

@@ -1,7 +1,7 @@
-import { ScanReport } from "@prisma/client";
+import { DetailedDomain } from "../types";
 
-export const getCAAReportMessage = (report: ScanReport) => {
-  const inspection = report.CAA;
+export const getCAAReportMessage = (report: DetailedDomain) => {
+  const inspection = report.details.CAA;
   if (inspection === null || inspection === undefined) {
     return `Die Überprüfung nach CAA Einträgen für die Domain ${report.fqdn} konnte nicht durchgeführt werden.`;
   } else if (inspection) {

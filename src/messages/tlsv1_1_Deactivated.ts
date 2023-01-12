@@ -1,8 +1,6 @@
-import { DetailedScanReport } from "../types";
+import { DetailedDomain } from "../types";
 
-export const getTLSv1_1_DeactivatedReportMessage = (
-  report: DetailedScanReport
-) => {
+export const getTLSv1_1_DeactivatedReportMessage = (report: DetailedDomain) => {
   const inspection = report.details["TLSv1_1_Deactivated"];
   if (inspection?.didPass === null || inspection?.didPass === undefined) {
     return "Die Überprüfung der Protokolle TLS 1.1 und älter sowie SSL konnte nicht durchgeführt werden.";

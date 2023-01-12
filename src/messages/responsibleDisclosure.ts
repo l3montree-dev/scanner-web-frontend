@@ -1,8 +1,8 @@
 import { ResponsibleDisclosureValidationError } from "../inspection/result-enums/organizational.typings";
-import { DetailedScanReport } from "../types";
+import { DetailedDomain } from "../types";
 
 export const getResponsibleDisclosureReportMessage = (
-  report: DetailedScanReport
+  report: DetailedDomain
 ) => {
   const inspection = report.details["ResponsibleDisclosure"];
   if (inspection?.didPass === null || inspection?.didPass === undefined) {

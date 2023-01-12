@@ -1,6 +1,12 @@
-import { PrismaClient, ScanReport, User } from "@prisma/client";
-import { Domain } from "domain";
-import { IScanErrorResponse, PaginateRequest, PaginateResult } from "../types";
+import { Domain, Prisma, PrismaClient, ScanReport, User } from "@prisma/client";
+import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
+import {
+  DomainWithScanResult,
+  IScanErrorResponse,
+  PaginateRequest,
+  PaginateResult,
+} from "../types";
+import { DTO, toDTO } from "../utils/server";
 // only create a new report if the didPass property changed.
 const handleNewDomain = async (
   domain: { fqdn: string; group?: string },
@@ -24,6 +30,7 @@ const handleNewDomain = async (
 
 const handleDomainScanError = async (
   content: IScanErrorResponse,
+  shouldBeMonitoredIfNotExist: boolean,
   prisma: PrismaClient
 ) => {
   const res = await prisma.domain.upsert({
@@ -40,12 +47,34 @@ const handleDomainScanError = async (
     create: {
       errorCount: 0,
       fqdn: content.fqdn,
+      monitor: shouldBeMonitoredIfNotExist,
       group: "unknown",
       lastScan: content.timestamp ?? Date.now(),
     },
   });
 
   return res;
+};
+
+const translateSortDirection = (
+  direction?: string | "1" | "-1"
+): "ASC" | "DESC" => {
+  if (direction === "-1") {
+    return "DESC";
+  }
+  return "ASC";
+};
+
+const translateSort = (sort?: string): `sr.${InspectionType}` | "d.fqdn" => {
+  if (!sort) {
+    return "d.fqdn";
+  }
+
+  if (Object.keys(InspectionTypeEnum).includes(sort)) {
+    return `sr.${sort as InspectionType}`;
+  }
+
+  return "d.fqdn";
 };
 
 const getDomainsOfNetworksWithLatestTestResult = async (
@@ -55,40 +84,91 @@ const getDomainsOfNetworksWithLatestTestResult = async (
     sortDirection?: string;
   },
   prisma: PrismaClient
-): Promise<PaginateResult<Domain & { scanReport?: ScanReport }>> => {
-  // get all domains of the network
+): Promise<PaginateResult<DTO<DomainWithScanResult>>> => {
+  const sqlValues = [
+    user.id,
+    paginateRequest.pageSize,
+    paginateRequest.page * paginateRequest.pageSize,
+  ];
+  if (paginateRequest.search !== undefined && paginateRequest.search !== "") {
+    sqlValues.unshift(
+      paginateRequest.search.endsWith("*")
+        ? paginateRequest.search
+        : `${paginateRequest.search}*`
+    );
+  }
+
   const [total, domains] = await Promise.all([
-    prisma.userDomainRelation.count({
+    prisma.domain.count({
       where: {
-        userId: user.id,
-      },
-    }),
-    prisma.userDomainRelation.findMany({
-      skip: paginateRequest.pageSize * paginateRequest.page,
-      take: paginateRequest.pageSize,
-      where: {
-        userId: user.id,
-      },
-      include: {
-        domain: {
-          include: {
-            scanReports: {
-              orderBy: {
-                createdAt: "desc",
-              },
-              take: 1,
-            },
+        users: {
+          some: {
+            userId: user.id,
           },
         },
+        ...(paginateRequest.search !== undefined &&
+        paginateRequest.search !== ""
+          ? {
+              fqdn: {
+                search: sqlValues[0] as string,
+              },
+            }
+          : {}),
       },
     }),
+
+    // subject to sql injection!!!
+    prisma.$queryRawUnsafe(
+      `
+SELECT *, d.fqdn as fqdn, d.createdAt as createdAt, d.updatedAt as updatedAt, d.details as details from user_domain_relations udr 
+    INNER JOIN domains d on udr.fqdn = d.fqdn 
+    LEFT JOIN scan_reports sr on d.fqdn = sr.fqdn  
+    WHERE NOT EXISTS(
+        SELECT 1 from scan_reports sr2 where sr.fqdn = sr2.fqdn AND sr.createdAt > sr2.createdAt
+      ) 
+      ${
+        paginateRequest.search !== undefined && paginateRequest.search !== ""
+          ? "AND MATCH (d.fqdn) AGAINST (? IN BOOLEAN MODE)"
+          : ""
+      }
+      AND userId = ?
+      ORDER BY ${translateSort(paginateRequest.sort)} ${translateSortDirection(
+        paginateRequest.sortDirection
+      )}
+      LIMIT ?
+      OFFSET ?;
+`,
+      ...sqlValues
+    ) as Promise<any[]>,
   ]);
+
+  const data = domains.map((d) =>
+    toDTO({
+      lastScan: d.lastScan,
+      fqdn: d.fqdn,
+      group: d.group,
+      monitor: d.monitor,
+      queued: d.queued,
+      errorCount: d.errorCount,
+      createdAt: d.createdAt,
+      updatedAt: d.updatedAt,
+      details: d.details,
+      scanReport: {
+        ...(Object.fromEntries(
+          Object.keys(InspectionTypeEnum).map((key) => [
+            key,
+            d[key] === null ? null : Boolean(d[key]),
+          ])
+        ) as { [key in InspectionType]: boolean | null }),
+      },
+    })
+  );
 
   return {
     total,
     page: paginateRequest.page,
     pageSize: paginateRequest.pageSize,
-    data: domains as any,
+    data,
   };
 };
 
@@ -116,6 +196,7 @@ const getDomains2Scan = async (prisma: PrismaClient) => {
         },
         {
           queued: false,
+          monitor: true,
           errorCount: {
             lt: 5,
           },

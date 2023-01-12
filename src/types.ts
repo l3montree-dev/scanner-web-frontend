@@ -1,4 +1,4 @@
-import { ScanReport } from "@prisma/client";
+import { Domain } from "@prisma/client";
 import { InspectionType, InspectResultDTO } from "./inspection/scans";
 
 export interface IDashboard {
@@ -15,17 +15,6 @@ export interface ChartData {
   };
   totalCount: number;
 }
-
-export type IDomain = {
-  fqdn: string;
-  ipV4Address: string;
-  ipV6Address?: string[];
-  lastScan: number | null;
-  errorCount: number | null;
-  // save the number representation of the v4 address as well
-  // to make it easier to query for ranges
-  ipV4AddressNumber: number;
-} & { [key in InspectionType]: boolean | null };
 
 export interface INetworkPatchDTO {
   comment?: string;
@@ -136,3 +125,16 @@ export interface IKcUser {
   attributes?: { role: string[] };
   notBefore: number;
 }
+
+export type DetailedDomain = Omit<Domain, "lastScan"> & {
+  details: IScanSuccessResponse["result"];
+  lastScan: number;
+};
+
+export type DomainWithScanResult = Domain & {
+  scanReport: { [key in InspectionType]: boolean | null } | null;
+};
+
+export type DetailedDomainWithScanResult = Omit<Domain, "lastScan"> & {
+  scanReport: { [key in InspectionType]: boolean | null };
+};

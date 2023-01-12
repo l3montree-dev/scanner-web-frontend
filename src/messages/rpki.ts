@@ -1,6 +1,6 @@
-import { DetailedScanReport } from "../types";
+import { DetailedDomain } from "../types";
 
-export default function getRPKIReportMessage(report: DetailedScanReport) {
+export default function getRPKIReportMessage(report: DetailedDomain) {
   const inspection = report.details["RPKI"];
   if (inspection?.didPass === null || inspection?.didPass === undefined) {
     return `Der RPKI Status der Domain ${report.fqdn} konnte nicht überprüft werden.`;

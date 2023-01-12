@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import { FormEvent, FunctionComponent, useState } from "react";
 import useLoading from "../hooks/useLoading";
 import { classNames } from "../utils/common";
@@ -10,7 +11,9 @@ const DomainOverviewForm: FunctionComponent<{
   onNewDomain: (domain: string) => Promise<void>;
   onFileFormSubmit: (files: File[]) => Promise<void>;
 }> = ({ onSearch, onNewDomain, onFileFormSubmit }) => {
-  const [search, setSearch] = useState("");
+  const router = useRouter();
+
+  const [search, setSearch] = useState((router.query.search as string) ?? "");
   const [newDomain, setNewDomain] = useState("");
   const searchRequest = useLoading();
   const createRequest = useLoading();

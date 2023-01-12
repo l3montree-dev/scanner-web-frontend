@@ -1,4 +1,5 @@
 import {
+  DetailedDomain,
   IIpLookupProgressUpdateMsg,
   IIpLookupReportDTO,
   IIpLookupReportMsg,
@@ -8,8 +9,9 @@ import {
   WithoutId,
 } from "../types";
 
+import { Domain, Network } from "@prisma/client";
+
 import ip from "ip";
-import { isValidIp, isValidMask } from "./validator";
 import {
   CertificateInspectionType,
   ContentInspectionType,
@@ -22,7 +24,8 @@ import {
   OrganizationalInspectionType,
   TLSInspectionType,
 } from "../inspection/scans";
-import { Network } from "@prisma/client";
+import { isValidIp, isValidMask } from "./validator";
+import { DTO } from "./server";
 
 export const serverOnly = <T>(fn: () => T): T | null => {
   if (typeof window === "undefined") {
@@ -112,7 +115,7 @@ export const classNames = (
   return args.filter(Boolean).join(" ");
 };
 
-export const parseNetwork = (cidr: string): WithoutId<Network> => {
+export const parseNetwork = (cidr: string): WithoutId<DTO<Network>> => {
   const subnet = ip.cidrSubnet(cidr);
 
   return {
@@ -187,4 +190,10 @@ export const linkMapper: { [key in InspectionType]: string } = {
   [HeaderInspectionType.XFrameOptions]: "",
   [HeaderInspectionType.XSSProtection]: "",
   [HeaderInspectionType.ContentTypeOptions]: "",
+};
+
+export const domainContainsDetails = (
+  domain: Omit<Domain, "lastScan"> & { lastScan: number }
+): domain is DetailedDomain => {
+  return "details" in domain && domain.details !== null;
 };

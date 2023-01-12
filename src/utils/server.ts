@@ -22,18 +22,37 @@ export async function stream2buffer(stream: Stream): Promise<Buffer> {
   });
 }
 
-export const toDTO = (v: any): any => {
+export type DTO<T> = T extends bigint
+  ? number
+  : T extends Prisma.Decimal
+  ? number
+  : T extends undefined
+  ? null
+  : T extends Array<infer U>
+  ? DTO<U>[]
+  : T extends Date
+  ? string
+  : T extends object
+  ? { [K in keyof T]: DTO<T[K]> }
+  : T;
+
+export const toDTO = <T>(v: T): DTO<T> => {
+  if (v === undefined) {
+    return null as DTO<T>;
+  }
   if (v instanceof Array) {
-    return v.map((v) => toDTO(v));
+    return v.map((v) => toDTO(v)) as DTO<T>;
   }
   if (typeof v === "bigint") {
-    return Number(v);
+    return Number(v) as DTO<T>;
   }
   if (v instanceof Prisma.Decimal) {
-    return v.toNumber();
+    return v.toNumber() as DTO<T>;
   }
   if (typeof v === "object" && v !== null) {
-    return Object.fromEntries(Object.entries(v).map(([k, v]) => [k, toDTO(v)]));
+    return Object.fromEntries(
+      Object.entries(v).map(([k, v]) => [k, toDTO(v)])
+    ) as DTO<T>;
   }
-  return v;
+  return v as DTO<T>;
 };

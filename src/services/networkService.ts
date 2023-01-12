@@ -1,11 +1,15 @@
-import { PrismaClient } from "@prisma/client";
+import { Network, PrismaClient } from "@prisma/client";
 import { parseNetwork } from "../utils/common";
+import { DTO, toDTO } from "../utils/server";
 
 const getAll = async (prisma: PrismaClient) => {
-  return prisma.network.findMany();
+  return toDTO(await prisma.network.findMany());
 };
 
-const createNetworks = async (networks: string[], prisma: PrismaClient) => {
+const createNetworks = async (
+  networks: string[],
+  prisma: PrismaClient
+): Promise<DTO<Network[]>> => {
   // first create all the networks.
   // check which networks do already exist based on the cidr
   const existingNetworks = await prisma.network.findMany({
@@ -27,7 +31,7 @@ const createNetworks = async (networks: string[], prisma: PrismaClient) => {
   await prisma.network.createMany({
     data,
   });
-  return data;
+  return toDTO(data);
 };
 
 export const networkService = {

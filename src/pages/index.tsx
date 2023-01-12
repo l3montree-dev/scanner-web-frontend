@@ -18,7 +18,7 @@ import {
 } from "../inspection/scans";
 
 import { clientHttpClient } from "../services/clientHttpClient";
-import { IScanSuccessResponse } from "../types";
+import { DetailedDomain, IScanSuccessResponse } from "../types";
 import { classNames, sanitizeFQDN } from "../utils/common";
 
 const hostnameRegex = new RegExp(
@@ -40,7 +40,7 @@ const Home: NextPage = () => {
   const [website, setWebsite] = useState("");
   const scanRequest = useLoading();
   const refreshRequest = useLoading();
-  const [domain, setDomain] = useState<null | Domain>(null);
+  const [domain, setDomain] = useState<null | DetailedDomain>(null);
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -71,7 +71,7 @@ const Home: NextPage = () => {
         );
       }
 
-      const obj: Domain = await response.json();
+      const obj: DetailedDomain = await response.json();
       setDomain(obj);
       scanRequest.success();
     } catch (e) {

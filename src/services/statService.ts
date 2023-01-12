@@ -2,8 +2,6 @@ import { Prisma, PrismaClient, User } from "@prisma/client";
 import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
 import { toDTO } from "../utils/server";
 
-const keys = Object.keys(InspectionTypeEnum);
-
 const getTotalsOfUser = async (user: User, prisma: PrismaClient) => {
   // count the domains this user has access to
   return {
@@ -65,9 +63,8 @@ AVG(CertificateTransparency) as CertificateTransparency,
 AVG(ValidCertificateChain) as ValidCertificateChain,
 
 COUNT(*) as totalCount
-      from user_domain_relations udr LEFT JOIN scan_reports sr1 on udr.fqdn = sr1.fqdn
-      WHERE sr1.fqdn IS NOT NULL
-        AND NOT EXISTS(
+      from user_domain_relations udr INNER JOIN scan_reports sr1 on udr.fqdn = sr1.fqdn
+        WHERE NOT EXISTS(
           SELECT 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr1.createdAt > sr2.createdAt
     ) AND udr.userId = ${user.id}`
   )) as any;
@@ -125,9 +122,8 @@ const getFailedSuccessPercentage = async (
     AVG(ValidCertificateChain) as ValidCertificateChain,
     
     COUNT(*) as totalCount
-          from user_domain_relations udr LEFT JOIN scan_reports sr1 on udr.fqdn = sr1.fqdn
-          WHERE sr1.fqdn IS NOT NULL
-            AND NOT EXISTS(
+          from user_domain_relations udr INNER JOIN scan_reports sr1 on udr.fqdn = sr1.fqdn
+          WHERE NOT EXISTS(
               SELECT 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr1.createdAt > sr2.createdAt
         ) AND udr.userId = ${user.id} AND sr1.createdAt < ${new Date(
       timeQuery.end

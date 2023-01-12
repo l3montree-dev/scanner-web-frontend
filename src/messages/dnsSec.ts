@@ -1,7 +1,7 @@
-import { DetailedScanReport } from "../types";
+import { DetailedDomain } from "../types";
 
-export const getDNSSecReportMessage = (report: DetailedScanReport) => {
-  const inspection = report.DNSSec;
+export const getDNSSecReportMessage = (report: DetailedDomain) => {
+  const inspection = report.details.DNSSec;
   if (inspection === null || inspection === undefined) {
     return `DNSSEC konnte für die Domain ${report.fqdn} nicht überprüft werden.`;
   } else if (inspection) {

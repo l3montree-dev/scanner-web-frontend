@@ -1,6 +1,6 @@
-import { DetailedScanReport } from "../types";
+import { DetailedDomain } from "../types";
 
-export const getTLSv1_3ReportMessage = (report: DetailedScanReport) => {
+export const getTLSv1_3ReportMessage = (report: DetailedDomain) => {
   const inspection = report.details["TLSv1_3"];
   if (inspection?.didPass === null || inspection?.didPass === undefined) {
     return `Die Überprüfung des TLS 1.3 Protokolls konnte nicht durchgeführt werden.`;

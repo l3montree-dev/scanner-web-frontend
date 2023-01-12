@@ -34,14 +34,16 @@ import { clientHttpClient } from "../../services/clientHttpClient";
 import { domainService } from "../../services/domainService";
 
 import {
-  DetailedScanReport,
+  DetailedDomain,
+  DomainWithScanResult,
   IScanSuccessResponse,
   PaginateResult,
 } from "../../types";
 import { classNames } from "../../utils/common";
+import { DTO } from "../../utils/server";
 
 interface Props {
-  domains: PaginateResult<Domain> & { scanReport?: ScanReport };
+  domains: PaginateResult<DTO<DomainWithScanResult>>;
 }
 
 const SortButton: FunctionComponent<{
@@ -67,7 +69,9 @@ const SortButton: FunctionComponent<{
 };
 
 const Dashboard: FunctionComponent<Props> = (props) => {
-  const [domains, setDomains] = useState<Array<any>>(props.domains.data);
+  const [domains, setDomains] = useState<Array<DTO<DomainWithScanResult>>>(
+    props.domains.data
+  );
 
   const scanRequest = useLoading();
   const router = useRouter();
@@ -113,8 +117,8 @@ const Dashboard: FunctionComponent<Props> = (props) => {
     );
 
     if (response.ok) {
-      const data: DetailedScanReport = await response.json();
-
+      const data: DetailedDomain = await response.json();
+      console.log(data);
       // inject it into the domains
       setDomains((prev) => {
         const index = prev.findIndex((d) => d.fqdn === fqdn);
@@ -124,7 +128,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
         const newDomains = [...prev];
         newDomains[index] = {
           ...newDomains[index],
-          lastScan: data.updatedAt.getTime(),
+          lastScan: data.lastScan,
         };
         return newDomains;
       });
@@ -198,10 +202,13 @@ const Dashboard: FunctionComponent<Props> = (props) => {
             verschiedenen ausgeführten Sicherheitstest abschneiden.
             <br />
             <br />
-            Im Augenblick haben Sie Zugriff auf <b>
-              {props.domains.total}
-            </b>{" "}
-            Domains
+            {(router.query.search === undefined ||
+              router.query.search === "") && (
+              <>
+                Im Augenblick haben Sie Zugriff auf <b>{props.domains.total}</b>{" "}
+                Domains
+              </>
+            )}
           </p>
           <div className="w-full border-deepblue-200 border bg-deepblue-500">
             <div className="p-5">
@@ -358,22 +365,26 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                         </div>
                       </td>
                       <td className="p-2">
-                        <ResultIcon didPass={domain.ResponsibleDisclosure} />
+                        <ResultIcon
+                          didPass={domain.scanReport?.ResponsibleDisclosure}
+                        />
                       </td>
                       <td className="p-2">
-                        <ResultIcon didPass={domain.TLSv1_3} />
+                        <ResultIcon didPass={domain.scanReport?.TLSv1_3} />
                       </td>
                       <td className="p-2">
-                        <ResultIcon didPass={domain.TLSv1_1_Deactivated} />
+                        <ResultIcon
+                          didPass={domain.scanReport?.TLSv1_1_Deactivated}
+                        />
                       </td>
                       <td className="p-2">
-                        <ResultIcon didPass={domain.HSTS} />
+                        <ResultIcon didPass={domain.scanReport?.HSTS} />
                       </td>
                       <td className="p-2">
-                        <ResultIcon didPass={domain.DNSSec} />
+                        <ResultIcon didPass={domain.scanReport?.DNSSec} />
                       </td>
                       <td className="p-2">
-                        <ResultIcon didPass={domain.RPKI} />
+                        <ResultIcon didPass={domain.scanReport?.RPKI} />
                       </td>
                       <td className="text-right p-2">
                         <Menu
