@@ -31,7 +31,7 @@ import {
   OrganizationalInspectionType,
   TLSInspectionType,
 } from "../../inspection/scans";
-import { dashboardService } from "../../services/dashboardService";
+import { statService } from "../../services/statService";
 import { theme } from "../../styles/victory-theme";
 import { IDashboard } from "../../types";
 import { linkMapper } from "../../utils/common";
@@ -360,13 +360,13 @@ const Dashboard: FunctionComponent<Props> = (props) => {
 
 export const getServerSideProps = decorateServerSideProps(
   async (_context, [currentUser, prisma]) => {
-    const dashboard = await dashboardService.staleWhileRevalidate(
+    const dashboard = await statService.getDashboardForUser(
       currentUser,
       prisma
     );
 
     return {
-      props: dashboard.content as unknown as IDashboard,
+      props: dashboard,
     };
   },
   withCurrentUser,

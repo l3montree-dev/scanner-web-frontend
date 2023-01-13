@@ -1,9 +1,8 @@
 import { randomUUID } from "crypto";
-import { resolve4 } from "dns/promises";
 import { Server as HttpServer } from "http";
-import ip from "ip";
 import PQueue from "p-queue";
 import { Server } from "socket.io";
+import { config } from "../config";
 import { prisma } from "../db/connection";
 
 import { once } from "../decorators/once";
@@ -19,11 +18,13 @@ import {
   isScanError,
   transformIpLookupMsg2DTO,
 } from "../utils/common";
+import { eachDay } from "../utils/time";
 import { domainService } from "./domainService";
 
 import { getLogger } from "./logger";
 import { rabbitMQClient, rabbitMQRPCClient } from "./rabbitmqClient";
 import { reportService } from "./reportService";
+import { statService } from "./statService";
 
 const logger = getLogger(__filename);
 
@@ -94,7 +95,7 @@ const startLookupResponseLoop = once(() => {
 });
 
 const startScanResponseLoop = once(() => {
-  logger.info("connected to database - starting scan response loop");
+  logger.info("starting scan response loop");
   rabbitMQClient.subscribe("scan-response", async (msg) => {
     const content = JSON.parse(msg.content.toString()).data as IScanResponse;
 
@@ -120,6 +121,94 @@ const startScanResponseLoop = once(() => {
       logger.error(e);
     }
   });
+});
+
+const statLoop = once(() => {
+  let running = false;
+  const promiseQueue = new PQueue({
+    concurrency: 2,
+  });
+  logger.info("starting stat loop");
+  setInterval(async () => {
+    if (isMaster() && !running) {
+      running = true;
+      // check which stats need to be generated.
+      config.generateStatsForGroups.forEach((group) => {
+        eachDay(config.statFirstDay, new Date()).forEach((date) => {
+          // check if the stat does exist.
+          promiseQueue.add(async () => {
+            const exists = await prisma.stat.findFirst({
+              where: {
+                subject: group,
+                time: date,
+              },
+            });
+            if (!exists) {
+              // generate the stat.
+              const stat = await statService.getGroupFailedSuccessPercentage(
+                group,
+                prisma,
+                date
+              );
+
+              const start = Date.now();
+              await prisma.stat.create({
+                data: {
+                  subject: group,
+                  time: date,
+                  value: stat,
+                },
+              });
+              logger.info(
+                { duration: Date.now() - start },
+                `generated stat for ${group} on ${new Date(date)}`
+              );
+            }
+          });
+        });
+      });
+
+      // generate the stats for each user.
+      const users = await prisma.user.findMany();
+      users.forEach((user) => {
+        eachDay(config.statFirstDay, new Date()).forEach((date) => {
+          // check if the stat does exist.
+          promiseQueue.add(async () => {
+            const exists = await prisma.stat.findFirst({
+              where: {
+                subject: user.id,
+                time: date,
+              },
+            });
+            if (!exists) {
+              // generate the stat.
+              const stat = await statService.getUserFailedSuccessPercentage(
+                user,
+                prisma,
+                date
+              );
+
+              const start = Date.now();
+              await prisma.stat.create({
+                data: {
+                  subject: user.id,
+                  time: date,
+                  value: stat,
+                },
+              });
+              logger.info(
+                { duration: Date.now() - start },
+                `generated stat for ${user.id} on ${new Date(date)}`
+              );
+            }
+          });
+        });
+      });
+
+      await promiseQueue.onIdle();
+      running = false;
+    }
+  }, 10 * 1000);
 });
 
 const startScanLoop = once(() => {
@@ -169,4 +258,5 @@ export const serverCtrl = {
   startLookupResponseLoop,
   startScanResponseLoop,
   startScanLoop,
+  statLoop,
 };

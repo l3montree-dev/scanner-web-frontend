@@ -20,7 +20,7 @@ model ScanReport {
   duration  Int
 
   fqdn   String @db.VarChar(255)
-  domain Domain @relation(fields: [fqdn], references: [fqdn])
+  domain Domain @relation(fields: [fqdn], references: [fqdn], onDelete: Cascade)
 
   sut String?
 
@@ -96,17 +96,6 @@ model ScanReport {
   @@map("scan_reports")
 }
 
-model Dashboard {
-  id Int @id @default(autoincrement())
-
-  content Json
-
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
-
-  @@map("dashboards")
-}
-
 model Domain {
   fqdn String @id
 
@@ -137,10 +126,13 @@ model Domain {
 }
 
 model UserDomainRelation {
-  user     User   @relation(fields: [userId], references: [id])
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId   String
-  domain   Domain @relation(fields: [fqdn], references: [fqdn])
+  domain   Domain @relation(fields: [fqdn], references: [fqdn], onDelete: Cascade)
   fqdn String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
 
   @@id([userId, fqdn])
   @@map("user_domain_relations")
@@ -150,7 +142,6 @@ model User {
   id         String               @id
   role       String?
   domains    UserDomainRelation[]
-  dashboards Dashboard[]
 
   @@map("users")
 }
@@ -166,4 +157,14 @@ model Network {
   comment            String?
 
   @@map("networks")
+}
+
+
+model Stat {
+    subject String
+    time BigInt
+    value Json
+
+    @@id([subject, time])
+    @@map("stats")
 }

@@ -10,6 +10,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   serverCtrl.startScanResponseLoop();
   serverCtrl.startLookupResponseLoop();
   serverCtrl.startScanLoop();
+  serverCtrl.statLoop();
 
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json");
