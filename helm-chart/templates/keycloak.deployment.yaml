@@ -34,7 +34,7 @@ spec:
         - name: keycloak
           securityContext:
             {{- toYaml .Values.keycloak.securityContext | nindent 12 }}
-          image: "registry.gitlab.com/ozg-security/keycloak:{{ .Values.keycloak.image.tag | default "latest" }}"
+          image: "registry.gitlab.com/ozg-security/keycloak{{ .Values.keycloak.image.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.keycloak.image.pullPolicy }}
           args:
             [

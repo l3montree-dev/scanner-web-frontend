@@ -132,7 +132,7 @@ export type DetailedDomain = Omit<Domain, "lastScan"> & {
   lastScan: number;
 };
 
-export type DomainWithScanResult = Domain & {
+export type DomainWithScanResult = Omit<Domain, "details"> & {
   scanReport: { [key in InspectionType]: boolean | null } | null;
 };
 

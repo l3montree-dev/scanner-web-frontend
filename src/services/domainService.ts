@@ -110,6 +110,10 @@ const getDomainsOfNetworksWithLatestTestResult = async (
     );
   }
 
+  const selectInspectionTypes = Object.keys(InspectionTypeEnum)
+    .map((key) => `sr.${key} as ${key}`)
+    .join(", ");
+
   const [total, domains] = await Promise.all([
     prisma.domain.count({
       where: {
@@ -132,7 +136,7 @@ const getDomainsOfNetworksWithLatestTestResult = async (
     // subject to sql injection!!!
     prisma.$queryRawUnsafe(
       `
-SELECT *, d.fqdn as fqdn, d.createdAt as createdAt, d.updatedAt as updatedAt, d.details as details from user_domain_relations udr 
+    SELECT ${selectInspectionTypes}, d.fqdn as fqdn, d.createdAt as createdAt, d.updatedAt as updatedAt from user_domain_relations udr
     INNER JOIN domains d on udr.fqdn = d.fqdn 
     LEFT JOIN scan_reports sr on d.fqdn = sr.fqdn  
     WHERE NOT EXISTS(
@@ -164,7 +168,6 @@ SELECT *, d.fqdn as fqdn, d.createdAt as createdAt, d.updatedAt as updatedAt, d.
       errorCount: d.errorCount,
       createdAt: d.createdAt,
       updatedAt: d.updatedAt,
-      details: d.details,
       scanReport: {
         ...(Object.fromEntries(
           Object.keys(InspectionTypeEnum).map((key) => [

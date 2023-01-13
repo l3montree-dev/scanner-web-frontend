@@ -93,6 +93,7 @@ const staleWhileRevalidate = async (
   });
 
   if (dashboard) {
+    logger.info("returning cached dashboard");
     return dashboard;
   }
   logger.info("no cached dashboard - creating it");
