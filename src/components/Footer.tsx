@@ -35,7 +35,7 @@ const Footer = () => {
             <span className="mr-4">
               <button
                 onClick={() => setIsOpen(true)}
-                className="cursor-pointer p-2"
+                className="cursor-pointer hover:underline p-2"
                 type="button"
               >
                 Impressum
@@ -69,7 +69,10 @@ const Footer = () => {
                   <Link className="mr-2" href="/dashboard">
                     Dashboard
                   </Link>
-                  <span className="cursor-pointer" onClick={() => signOut()}>
+                  <span
+                    className="cursor-pointer hover:underline"
+                    onClick={() => signOut()}
+                  >
                     Logout
                   </span>
                 </>
