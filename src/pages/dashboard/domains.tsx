@@ -210,7 +210,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
               </>
             )}
           </p>
-          <div className="w-full border-deepblue-200 border bg-deepblue-500">
+          <div className="w-full border-deepblue-50 border bg-deepblue-500">
             <div className="p-5">
               <div className="text-black">
                 <DomainOverviewForm
@@ -222,7 +222,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
             </div>
             <table className="w-full">
               <thead className="">
-                <tr className="bg-deepblue-100 text-sm border-b border-b-deepblue-500 text-left">
+                <tr className="bg-deepblue-200 text-sm border-b border-b-deepblue-50 text-left">
                   <th className="p-2">
                     <div>
                       <span>Domain</span>
@@ -324,11 +324,13 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                 </tr>
               </thead>
               <tbody>
-                {domains.map((domain) => {
+                {domains.map((domain, i) => {
                   return (
                     <tr
                       className={classNames(
-                        "border-b border-b-deepblue-200 transition-all",
+                        i % 2 === 0 ? "bg-deepblue-400" : "bg-deepblue-500",
+                        i !== domains.length - 1 && "border-b",
+                        " border-b-deepblue-300 transition-all",
                         domain.errorCount !== null && domain.errorCount >= 5
                           ? "line-through"
                           : ""

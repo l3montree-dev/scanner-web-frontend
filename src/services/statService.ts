@@ -1,6 +1,7 @@
 import { Prisma, PrismaClient, User } from "@prisma/client";
-import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
-import { IDashboard } from "../types";
+import { config } from "../config";
+import { InspectionType } from "../inspection/scans";
+import { IDashboard, ChartData } from "../types";
 import { toDTO } from "../utils/server";
 
 const getTotalsOfUser = async (user: User, prisma: PrismaClient) => {
@@ -135,6 +136,38 @@ const getUserFailedSuccessPercentage = async (
   };
 };
 
+export const getReferenceChartData = async (
+  prisma: PrismaClient
+): Promise<{
+  [referenceName: string]: Array<ChartData & { date: number }>;
+}> => {
+  const stats = await prisma.stat.findMany({
+    where: {
+      subject: {
+        in: config.generateStatsForGroups,
+      },
+    },
+  });
+  const res: {
+    [referenceName: string]: Array<ChartData & { date: number }>;
+  } = {};
+  stats.sort((a, b) => Number(a.time) - Number(b.time));
+  stats.forEach((s) => {
+    const { subject, time, value } = s;
+    if (!res[subject]) {
+      res[subject] = [];
+    }
+    res[subject].push({
+      date: Number(time),
+      ...(value as {
+        data: { [key in InspectionType]: number };
+        totalCount: number;
+      }),
+    });
+  });
+  return res;
+};
+
 export const getDashboardForUser = async (
   user: User,
   prisma: PrismaClient
@@ -173,4 +206,5 @@ export const statService = {
   getUserFailedSuccessPercentage,
   getGroupFailedSuccessPercentage,
   getDashboardForUser,
+  getReferenceChartData,
 };

@@ -205,3 +205,10 @@ export const neverThrow = async <T>(promise: Promise<T>): Promise<T | null> => {
     return null;
   }
 };
+
+export const dateFormat = {
+  hour12: false,
+  day: "2-digit" as const,
+  month: "2-digit" as const,
+  year: "2-digit" as const,
+};

@@ -146,9 +146,9 @@ const Users: FunctionComponent<Props> = (props) => {
             </Button>
           </div>
 
-          <table className="w-full text-left text-white border-deepblue-200 border mt-10 bg-deepblue-500">
+          <table className="w-full text-left text-white border-deepblue-50 border mt-10 bg-deepblue-500">
             <thead>
-              <tr className="bg-deepblue-100  text-sm border-b border-b-deepblue-500 text-left">
+              <tr className="bg-deepblue-100  text-sm border-b border-b-deepblue-50 text-left">
                 <th className="p-2 py-4">Nutzername</th>
                 <th className="p-2 py-4">Vorname</th>
                 <th className="p-2 py-4">Nachname</th>
@@ -160,6 +160,7 @@ const Users: FunctionComponent<Props> = (props) => {
               {users.map((user, i) => (
                 <tr
                   className={classNames(
+                    i % 2 === 0 ? "bg-deepblue-400" : "bg-deepblue-500",
                     i + 1 !== users.length ? "border-b" : "",
                     " border-b-deepblue-500 transition-all"
                   )}

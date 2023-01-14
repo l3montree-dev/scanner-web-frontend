@@ -112,9 +112,9 @@ const Network: FunctionComponent<Props> = (props) => {
               Netzwerk hinzufügen
             </Button>
           </div>
-          <table className="w-full text-left text-white border-deepblue-100 mt-10 border bg-deepblue-500">
+          <table className="w-full text-left text-white border-deepblue-50 mt-10 border bg-deepblue-500">
             <thead>
-              <tr className="bg-deepblue-100  text-sm border-b border-b-deepblue-500 text-left">
+              <tr className="bg-deepblue-100  text-sm border-b border-b-deepblue-50 text-left">
                 <th className="p-2 py-4">CIDR</th>
                 <th className="p-2 py-4">Kommentar</th>
                 <th className="p-2 py-4">Aktionen</th>
@@ -124,6 +124,7 @@ const Network: FunctionComponent<Props> = (props) => {
               {networks.map((network, i) => (
                 <tr
                   className={classNames(
+                    i % 2 === 0 ? "bg-deepblue-400" : "bg-deepblue-500",
                     i + 1 !== networks.length ? "border-b" : "",
                     "border-b-deepblue-200 transition-all"
                   )}
