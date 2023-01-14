@@ -408,7 +408,8 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                               constrainToVisibleArea
                               cornerRadius={0}
                               style={{
-                                fill: "white",
+                                fill: (fullConfig.theme?.colors as any)
+                                  .lightning["200"],
                                 fontSize: 12,
                               }}
                               flyoutPadding={2.5}
