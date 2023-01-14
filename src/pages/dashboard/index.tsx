@@ -233,9 +233,9 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                       <Link
                         target={"_blank"}
                         href={linkMapper[key]}
-                        className="text-sm absolute top-1 underline right-0 mt-2 mr-3"
+                        className="text-sm absolute w-full inline-block overflow-hidden truncate text-right whitespace-nowrap top-1 underline right-0 mt-2 px-5"
                       >
-                        Mehr Informationen
+                        Was ist &quot;{mapping[key]}&quot;?
                       </Link>
                     )}
                     <svg viewBox="0 0 300 300">
@@ -361,9 +361,9 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                         <Link
                           target={"_blank"}
                           href={linkMapper[key]}
-                          className="text-sm absolute top-1 underline right-0 mt-2 mr-3"
+                          className="text-sm absolute w-full inline-block overflow-hidden truncate text-right whitespace-nowrap top-1 underline right-0 mt-2 px-5"
                         >
-                          Mehr Informationen
+                          Was ist &quot;{mapping[key]}&quot;?
                         </Link>
                       )}
                       <svg style={{ height: 0 }}>
@@ -397,37 +397,6 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                           tickFormat={(t) => `${t}%`}
                           dependentAxis
                           fixLabelOverlap
-                        />
-
-                        <VictoryLine
-                          animate
-                          interpolation={"basis"}
-                          labels={({ datum }) => `${datum.y.toFixed(1)}%`}
-                          labelComponent={
-                            <VictoryTooltip
-                              constrainToVisibleArea
-                              cornerRadius={0}
-                              style={{
-                                fill: (fullConfig.theme?.colors as any)
-                                  .lightning["200"],
-                                fontSize: 12,
-                              }}
-                              flyoutPadding={2.5}
-                              flyoutStyle={{
-                                stroke: "none",
-                                fill: (fullConfig.theme?.colors as any)
-                                  .deepblue["500"],
-                              }}
-                              dx={0}
-                              dy={-5}
-                              pointerLength={0}
-                            />
-                          }
-                          colorScale={[
-                            (fullConfig.theme?.colors as any).lightning["500"],
-                            (fullConfig.theme?.colors as any).slate["600"],
-                          ]}
-                          data={data}
                         />
 
                         {Object.entries(referenceData).map(
@@ -466,6 +435,36 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                             />
                           )
                         )}
+                        <VictoryLine
+                          animate
+                          interpolation={"basis"}
+                          labels={({ datum }) => `${datum.y.toFixed(1)}%`}
+                          labelComponent={
+                            <VictoryTooltip
+                              constrainToVisibleArea
+                              cornerRadius={0}
+                              style={{
+                                fill: (fullConfig.theme?.colors as any)
+                                  .lightning["200"],
+                                fontSize: 12,
+                              }}
+                              flyoutPadding={2.5}
+                              flyoutStyle={{
+                                stroke: "none",
+                                fill: (fullConfig.theme?.colors as any)
+                                  .deepblue["500"],
+                              }}
+                              dx={0}
+                              dy={-5}
+                              pointerLength={0}
+                            />
+                          }
+                          colorScale={[
+                            (fullConfig.theme?.colors as any).lightning["500"],
+                            (fullConfig.theme?.colors as any).slate["600"],
+                          ]}
+                          data={data}
+                        />
                         <VictoryArea
                           style={{
                             data: { fill: "url(#serviceGradient)" },

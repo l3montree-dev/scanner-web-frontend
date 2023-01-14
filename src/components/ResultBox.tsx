@@ -4,6 +4,7 @@ import {
   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Link from "next/link";
 import { FunctionComponent, ReactNode } from "react";
 import { classNames } from "../utils/common";
 
@@ -58,15 +59,13 @@ const ResultBox: FunctionComponent<Props> = (props) => {
 
       {props.link !== undefined && (
         <div className="flex flex-row justify-end">
-          <a
-            className="text-sm underline"
-            target="_blank"
-            download
+          <Link
+            target={"_blank"}
             href={props.link}
-            rel="noreferrer"
+            className="text-sm w-full inline-block overflow-hidden truncate text-right whitespace-nowrap top-1 underline right-0 mt-2 px-5"
           >
-            Mehr Informationen
-          </a>
+            Was ist &quot;{props.title}&quot;?
+          </Link>
         </div>
       )}
     </div>
