@@ -68,6 +68,7 @@ const handleNewScanReport = async (
       update: {
         queued: false,
         lastScan: result.timestamp,
+        errorCount: 0,
         details: {
           ...result.result,
           // save the subject under test inside the details
@@ -90,6 +91,7 @@ const handleNewScanReport = async (
     data: {
       queued: false,
       lastScan: result.timestamp,
+      errorCount: 0,
       details: {
         ...result.result,
         // save the subject under test inside the details
