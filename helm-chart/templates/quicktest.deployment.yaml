@@ -48,7 +48,7 @@ spec:
             - mountPath: "/go/src/app/config"
               name: request-montioring-config
           imagePullPolicy: {{ .Values.requestMonitoringSidecar.image.pullPolicy }}
-        - name: leader-elector-sidecar
+        - name: leader-election-sidecar
           image: k8s.gcr.io/leader-elector:0.5
           imagePullPolicy: IfNotPresent
           securityContext:
