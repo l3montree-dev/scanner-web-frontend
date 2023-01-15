@@ -61,6 +61,7 @@ export class RabbitMQClient {
             {
               duration: Date.now() - start,
               messageId: msg.properties.messageId,
+              queue,
             },
             `acknowledging message: ${msg.properties.messageId.toString()}`
           );

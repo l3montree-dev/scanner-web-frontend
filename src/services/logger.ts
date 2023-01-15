@@ -8,7 +8,7 @@ const logger = pino({
 });
 export const getLogger = (file: string) => {
   if (config.isProduction) {
-    return logger.child({ file });
+    return logger;
   }
   return logger;
 };
