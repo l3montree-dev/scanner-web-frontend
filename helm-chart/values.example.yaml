@@ -92,15 +92,6 @@ influxdb:
       bucket: ozgsec
 
 
-# define the mongo db credentials using an existing secret
-mongodb:
-  auth:
-    existingSecret: mongodb-credentials
-    usernames:
-      - ozgsec
-    databases:
-      - ozgsec
-
 rabbitmq:
   auth:
     username: ozgsec

@@ -2,9 +2,6 @@ dependencies:
 - name: influxdb
   repository: https://charts.bitnami.com/bitnami
   version: 5.4.13
-- name: mongodb
-  repository: https://charts.bitnami.com/bitnami
-  version: 13.1.7
 - name: rabbitmq
   repository: https://charts.bitnami.com/bitnami
   version: 11.1.5
@@ -14,5 +11,5 @@ dependencies:
 - name: redis
   repository: https://charts.bitnami.com/bitnami
   version: 17.4.0
-digest: sha256:8b333bea74b7faafa970de15ffe8238bff5810857126356c278d6c6b3db5b6b6
-generated: "2022-12-30T12:12:47.774971+01:00"
+digest: sha256:0199e5b53ed48e5124ea5cad6163dfc02966164e2ebfe9ff8078a6b417ca9521
+generated: "2023-01-16T11:41:11.716994+01:00"
