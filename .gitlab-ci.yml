@@ -38,8 +38,8 @@ jest:
     script:
         - /kaniko/executor
           --cleanup
-          --context $CI_PROJECT_DIR
-          --dockerfile $CI_PROJECT_DIR/Dockerfile
+          --context $CI_PROJECT_DIR/apps/quicktest
+          --dockerfile $CI_PROJECT_DIR/apps/quicktest/Dockerfile
           --destination $IMAGE_TAG
 
 build-tag:
