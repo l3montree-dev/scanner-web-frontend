@@ -14,6 +14,8 @@ import {
   VictoryAxis,
   VictoryChart,
   VictoryLabel,
+  VictoryLabelableProps,
+  VictoryLabelProps,
   VictoryLegend,
   VictoryLine,
   VictoryPie,
@@ -103,12 +105,12 @@ const referenceNameMapping: {
   };
 } = {
   de_top_100000: {
-    name: ".de Top 100.000",
-    color: (fullConfig.theme?.colors as any).yellow["500"],
+    name: ".de",
+    color: (fullConfig.theme?.colors as any).slate["400"],
   },
   top_100000: {
-    name: "Top 100.000",
-    color: (fullConfig.theme?.colors as any).red["500"],
+    name: "global",
+    color: (fullConfig.theme?.colors as any).slate["400"],
   },
 };
 
@@ -124,6 +126,89 @@ function hexToRgbA(hex: string): string {
   }
   throw new Error("Bad Hex");
 }
+
+const LabelComponent: FunctionComponent<any> = (props) => {
+  if (props.data?.length - 1 === +(props.index ?? 0)) {
+    return (
+      <VictoryLabel
+        {...props}
+        textAnchor={"end"}
+        verticalAnchor={"middle"}
+        dy={0}
+        renderInPortal={true}
+        dx={30}
+        backgroundStyle={{
+          fill: (fullConfig.theme?.colors as any).deepblue["500"],
+        }}
+        style={{
+          fontSize: 10,
+          fill: (fullConfig.theme?.colors as any).lightning["200"],
+        }}
+      />
+    );
+  }
+  return (
+    <VictoryTooltip
+      {...props}
+      constrainToVisibleArea
+      style={{
+        fill: (fullConfig.theme?.colors as any).lightning["200"],
+        fontSize: 10,
+      }}
+      flyoutPadding={2.5}
+      flyoutStyle={{
+        stroke: "none",
+        fill: (fullConfig.theme?.colors as any).deepblue["500"],
+      }}
+      dx={0}
+      dy={-1.55}
+      pointerLength={0}
+    />
+  );
+};
+
+const RefLabelComponent: FunctionComponent<any> = (props) => {
+  if (
+    (4 - props.i) * Math.floor((props.data?.length - 1) / 5) ===
+    +(props.index ?? 0)
+  ) {
+    return (
+      <VictoryLabel
+        {...props}
+        renderInPortal={false}
+        textAnchor={"middle"}
+        verticalAnchor={"middle"}
+        backgroundPadding={2}
+        dx={0}
+        dy={-2}
+        backgroundStyle={{
+          fill: (fullConfig.theme?.colors as any).deepblue["500"],
+        }}
+        style={{
+          fontSize: 10,
+          fill: (fullConfig.theme?.colors as any).slate["400"],
+        }}
+      />
+    );
+  } else if (props.data.length - 1 === +(props.index ?? 0)) {
+    return (
+      <VictoryLabel
+        {...props}
+        renderInPortal={true}
+        textAnchor={"end"}
+        verticalAnchor={"middle"}
+        backgroundPadding={3}
+        dx={30}
+        dy={0}
+        style={{
+          fontSize: 10,
+          fill: (fullConfig.theme?.colors as any).slate["400"],
+        }}
+      />
+    );
+  }
+  return null;
+};
 
 const Dashboard: FunctionComponent<Props> = (props) => {
   const dashboard = props.dashboard;
@@ -166,11 +251,27 @@ const Dashboard: FunctionComponent<Props> = (props) => {
               }
             )
           );
+
+          const min = Math.min(
+            ...data.map((item) => item.y),
+            ...Object.values(referenceData)
+              .flat()
+              .map((item) => item.y)
+          );
+          const max = Math.max(
+            ...data.map((item) => item.y),
+            ...Object.values(referenceData)
+              .flat()
+              .map((item) => item.y)
+          );
+
           return [
             key,
             {
               data,
               referenceData,
+              min,
+              max,
             },
           ];
         })
@@ -223,6 +324,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
               if (100 - percentage < 1.5 || percentage < 1.5) {
                 padAngle = 0;
               }
+
               return (
                 <div
                   className="w-56 bg-deepblue-500 border flex-col flex border-deepblue-50"
@@ -317,42 +419,10 @@ const Dashboard: FunctionComponent<Props> = (props) => {
               Top 100.000 .de Domains sowie der Top 100.000 Domains dar. Die
               Daten werden regelmä&szlig;ig aktualisiert.
             </p>
-
-            <div className="w-1/3">
-              <div className="px-2 py-2 text-slate-300 mr-3 bg-deepblue-400 border-deepblue-50 border">
-                <span className="mb-2 text-lg block">Legende</span>
-                <div className="text-sm">
-                  <div className="flex-row flex items-center">
-                    <div className="w-3 h-3 bg-lightning-500 rounded-full"></div>
-                    <span className="ml-2">Verwaltete Dienste</span>
-                  </div>
-                  {Object.keys(props.referenceChartData).map(
-                    (referenceName) => (
-                      <div
-                        key={referenceName}
-                        className="flex-row mt-2 flex items-center"
-                      >
-                        <div
-                          style={{
-                            backgroundColor:
-                              referenceNameMapping[referenceName].color,
-                          }}
-                          className="w-3 h-3 rounded-full"
-                        ></div>
-                        <span className="ml-2">
-                          {referenceNameMapping[referenceName].name}
-                        </span>
-                      </div>
-                    )
-                  )}
-                </div>
-              </div>
-            </div>
           </div>
-
           <div className="flex mt-5 justify-start -mx-2 flex-wrap flex-row">
             {displayKey.map((key) => {
-              const { data, referenceData } = dataPerDisplayKey[key];
+              const { data, referenceData, min, max } = dataPerDisplayKey[key];
               return (
                 <div className="xl:w-1/3 sm:w-1/2 w-full mb-5" key={key}>
                   <div className="bg-deepblue-500 mx-2 historical-chart border flex-col flex border-deepblue-50">
@@ -390,7 +460,9 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                           />
                         }
                         theme={theme}
-                        domainPadding={[0, 10]}
+                        minDomain={{ y: Math.max(0, min - max / 20) }}
+                        maxDomain={{ y: Math.min(100, max + max / 20) }}
+                        domainPadding={{ x: [0, 5] }}
                       >
                         <VictoryAxis fixLabelOverlap />
                         <VictoryAxis
@@ -398,7 +470,17 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                           dependentAxis
                           fixLabelOverlap
                         />
-
+                        <VictoryLine
+                          animate
+                          interpolation={"basis"}
+                          labels={({ datum }) => `${datum.y.toFixed(1)}%`}
+                          labelComponent={<LabelComponent />}
+                          colorScale={[
+                            (fullConfig.theme?.colors as any).lightning["500"],
+                            (fullConfig.theme?.colors as any).slate["600"],
+                          ]}
+                          data={data}
+                        />
                         {Object.entries(referenceData).map(
                           ([referenceName, value], i) => (
                             <VictoryLine
@@ -415,56 +497,15 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                               data={value}
                               labels={(d) => {
                                 if (+d.index === value.length - 1) {
-                                  return `
-                                    ${d.datum.y.toFixed(1)}%`;
+                                  return `${d.datum.y.toFixed(1)}%`;
                                 }
-                                return null;
+                                return referenceNameMapping[referenceName].name;
                               }}
-                              labelComponent={
-                                <VictoryLabel
-                                  textAnchor={"end"}
-                                  verticalAnchor={"start"}
-                                  backgroundPadding={3}
-                                  style={{
-                                    fontSize: 10,
-                                    fill: referenceNameMapping[referenceName]
-                                      .color,
-                                  }}
-                                />
-                              }
+                              labelComponent={<RefLabelComponent i={i} />}
                             />
                           )
                         )}
-                        <VictoryLine
-                          animate
-                          interpolation={"basis"}
-                          labels={({ datum }) => `${datum.y.toFixed(1)}%`}
-                          labelComponent={
-                            <VictoryTooltip
-                              constrainToVisibleArea
-                              cornerRadius={0}
-                              style={{
-                                fill: (fullConfig.theme?.colors as any)
-                                  .lightning["200"],
-                                fontSize: 12,
-                              }}
-                              flyoutPadding={2.5}
-                              flyoutStyle={{
-                                stroke: "none",
-                                fill: (fullConfig.theme?.colors as any)
-                                  .deepblue["500"],
-                              }}
-                              dx={0}
-                              dy={-5}
-                              pointerLength={0}
-                            />
-                          }
-                          colorScale={[
-                            (fullConfig.theme?.colors as any).lightning["500"],
-                            (fullConfig.theme?.colors as any).slate["600"],
-                          ]}
-                          data={data}
-                        />
+
                         <VictoryArea
                           style={{
                             data: { fill: "url(#serviceGradient)" },
