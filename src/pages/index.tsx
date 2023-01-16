@@ -169,9 +169,8 @@ const Home: NextPage<Props> = ({ displayNotAvailable }) => {
                 OZG Security Challenge 2023
               </h1>
               <p className="text-white text-xl mt-10">
-                Hier entsteht ein Werkzeug für einen Schnelltest einer Webseite
-                in Bezug auf ausgewählte IT-Sicherheitsmaßnahmen und
-                Best-Practices.
+                Hier entsteht ein Schnelltest einer Webseite in Bezug auf
+                ausgewählte IT-Sicherheitsmaßnahmen und Best-Practices.
               </p>
             </div>
           </div>
@@ -285,22 +284,27 @@ const Home: NextPage<Props> = ({ displayNotAvailable }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { req, res, query } = context;
-
-  if (req.headers.host?.includes("beta.ozgsec.de")) {
-    // check if the user does provide a valid query parameter
-    const code = query["code"];
-    if (!code || +code % 42 !== 0) {
-      return {
-        props: {
-          displayNotAvailable: true,
-        },
-      };
-    }
+  const { query } = context;
+  // check if the user does provide a valid query parameter
+  const date = new Date();
+  const code = query["code"];
+  if (
+    code &&
+    (+code === 423333 ||
+      (+code % 42 === 0 &&
+        date.getMonth() === 0 &&
+        date.getDate() >= 24 &&
+        date.getDate() <= 25))
+  ) {
+    return {
+      props: {
+        displayNotAvailable: false,
+      },
+    };
   }
   return {
     props: {
-      displayNotAvailable: false,
+      displayNotAvailable: true,
     },
   };
 };

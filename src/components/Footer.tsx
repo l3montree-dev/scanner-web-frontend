@@ -86,7 +86,8 @@ const Footer: FunctionComponent<Props> = ({ hideLogin }) => {
               </div>
             )}
             <span className="mt-5 sm:mt-0">
-              © Bundesministerium des Innern und für Heimat, 2022
+              © Bundesministerium des Innern und für Heimat,{" "}
+              {new Date().getFullYear()}
             </span>
           </div>
         </div>
