@@ -1,0 +1,42 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: beta-ozgsec-de
+  namespace: ozgsec
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "true"
+    kubernetes.io/tls-acme: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: "nginx"
+    # nginx.ingress.kubernetes.io/auth-type: basic
+   #  nginx.ingress.kubernetes.io/auth-secret: basic-auth
+   # nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
+    nginx.ingress.kubernetes.io/proxy-body-size: 50m
+    nginx.ingress.kubernetes.io/server-snippet: |-
+      proxy_hide_header X-Powered-By;
+      add_header Referrer-Policy                      "strict-origin"        always;
+      add_header X-Content-Type-Options               "nosniff"              always;
+      add_header X-Frame-Options                      "DENY"                 always;
+      add_header X-XSS-Protection                     "1; mode=block"        always;
+      add_header Content-Security-Policy              "default-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; connect-src 'self' https://beta.zgsec.de;"  always;
+      gzip on;
+      gzip_min_length 1400;
+      gzip_comp_level 6;
+      gzip_proxied any;
+      gzip_types *;
+spec:
+  tls:
+    - hosts:
+        - beta.ozgsec.de
+      secretName: beta-ozgsec-de-tls
+  rules:
+    - host: beta.ozgsec.de
+      http:
+        paths:
+            - path: /
+              pathType: Prefix
+              backend:
+                service:
+                    name: quicktest-service
+                    port:
+                        number: 4000
