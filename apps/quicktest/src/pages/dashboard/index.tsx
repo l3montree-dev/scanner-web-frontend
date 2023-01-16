@@ -20,7 +20,7 @@ import {
   VictoryTooltip,
   VictoryVoronoiContainer,
 } from "victory";
-import tailwindConfig from "../../../tailwind.config.js";
+import tailwindConfig from "../../../../tailwind.config.js";
 import DashboardPage from "../../components/DashboardPage";
 import SideNavigation from "../../components/SideNavigation";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";

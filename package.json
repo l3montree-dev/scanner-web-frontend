@@ -1,63 +1,23 @@
 {
-    "name": "ozgsec",
-    "version": "1.2.3",
-    "private": true,
+    "name": "ozgsec-quicktest",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
     "scripts": {
-        "dev": "next dev",
-        "test": "jest",
-        "postinstall": "npx prisma generate",
-        "build": "next build",
-        "start": "next start",
-        "lint": "next lint",
-        "load-test": "k6 run load-test.k6.js",
-        "load-test:monitor": "k6 run load-test.k6.js --out influxdb=http://localhost:8086/k6"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "dev": "npm run -w apps/quicktest dev"
     },
-    "dependencies": {
-        "@elastic/ecs-pino-format": "^1.3.0",
-        "@fortawesome/fontawesome-svg-core": "^6.2.1",
-        "@fortawesome/free-solid-svg-icons": "^6.2.1",
-        "@fortawesome/react-fontawesome": "^0.2.0",
-        "@keycloak/keycloak-admin-client": "^20.0.2",
-        "@prisma/client": "^4.8.1",
-        "@types/socket.io": "^3.0.2",
-        "amqplib": "^0.10.3",
-        "dotenv": "^16.0.3",
-        "formidable": "^2.1.1",
-        "ip": "^2.0.0",
-        "next": "13.0.6",
-        "next-auth": "^4.18.5",
-        "p-queue": "^7.3.0",
-        "pino": "^8.7.0",
-        "react": "18.2.0",
-        "react-dom": "18.2.0",
-        "react-syntax-highlighter": "^15.5.0",
-        "socket.io-client": "^4.5.4",
-        "victory": "^36.6.8"
+    "repository": {
+        "type": "git",
+        "url": "git+ssh://git@gitlab.com/ozg-security/ozgsec-security-quick-test.git"
     },
-    "devDependencies": {
-        "@types/amqplib": "^0.10.0",
-        "@types/formidable": "^2.0.5",
-        "@types/ip": "^1.1.0",
-        "@types/jest": "^29.2.3",
-        "@types/jsdom": "^20.0.1",
-        "@types/node": "^18.11.10",
-        "@types/react": "18.0.26",
-        "@types/react-dom": "18.0.9",
-        "@types/react-syntax-highlighter": "^15.5.5",
-        "@types/socket.io-client": "^3.0.0",
-        "autoprefixer": "^10.4.13",
-        "eslint": "8.29.0",
-        "eslint-config-next": "13.0.6",
-        "eslint-config-prettier": "^8.5.0",
-        "eslint-plugin-prettier": "^4.2.1",
-        "jest": "^29.3.1",
-        "jest-junit": "^15.0.0",
-        "postcss": "^8.4.19",
-        "prisma": "^4.8.1",
-        "sass": "^1.56.1",
-        "tailwindcss": "^3.2.4",
-        "ts-jest": "^29.0.3",
-        "ts-node": "^10.9.1",
-        "typescript": "^4.9.4"
-    }
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://gitlab.com/ozg-security/ozgsec-security-quick-test/issues"
+    },
+    "homepage": "https://gitlab.com/ozg-security/ozgsec-security-quick-test#readme",
+    "workspaces": [
+        "apps/quicktest"
+    ]
 }

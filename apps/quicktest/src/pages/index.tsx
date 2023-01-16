@@ -287,7 +287,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const { query } = context;
   // check if the user does provide a valid query parameter
   const date = new Date();
-  const code = query["code"];
+  const code = query["s"];
   if (
     code &&
     (+code === 423333 ||
