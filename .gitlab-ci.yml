@@ -14,7 +14,7 @@ jest:
     image: node:18@sha256:9d8a6466c6385e05f62f8ccf173e80209efb0ff4438f321f09ddf552b05af3ba
     stage: test
     before_script:
-        - cd app/quicktest
+        - cd apps/quicktest
     script:
         - npm ci --include=dev
         - "npx jest --ci --reporters=default --reporters=jest-junit"
@@ -34,7 +34,7 @@ jest:
         name: gcr.io/kaniko-project/executor:v1.9.1-debug@sha256:ac169723b2076f9d5804f4bc05c98397e286da6fdcdd5a09fdc179f06ccb3be1
         entrypoint: [""]
     before_script:
-        - cd app/quicktest
+        - cd apps/quicktest
     script:
         - /kaniko/executor
           --cleanup

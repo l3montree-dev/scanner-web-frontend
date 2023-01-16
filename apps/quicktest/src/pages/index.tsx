@@ -1,6 +1,5 @@
 import { faRefresh } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Domain } from "@prisma/client";
 import type { GetServerSideProps, NextPage } from "next";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import Button from "../components/Button";
