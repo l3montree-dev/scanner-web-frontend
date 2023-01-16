@@ -19,7 +19,7 @@ const updateMaster = async (url: string) => {
 if (podName && leaderElectorUrl) {
   updateMaster(leaderElectorUrl)
     .then(() => {
-      logger.info(`The master is ${master.name}`);
+      logger.debug(`The master is ${master.name}`);
     })
     .catch((e) => {
       logger.error(e, "Leader election failed");
@@ -30,7 +30,7 @@ if (podName && leaderElectorUrl) {
 
 export const isMaster = () => {
   if (process.env.POD_NAME == undefined) {
-    logger.warn("POD_NAME is not set - always master");
+    logger.debug("POD_NAME is not set - always master");
     return true;
   }
   return master.name === process.env.POD_NAME;

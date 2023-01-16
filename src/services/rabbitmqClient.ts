@@ -69,6 +69,7 @@ export class RabbitMQClient {
         } catch (e: any) {
           if (e) {
             logger.error({ err: e.message }, "error while processing message");
+            channel.ack(msg);
           }
         }
         return;

@@ -1,5 +1,12 @@
-export { default } from "next-auth/middleware";
+import { NextRequest } from "next/server";
 
-export const config = {
-  matcher: ["/dashboard/:path*", "/administration/:path*"],
-};
+import { NextRequestWithAuth, withAuth } from "next-auth/middleware";
+
+export default function middleware(request: NextRequest) {
+  if (
+    request.nextUrl.pathname.startsWith("/dashboard") ||
+    request.nextUrl.pathname.startsWith("/administration")
+  ) {
+    return withAuth(request as NextRequestWithAuth);
+  }
+}

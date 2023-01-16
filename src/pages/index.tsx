@@ -1,7 +1,7 @@
 import { faRefresh } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Domain } from "@prisma/client";
-import type { NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import Button from "../components/Button";
 import Meta from "../components/Meta";
@@ -36,7 +36,10 @@ const isInViewport = (element: HTMLElement) => {
   );
 };
 
-const Home: NextPage = () => {
+interface Props {
+  displayNotAvailable: boolean;
+}
+const Home: NextPage<Props> = ({ displayNotAvailable }) => {
   const [website, setWebsite] = useState("");
   const scanRequest = useLoading();
   const refreshRequest = useLoading();
@@ -154,6 +157,28 @@ const Home: NextPage = () => {
   const dateString = domain
     ? new Date(Number(domain.lastScan)).toLocaleString()
     : "";
+
+  if (displayNotAvailable) {
+    return (
+      <Page hideLogin>
+        <Meta />
+        <div className="flex md:py-10 flex-col w-full justify-center">
+          <div className="max-w-screen-lg w-full md:p-5 mx-auto">
+            <div className="md:mt-0 mt-10 md:p-10 text-white text-center p-5">
+              <h1 className="text-5xl sm:order-1 order-2 mb-3 font-bold">
+                OZG Security Challenge 2023
+              </h1>
+              <p className="text-white text-xl mt-10">
+                Hier entsteht ein Werkzeug für einen Schnelltest einer Webseite
+                in Bezug auf ausgewählte IT-Sicherheitsmaßnahmen und
+                Best-Practices.
+              </p>
+            </div>
+          </div>
+        </div>
+      </Page>
+    );
+  }
   return (
     <Page>
       <Meta />
@@ -257,6 +282,27 @@ const Home: NextPage = () => {
       </div>
     </Page>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { req, res, query } = context;
+
+  if (req.headers.host?.includes("beta.ozgsec.de")) {
+    // check if the user does provide a valid query parameter
+    const code = query["code"];
+    if (!code || +code % 42 !== 0) {
+      return {
+        props: {
+          displayNotAvailable: true,
+        },
+      };
+    }
+  }
+  return {
+    props: {
+      displayNotAvailable: false,
+    },
+  };
 };
 
 export default Home;

@@ -1,10 +1,13 @@
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import { useState } from "react";
+import { FunctionComponent, useState } from "react";
 import Imprint from "./Imprint";
 import Modal from "./Modal";
 
-const Footer = () => {
+interface Props {
+  hideLogin?: boolean;
+}
+const Footer: FunctionComponent<Props> = ({ hideLogin }) => {
   const [isOpen, setIsOpen] = useState(false);
   const session = useSession();
 
@@ -63,23 +66,25 @@ const Footer = () => {
             </span>
           </div>
           <div className="p-2 flex-row flex-wrap sm:flex">
-            <div className="mr-2">
-              {session.status === "authenticated" ? (
-                <>
-                  <Link className="mr-2" href="/dashboard">
-                    Dashboard
-                  </Link>
-                  <span
-                    className="cursor-pointer hover:underline"
-                    onClick={() => signOut()}
-                  >
-                    Logout
-                  </span>
-                </>
-              ) : (
-                <Link href="/dashboard">Login</Link>
-              )}
-            </div>
+            {!Boolean(hideLogin) && (
+              <div className="mr-2">
+                {session.status === "authenticated" ? (
+                  <>
+                    <Link className="mr-2" href="/dashboard">
+                      Dashboard
+                    </Link>
+                    <span
+                      className="cursor-pointer hover:underline"
+                      onClick={() => signOut()}
+                    >
+                      Logout
+                    </span>
+                  </>
+                ) : (
+                  <Link href="/dashboard">Login</Link>
+                )}
+              </div>
+            )}
             <span className="mt-5 sm:mt-0">
               © Bundesministerium des Innern und für Heimat, 2022
             </span>

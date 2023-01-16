@@ -229,11 +229,11 @@ const startScanLoop = once(() => {
 
       if (domains.length === 0) {
         running = false;
-        logger.info({ component: "SCAN_LOOP" }, "no domains to scan");
+        logger.debug({ component: "SCAN_LOOP" }, "no domains to scan");
         return;
       }
       const requestId = randomUUID();
-      logger.info(
+      logger.debug(
         { requestId, component: "SCAN_LOOP" },
         `found ${domains.length} domains to scan - sending scan request with id: ${requestId}`
       );

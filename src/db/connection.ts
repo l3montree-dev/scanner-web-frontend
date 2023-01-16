@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { databaseConnection } from "../server-config";
 
 import { GlobalRef } from "../services/globalRef";
 
@@ -20,7 +21,7 @@ if (!prismaRef.value) {
   prismaRef.value = new PrismaClient({
     datasources: {
       db: {
-        url: `mysql://${process.env.MYSQL_USER}:${process.env.MYSQL_PASSWORD}@${process.env.MYSQL_HOST}:${process.env.MYSQL_PORT}/${process.env.MYSQL_DATABASE}`,
+        url: `mysql://${databaseConnection.user}:${databaseConnection.password}@${databaseConnection.host}:${databaseConnection.port}/${databaseConnection.database}`,
       },
     },
   });
