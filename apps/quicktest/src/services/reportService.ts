@@ -16,6 +16,21 @@ const reportDidChange = (
   return res;
 };
 
+const combineReport = (
+  lastReport: ScanReport | undefined,
+  newReport: Omit<ScanReport, "createdAt" | "updatedAt" | "id">
+) => {
+  if (lastReport === undefined) {
+    return newReport;
+  }
+  Object.keys(InspectionTypeEnum).forEach((key) => {
+    if (newReport[key as InspectionType] === null) {
+      newReport[key as InspectionType] = lastReport[key as InspectionType];
+    }
+  });
+  return newReport;
+};
+
 const scanResult2ScanReport = (
   result: IScanSuccessResponse
 ): Omit<ScanReport, "createdAt" | "updatedAt" | "id"> => {
@@ -48,7 +63,11 @@ const handleNewScanReport = async (
     },
     take: 1,
   });
-  const newReport = scanResult2ScanReport(result);
+
+  const newReport = combineReport(
+    lastReport.length === 1 ? lastReport[0] : undefined,
+    scanResult2ScanReport(result)
+  );
   if (lastReport.length !== 1 || reportDidChange(lastReport[0], newReport)) {
     // if the report changed, we need to create a new one.
     const domain = await prisma.domain.upsert({
