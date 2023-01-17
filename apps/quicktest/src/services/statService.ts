@@ -146,6 +146,12 @@ export const getReferenceChartData = async (
       subject: {
         in: config.generateStatsForGroups,
       },
+      time: {
+        gte: config.statFirstDay.getTime(),
+      },
+    },
+    orderBy: {
+      time: "asc",
     },
   });
   const res: {
@@ -177,6 +183,12 @@ export const getDashboardForUser = async (
     prisma.stat.findMany({
       where: {
         subject: user.id,
+        time: {
+          gte: config.statFirstDay.getTime(),
+        },
+      },
+      orderBy: {
+        time: "asc",
       },
     }),
   ]);

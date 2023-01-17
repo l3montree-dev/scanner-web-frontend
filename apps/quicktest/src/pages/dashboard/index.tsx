@@ -114,19 +114,6 @@ const referenceNameMapping: {
   },
 };
 
-function hexToRgbA(hex: string): string {
-  var c: any;
-  if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
-    c = hex.substring(1).split("");
-    if (c.length == 3) {
-      c = [c[0], c[0], c[1], c[1], c[2], c[2]];
-    }
-    c = `0x${c.join("")}`;
-    return `rgba(${[(c >> 16) & 255, (c >> 8) & 255, c & 255].join(",")},0.2)`;
-  }
-  throw new Error("Bad Hex");
-}
-
 const LabelComponent: FunctionComponent<any> = (props) => {
   if (props.data?.length - 1 === +(props.index ?? 0)) {
     return (
@@ -168,10 +155,12 @@ const LabelComponent: FunctionComponent<any> = (props) => {
 };
 
 const RefLabelComponent: FunctionComponent<any> = (props) => {
-  if (
-    (4 - props.i) * Math.floor((props.data?.length - 1) / 5) ===
-    +(props.index ?? 0)
-  ) {
+  const totalElements = props.data?.length - 1;
+  const totalRefComponents = props.nRefComponents;
+  // evenly space the labels
+  const refComponentIndex =
+    props.i * Math.floor(totalElements / totalRefComponents);
+  if (refComponentIndex === +props.index) {
     return (
       <VictoryLabel
         {...props}
@@ -179,7 +168,8 @@ const RefLabelComponent: FunctionComponent<any> = (props) => {
         textAnchor={"middle"}
         verticalAnchor={"middle"}
         backgroundPadding={2}
-        dx={0}
+        // make sure to never overlap with the y-axis
+        dx={30}
         dy={-2}
         backgroundStyle={{
           fill: (fullConfig.theme?.colors as any).deepblue["500"],
@@ -482,7 +472,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                           data={data}
                         />
                         {Object.entries(referenceData).map(
-                          ([referenceName, value], i) => (
+                          ([referenceName, value], i, arr) => (
                             <VictoryLine
                               interpolation={"basis"}
                               style={{
@@ -501,7 +491,12 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                                 }
                                 return referenceNameMapping[referenceName].name;
                               }}
-                              labelComponent={<RefLabelComponent i={i} />}
+                              labelComponent={
+                                <RefLabelComponent
+                                  nRefComponents={arr.length}
+                                  i={i}
+                                />
+                              }
                             />
                           )
                         )}
