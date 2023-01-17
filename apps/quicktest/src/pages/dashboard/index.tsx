@@ -200,6 +200,28 @@ const RefLabelComponent: FunctionComponent<any> = (props) => {
   return null;
 };
 
+const percentageToXInPieChart = (percentage: number, r = 100) => {
+  return (
+    -1 *
+      Math.cos(
+        (+percentage / 100) * 360 * (Math.PI / 180) + 90 * (Math.PI / 180)
+      ) *
+      r +
+    150
+  );
+};
+
+const percentageToYInPieChart = (percentage: number, r = 100) => {
+  return (
+    -1 *
+      Math.sin(
+        (+percentage / 100) * 360 * (Math.PI / 180) + 90 * (Math.PI / 180)
+      ) *
+      r +
+    150
+  );
+};
+
 const Dashboard: FunctionComponent<Props> = (props) => {
   const dashboard = props.dashboard;
   const [data, setData] = useState({
@@ -315,6 +337,11 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                 padAngle = 0;
               }
 
+              const refData = Object.entries(
+                dataPerDisplayKey[key].referenceData
+              ).map(([groupName, data]) => {
+                return [groupName, data[data.length - 1].y];
+              });
               return (
                 <div
                   className="w-56 bg-deepblue-500 border flex-col flex border-deepblue-50"
@@ -387,6 +414,38 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                           dashboard.currentState.data[key] * 100
                         ).toFixed(0)}%`}
                       />
+                      {refData.map(([groupName, value], i) => {
+                        return (
+                          <g key={groupName}>
+                            <line
+                              x1={percentageToXInPieChart(+value, 110)}
+                              y1={percentageToYInPieChart(+value, 110)}
+                              x2={percentageToXInPieChart(+value, 80)}
+                              y2={percentageToYInPieChart(+value, 80)}
+                              style={{
+                                stroke: referenceNameMapping[groupName].color,
+                                strokeWidth: 2,
+                              }}
+                            />
+                            <VictoryLabel
+                              textAnchor="middle"
+                              x={percentageToXInPieChart(
+                                +value,
+                                i % 2 == 0 ? 70 : 130
+                              )}
+                              y={percentageToYInPieChart(
+                                +value,
+                                i % 2 == 0 ? 70 : 130
+                              )}
+                              style={{
+                                fontSize: 16,
+                                fill: referenceNameMapping[groupName].color,
+                              }}
+                              text={`${referenceNameMapping[groupName].name}`}
+                            />
+                          </g>
+                        );
+                      })}
                     </svg>
                   </div>
                   <h2
@@ -406,8 +465,8 @@ const Dashboard: FunctionComponent<Props> = (props) => {
               Die Trendanalyse visualisiert die Veränderung der
               Sicherheitskriterien in Anbetracht der Zeit. Zusätzlich stellt sie
               die Werte der verwalteten Dienste im Vergleich zu den Werten der
-              Top 100.000 .de Domains sowie der Top 100.000 Domains dar. Die
-              Daten werden regelmä&szlig;ig aktualisiert.
+              Top 100.000 .de Domains sowie der globalen Top 100.000 Domains
+              dar. Die Daten werden täglich aktualisiert.
             </p>
           </div>
           <div className="flex mt-5 justify-start -mx-2 flex-wrap flex-row">
