@@ -1,0 +1,119 @@
+@font-face {
+  font-family: 'BundesSansWeb';
+  src: url('/static/fonts/BundesSansWeb-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'BundesSansWeb';
+  src: url('/static/fonts/BundesSansWeb-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+}
+
+:root {
+  --ifm-font-family-base: 'BundesSansWeb';
+  --ifm-color-primary: #acfccf;
+  --ifm-color-primary-dark: #83fbb7;
+  --ifm-color-primary-darker: #6ffaac;
+  --ifm-color-primary-darkest: #31f888;
+  --ifm-color-primary-light: #d5fde7;
+  --ifm-color-primary-lighter: #e9fef2;
+  --ifm-color-primary-lightest: #ffffff;
+  --ifm-code-font-size: 95%;
+  --ifm-background-color: #060D38;
+  --ifm-heading-color: #FFF;
+  --ifm-font-color-base: #FFF;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #acfccf;
+  --ifm-color-primary-dark: #83fbb7;
+  --ifm-color-primary-darker: #6ffaac;
+  --ifm-color-primary-darkest: #31f888;
+  --ifm-color-primary-light: #d5fde7;
+  --ifm-color-primary-lighter: #e9fef2;
+  --ifm-color-primary-lightest: #ffffff;
+  --ifm-background-color: #060D38 !important;
+  --ifm-background-color-secondary: #101741;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+nav {
+  background-color: #FFF !important;
+}
+
+.navbar__title {
+  color: #000 !important;
+}
+
+.navbar__title:hover {
+  text-decoration: underline;
+}
+
+.navbar__item {
+  color: #000 !important;
+}
+
+.navbar__item:hover {
+  text-decoration: underline;
+}
+
+.navbar__logo {
+  margin-right: 10%;
+}
+
+.navbar__brand {
+  width: 252px;
+}
+
+.hero {
+  background-color: var(--ifm-background-color-secondary) !important;
+}
+
+.hero__title {
+  color: #FFF !important;
+}
+
+.hero__subtitle {
+  color: #FFF !important;
+}
+
+.button {
+  background-color: var(--ifm-color-primary) !important;
+  color: rgb(0, 0, 0) !important;
+  border-radius: 0%;
+  border: 0;
+}
+
+.button:hover {
+  background-color: rgb(52, 52, 52) !important;
+  color: #FFF !important;
+}
+
+
+.footer {
+  background-color: #FFF !important;
+}
+
+.footer__link-item {
+  color: #000 !important;
+}
+
+.footer__link-item:hover {
+  color: var(--ifm-color-primary-darkest) !important;
+}
+
+.footer__title {
+  color: #000 !important;
+}
+
+.footer__copyright {
+  color: #000 !important;
+}
+
+.footer__bottom {
+  margin-top: 4%;
+}
