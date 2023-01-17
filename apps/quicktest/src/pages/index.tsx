@@ -270,7 +270,7 @@ const Home: NextPage<Props> = ({ displayNotAvailable }) => {
               )}
               {!refreshRequest.isLoading && !refreshRequest.errored && (
                 <div>
-                  <p>Bestanden: {amountPassed}/6</p>
+                  <p>Erfüllt: {amountPassed}/6</p>
                   <ResultGrid report={domain} />
                 </div>
               )}
