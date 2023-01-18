@@ -18,12 +18,12 @@ const Footer: FunctionComponent<Props> = ({ hideLogin }) => {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <div className="flex flex-row">
             <img width={200} src={"/assets/bmi-logo.svg"} alt="Logo BMI" />
-            {/*  <img
-              width={214}
+            <img
+              width={212}
               className="ml-5"
               src={"/assets/bsi-logo.svg"}
               alt="Logo BSI"
-          /> */}
+            />
           </div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
