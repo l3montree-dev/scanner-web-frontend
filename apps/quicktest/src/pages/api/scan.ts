@@ -35,7 +35,6 @@ export default decorate(
       `received request to scan site: ${req.query.site}`
     );
     const siteToScan = sanitizeFQDN(req.query.site);
-    console.log("siteToScan", siteToScan);
     logger.debug({ requestId }, `sanitized site to scan: ${siteToScan}`);
     // check if we were able to sanitize the site
     // if the requested site is not a valid fqdn, the function returns null
@@ -104,7 +103,6 @@ export default decorate(
           fqdn: result.fqdn,
         });
       } else {
-        console.log(result);
         // do not monitor this domain if it does not exist yet - this means, that there is a user which scans the domain for the first time.
         // it is not necessary to do any re-scans.
         await domainService.handleDomainScanError(result, prisma);

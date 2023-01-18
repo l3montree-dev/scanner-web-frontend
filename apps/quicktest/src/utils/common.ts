@@ -106,9 +106,7 @@ export const sanitizeFQDN = (providedValue: any): string | null => {
   );
 
   // make sure to keep the port if provided
-  return url.port
-    ? `${url.hostname}:${url.port}${url.pathname}`
-    : url.hostname + url.pathname;
+  return url.port ? `${url.hostname}:${url.port}` : url.hostname;
 };
 
 export const classNames = (

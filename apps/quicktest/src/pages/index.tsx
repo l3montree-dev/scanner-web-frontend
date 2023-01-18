@@ -49,7 +49,7 @@ const Home: NextPage<Props> = ({ displayNotAvailable }) => {
 
     // test if valid url
     const fqdn = sanitizeFQDN(website);
-    if (!fqdn) {
+    if (!fqdn || !hostnameRegex.test(fqdn)) {
       scanRequest.error("Bitte trage einen gültigen Domainnamen ein.");
       return;
     }
