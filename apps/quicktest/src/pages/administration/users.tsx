@@ -148,7 +148,7 @@ const Users: FunctionComponent<Props> = (props) => {
 
           <table className="w-full text-left text-white border-deepblue-50 border mt-10 bg-deepblue-500">
             <thead>
-              <tr className="bg-deepblue-100  text-sm border-b border-b-deepblue-50 text-left">
+              <tr className="bg-deepblue-200  text-sm border-b border-b-deepblue-50 text-left">
                 <th className="p-2 py-4">Nutzername</th>
                 <th className="p-2 py-4">Vorname</th>
                 <th className="p-2 py-4">Nachname</th>
