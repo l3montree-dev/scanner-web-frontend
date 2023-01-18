@@ -37,6 +37,10 @@ export type DTO<T> = T extends bigint
   : T;
 
 export const toDTO = <T>(v: T): DTO<T> => {
+  if (v instanceof Date) {
+    return v.toISOString() as DTO<T>;
+  }
+
   if (v === undefined) {
     return null as DTO<T>;
   }

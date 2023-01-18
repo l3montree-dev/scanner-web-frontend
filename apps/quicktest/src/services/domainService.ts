@@ -136,7 +136,7 @@ const getDomainsOfNetworksWithLatestTestResult = async (
     // subject to sql injection!!!
     prisma.$queryRawUnsafe(
       `
-    SELECT ${selectInspectionTypes}, d.fqdn as fqdn, d.createdAt as createdAt, d.updatedAt as updatedAt from user_domain_relations udr
+    SELECT ${selectInspectionTypes}, d.fqdn as fqdn, d.createdAt as createdAt, d.updatedAt as updatedAt, d.group as 'group', d.queued as queued, d.monitor as monitor, d.errorCount as errorCount, d.lastScan as lastScan from user_domain_relations udr
     INNER JOIN domains d on udr.fqdn = d.fqdn 
     LEFT JOIN scan_reports sr on d.fqdn = sr.fqdn  
     WHERE NOT EXISTS(

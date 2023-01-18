@@ -325,6 +325,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
               </thead>
               <tbody>
                 {domains.map((domain, i) => {
+                  console.log(domain);
                   return (
                     <tr
                       className={classNames(
