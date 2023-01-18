@@ -198,3 +198,20 @@ nav.menu {
   margin-right: 10px;
   opacity: 0.75;
 }
+
+.card {
+    background: #101741 !important;
+    border-color: rgb(36, 43, 86)!important;
+}
+
+.card:hover {
+    border-color: #acfccf!important;
+}
+
+.menu .menu__link.menu__link--active {
+    background-color: #1A214C;
+}
+
+.menu .menu__link:hover {
+    background-color: #1A214C;
+}
