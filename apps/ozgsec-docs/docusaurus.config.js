@@ -56,11 +56,15 @@ const config = {
         items: [
           {
             type: 'doc',
-            docId: 'intro',
+            docId: 'overview',
             position: 'left',
-            label: 'Tutorial',
+            label: 'Maßnahmen',
           },
-          { to: '/blog', label: 'Blog', position: 'left' },
+          {
+            type: 'doc',
+            docId: 'overview',
+            position: 'left', label: 'API Dokumentation'
+          },
           {
             href: 'https://ozgsec.de',
             label: 'Schnelltest',

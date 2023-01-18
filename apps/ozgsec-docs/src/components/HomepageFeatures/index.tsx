@@ -65,3 +65,97 @@ export default function HomepageFeatures(): JSX.Element {
     </section>
   );
 }
+
+const translateTime = (time: "low" | "medium" | "high") => {
+  switch (time) {
+    case "low":
+      return {
+        str: "Gering (< 5 PT)", className: "green"
+      };
+    case "medium":
+      return {
+        str: "Mittel (50 PT)", className: "yellow"
+      };
+    case "high":
+      return {
+        str: "Hoch (> 100 PT)", className: "box-red"
+      };
+  }
+}
+
+const translateHardware = (hardware: boolean) => {
+  if (hardware) {
+    return {
+      str: "Hardware benötigt", className: "box-red"
+    };
+  }
+  return {
+    str: "Ohne neue Hardware", className: "green"
+  };
+}
+
+export const Details = ({ refs, implementation, time, hardware }) => {
+  return (
+    <div className='details'>
+      <ResourceEstimation time={time} hardware={hardware} />
+      <Refs refs={refs} />
+      <Implementation implementation={implementation} />
+    </div>
+  )
+}
+
+export const Refs = ({ refs }) => {
+  return (
+    <div className='refs group'>
+      <span className='title'>Referenzen</span>
+      <div className='row1 items-start'>
+        <img width={35} src='/img/refs.svg' alt='Referenz-Icon' />
+        <div className='col1'>
+          {refs.map(({ name, link }) => (
+            <div key={name}>
+              <a
+                href={link}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {name}
+              </a>
+            </div>
+          )
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export const Implementation = ({ implementation }) => {
+  return (
+    <div className='group'>
+      <span className='title'>Implementierung</span>
+      <div className='row1 items-start'>
+        <img width={45} src='/img/implementation.svg' alt='Implementierung-Icon' />
+        <span>{implementation}</span>
+      </div>
+    </div>
+  )
+}
+
+
+export const ResourceEstimation = ({ time, hardware }) => {
+  const timeObj = translateTime(time);
+  const hardwareObj = translateHardware(hardware);
+  return (
+    <div className='group'>
+      <span className='title'>Ressourcenabschätzung</span>
+      <div className='row1'>
+        <div className={"box " + timeObj.className}></div>
+        <span>{timeObj.str}</span>
+      </div>
+      <div className='row1'>
+        <div className={"box " + hardwareObj.className}></div>
+        <span>{hardwareObj.str}</span>
+      </div>
+    </div>
+  )
+};
