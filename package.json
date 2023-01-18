@@ -18,6 +18,7 @@
     },
     "homepage": "https://gitlab.com/ozg-security/ozgsec-security-quick-test#readme",
     "workspaces": [
-        "apps/quicktest"
+        "apps/quicktest",
+        "apps/ozgsec-docs"
     ]
 }
