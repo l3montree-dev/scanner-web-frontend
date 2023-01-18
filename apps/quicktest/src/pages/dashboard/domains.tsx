@@ -151,7 +151,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
   };
 
   const handleSearch = async (value: string) => {
-    patchQuery({ search: value });
+    patchQuery({ search: value, page: "0" });
   };
 
   const handleAddRecord = async (domain: string) => {

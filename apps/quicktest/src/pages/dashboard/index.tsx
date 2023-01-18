@@ -1,22 +1,13 @@
 import { faListCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link.js";
-import {
-  Fragment,
-  FunctionComponent,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { FunctionComponent, useEffect, useMemo, useState } from "react";
 import resolveConfig from "tailwindcss/resolveConfig";
 import {
   VictoryArea,
   VictoryAxis,
   VictoryChart,
   VictoryLabel,
-  VictoryLabelableProps,
-  VictoryLabelProps,
-  VictoryLegend,
   VictoryLine,
   VictoryPie,
   VictoryTooltip,
@@ -55,38 +46,41 @@ interface Props {
 const fullConfig = resolveConfig(tailwindConfig);
 
 const mapping: { [key in InspectionType]: string } = {
-  [HttpInspectionType.HTTP]: "",
-  [HttpInspectionType.HTTP308]: "",
-  [HttpInspectionType.HTTPRedirectsToHttps]: "",
-  [TLSInspectionType.TLSv1_2]: "",
+  [HttpInspectionType.HTTP]: "HTTP",
+  [HttpInspectionType.HTTP308]: "HTTP moved permanently",
+  [HttpInspectionType.HTTPRedirectsToHttps]: "HTTP Weiterleitung zu HTTPS",
+  [TLSInspectionType.TLSv1_2]: "TLS 1.2",
   [TLSInspectionType.TLSv1_3]: "TLS 1.3",
   [TLSInspectionType.TLSv1_1_Deactivated]:
     "Deaktivierung von veralteten TLS/ SSL Protokollen",
-  [TLSInspectionType.StrongKeyExchange]: "",
-  [TLSInspectionType.StrongCipherSuites]: "",
-  [CertificateInspectionType.ValidCertificate]: "",
-  [CertificateInspectionType.StrongPrivateKey]: "",
-  [CertificateInspectionType.StrongSignatureAlgorithm]: "",
-  [CertificateInspectionType.MatchesHostname]: "",
-  [CertificateInspectionType.NotRevoked]: "",
-  [CertificateInspectionType.CertificateTransparency]: "",
-  [CertificateInspectionType.ValidCertificateChain]: "",
-  [CookieInspectionType.SecureSessionCookies]: "",
-  [NetworkInspectionType.IPv6]: "",
+  [TLSInspectionType.StrongKeyExchange]: "Strong-Key-Exchange",
+  [TLSInspectionType.StrongCipherSuites]: "Strong-Cipher-Suites",
+  [CertificateInspectionType.ValidCertificate]: "Gültiges Zertifikat",
+  [CertificateInspectionType.StrongPrivateKey]: "Starker-Private-Key",
+  [CertificateInspectionType.StrongSignatureAlgorithm]:
+    "Starker Signatur Algorithmus",
+  [CertificateInspectionType.MatchesHostname]:
+    "Hostname Übereinstimmung im Zertifikat",
+  [CertificateInspectionType.NotRevoked]:
+    "Zertifikat wurde nicht zurückgerufen",
+  [CertificateInspectionType.CertificateTransparency]: "Zertifikattransparenz",
+  [CertificateInspectionType.ValidCertificateChain]: "Gültige Zertifikatskette",
+  [CookieInspectionType.SecureSessionCookies]: "Sichere Session Cookies",
+  [NetworkInspectionType.IPv6]: "IPv6",
   [NetworkInspectionType.RPKI]: "RPKI",
   [DomainInspectionType.DNSSec]: "DNSSEC",
-  [DomainInspectionType.CAA]: "",
+  [DomainInspectionType.CAA]: "CAA",
   [OrganizationalInspectionType.ResponsibleDisclosure]:
     "Responsible Disclosure",
-  [ContentInspectionType.SubResourceIntegrity]: "",
-  [ContentInspectionType.NoMixedContent]: "",
-  [HeaderInspectionType.HTTPS]: "",
+  [ContentInspectionType.SubResourceIntegrity]: "Sub Resource Integrity",
+  [ContentInspectionType.NoMixedContent]: "Kein Mixed Content",
+  [HeaderInspectionType.HTTPS]: "HTTPS",
   [HeaderInspectionType.HSTS]: "HSTS",
-  [HeaderInspectionType.HSTSPreloaded]: "",
-  [HeaderInspectionType.ContentSecurityPolicy]: "",
-  [HeaderInspectionType.XFrameOptions]: "",
-  [HeaderInspectionType.XSSProtection]: "",
-  [HeaderInspectionType.ContentTypeOptions]: "",
+  [HeaderInspectionType.HSTSPreloaded]: "HSTS Preloaded",
+  [HeaderInspectionType.ContentSecurityPolicy]: "Content Security Policy",
+  [HeaderInspectionType.XFrameOptions]: "X-Frame-Options",
+  [HeaderInspectionType.XSSProtection]: "X-XSS-Protection",
+  [HeaderInspectionType.ContentTypeOptions]: "Content-Type-Options",
 };
 
 const displayKey: Array<InspectionType> = [

@@ -102,11 +102,7 @@ const getDomainsOfNetworksWithLatestTestResult = async (
     paginateRequest.page * paginateRequest.pageSize,
   ];
   if (paginateRequest.search !== undefined && paginateRequest.search !== "") {
-    sqlValues.unshift(
-      paginateRequest.search.endsWith("*")
-        ? paginateRequest.search
-        : `${paginateRequest.search}*`
-    );
+    sqlValues.unshift(paginateRequest.search);
   }
 
   const selectInspectionTypes = Object.keys(InspectionTypeEnum)
@@ -143,7 +139,7 @@ const getDomainsOfNetworksWithLatestTestResult = async (
       ) 
       ${
         paginateRequest.search !== undefined && paginateRequest.search !== ""
-          ? "AND MATCH (d.fqdn) AGAINST (? IN BOOLEAN MODE)"
+          ? "AND MATCH (d.fqdn) AGAINST (?)"
           : ""
       }
       AND userId = ?
