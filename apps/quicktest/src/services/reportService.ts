@@ -50,7 +50,6 @@ const scanResult2ScanReport = (
 // only create a new report if the didPass property changed.
 const handleNewScanReport = async (
   result: IScanSuccessResponse,
-  shouldBeMonitoredIfNotExist: boolean,
   prisma: PrismaClient
 ): Promise<DTO<DetailedDomainWithScanResult>> => {
   // fetch the last existing report and check if we only need to update that one.
@@ -76,7 +75,6 @@ const handleNewScanReport = async (
         fqdn: newReport.fqdn,
         queued: false,
         lastScan: result.timestamp,
-        monitor: shouldBeMonitoredIfNotExist,
         details: {
           ...result.result,
           // save the subject under test inside the details

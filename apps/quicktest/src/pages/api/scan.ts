@@ -105,7 +105,7 @@ export default decorate(
       } else {
         // do not monitor this domain if it does not exist yet - this means, that there is a user which scans the domain for the first time.
         // it is not necessary to do any re-scans.
-        await domainService.handleDomainScanError(result, false, prisma);
+        await domainService.handleDomainScanError(result, prisma);
         logger.error(
           {
             err: result.result.error.message,
@@ -124,11 +124,7 @@ export default decorate(
         { duration: Date.now() - start, requestId },
         `successfully scanned site: ${siteToScan}`
       );
-      const domain = await reportService.handleNewScanReport(
-        result,
-        false,
-        prisma
-      );
+      const domain = await reportService.handleNewScanReport(result, prisma);
       return res.json(domain);
     }
   },

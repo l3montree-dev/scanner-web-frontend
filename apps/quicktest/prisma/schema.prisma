@@ -116,8 +116,6 @@ model Domain {
   // the full report
   details Json?
 
-  monitor Boolean @default(true)
-
   @@index([group])
   @@index([lastScan])
   @@map("domains")

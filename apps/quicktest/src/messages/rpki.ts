@@ -12,7 +12,6 @@ export default function getRPKIReportMessage(report: DetailedDomain) {
   const inspection = report.details["RPKI"];
   const fqdn = report.details.sut;
 
-  console.log(inspection);
   if (inspection?.didPass === null || inspection?.didPass === undefined) {
     return `Der RPKI Status der Domain ${fqdn} konnte nicht überprüft werden.`;
   } else if (inspection.didPass) {

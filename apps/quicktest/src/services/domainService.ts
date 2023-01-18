@@ -1,4 +1,5 @@
 import { PrismaClient, User } from "@prisma/client";
+import { config } from "../config";
 import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
 import {
   DomainWithScanResult,
@@ -42,7 +43,6 @@ const handleNewDomain = async (
 
 const handleDomainScanError = async (
   content: IScanErrorResponse,
-  shouldBeMonitoredIfNotExist: boolean,
   prisma: PrismaClient
 ) => {
   const res = await prisma.domain.upsert({
@@ -59,7 +59,6 @@ const handleDomainScanError = async (
     create: {
       errorCount: 1,
       fqdn: content.fqdn,
-      monitor: shouldBeMonitoredIfNotExist,
       group: "unknown",
       lastScan: content.timestamp ?? Date.now(),
     },
@@ -136,7 +135,7 @@ const getDomainsOfNetworksWithLatestTestResult = async (
     // subject to sql injection!!!
     prisma.$queryRawUnsafe(
       `
-    SELECT ${selectInspectionTypes}, d.fqdn as fqdn, d.createdAt as createdAt, d.updatedAt as updatedAt, d.group as 'group', d.queued as queued, d.monitor as monitor, d.errorCount as errorCount, d.lastScan as lastScan from user_domain_relations udr
+    SELECT ${selectInspectionTypes}, d.fqdn as fqdn, d.createdAt as createdAt, d.updatedAt as updatedAt, d.group as 'group', d.queued as queued, d.errorCount as errorCount, d.lastScan as lastScan from user_domain_relations udr
     INNER JOIN domains d on udr.fqdn = d.fqdn 
     LEFT JOIN scan_reports sr on d.fqdn = sr.fqdn  
     WHERE NOT EXISTS(
@@ -163,7 +162,6 @@ const getDomainsOfNetworksWithLatestTestResult = async (
       lastScan: d.lastScan,
       fqdn: d.fqdn,
       group: d.group,
-      monitor: d.monitor,
       queued: d.queued,
       errorCount: d.errorCount,
       createdAt: d.createdAt,
@@ -192,6 +190,7 @@ const getDomains2Scan = async (prisma: PrismaClient) => {
   const domains = await prisma.domain.findMany({
     where: {
       AND: [
+        // it has not been scanned in the past scan interval days.
         {
           OR: [
             {
@@ -209,9 +208,24 @@ const getDomains2Scan = async (prisma: PrismaClient) => {
             },
           ],
         },
+        // it either belongs to a group which is configured to be scanned or it is monitored by a user
+        {
+          OR: [
+            {
+              group: {
+                in: config.generateStatsForGroups,
+              },
+            },
+            {
+              users: {
+                some: {},
+              },
+            },
+          ],
+        },
         {
           queued: false,
-          monitor: true,
+          // it is scan-able
           errorCount: {
             lt: 5,
           },

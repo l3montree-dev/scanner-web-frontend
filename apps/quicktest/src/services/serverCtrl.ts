@@ -107,7 +107,7 @@ const startScanResponseLoop = once(() => {
     }
     if (isScanError(content)) {
       try {
-        await domainService.handleDomainScanError(content, false, prisma);
+        await domainService.handleDomainScanError(content, prisma);
       } finally {
         logger.error({ fqdn: content.fqdn }, content.result.error);
         return;
@@ -115,7 +115,7 @@ const startScanResponseLoop = once(() => {
     }
 
     try {
-      await reportService.handleNewScanReport(content, false, prisma);
+      await reportService.handleNewScanReport(content, prisma);
     } catch (e) {
       // always ack the message - catch the error.
       logger.error(e);
