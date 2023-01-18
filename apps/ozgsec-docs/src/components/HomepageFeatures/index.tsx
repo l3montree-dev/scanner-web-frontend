@@ -11,7 +11,7 @@ type FeatureItem = {
 const FeatureList: FeatureItem[] = [
   {
     title: 'Sicherheit durch Transparenz',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    Svg: require('@site/static/img/shield-tick.svg').default,
     description: (
       <>
         Das Projekt OZGSec fördert ein homogenes Mindest-Niveau von IT-Sicherheit für alle OZG-Komponenten und steht allen Bürgerinnen und Bürgern frei zur Verfügung.
@@ -20,7 +20,7 @@ const FeatureList: FeatureItem[] = [
   },
   {
     title: 'Offene API',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    Svg: require('@site/static/img/radar.svg').default,
     description: (
       <>
         Die offene JSON-API des Schnelltests kann frei verwendet werden, um beliebige Webseiten auf verschiedene Sicherheitsmaßnahmen hin zu testen.
@@ -29,7 +29,7 @@ const FeatureList: FeatureItem[] = [
   },
   {
     title: 'Open Source',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    Svg: require('@site/static/img/code-pull-request.svg').default,
     description: (
       <>
         Die Software-Komponenten des Projektes werden Open-Source unter der European Union Public Licence v. 1.2 entwickelt.
