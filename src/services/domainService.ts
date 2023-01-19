@@ -138,7 +138,7 @@ const getDomainsOfNetworksWithLatestTestResult = async (
       ) 
       ${
         paginateRequest.search !== undefined && paginateRequest.search !== ""
-          ? "AND MATCH (d.fqdn) AGAINST (?)"
+          ? "AND d.fqdn LIKE CONCAT('%', ?, '%')"
           : ""
       }
       AND userId = ?
