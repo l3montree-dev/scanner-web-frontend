@@ -127,17 +127,7 @@ export interface IKcUser {
   notBefore: number;
 }
 
-export type DetailedDomain = Omit<Domain, "lastScan"> & {
+export type DetailedDomain = Omit<Domain, "lastScan" | "details"> & {
   details: IScanSuccessResponse["result"] & { sut: string };
   lastScan: number;
-};
-
-export type DomainWithScanResult = Omit<Domain, "details"> & {
-  scanReport: { [key in InspectionType]: boolean | null } | null;
-  lastScan: number | null;
-};
-
-export type DetailedDomainWithScanResult = Omit<Domain, "lastScan"> & {
-  scanReport: { [key in InspectionType]: boolean | null };
-  lastScan: number | null;
 };

@@ -1,5 +1,4 @@
 import {
-  DetailedDomain,
   IIpLookupProgressUpdateMsg,
   IIpLookupReportDTO,
   IIpLookupReportMsg,
@@ -9,7 +8,7 @@ import {
   WithoutId,
 } from "../types";
 
-import { Domain, Network } from "@prisma/client";
+import { Network } from "@prisma/client";
 
 import ip from "ip";
 import {
@@ -24,8 +23,8 @@ import {
   OrganizationalInspectionType,
   TLSInspectionType,
 } from "../inspection/scans";
-import { isValidIp, isValidMask } from "./validator";
 import { DTO } from "./server";
+import { isValidIp, isValidMask } from "./validator";
 
 export const serverOnly = <T>(fn: () => T): T | null => {
   if (typeof window === "undefined") {
@@ -190,12 +189,6 @@ export const linkMapper: { [key in InspectionType]: string } = {
   [HeaderInspectionType.XFrameOptions]: "",
   [HeaderInspectionType.XSSProtection]: "",
   [HeaderInspectionType.ContentTypeOptions]: "",
-};
-
-export const domainContainsDetails = (
-  domain: Omit<Domain, "lastScan"> & { lastScan: number }
-): domain is DetailedDomain => {
-  return "details" in domain && domain.details !== null;
 };
 
 export const neverThrow = async <T>(promise: Promise<T>): Promise<T | null> => {

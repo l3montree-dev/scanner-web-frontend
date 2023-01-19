@@ -2,7 +2,7 @@ import { PrismaClient, User } from "@prisma/client";
 import { config } from "../config";
 import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
 import {
-  DomainWithScanResult,
+  DetailedDomain,
   IScanErrorResponse,
   PaginateRequest,
   PaginateResult,
@@ -95,7 +95,7 @@ const getDomainsOfNetworksWithLatestTestResult = async (
     sortDirection?: string;
   },
   prisma: PrismaClient
-): Promise<PaginateResult<DTO<DomainWithScanResult>>> => {
+): Promise<PaginateResult<DTO<DetailedDomain>>> => {
   const sqlValues = [
     user.id,
     paginateRequest.pageSize,
@@ -105,13 +105,12 @@ const getDomainsOfNetworksWithLatestTestResult = async (
     sqlValues.unshift(paginateRequest.search);
   }
 
-  const selectInspectionTypes = Object.keys(InspectionTypeEnum)
-    .map((key) => `sr.${key} as ${key}`)
-    .join(", ");
-
   const [total, domains] = await Promise.all([
     prisma.domain.count({
       where: {
+        errorCount: {
+          lt: 5,
+        },
         users: {
           some: {
             userId: user.id,
@@ -131,7 +130,7 @@ const getDomainsOfNetworksWithLatestTestResult = async (
     // subject to sql injection!!!
     prisma.$queryRawUnsafe(
       `
-    SELECT ${selectInspectionTypes}, d.fqdn as fqdn, d.createdAt as createdAt, d.updatedAt as updatedAt, d.group as 'group', d.queued as queued, d.errorCount as errorCount, d.lastScan as lastScan from user_domain_relations udr
+    SELECT d.* from user_domain_relations udr
     INNER JOIN domains d on udr.fqdn = d.fqdn 
     LEFT JOIN scan_reports sr on d.fqdn = sr.fqdn  
     WHERE NOT EXISTS(
@@ -143,6 +142,7 @@ const getDomainsOfNetworksWithLatestTestResult = async (
           : ""
       }
       AND userId = ?
+      AND d.errorCount < 5
       ORDER BY ${translateSort(paginateRequest.sort)} ${translateSortDirection(
         paginateRequest.sortDirection
       )}
@@ -153,31 +153,11 @@ const getDomainsOfNetworksWithLatestTestResult = async (
     ) as Promise<any[]>,
   ]);
 
-  const data = domains.map((d) =>
-    toDTO({
-      lastScan: d.lastScan,
-      fqdn: d.fqdn,
-      group: d.group,
-      queued: d.queued,
-      errorCount: d.errorCount,
-      createdAt: d.createdAt,
-      updatedAt: d.updatedAt,
-      scanReport: {
-        ...(Object.fromEntries(
-          Object.keys(InspectionTypeEnum).map((key) => [
-            key,
-            d[key] === null ? null : Boolean(d[key]),
-          ])
-        ) as { [key in InspectionType]: boolean | null }),
-      },
-    })
-  );
-
   return {
     total,
     page: paginateRequest.page,
     pageSize: paginateRequest.pageSize,
-    data,
+    data: domains.map(toDTO),
   };
 };
 

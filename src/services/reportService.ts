@@ -1,6 +1,6 @@
 import { PrismaClient, ScanReport } from "@prisma/client";
 import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
-import { DetailedDomainWithScanResult, IScanSuccessResponse } from "../types";
+import { DetailedDomain, IScanSuccessResponse } from "../types";
 import { DTO, toDTO } from "../utils/server";
 
 const reportDidChange = (
@@ -51,7 +51,7 @@ const scanResult2ScanReport = (
 const handleNewScanReport = async (
   result: IScanSuccessResponse,
   prisma: PrismaClient
-): Promise<DTO<DetailedDomainWithScanResult>> => {
+): Promise<DTO<DetailedDomain>> => {
   // fetch the last existing report and check if we only need to update that one.
   const lastReport = await prisma.scanReport.findMany({
     where: {
@@ -94,13 +94,10 @@ const handleNewScanReport = async (
       },
     });
 
-    const scanReport = await prisma.scanReport.create({
+    await prisma.scanReport.create({
       data: { ...newReport },
     });
-    return {
-      ...toDTO(domain),
-      scanReport: toDTO(scanReport),
-    };
+    return toDTO(domain) as DTO<DetailedDomain>;
   }
 
   const domain = await prisma.domain.update({
@@ -117,10 +114,7 @@ const handleNewScanReport = async (
     },
   });
 
-  return {
-    ...toDTO(domain),
-    scanReport: toDTO(lastReport[0]),
-  };
+  return toDTO(domain) as DTO<DetailedDomain>;
 };
 
 export const reportService = {

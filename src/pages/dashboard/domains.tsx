@@ -6,7 +6,6 @@ import {
   faQuestionCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Domain, ScanReport } from "@prisma/client";
 import { useRouter } from "next/router";
 import { FunctionComponent, useEffect, useState } from "react";
 import DashboardPage from "../../components/DashboardPage";
@@ -35,7 +34,6 @@ import { domainService } from "../../services/domainService";
 
 import {
   DetailedDomain,
-  DomainWithScanResult,
   IScanSuccessResponse,
   PaginateResult,
 } from "../../types";
@@ -43,7 +41,7 @@ import { classNames } from "../../utils/common";
 import { DTO } from "../../utils/server";
 
 interface Props {
-  domains: PaginateResult<DTO<DomainWithScanResult>>;
+  domains: PaginateResult<DTO<DetailedDomain>>;
 }
 
 const SortButton: FunctionComponent<{
@@ -69,7 +67,7 @@ const SortButton: FunctionComponent<{
 };
 
 const Dashboard: FunctionComponent<Props> = (props) => {
-  const [domains, setDomains] = useState<Array<DTO<DomainWithScanResult>>>(
+  const [domains, setDomains] = useState<Array<DTO<DetailedDomain>>>(
     props.domains.data
   );
 
@@ -367,25 +365,29 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                       </td>
                       <td className="p-2">
                         <ResultIcon
-                          didPass={domain.scanReport?.ResponsibleDisclosure}
+                          didPass={
+                            domain.details?.ResponsibleDisclosure?.didPass
+                          }
                         />
-                      </td>
-                      <td className="p-2">
-                        <ResultIcon didPass={domain.scanReport?.TLSv1_3} />
                       </td>
                       <td className="p-2">
                         <ResultIcon
-                          didPass={domain.scanReport?.TLSv1_1_Deactivated}
+                          didPass={domain.details?.TLSv1_3?.didPass}
                         />
                       </td>
                       <td className="p-2">
-                        <ResultIcon didPass={domain.scanReport?.HSTS} />
+                        <ResultIcon
+                          didPass={domain.details?.TLSv1_1_Deactivated?.didPass}
+                        />
                       </td>
                       <td className="p-2">
-                        <ResultIcon didPass={domain.scanReport?.DNSSec} />
+                        <ResultIcon didPass={domain.details?.HSTS?.didPass} />
                       </td>
                       <td className="p-2">
-                        <ResultIcon didPass={domain.scanReport?.RPKI} />
+                        <ResultIcon didPass={domain.details?.DNSSec?.didPass} />
+                      </td>
+                      <td className="p-2">
+                        <ResultIcon didPass={domain.details?.RPKI?.didPass} />
                       </td>
                       <td className="text-right p-2">
                         <Menu
