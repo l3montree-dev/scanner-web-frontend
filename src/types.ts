@@ -134,8 +134,10 @@ export type DetailedDomain = Omit<Domain, "lastScan"> & {
 
 export type DomainWithScanResult = Omit<Domain, "details"> & {
   scanReport: { [key in InspectionType]: boolean | null } | null;
+  lastScan: number | null;
 };
 
 export type DetailedDomainWithScanResult = Omit<Domain, "lastScan"> & {
   scanReport: { [key in InspectionType]: boolean | null };
+  lastScan: number | null;
 };
