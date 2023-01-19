@@ -9,18 +9,16 @@ import { inspectRPC } from "../../inspection/inspect";
 import { domainService } from "../../services/domainService";
 import { getLogger } from "../../services/logger";
 import { reportService } from "../../services/reportService";
-import { DetailedDomainWithScanResult } from "../../types";
 import { isScanError, sanitizeFQDN } from "../../utils/common";
 import { DTO, toDTO } from "../../utils/server";
+import { DetailedDomain } from "../../types";
 
 const logger = getLogger(__filename);
 
 export default decorate(
   async (
     req: NextApiRequest,
-    res: NextApiResponse<
-      DTO<DetailedDomainWithScanResult> | { error: string; fqdn: string }
-    >,
+    res: NextApiResponse<DTO<DetailedDomain> | { error: string; fqdn: string }>,
     [prisma]
   ) => {
     const start = Date.now();
@@ -64,28 +62,14 @@ export default decorate(
               not: Prisma.JsonNull,
             },
           },
-          include: {
-            scanReports: {
-              orderBy: {
-                createdAt: "desc",
-              },
-              take: 1,
-            },
-          },
-          take: 1,
         })
-      );
+      ) as DTO<DetailedDomain>;
       if (domain) {
         logger.info(
           { requestId },
           `found existing report for site: ${siteToScan} - returning existing report`
         );
-
-        const { scanReports, ...domainWithoutScanReports } = domain;
-        return res.status(200).json({
-          ...domainWithoutScanReports,
-          scanReport: scanReports[0],
-        });
+        return res.status(200).json(domain);
       }
     }
 
