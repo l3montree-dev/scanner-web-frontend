@@ -3,7 +3,6 @@ import { config } from "../config";
 import { InspectionType } from "../inspection/scans";
 import { IDashboard, ChartData } from "../types";
 import { toDTO } from "../utils/server";
-import { eachDay } from "../utils/time";
 
 const getTotalsOfUser = async (user: User, prisma: PrismaClient) => {
   // count the domains this user has access to
@@ -183,7 +182,7 @@ export const getDashboardForUser = async (
     getTotalsOfUser(user, prisma),
     prisma.stat.findMany({
       where: {
-        subject: "ac53331e-f3b2-4960-a5b0-c9d92f6dfd41",
+        subject: user.id,
         time: {
           gte: config.statFirstDay.getTime(),
         },

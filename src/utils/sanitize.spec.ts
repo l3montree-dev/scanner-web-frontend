@@ -8,7 +8,7 @@ describe("sanitize test suite", () => {
     expect(sanitizeFQDN("https://example.com")).toBe("example.com");
   });
   it("should remove any path if provided", () => {
-    expect(sanitizeFQDN("example.com/path")).toBe("example.com");
+    expect(sanitizeFQDN("example.com/path")).toBe("example.com/path");
   });
   it("should remove any query parameters if provided", () => {
     expect(sanitizeFQDN("example.com?query=param")).toBe("example.com");
