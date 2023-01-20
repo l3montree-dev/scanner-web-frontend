@@ -166,7 +166,7 @@ const RefLabelComponent: FunctionComponent<any> = (props) => {
         dx={30}
         dy={-2}
         backgroundStyle={{
-          fill: (fullConfig.theme?.colors as any).deepblue["500"],
+          fill: (fullConfig.theme?.colors as any).deepblue["600"],
         }}
         style={{
           fontSize: 10,
