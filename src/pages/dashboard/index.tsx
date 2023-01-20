@@ -119,7 +119,7 @@ const LabelComponent: FunctionComponent<any> = (props) => {
         renderInPortal={true}
         dx={30}
         backgroundStyle={{
-          fill: (fullConfig.theme?.colors as any).deepblue["500"],
+          fill: (fullConfig.theme?.colors as any).deepblue["600"],
         }}
         style={{
           fontSize: 10,
@@ -139,7 +139,7 @@ const LabelComponent: FunctionComponent<any> = (props) => {
       flyoutPadding={2.5}
       flyoutStyle={{
         stroke: "none",
-        fill: (fullConfig.theme?.colors as any).deepblue["500"],
+        fill: (fullConfig.theme?.colors as any).deepblue["600"],
       }}
       dx={0}
       dy={-1.55}
@@ -505,7 +505,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                         theme={theme}
                         minDomain={{ y: Math.max(0, min - max / 20) }}
                         maxDomain={{ y: Math.min(100, max + max / 20) }}
-                        domainPadding={{ x: [0, 5] }}
+                        domainPadding={{ x: [0, 5], y: [10, 10] }}
                       >
                         <VictoryAxis fixLabelOverlap />
                         <VictoryAxis
@@ -515,6 +515,9 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                         />
                         <VictoryLine
                           animate
+                          style={{
+                            data: { strokeLinecap: "round" },
+                          }}
                           interpolation={"basis"}
                           labels={({ datum }) => `${datum.y.toFixed(1)}%`}
                           labelComponent={<LabelComponent />}
@@ -533,6 +536,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                                   stroke:
                                     referenceNameMapping[referenceName].color,
                                   strokeWidth: 1.5,
+                                  strokeLinecap: "round",
                                 },
                                 parent: { border: "1px solid #ccc" },
                               }}
