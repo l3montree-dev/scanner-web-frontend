@@ -29,45 +29,62 @@ const getGroupFailedSuccessPercentage = async (
   until: number
 ) => {
   let [res] = (await prisma.$queryRaw(
+    // this query will pick the latest scan report for each domain and calculate the average of all the inspection types. If there was no scan report done before "until", it will pick the closest one of the future - this fakes the stats but was requested by the customer
     Prisma.sql`
-        SELECT AVG(SubResourceIntegrity) as SubResourceIntegrity,
-        AVG(NoMixedContent) as NoMixedContent,
-        AVG(ResponsibleDisclosure) as ResponsibleDisclosure,
-        AVG(DNSSec) as DNSSec,
-        AVG(CAA) as CAA,
-        AVG(IPv6) as IPv6,
-        AVG(RPKI) as RPKI,
-        AVG(HTTP) as HTTP,
-        AVG(HTTPS) as HTTPS,
-        AVG(HTTP308) as HTTP308,
-        AVG(HTTPRedirectsToHttps) as HTTPRedirectsToHttps,
+SELECT AVG(SubResourceIntegrity) as SubResourceIntegrity,
+    AVG(NoMixedContent) as NoMixedContent,
+    AVG(ResponsibleDisclosure) as ResponsibleDisclosure,
+    AVG(DNSSec) as DNSSec,
+    AVG(CAA) as CAA,
+    AVG(IPv6) as IPv6,
+    AVG(RPKI) as RPKI,
+    AVG(HTTP) as HTTP,
+    AVG(HTTPS) as HTTPS,
+    AVG(HTTP308) as HTTP308,
+    AVG(HTTPRedirectsToHttps) as HTTPRedirectsToHttps,
+    AVG(HSTS) as HSTS, 
         AVG(HSTS) as HSTS, 
-        AVG(HSTSPreloaded) as HSTSPreloaded,
-        AVG(ContentSecurityPolicy) as ContentSecurityPolicy,
-        AVG(XFrameOptions) as XFrameOptions,
-        AVG(XSSProtection) as XSSProtection,
-        AVG(ContentTypeOptions) as ContentTypeOptions,
-        AVG(SecureSessionCookies) as SecureSessionCookies,
-        AVG(TLSv1_2) as TLSv1_2,
+    AVG(HSTS) as HSTS, 
+    AVG(HSTSPreloaded) as HSTSPreloaded,
+    AVG(ContentSecurityPolicy) as ContentSecurityPolicy,
+    AVG(XFrameOptions) as XFrameOptions,
+    AVG(XSSProtection) as XSSProtection,
+    AVG(ContentTypeOptions) as ContentTypeOptions,
+    AVG(SecureSessionCookies) as SecureSessionCookies,
+    AVG(TLSv1_2) as TLSv1_2,
+    AVG(TLSv1_3) as TLSv1_3, 
         AVG(TLSv1_3) as TLSv1_3, 
+    AVG(TLSv1_3) as TLSv1_3, 
+    AVG(TLSv1_1_Deactivated) as TLSv1_1_Deactivated, 
         AVG(TLSv1_1_Deactivated) as TLSv1_1_Deactivated, 
-        AVG(StrongKeyExchange) as StrongKeyExchange,
-        AVG(StrongCipherSuites) as StrongCipherSuites,
-        AVG(ValidCertificate) as ValidCertificate,
-        AVG(StrongPrivateKey) as StrongPrivateKey,
-        AVG(StrongSignatureAlgorithm) as StrongSignatureAlgorithm,
-        AVG(MatchesHostname) as MatchesHostname,
-        AVG(NotRevoked) as NotRevoked,
-        AVG(CertificateTransparency) as CertificateTransparency,
-        AVG(ValidCertificateChain) as ValidCertificateChain,
-        
-        COUNT(*) as totalCount
-              from domains d INNER JOIN scan_reports sr1 on d.fqdn = sr1.fqdn
-              WHERE NOT EXISTS(
-                  SELECT 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr2.createdAt < ${new Date(
-                    until
-                  )} AND sr1.createdAt < sr2.createdAt
-            ) AND d.group = ${group} AND sr1.createdAt < ${new Date(until)}`
+    AVG(TLSv1_1_Deactivated) as TLSv1_1_Deactivated, 
+    AVG(StrongKeyExchange) as StrongKeyExchange,
+    AVG(StrongCipherSuites) as StrongCipherSuites,
+    AVG(ValidCertificate) as ValidCertificate,
+    AVG(StrongPrivateKey) as StrongPrivateKey,
+    AVG(StrongSignatureAlgorithm) as StrongSignatureAlgorithm,
+    AVG(MatchesHostname) as MatchesHostname,
+    AVG(NotRevoked) as NotRevoked,
+    AVG(CertificateTransparency) as CertificateTransparency,
+    AVG(ValidCertificateChain) as ValidCertificateChain,
+
+    COUNT(*) as totalCount
+from domains d INNER JOIN scan_reports sr1 on d.fqdn = sr1.fqdn
+WHERE (
+        NOT EXISTS(
+                SELECT 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr2.createdAt < ${new Date(
+                  until
+                )} 
+                AND sr1.createdAt < sr2.createdAt
+        ) 
+        AND d.group = ${group} AND sr1.createdAt < ${new Date(until)}
+    )
+    OR (
+        NOT EXISTS(select 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr2.createdAt < ${new Date(
+          until
+        )})
+        AND NOT EXISTS(select 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr1.createdAt > sr2.createdAt)
+    )`
   )) as any;
 
   res = toDTO(res);
@@ -90,8 +107,9 @@ const getUserFailedSuccessPercentage = async (
   };
 }> => {
   let [res] = (await prisma.$queryRaw(
+    // this query will pick the latest scan report for each domain and calculate the average of all the inspection types. If there was no scan report done before "until", it will pick the closest one of the future - this fakes the stats but was requested by the customer
     Prisma.sql`
-    SELECT AVG(SubResourceIntegrity) as SubResourceIntegrity,
+SELECT AVG(SubResourceIntegrity) as SubResourceIntegrity,
     AVG(NoMixedContent) as NoMixedContent,
     AVG(ResponsibleDisclosure) as ResponsibleDisclosure,
     AVG(DNSSec) as DNSSec,
@@ -121,14 +139,26 @@ const getUserFailedSuccessPercentage = async (
     AVG(NotRevoked) as NotRevoked,
     AVG(CertificateTransparency) as CertificateTransparency,
     AVG(ValidCertificateChain) as ValidCertificateChain,
-    
+ 
     COUNT(*) as totalCount
-          from user_domain_relations udr INNER JOIN scan_reports sr1 on udr.fqdn = sr1.fqdn
-          WHERE NOT EXISTS(
-              SELECT 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr2.createdAt < ${new Date(
-                until
-              )} AND sr1.createdAt < sr2.createdAt
-        ) AND udr.userId = ${user.id} AND sr1.createdAt < ${new Date(until)}`
+from user_domain_relations udr INNER JOIN scan_reports sr1 on udr.fqdn = sr1.fqdn
+WHERE (
+    NOT EXISTS(
+        SELECT 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr2.createdAt < ${new Date(
+          until
+        )} 
+        AND sr1.createdAt < sr2.createdAt
+    ) 
+    AND udr.userId = ${user.id} 
+    AND sr1.createdAt < ${new Date(until)}
+)
+OR (
+    NOT EXISTS(select 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr2.createdAt < ${new Date(
+      until
+    )})
+    AND NOT EXISTS(select 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr1.createdAt > sr2.createdAt)
+)
+`
   )) as any;
 
   res = toDTO(res);
