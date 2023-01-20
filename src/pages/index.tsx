@@ -48,8 +48,8 @@ const Home: NextPage<Props> = ({ displayNotAvailable }) => {
     e.preventDefault();
 
     // test if valid url
-    const fqdn = sanitizeFQDN(website);
-    if (!fqdn || !hostnameRegex.test(fqdn)) {
+    const target = sanitizeFQDN(website);
+    if (!target) {
       scanRequest.error("Bitte trage einen gültigen Domainnamen ein.");
       return;
     }
@@ -60,7 +60,7 @@ const Home: NextPage<Props> = ({ displayNotAvailable }) => {
     // do the real api call.
     try {
       const response = await clientHttpClient(
-        `/api/scan?site=${fqdn}`,
+        `/api/scan?site=${encodeURIComponent(target)}`,
         crypto.randomUUID()
       );
 
@@ -106,7 +106,7 @@ const Home: NextPage<Props> = ({ displayNotAvailable }) => {
     refreshRequest.loading();
     try {
       const response = await clientHttpClient(
-        `/api/scan?site=${domain.fqdn}&refresh=true`,
+        `/api/scan?site=${encodeURIComponent(domain.fqdn)}&refresh=true`,
         crypto.randomUUID()
       );
       if (!response.ok) {

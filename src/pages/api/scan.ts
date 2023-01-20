@@ -84,7 +84,7 @@ export default decorate(
         return res.status(400).json({
           error:
             "Invalid site provided. Please provide a valid fully qualified domain name as site query parameter. Example: ?site=example.com",
-          fqdn: result.fqdn,
+          fqdn: result.target,
         });
       } else {
         // do not monitor this domain if it does not exist yet - this means, that there is a user which scans the domain for the first time.
@@ -100,7 +100,7 @@ export default decorate(
         );
         return res.status(500).json({
           error: "Error happened...",
-          fqdn: result.fqdn,
+          fqdn: result.target,
         });
       }
     } else {

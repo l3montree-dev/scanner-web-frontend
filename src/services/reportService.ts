@@ -35,7 +35,7 @@ const scanResult2ScanReport = (
   result: IScanSuccessResponse
 ): Omit<ScanReport, "createdAt" | "updatedAt" | "id"> => {
   return {
-    fqdn: result.fqdn,
+    fqdn: result.target,
     ipAddress: result.ipAddress,
     duration: result.duration,
     sut: result.sut,
@@ -55,7 +55,7 @@ const handleNewScanReport = async (
   // fetch the last existing report and check if we only need to update that one.
   const lastReport = await prisma.scanReport.findMany({
     where: {
-      fqdn: result.fqdn,
+      fqdn: result.target,
     },
     orderBy: {
       createdAt: "desc",
@@ -78,7 +78,7 @@ const handleNewScanReport = async (
         details: {
           ...result.result,
           // save the subject under test inside the details
-          sut: result.sut ?? result.fqdn,
+          sut: result.sut ?? result.target,
         } as Record<string, any>,
         group: "unknown",
       },
@@ -89,7 +89,7 @@ const handleNewScanReport = async (
         details: {
           ...result.result,
           // save the subject under test inside the details
-          sut: result.sut ?? result.fqdn,
+          sut: result.sut ?? result.target,
         } as Record<string, any>,
       },
     });
@@ -109,7 +109,7 @@ const handleNewScanReport = async (
       details: {
         ...result.result,
         // save the subject under test inside the details
-        sut: result.sut ?? result.fqdn,
+        sut: result.sut ?? result.target,
       } as Record<string, any>,
     },
   });

@@ -3,6 +3,7 @@ import { config } from "../config";
 import { InspectionType } from "../inspection/scans";
 import { IDashboard, ChartData } from "../types";
 import { toDTO } from "../utils/server";
+import { eachDay } from "../utils/time";
 
 const getTotalsOfUser = async (user: User, prisma: PrismaClient) => {
   // count the domains this user has access to
@@ -64,7 +65,7 @@ const getGroupFailedSuccessPercentage = async (
         COUNT(*) as totalCount
               from domains d INNER JOIN scan_reports sr1 on d.fqdn = sr1.fqdn
               WHERE NOT EXISTS(
-                  SELECT 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr1.createdAt > sr2.createdAt
+                  SELECT 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr1.createdAt < sr2.createdAt
             ) AND d.group = ${group} AND sr1.createdAt < ${new Date(until)}`
   )) as any;
 
@@ -123,7 +124,7 @@ const getUserFailedSuccessPercentage = async (
     COUNT(*) as totalCount
           from user_domain_relations udr INNER JOIN scan_reports sr1 on udr.fqdn = sr1.fqdn
           WHERE NOT EXISTS(
-              SELECT 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr1.createdAt > sr2.createdAt
+              SELECT 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr1.createdAt < sr2.createdAt
         ) AND udr.userId = ${user.id} AND sr1.createdAt < ${new Date(until)}`
   )) as any;
 
@@ -182,7 +183,7 @@ export const getDashboardForUser = async (
     getTotalsOfUser(user, prisma),
     prisma.stat.findMany({
       where: {
-        subject: user.id,
+        subject: "ac53331e-f3b2-4960-a5b0-c9d92f6dfd41",
         time: {
           gte: config.statFirstDay.getTime(),
         },

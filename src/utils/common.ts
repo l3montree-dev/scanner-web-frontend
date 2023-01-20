@@ -104,6 +104,12 @@ export const sanitizeFQDN = (providedValue: any): string | null => {
       : `https://${providedValue}`
   );
 
+  if (url.pathname !== "/") {
+    return url.port
+      ? `${url.hostname}:${url.port}${url.pathname}`
+      : url.hostname + url.pathname;
+  }
+
   // make sure to keep the port if provided
   return url.port ? `${url.hostname}:${url.port}` : url.hostname;
 };

@@ -5,7 +5,7 @@ export const getResponsibleDisclosureReportMessage = (
   report: DetailedDomain
 ) => {
   const inspection = report.details["ResponsibleDisclosure"];
-  const fqdn = report.details.sut;
+  const fqdn = new URL(`http://${report.details.sut}`).hostname;
   if (inspection?.didPass === null || inspection?.didPass === undefined) {
     return `Die Datei ${fqdn}/.well-known/security.txt konnte nicht überprüft werden.`;
   } else if (inspection.didPass) {

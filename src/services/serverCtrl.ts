@@ -101,7 +101,7 @@ const startScanResponseLoop = once(() => {
 
     let address = content.ipAddress;
     if (!address) {
-      logger.error({ fqdn: content.fqdn }, "no ip found");
+      logger.error({ target: content.target }, "no ip found");
       // we cannot do anything...
       return;
     }
@@ -109,7 +109,7 @@ const startScanResponseLoop = once(() => {
       try {
         await domainService.handleDomainScanError(content, prisma);
       } finally {
-        logger.error({ fqdn: content.fqdn }, content.result.error);
+        logger.error({ target: content.target }, content.result.error);
         return;
       }
     }

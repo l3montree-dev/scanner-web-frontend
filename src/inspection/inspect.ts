@@ -3,12 +3,12 @@ import { IScanResponse } from "../types";
 
 export const inspectRPC = async (
   requestId: string,
-  fqdn: string
+  target: string
 ): Promise<IScanResponse> => {
   const result = await rabbitMQRPCClient.call<IScanResponse>(
     process.env.SCAN_REQUEST_QUEUE ?? "scan-request",
     {
-      fqdn,
+      target,
     },
     { messageId: requestId }
   );
@@ -16,11 +16,11 @@ export const inspectRPC = async (
   return result;
 };
 
-export const inspect = async (requestId: string, fqdn: string) => {
+export const inspect = async (requestId: string, target: string) => {
   const result = await rabbitMQClient.publish(
     process.env.SCAN_REQUEST_QUEUE ?? "scan-request",
     {
-      fqdn,
+      target,
     },
     { durable: true, maxPriority: 10 },
     { messageId: requestId, priority: 1, replyTo: "scan-response" }

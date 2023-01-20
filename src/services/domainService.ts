@@ -47,7 +47,7 @@ const handleDomainScanError = async (
 ) => {
   const res = await prisma.domain.upsert({
     where: {
-      fqdn: content.fqdn,
+      fqdn: content.target,
     },
     update: {
       lastScan: content.timestamp ?? Date.now(),
@@ -58,7 +58,7 @@ const handleDomainScanError = async (
     },
     create: {
       errorCount: 1,
-      fqdn: content.fqdn,
+      fqdn: content.target,
       group: "unknown",
       lastScan: content.timestamp ?? Date.now(),
     },

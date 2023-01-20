@@ -84,7 +84,7 @@ export type IScanSuccessResponse = {
   result: Partial<{
     [key in InspectionType]: InspectResultDTO;
   }>;
-  fqdn: string;
+  target: string;
   ipAddress: string;
   duration: number;
   timestamp: number;
@@ -92,7 +92,7 @@ export type IScanSuccessResponse = {
 };
 
 export type IScanErrorResponse = {
-  fqdn: string;
+  target: string;
   timestamp: number;
   ipAddress: string;
   duration: number;

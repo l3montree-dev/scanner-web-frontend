@@ -35,10 +35,10 @@ const Header = () => {
               <Link href="/" className="flex items-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  width={55}
+                  width={65}
                   height={55}
                   src={"/assets/ozg-logo-colored.svg"}
-                  alt="Logo BMI"
+                  alt="Logo OZG"
                 />
               </Link>
             </div>
