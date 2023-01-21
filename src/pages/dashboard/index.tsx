@@ -406,7 +406,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                         y={150}
                         text={`${(
                           dashboard.currentState.data[key] * 100
-                        ).toFixed(0)}%`}
+                        ).toFixed(1)}%`}
                       />
                       {refData.map(([groupName, value], i) => {
                         return (
