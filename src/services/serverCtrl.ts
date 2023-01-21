@@ -250,7 +250,7 @@ const startScanLoop = once(() => {
       running = false;
       logger.error(e);
     }
-  }, +(process.env.SCAN_INTERVAL ?? 10 * 1000));
+  }, +(process.env.SCAN_INTERVAL ?? 5 * 60 * 1000));
 });
 
 export const serverCtrl = {

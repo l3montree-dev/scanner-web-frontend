@@ -8,7 +8,7 @@ import {
   PaginateResult,
 } from "../types";
 import { neverThrow } from "../utils/common";
-import { DTO, toDTO } from "../utils/server";
+import { DTO, shuffle, toDTO } from "../utils/server";
 
 const handleNewDomain = async (
   domain: { fqdn: string; group?: string },
@@ -211,7 +211,7 @@ const getDomains2Scan = async (prisma: PrismaClient) => {
     orderBy: {
       lastScan: "asc",
     },
-    take: 1_000,
+    take: 10_000,
   });
 
   await prisma.domain.updateMany({
@@ -225,7 +225,7 @@ const getDomains2Scan = async (prisma: PrismaClient) => {
     },
   });
 
-  return domains;
+  return shuffle(domains);
 };
 
 export const domainService = {
