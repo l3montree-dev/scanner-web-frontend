@@ -108,9 +108,6 @@ const getDomainsOfNetworksWithLatestTestResult = async (
   const [total, domains] = await Promise.all([
     prisma.domain.count({
       where: {
-        errorCount: {
-          lt: 5,
-        },
         users: {
           some: {
             userId: user.id,
@@ -142,7 +139,6 @@ const getDomainsOfNetworksWithLatestTestResult = async (
           : ""
       }
       AND userId = ?
-      AND d.errorCount < 5
       ORDER BY ${translateSort(paginateRequest.sort)} ${translateSortDirection(
         paginateRequest.sortDirection
       )}
