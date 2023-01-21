@@ -285,16 +285,8 @@ const Home: NextPage<Props> = ({ displayNotAvailable }) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { query } = context;
   // check if the user does provide a valid query parameter
-  const date = new Date();
   const code = query["s"];
-  if (
-    code &&
-    (+code === 423333 ||
-      (+code % 42 === 0 &&
-        date.getMonth() === 0 &&
-        date.getDate() >= 24 &&
-        date.getDate() <= 25))
-  ) {
+  if (code && (+code === 423333 || +code % 42 === 0)) {
     return {
       props: {
         displayNotAvailable: false,
