@@ -141,14 +141,13 @@ SELECT AVG(SubResourceIntegrity) as SubResourceIntegrity,
  
     COUNT(*) as totalCount
 from user_domain_relations udr INNER JOIN scan_reports sr1 on udr.fqdn = sr1.fqdn
-WHERE (
+WHERE  udr.userId = ${user.id}  AND ((
     NOT EXISTS(
         SELECT 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr2.createdAt < ${new Date(
           until
         )} 
         AND sr1.createdAt < sr2.createdAt
     ) 
-    AND udr.userId = ${user.id} 
     AND sr1.createdAt < ${new Date(until)}
 )
 OR (
@@ -156,7 +155,7 @@ OR (
       until
     )})
     AND NOT EXISTS(select 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr1.createdAt > sr2.createdAt)
-)
+))
 `
   )) as any;
 
