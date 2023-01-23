@@ -7,6 +7,7 @@ import {
   VictoryArea,
   VictoryAxis,
   VictoryChart,
+  VictoryContainer,
   VictoryLabel,
   VictoryLine,
   VictoryPie,
@@ -351,7 +352,18 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                         Was ist &quot;{mapping[key]}&quot;?
                       </Link>
                     )}
-                    <svg viewBox="0 0 300 300">
+                    <VictoryChart
+                      prependDefaultAxes={false}
+                      width={300}
+                      height={300}
+                    >
+                      <VictoryAxis
+                        style={{
+                          axis: { stroke: "transparent" },
+                          ticks: { stroke: "transparent" },
+                          tickLabels: { fill: "transparent" },
+                        }}
+                      />
                       <VictoryPie
                         standalone={false}
                         width={300}
@@ -363,6 +375,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                         innerRadius={90}
                         labelComponent={
                           <VictoryTooltip
+                            renderInPortal
                             constrainToVisibleArea
                             cornerRadius={0}
                             style={{
@@ -445,7 +458,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                           </g>
                         );
                       })}
-                    </svg>
+                    </VictoryChart>
                   </div>
                   <h2
                     title={mapping[key]}
