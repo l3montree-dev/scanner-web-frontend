@@ -391,11 +391,16 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                             y: data.totalCount * data.data[key],
                           },
                           {
-                            x: `Fehlerhaft (${(
-                              (1 - data.data[key]) *
-                              100
-                            ).toFixed(1)}%)`,
-                            y: data.totalCount * (1 - data.data[key]),
+                            x:
+                              data.totalCount === 0
+                                ? "Keine Testergebnisse vorhanden"
+                                : `Fehlerhaft (${(
+                                    (1 - data.data[key] || 1) * 100
+                                  ).toFixed(1)}%)`,
+                            y:
+                              data.totalCount === 0
+                                ? 100
+                                : data.totalCount * (1 - data.data[key]),
                           },
                         ]}
                       />
