@@ -7,7 +7,9 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
-import { FunctionComponent, useEffect, useState } from "react";
+import { FunctionComponent, useEffect, useMemo, useState } from "react";
+import Button from "../../components/Button";
+import Checkbox from "../../components/Checkbox";
 import DashboardPage from "../../components/DashboardPage";
 import DomainOverviewForm from "../../components/DomainOverviewForm";
 import Menu from "../../components/Menu";
@@ -71,6 +73,9 @@ const Dashboard: FunctionComponent<Props> = (props) => {
     props.domains.data
   );
 
+  const [selection, setSelection] = useState<{ [fqdn: string]: boolean }>({});
+  const scanAllLoading = useLoading();
+
   const scanRequest = useLoading();
   const router = useRouter();
 
@@ -105,6 +110,46 @@ const Dashboard: FunctionComponent<Props> = (props) => {
   useEffect(() => {
     setDomains(props.domains.data);
   }, [props.domains]);
+
+  const deleteFQDN = async (fqdn: string) => {
+    const response = await clientHttpClient(
+      `/api/domains`,
+      crypto.randomUUID(),
+      {
+        method: "DELETE",
+        body: JSON.stringify({
+          domains: [fqdn],
+        }),
+      }
+    );
+    if (response.ok) {
+      setDomains((prev) => prev.filter((d) => d.fqdn !== fqdn));
+    }
+  };
+
+  const selectedFQDNs = useMemo(
+    () =>
+      Object.entries(selection)
+        .filter(([key, value]) => value)
+        .map(([key]) => key),
+    [selection]
+  );
+
+  const deleteSelection = async () => {
+    const response = await clientHttpClient(
+      `/api/domains`,
+      crypto.randomUUID(),
+      {
+        method: "DELETE",
+        body: JSON.stringify({
+          domains: selectedFQDNs,
+        }),
+      }
+    );
+    if (response.ok) {
+      setDomains((prev) => prev.filter((d) => !selectedFQDNs.includes(d.fqdn)));
+    }
+  };
 
   const scanFQDN = async (fqdn: string) => {
     scanRequest.loading(fqdn);
@@ -220,6 +265,23 @@ const Dashboard: FunctionComponent<Props> = (props) => {
             <table className="w-full">
               <thead className="">
                 <tr className="bg-deepblue-200 text-sm border-b border-b-deepblue-50 text-left">
+                  <th className="p-2 pr-0">
+                    <Checkbox
+                      checked={
+                        selectedFQDNs.length > 0 &&
+                        selectedFQDNs.length === props.domains.data.length
+                      }
+                      onChange={() => {
+                        console.log("change");
+                        setSelection((prev) => {
+                          return props.domains.data.reduce((acc, domain) => {
+                            acc[domain.fqdn] = !Boolean(prev[domain.fqdn]);
+                            return acc;
+                          }, {} as Record<string, boolean>);
+                        });
+                      }}
+                    />
+                  </th>
                   <th className="p-2">
                     <div>
                       <span>Domain</span>
@@ -321,19 +383,104 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                 </tr>
               </thead>
               <tbody>
+                <tr className="bg-deepblue-300 border-b-deepblue-50 border-b">
+                  <td colSpan={9}>
+                    <div
+                      className={classNames(
+                        "flex flex-row justify-end",
+                        selectedFQDNs.length === 0
+                          ? "opacity-50 pointer-events-none"
+                          : ""
+                      )}
+                    >
+                      <Menu
+                        Button={
+                          <div className="p-2 bg-deepblue-100 border border-deepblue-100 m-2 flex flex-row items-center justify-center">
+                            Gruppenaktionen ({selectedFQDNs.length})
+                            <FontAwesomeIcon
+                              className="ml-2"
+                              icon={faCaretDown}
+                            />
+                          </div>
+                        }
+                        Menu={
+                          <MenuList>
+                            <MenuItem
+                              loading={scanAllLoading.isLoading}
+                              onClick={async () => {
+                                scanAllLoading.loading();
+                                try {
+                                  await Promise.all(
+                                    selectedFQDNs.map((d) => scanFQDN(d))
+                                  );
+                                } finally {
+                                  scanAllLoading.success();
+                                }
+                              }}
+                            >
+                              <div>
+                                <div>Erneut scannen</div>
+                              </div>
+                            </MenuItem>
+                            <MenuItem onClick={deleteSelection}>
+                              <div>Löschen</div>
+                            </MenuItem>
+                          </MenuList>
+                        }
+                      />
+                    </div>
+                  </td>
+                </tr>
+
                 {domains.map((domain, i) => {
                   return (
                     <tr
+                      onClick={() => {
+                        setSelection((prev) => {
+                          if (prev[domain.fqdn] === undefined) {
+                            prev[domain.fqdn] = true;
+                            return { ...prev };
+                          }
+                          return {
+                            ...prev,
+                            [domain.fqdn]: !prev[domain.fqdn],
+                          };
+                        });
+                      }}
                       className={classNames(
-                        i % 2 === 0 ? "bg-deepblue-400" : "bg-deepblue-500",
+                        "cursor-pointer",
                         i !== domains.length - 1 && "border-b",
-                        " border-b-deepblue-300 transition-all",
+                        "border-b-deepblue-300 transition-all",
                         domain.errorCount !== null && domain.errorCount >= 5
                           ? "line-through"
-                          : ""
+                          : "",
+                        selection[domain.fqdn]
+                          ? "bg-deepblue-200"
+                          : i % 2 === 0
+                          ? "bg-deepblue-400"
+                          : "bg-deepblue-500"
                       )}
                       key={domain.fqdn}
                     >
+                      <td className="p-2 pr-0">
+                        <div className="flex flex-row items-center">
+                          <Checkbox
+                            onChange={() => {
+                              setSelection((prev) => {
+                                if (prev[domain.fqdn] === undefined) {
+                                  prev[domain.fqdn] = true;
+                                  return { ...prev };
+                                }
+                                return {
+                                  ...prev,
+                                  [domain.fqdn]: !prev[domain.fqdn],
+                                };
+                              });
+                            }}
+                            checked={Boolean(selection[domain.fqdn])}
+                          />
+                        </div>
+                      </td>
                       <td className="p-2">
                         {domain.fqdn}
                         <div className="inline ml-2">
@@ -413,6 +560,15 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                                     </span>
                                   )}
                                 </div>
+                              </MenuItem>
+                              <MenuItem
+                                loading={
+                                  scanRequest.key === domain.fqdn &&
+                                  scanRequest.isLoading
+                                }
+                                onClick={() => deleteFQDN(domain.fqdn)}
+                              >
+                                <div>Löschen</div>
                               </MenuItem>
                             </MenuList>
                           }

@@ -18,6 +18,7 @@ const Menu: FunctionComponent<Props> = ({ Button, Menu }) => {
   };
 
   const openMenu: MouseEventHandler = (e) => {
+    e.stopPropagation();
     setIsOpen(true);
     setTimeout(
       () =>

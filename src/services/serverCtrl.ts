@@ -171,38 +171,7 @@ const statLoop = once(() => {
       // generate the stats for each user.
       const users = await prisma.user.findMany();
       users.forEach((user) => {
-        eachDay(config.statFirstDay, new Date()).forEach((date) => {
-          // check if the stat does exist.
-          promiseQueue.add(async () => {
-            const exists = await prisma.stat.findFirst({
-              where: {
-                subject: user.id,
-                time: date,
-              },
-            });
-            if (!exists) {
-              // generate the stat.
-              const stat = await statService.getUserFailedSuccessPercentage(
-                user,
-                prisma,
-                date
-              );
-
-              const start = Date.now();
-              await prisma.stat.create({
-                data: {
-                  subject: user.id,
-                  time: date,
-                  value: stat,
-                },
-              });
-              logger.info(
-                { duration: Date.now() - start },
-                `generated stat for ${user.id} on ${new Date(date)}`
-              );
-            }
-          });
-        });
+        promiseQueue.add(() => statService.generateStatsForUser(user, prisma));
       });
 
       await promiseQueue.onIdle();

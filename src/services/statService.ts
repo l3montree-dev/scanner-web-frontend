@@ -1,8 +1,13 @@
 import { Prisma, PrismaClient, User } from "@prisma/client";
+import PQueue from "p-queue";
 import { config } from "../config";
 import { InspectionType } from "../inspection/scans";
 import { IDashboard, ChartData } from "../types";
 import { toDTO } from "../utils/server";
+import { eachDay } from "../utils/time";
+import { getLogger } from "./logger";
+
+const logger = getLogger(__filename);
 
 const getTotalsOfUser = async (user: User, prisma: PrismaClient) => {
   // count the domains this user has access to
@@ -13,6 +18,56 @@ const getTotalsOfUser = async (user: User, prisma: PrismaClient) => {
       },
     }),
   };
+};
+
+const generateStatsForUser = async (
+  user: User,
+  prisma: PrismaClient,
+  force = false
+) => {
+  const promiseQueue = new PQueue({ concurrency: 10 });
+  eachDay(config.statFirstDay, new Date()).forEach((date) => {
+    // check if the stat does exist.
+    promiseQueue.add(async () => {
+      let exists = false;
+      if (!force) {
+        exists = Boolean(
+          await prisma.stat.findFirst({
+            where: {
+              subject: user.id,
+              time: date,
+            },
+          })
+        );
+      } else {
+        // delete the stat
+        await prisma.stat.deleteMany({
+          where: {
+            subject: user.id,
+            time: date,
+          },
+        });
+      }
+
+      if (!exists) {
+        // generate the stat.
+        const stat = await getUserFailedSuccessPercentage(user, prisma, date);
+
+        const start = Date.now();
+        await prisma.stat.create({
+          data: {
+            subject: user.id,
+            time: date,
+            value: stat,
+          },
+        });
+        logger.info(
+          { duration: Date.now() - start },
+          `generated stat for ${user.id} on ${new Date(date)}`
+        );
+      }
+    });
+  });
 };
 
 const getTotals = async (
@@ -247,8 +302,8 @@ export const getDashboardForUser = async (
 export const statService = {
   getTotals,
   getTotalsOfUser,
-  getUserFailedSuccessPercentage,
   getGroupFailedSuccessPercentage,
   getDashboardForUser,
   getReferenceChartData,
+  generateStatsForUser,
 };
