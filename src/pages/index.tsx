@@ -286,7 +286,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const { query } = context;
   // check if the user does provide a valid query parameter
   const code = query["s"];
-  if (code && (+code === 423333 || +code % 42 === 0)) {
+  if (
+    context.req.headers.host === "localhost:3000" ||
+    (code && (+code === 423333 || +code % 42 === 0))
+  ) {
     return {
       props: {
         displayNotAvailable: false,

@@ -71,6 +71,7 @@ export interface ISession {
 export interface IToken extends ISession {
   accessToken: string;
   refreshToken: string;
+  idToken: string;
 }
 
 export interface ICreateUserDTO {

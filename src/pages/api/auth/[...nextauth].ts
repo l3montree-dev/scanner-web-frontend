@@ -77,6 +77,7 @@ export const authOptions: AuthOptions = {
         params.token.accessToken = params.account.access_token;
         params.token.expiresAt = params.account.expires_at * 1000;
         params.token.refreshToken = params.account.refresh_token;
+        params.token.idToken = params.account.id_token;
 
         return params.token;
       }

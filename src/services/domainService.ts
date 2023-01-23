@@ -132,7 +132,7 @@ const getDomainsOfNetworksWithLatestTestResult = async (
     LEFT JOIN scan_reports sr on d.fqdn = sr.fqdn  
     WHERE NOT EXISTS(
         SELECT 1 from scan_reports sr2 where sr.fqdn = sr2.fqdn AND sr.createdAt > sr2.createdAt
-      ) 
+      )
       ${
         paginateRequest.search !== undefined && paginateRequest.search !== ""
           ? "AND d.fqdn LIKE CONCAT('%', ?, '%')"

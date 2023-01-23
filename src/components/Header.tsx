@@ -18,13 +18,15 @@ const getInitials = (name: string) => {
 
 const Header = () => {
   const session = useSession();
-  const router = useRouter();
 
-  const handleSignOut = () => {
-    signOut({
+  const handleSignOut = async () => {
+    const res: { path: string } = await (
+      await fetch("/api/auth/kc-signout")
+    ).json();
+    await signOut({
       redirect: false,
     });
-    router.push("/");
+    window.location.href = res.path;
   };
   return (
     <div className="bg-deepblue-700 h-14 border-b text-black border-deepblue-200">
@@ -47,7 +49,7 @@ const Header = () => {
             <div className="ml-2 text-white">
               <Menu
                 Button={
-                  <div className="bg-deepblue-100 rounded-full text-white h-10 w-10 flex items-center justify-center text-sm">
+                  <div className="bg-deepblue-100 rounded-full text-white h-9 w-9 flex items-center justify-center text-sm mr-1">
                     {getInitials(session.data.user.name)}
                   </div>
                 }
