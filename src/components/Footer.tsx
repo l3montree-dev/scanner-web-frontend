@@ -73,7 +73,15 @@ const Footer: FunctionComponent<Props> = ({ hideLogin }) => {
                     </Link>
                     <span
                       className="cursor-pointer hover:underline"
-                      onClick={() => signOut()}
+                      onClick={async () => {
+                        const res: { path: string } = await (
+                          await fetch("/api/auth/kc-signout")
+                        ).json();
+                        await signOut({
+                          redirect: false,
+                        });
+                        window.location.href = res.path;
+                      }}
                     >
                       Logout
                     </span>
