@@ -1,4 +1,5 @@
 import React, { FunctionComponent, PropsWithChildren } from "react";
+import { classNames } from "../utils/common";
 import Spinner from "./Spinner";
 
 interface Props extends PropsWithChildren {
@@ -15,11 +16,13 @@ const Button: FunctionComponent<Props> = (props) => {
     <button {...rest}>
       <div className="flex flex-row items-center">
         {loading && (
-          <div className="flex mr-2 -my-10 flex-row items-center">
+          <div className="flex sm:mr-2 -my-10 flex-row items-center">
             <Spinner color={spinnerColor} size={spinnerSize} />
           </div>
         )}
-        {props.children}
+        <div className={classNames(loading && "hidden sm:block")}>
+          {props.children}
+        </div>
       </div>
     </button>
   );
