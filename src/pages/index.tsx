@@ -163,7 +163,7 @@ const Home: NextPage<Props> = ({ displayNotAvailable }) => {
         <Meta />
         <div className="flex md:py-10 flex-col w-full justify-center">
           <div className="max-w-screen-lg w-full md:p-5 mx-auto">
-            <div className="md:mt-0 mt-10 md:p-10 text-white text-center p-5">
+            <div className="md:mt-0 mt-10 md:p-10 text-white text-center pb-14 p-5">
               <h1 className="text-5xl sm:order-1 order-2 mb-3 font-bold">
                 OZG Security Challenge 2023
               </h1>
@@ -182,7 +182,7 @@ const Home: NextPage<Props> = ({ displayNotAvailable }) => {
       <Meta />
       <div className="flex md:py-10 flex-col w-full justify-center">
         <div className="max-w-screen-lg w-full md:p-5 mx-auto">
-          <div className="md:bg-deepblue-400 md:mt-0 mt-10 md:p-10 p-5">
+          <div className="md:bg-deepblue-400 p-4 pb-14 md:mt-0 mt-10 md:p-10">
             <div className="flex flex-wrap sm:flex-nowrap flex-row items-start justify-between">
               <h1 className="text-5xl sm:order-1 order-2 mb-3 text-white font-bold">
                 OZG Security Challenge 2023

@@ -19,6 +19,7 @@ const Footer: FunctionComponent<Props> = ({ hideLogin }) => {
           <div className="flex px-1 flex-row">
             <img
               width={370}
+              height={100}
               src={"/assets/BMI_de_v3__BSI_de_v1__Web_farbig.svg"}
               alt="Logo BMI & BSI"
             />
@@ -26,7 +27,8 @@ const Footer: FunctionComponent<Props> = ({ hideLogin }) => {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             width={120}
-            className="sm:ml-5 ml-0 mt-5 sm:mt-0"
+            height={61}
+            className="sm:ml-5 mb-10 sm:mb-0 ml-0 mt-5 sm:mt-0"
             src={"/assets/ozg-logo-colored.svg"}
             alt="OZG Logo"
           />
@@ -64,8 +66,8 @@ const Footer: FunctionComponent<Props> = ({ hideLogin }) => {
             </span>
           </div>
           <div className="p-2 flex-row flex-wrap sm:flex">
-            {!Boolean(hideLogin) && (
-              <div className="mr-2">
+            {!Boolean(!hideLogin) && (
+              <div className="mr-2 mb-8 sm:mb-0">
                 {session.status === "authenticated" ? (
                   <>
                     <Link className="mr-2" href="/dashboard">
