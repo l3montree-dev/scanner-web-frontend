@@ -37,6 +37,7 @@ const Footer: FunctionComponent<Props> = ({ hideLogin }) => {
           <div className="flex flex-wrap flex-row mb-0">
             <span className="mr-4">
               <button
+                aria-label="Impressum öffnen"
                 onClick={() => setIsOpen(true)}
                 className="cursor-pointer hover:underline p-2"
                 type="button"

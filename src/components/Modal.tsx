@@ -15,6 +15,10 @@ const Modal: FunctionComponent<Props> = (props) => {
   const ref = useRef<HTMLElement | null>(null);
 
   const delayedIsOpen = useDelayChange(props.isOpen, 250);
+  const displayContent = useDelayChange(props.isOpen, 250, (oldValue) => {
+    // if we are transitioning from open to closed we want to delay it - otherwise we want to show it immediately
+    return oldValue;
+  });
   useEffect(() => {
     ref.current = document.querySelector("#modal");
   }, []);
@@ -49,21 +53,27 @@ const Modal: FunctionComponent<Props> = (props) => {
                     props.isOpen ? "scale-100" : "scale-50"
                   )}
                 >
-                  <div className="flex flex-row items-center justify-between">
-                    <h5 className="text-white text-xl font-bold">
-                      {props.title}
-                    </h5>
-                    <button
-                      className="w-10 h-10 flex flex-col justify-center items-center bg-deepblue-200"
-                      onClick={props.onClose}
-                    >
-                      <FontAwesomeIcon
-                        className="text-white text-xl"
-                        icon={faTimes}
-                      />
-                    </button>
-                  </div>
-                  <div className="flex-1">{props.children}</div>
+                  {displayContent && (
+                    <>
+                      <div className="flex flex-row items-center justify-between">
+                        <h5 className="text-white text-xl font-bold">
+                          {props.title}
+                        </h5>
+                        <button
+                          aria-label="Modal schliessen"
+                          className="w-10 h-10 flex flex-col justify-center items-center bg-deepblue-200"
+                          onClick={props.onClose}
+                        >
+                          <FontAwesomeIcon
+                            className="text-white text-xl"
+                            icon={faTimes}
+                          />
+                        </button>
+                      </div>
+
+                      <div className="flex-1">{props.children}</div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
