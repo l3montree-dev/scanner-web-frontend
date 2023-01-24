@@ -66,7 +66,7 @@ const Footer: FunctionComponent<Props> = ({ hideLogin }) => {
             </span>
           </div>
           <div className="p-2 flex-row flex-wrap sm:flex">
-            {!Boolean(!hideLogin) && (
+            {!Boolean(hideLogin) && (
               <div className="mr-2 mb-8 sm:mb-0">
                 {session.status === "authenticated" ? (
                   <>
