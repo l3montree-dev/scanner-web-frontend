@@ -66,16 +66,16 @@ const Footer: FunctionComponent<Props> = ({ hideLogin }) => {
               </a>
             </span>
           </div>
-          <div className="p-2 flex-row flex-wrap sm:flex">
+          <div className="flex-row flex-wrap sm:flex">
             {!Boolean(hideLogin) && (
               <div className="mr-2 mb-8 sm:mb-0">
                 {session.status === "authenticated" ? (
-                  <>
-                    <Link className="mr-2" href="/dashboard">
+                  <div className="flex flex-row">
+                    <Link className="mr-2 p-2 block" href="/dashboard">
                       Dashboard
                     </Link>
                     <span
-                      className="cursor-pointer hover:underline"
+                      className="cursor-pointer p-2 block hover:underline"
                       onClick={async () => {
                         const res: { path: string } = await (
                           await fetch("/api/auth/kc-signout")
@@ -88,13 +88,15 @@ const Footer: FunctionComponent<Props> = ({ hideLogin }) => {
                     >
                       Logout
                     </span>
-                  </>
+                  </div>
                 ) : (
-                  <Link href="/dashboard">Login</Link>
+                  <Link className="p-2 block" href="/dashboard">
+                    Login
+                  </Link>
                 )}
               </div>
             )}
-            <span className="mt-5 sm:mt-0">
+            <span className="mt-5 p-2 sm:mt-0">
               © Bundesministerium des Innern und für Heimat,{" "}
               {new Date().getFullYear()}
             </span>
