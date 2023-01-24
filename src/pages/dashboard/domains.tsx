@@ -36,6 +36,7 @@ import { domainService } from "../../services/domainService";
 
 import {
   DetailedDomain,
+  DomainType,
   IScanSuccessResponse,
   PaginateResult,
 } from "../../types";
@@ -68,6 +69,17 @@ const SortButton: FunctionComponent<{
   );
 };
 
+const translateDomainType = (type: DomainType) => {
+  switch (type) {
+    case DomainType.reachable:
+      return "Erreichbare Domains";
+    case DomainType.unreachable:
+      return "Nicht erreichbare Domains";
+    case DomainType.all:
+      return "Alle Domains";
+  }
+};
+
 const Dashboard: FunctionComponent<Props> = (props) => {
   const [domains, setDomains] = useState<Array<DTO<DetailedDomain>>>(
     props.domains.data
@@ -79,6 +91,8 @@ const Dashboard: FunctionComponent<Props> = (props) => {
   const scanRequest = useLoading();
   const router = useRouter();
 
+  const viewedDomainType =
+    (router.query.domainType as DomainType | undefined) ?? DomainType.all;
   const handleSort = (key: InspectionType | "fqdn") => {
     // check if we should reverse the order.
     const instructions = { key, direction: 1 as 1 | -1 };
@@ -98,7 +112,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
     return faCaretUp;
   };
 
-  const patchQuery = (query: Record<string, string>) =>
+  const patchQuery = (query: Record<string, string>) => {
     router.push({
       pathname: router.pathname,
       query: {
@@ -106,6 +120,8 @@ const Dashboard: FunctionComponent<Props> = (props) => {
         ...query,
       },
     });
+    setSelection({});
+  };
 
   useEffect(() => {
     setDomains(props.domains.data);
@@ -242,15 +258,6 @@ const Dashboard: FunctionComponent<Props> = (props) => {
             Domains auf einen Blick. Hier können Sie schnell und einfach
             vergleichen, wie gut die verschiedenen Domains in Bezug auf die
             verschiedenen ausgeführten Sicherheitstest abschneiden.
-            <br />
-            <br />
-            {(router.query.search === undefined ||
-              router.query.search === "") && (
-              <>
-                Im Augenblick haben Sie Zugriff auf <b>{props.domains.total}</b>{" "}
-                Domains
-              </>
-            )}
           </p>
           <div className="w-full border-deepblue-50 border bg-deepblue-500">
             <div className="p-5">
@@ -261,6 +268,74 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                   onFileFormSubmit={handleFileFormSubmit}
                 />
               </div>
+            </div>
+            <div className="border-t flex flex-row border-deepblue-50 border-b">
+              <div
+                className={classNames(
+                  "flex flex-row justify-start",
+                  selectedFQDNs.length === 0
+                    ? "opacity-50 pointer-events-none"
+                    : ""
+                )}
+              >
+                <Menu
+                  Button={
+                    <div className="p-2 bg-deepblue-100 border border-deepblue-100 m-2 flex flex-row items-center justify-center">
+                      Gruppenaktionen ({selectedFQDNs.length})
+                      <FontAwesomeIcon className="ml-2" icon={faCaretDown} />
+                    </div>
+                  }
+                  Menu={
+                    <MenuList>
+                      <MenuItem
+                        loading={scanAllLoading.isLoading}
+                        onClick={async () => {
+                          scanAllLoading.loading();
+                          try {
+                            await Promise.all(
+                              selectedFQDNs.map((d) => scanFQDN(d))
+                            );
+                          } finally {
+                            scanAllLoading.success();
+                          }
+                        }}
+                      >
+                        <div>
+                          <div>Erneut scannen</div>
+                        </div>
+                      </MenuItem>
+                      <MenuItem onClick={deleteSelection}>
+                        <div>Löschen</div>
+                      </MenuItem>
+                    </MenuList>
+                  }
+                />
+              </div>
+              <Menu
+                Button={
+                  <div className="p-2 bg-deepblue-100 border border-deepblue-100 my-2 flex flex-row items-center justify-center">
+                    Zeige: {translateDomainType(viewedDomainType)} (
+                    {props.domains.total})
+                    <FontAwesomeIcon className="ml-2" icon={faCaretDown} />
+                  </div>
+                }
+                Menu={
+                  <MenuList>
+                    {Object.values(DomainType).map((type) => (
+                      <MenuItem
+                        key={type}
+                        selected={type === viewedDomainType}
+                        loading={scanAllLoading.isLoading}
+                        onClick={async () => {
+                          patchQuery({ domainType: type, page: "0" });
+                        }}
+                      >
+                        <div>{translateDomainType(type)}</div>
+                      </MenuItem>
+                    ))}
+                  </MenuList>
+                }
+              />
             </div>
             <table className="w-full">
               <thead className="">
@@ -383,55 +458,6 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                 </tr>
               </thead>
               <tbody>
-                <tr className="bg-deepblue-300 border-b-deepblue-50 border-b">
-                  <td colSpan={9}>
-                    <div
-                      className={classNames(
-                        "flex flex-row justify-end",
-                        selectedFQDNs.length === 0
-                          ? "opacity-50 pointer-events-none"
-                          : ""
-                      )}
-                    >
-                      <Menu
-                        Button={
-                          <div className="p-2 bg-deepblue-100 border border-deepblue-100 m-2 flex flex-row items-center justify-center">
-                            Gruppenaktionen ({selectedFQDNs.length})
-                            <FontAwesomeIcon
-                              className="ml-2"
-                              icon={faCaretDown}
-                            />
-                          </div>
-                        }
-                        Menu={
-                          <MenuList>
-                            <MenuItem
-                              loading={scanAllLoading.isLoading}
-                              onClick={async () => {
-                                scanAllLoading.loading();
-                                try {
-                                  await Promise.all(
-                                    selectedFQDNs.map((d) => scanFQDN(d))
-                                  );
-                                } finally {
-                                  scanAllLoading.success();
-                                }
-                              }}
-                            >
-                              <div>
-                                <div>Erneut scannen</div>
-                              </div>
-                            </MenuItem>
-                            <MenuItem onClick={deleteSelection}>
-                              <div>Löschen</div>
-                            </MenuItem>
-                          </MenuList>
-                        }
-                      />
-                    </div>
-                  </td>
-                </tr>
-
                 {domains.map((domain, i) => {
                   return (
                     <tr
@@ -607,6 +633,9 @@ export const getServerSideProps = decorateServerSideProps(
           pageSize: 50,
           page,
           search,
+          type:
+            (context.query["domainType"] as DomainType | undefined) ||
+            DomainType.all,
           sort: context.query["sort"] as string | undefined,
           sortDirection: context.query["sortDirection"] as string | undefined,
         },

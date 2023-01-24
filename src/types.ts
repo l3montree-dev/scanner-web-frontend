@@ -52,6 +52,12 @@ export type IIpLookupReportDTO = Omit<IIpLookupReportMsg, "results"> & {
   results: Array<{ domain: string; ip: string }>;
 };
 
+export enum DomainType {
+  all = "all",
+  reachable = "reachable",
+  unreachable = "unreachable",
+}
+
 export interface ISession {
   user: {
     name: string;

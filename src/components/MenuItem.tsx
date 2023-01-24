@@ -1,15 +1,25 @@
 import React, { FunctionComponent } from "react";
+import { classNames } from "../utils/common";
 import Spinner from "./Spinner";
 interface Props {
   children: React.ReactNode;
   loading?: boolean;
   onClick?: () => void;
+  selected?: boolean;
 }
-const MenuItem: FunctionComponent<Props> = ({ children, onClick, loading }) => {
+const MenuItem: FunctionComponent<Props> = ({
+  children,
+  onClick,
+  loading,
+  selected,
+}) => {
   return (
     <button
       onClick={onClick}
-      className="p-2 flex-row flex items-center px-4 hover:bg-deepblue-50 cursor-pointer w-full text-left"
+      className={classNames(
+        "p-2 flex-row flex items-center px-4 hover:bg-deepblue-50 cursor-pointer w-full text-left",
+        selected && "bg-deepblue-50"
+      )}
     >
       {loading && (
         <div className="mr-2">

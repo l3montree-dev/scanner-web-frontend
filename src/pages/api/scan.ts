@@ -2,19 +2,27 @@
 import { randomUUID } from "crypto";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { Prisma } from "@prisma/client";
+import { Domain, Prisma } from "@prisma/client";
 import { decorate } from "../../decorators/decorate";
 import { withDB } from "../../decorators/withDB";
 import { inspectRPC } from "../../inspection/inspect";
 import { domainService } from "../../services/domainService";
 import { getLogger } from "../../services/logger";
 import { reportService } from "../../services/reportService";
-import { isScanError, sanitizeFQDN } from "../../utils/common";
+import {
+  defaultOnError,
+  isScanError,
+  neverThrow,
+  sanitizeFQDN,
+  timeout,
+} from "../../utils/common";
 import { DTO, toDTO } from "../../utils/server";
 import { DetailedDomain } from "../../types";
+import CircuitBreaker from "../../utils/CircuitBreaker";
 
 const logger = getLogger(__filename);
 
+const scanCB = new CircuitBreaker();
 export default decorate(
   async (
     req: NextApiRequest,
@@ -51,19 +59,22 @@ export default decorate(
     if (req.query.refresh !== "true") {
       // check if we already have a report for this site
       const domain = toDTO(
-        await prisma.domain.findFirst({
-          where: {
-            fqdn: siteToScan,
-            lastScan: {
-              // last hour
-              gte: new Date(Date.now() - 1000 * 60 * 60 * 1).getTime(),
+        await neverThrow(
+          prisma.domain.findFirst({
+            where: {
+              fqdn: siteToScan,
+              lastScan: {
+                // last hour
+                gte: new Date(Date.now() - 1000 * 60 * 60 * 1).getTime(),
+              },
+              details: {
+                not: Prisma.JsonNull,
+              },
             },
-            details: {
-              not: Prisma.JsonNull,
-            },
-          },
-        })
+          })
+        )
       ) as DTO<DetailedDomain>;
+
       if (domain) {
         logger.info(
           { requestId },
@@ -89,7 +100,12 @@ export default decorate(
       } else {
         // do not monitor this domain if it does not exist yet - this means, that there is a user which scans the domain for the first time.
         // it is not necessary to do any re-scans.
-        await domainService.handleDomainScanError(result, prisma);
+        await neverThrow(
+          scanCB.run(
+            async () =>
+              await timeout(domainService.handleDomainScanError(result, prisma))
+          )
+        );
         logger.error(
           {
             err: result.result.error.message,
@@ -108,7 +124,21 @@ export default decorate(
         { duration: Date.now() - start, requestId },
         `successfully scanned site: ${siteToScan}`
       );
-      const domain = await reportService.handleNewScanReport(result, prisma);
+      const domain = await defaultOnError(
+        scanCB.run(async () =>
+          timeout(reportService.handleNewScanReport(result, prisma))
+        ),
+        {
+          fqdn: result.target,
+          lastScan: result.timestamp,
+          errorCount: 0,
+          group: "",
+          queued: false,
+          createdAt: new Date(result.timestamp).toString(),
+          updatedAt: new Date(result.timestamp).toString(),
+          details: { ...result.result, sut: result.sut },
+        } as DTO<DetailedDomain>
+      );
       return res.json(domain);
     }
   },

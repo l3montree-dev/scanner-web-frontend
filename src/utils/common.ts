@@ -205,6 +205,17 @@ export const neverThrow = async <T>(promise: Promise<T>): Promise<T | null> => {
   }
 };
 
+export const defaultOnError = async <T, D>(
+  promise: Promise<T>,
+  d: D
+): Promise<T | D> => {
+  const res = await neverThrow(promise);
+  if (res === null) {
+    return d;
+  }
+  return res;
+};
+
 export const dateFormat = {
   hour12: false,
   day: "2-digit" as const,

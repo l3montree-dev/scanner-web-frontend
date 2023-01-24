@@ -3,6 +3,7 @@ import { config } from "../config";
 import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
 import {
   DetailedDomain,
+  DomainType,
   IScanErrorResponse,
   PaginateRequest,
   PaginateResult,
@@ -93,6 +94,7 @@ const getDomainsOfNetworksWithLatestTestResult = async (
   paginateRequest: PaginateRequest & { search?: string } & {
     sort?: string;
     sortDirection?: string;
+    type?: DomainType;
   },
   prisma: PrismaClient
 ): Promise<PaginateResult<DTO<DetailedDomain>>> => {
@@ -114,13 +116,21 @@ const getDomainsOfNetworksWithLatestTestResult = async (
           },
         },
         ...(paginateRequest.search !== undefined &&
-        paginateRequest.search !== ""
-          ? {
-              fqdn: {
-                search: sqlValues[0] as string,
-              },
-            }
-          : {}),
+          paginateRequest.search !== "" && {
+            fqdn: {
+              search: sqlValues[0] as string,
+            },
+          }),
+        ...(paginateRequest.type !== undefined &&
+          paginateRequest.type !== DomainType.all && {
+            errorCount: {
+              ...(paginateRequest.type === DomainType.unreachable
+                ? {
+                    gte: 5,
+                  }
+                : { lt: 5 }),
+            },
+          }),
       },
     }),
 
@@ -139,6 +149,13 @@ const getDomainsOfNetworksWithLatestTestResult = async (
           : ""
       }
       AND userId = ?
+      ${
+        paginateRequest.type === DomainType.unreachable
+          ? "AND errorCount >= 5"
+          : paginateRequest.type === DomainType.reachable
+          ? "AND errorCount < 5"
+          : ""
+      }
       ORDER BY ${translateSort(paginateRequest.sort)} ${translateSortDirection(
         paginateRequest.sortDirection
       )}
