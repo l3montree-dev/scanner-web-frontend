@@ -26,7 +26,7 @@ const ResultBox: FunctionComponent<Props> = (props) => {
               ? "text-white"
               : props.didPass
               ? "text-lightning-500"
-              : "text-red-500"
+              : "text-white"
           )}
           icon={
             props.didPass === null
@@ -45,7 +45,7 @@ const ResultBox: FunctionComponent<Props> = (props) => {
                   ? "text-white"
                   : props.didPass
                   ? "text-lightning-500"
-                  : "text-red-500"
+                  : "text-white"
               )}
             >
               {props.title}

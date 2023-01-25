@@ -16,7 +16,7 @@ const borderClass = (didPass: boolean | null) => {
     ? "border-white"
     : didPass
     ? "border-lightning-500"
-    : "border-red-500";
+    : "border-white";
 };
 
 const messages = {
