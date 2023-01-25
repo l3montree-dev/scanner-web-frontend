@@ -181,7 +181,7 @@ export const linkMapper: { [key in InspectionType]: string } = {
   [CertificateInspectionType.ValidCertificateChain]: "",
   [CookieInspectionType.SecureSessionCookies]: "",
   [NetworkInspectionType.IPv6]: "",
-  [NetworkInspectionType.RPKI]: "",
+  [NetworkInspectionType.RPKI]: "/one-pager/RPKI-One-Pager.pdf",
   [DomainInspectionType.DNSSec]: "/one-pager/DNSSEC-One-Pager.pdf",
   [DomainInspectionType.CAA]: "",
   [OrganizationalInspectionType.ResponsibleDisclosure]:

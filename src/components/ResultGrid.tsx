@@ -135,6 +135,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
             title="RPKI"
             description={getDescription(report, "RPKI")}
             didPass={report.details.RPKI?.didPass ?? null}
+            link={linkMapper["RPKI"]}
           />
         </div>
       </div>
