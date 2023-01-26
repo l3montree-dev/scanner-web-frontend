@@ -38,7 +38,7 @@ export default function getRPKIReportMessage(report: DetailedDomain) {
 
     return `Das IP-Adressen Präfix ${actualValue.prefix} (AS: ${
       actualValue.asn
-    }${holderStr(actualValue.holder)}) weist ein valide Signatur auf.`;
+    }${holderStr(actualValue.holder)}) weist eine valide Signatur auf.`;
   } else {
     let actualValue: {
       prefix: string;
