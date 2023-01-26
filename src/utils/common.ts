@@ -63,6 +63,9 @@ export const limitStringValues = <T>(obj: T, charLimit = 255): T => {
   if (obj === null || obj === undefined) {
     return obj;
   }
+  if (obj instanceof Array) {
+    return obj.map((el) => limitStringValues(el, charLimit)) as any;
+  }
   if (typeof obj === "string") {
     return obj.slice(0, charLimit) as any;
   }
@@ -72,9 +75,6 @@ export const limitStringValues = <T>(obj: T, charLimit = 255): T => {
         return [key, limitStringValues(value, charLimit)];
       })
     ) as any;
-  }
-  if (obj instanceof Array) {
-    return obj.map((el) => limitStringValues(el, charLimit)) as any;
   }
   return obj;
 };
