@@ -56,7 +56,7 @@ export const transformIpLookupMsg2DTO = (
 };
 
 export const splitLineBreak = (str: string): string[] => {
-  return str.split(/\r?\n|\r|\n/g);
+  return str.split(/\r?\n|\r|\n/g).map((s) => s.trim());
 };
 
 export const limitStringValues = <T>(obj: T, charLimit = 255): T => {
