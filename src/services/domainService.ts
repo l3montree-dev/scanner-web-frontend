@@ -141,7 +141,7 @@ const getDomainsOfNetworksWithLatestTestResult = async (
     INNER JOIN domains d on udr.fqdn = d.fqdn 
     LEFT JOIN scan_reports sr on d.fqdn = sr.fqdn  
     WHERE NOT EXISTS(
-        SELECT 1 from scan_reports sr2 where sr.fqdn = sr2.fqdn AND sr.createdAt > sr2.createdAt
+        SELECT 1 from scan_reports sr2 where sr.fqdn = sr2.fqdn AND sr.createdAt < sr2.createdAt
       )
       ${
         paginateRequest.search !== undefined && paginateRequest.search !== ""
