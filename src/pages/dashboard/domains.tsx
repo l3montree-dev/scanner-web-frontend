@@ -587,13 +587,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                                   )}
                                 </div>
                               </MenuItem>
-                              <MenuItem
-                                loading={
-                                  scanRequest.key === domain.fqdn &&
-                                  scanRequest.isLoading
-                                }
-                                onClick={() => deleteFQDN(domain.fqdn)}
-                              >
+                              <MenuItem onClick={() => deleteFQDN(domain.fqdn)}>
                                 <div>Löschen</div>
                               </MenuItem>
                             </MenuList>

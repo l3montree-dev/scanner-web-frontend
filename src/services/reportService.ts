@@ -1,6 +1,7 @@
 import { PrismaClient, ScanReport } from "@prisma/client";
 import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
 import { DetailedDomain, IScanSuccessResponse } from "../types";
+import { limitStringValues } from "../utils/common";
 import { DTO, toDTO } from "../utils/server";
 
 const reportDidChange = (
@@ -14,6 +15,16 @@ const reportDidChange = (
   });
 
   return res;
+};
+
+export const scanResult2DomainDetails = (
+  scanResponse: IScanSuccessResponse
+): Record<string, any> => {
+  return {
+    ...limitStringValues(scanResponse.result),
+    // save the subject under test inside the details
+    sut: scanResponse.sut ?? scanResponse.target,
+  };
 };
 
 const combineReport = (
@@ -75,22 +86,14 @@ const handleNewScanReport = async (
         fqdn: newReport.fqdn,
         queued: false,
         lastScan: result.timestamp,
-        details: {
-          ...result.result,
-          // save the subject under test inside the details
-          sut: result.sut ?? result.target,
-        } as Record<string, any>,
+        details: scanResult2DomainDetails(result),
         group: "unknown",
       },
       update: {
         queued: false,
         lastScan: result.timestamp,
         errorCount: 0,
-        details: {
-          ...result.result,
-          // save the subject under test inside the details
-          sut: result.sut ?? result.target,
-        } as Record<string, any>,
+        details: {} as Record<string, any>,
       },
     });
 
@@ -106,11 +109,7 @@ const handleNewScanReport = async (
       queued: false,
       lastScan: result.timestamp,
       errorCount: 0,
-      details: {
-        ...result.result,
-        // save the subject under test inside the details
-        sut: result.sut ?? result.target,
-      } as Record<string, any>,
+      details: scanResult2DomainDetails(result),
     },
   });
 

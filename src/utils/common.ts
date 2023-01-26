@@ -55,6 +55,30 @@ export const transformIpLookupMsg2DTO = (
   };
 };
 
+export const splitLineBreak = (str: string): string[] => {
+  return str.split(/\r?\n|\r|\n/g);
+};
+
+export const limitStringValues = <T>(obj: T, charLimit = 255): T => {
+  if (obj === null || obj === undefined) {
+    return obj;
+  }
+  if (typeof obj === "string") {
+    return obj.slice(0, charLimit) as any;
+  }
+  if (typeof obj === "object") {
+    return Object.fromEntries(
+      Object.entries(obj).map(([key, value]) => {
+        return [key, limitStringValues(value, charLimit)];
+      })
+    ) as any;
+  }
+  if (obj instanceof Array) {
+    return obj.map((el) => limitStringValues(el, charLimit)) as any;
+  }
+  return obj;
+};
+
 export const isAdmin = (session: ISession | null | undefined): boolean => {
   if (!session || !session.resource_access) {
     return false;

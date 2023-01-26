@@ -8,7 +8,10 @@ import { withDB } from "../../decorators/withDB";
 import { inspectRPC } from "../../inspection/inspect";
 import { domainService } from "../../services/domainService";
 import { getLogger } from "../../services/logger";
-import { reportService } from "../../services/reportService";
+import {
+  reportService,
+  scanResult2DomainDetails,
+} from "../../services/reportService";
 import {
   defaultOnError,
   isScanError,
@@ -136,7 +139,7 @@ export default decorate(
           queued: false,
           createdAt: new Date(result.timestamp).toString(),
           updatedAt: new Date(result.timestamp).toString(),
-          details: { ...result.result, sut: result.sut },
+          details: scanResult2DomainDetails(result),
         } as DTO<DetailedDomain>
       );
       return res.json(domain);

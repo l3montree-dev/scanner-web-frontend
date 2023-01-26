@@ -1,5 +1,4 @@
 import { PrismaClient, User } from "@prisma/client";
-import { resolve4 } from "dns/promises";
 import formidable from "formidable";
 import fs from "fs/promises";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -14,6 +13,7 @@ import { domainService } from "../../services/domainService";
 import { getLogger } from "../../services/logger";
 import { statService } from "../../services/statService";
 import { ISession } from "../../types";
+import { splitLineBreak } from "../../utils/common";
 import { stream2buffer } from "../../utils/server";
 
 const logger = getLogger(__filename);
@@ -113,7 +113,7 @@ const handlePost = async (
         return data.toString();
       })
   );
-  const entries = files.map((file) => file.split("\n")).flat();
+  const entries = files.map((file) => splitLineBreak(file)).flat();
 
   const promiseQueue = new PQueue({ concurrency: 5, timeout: 5_000 });
 
