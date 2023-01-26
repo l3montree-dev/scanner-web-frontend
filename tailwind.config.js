@@ -23,6 +23,7 @@ module.exports = {
                     "800": "#00001a",
                     "900": "#000010"
                 },
+                silver: "#85878b",
                 lightning: {
                     "50": "#deffff",
                     "100": "#d4fff7",

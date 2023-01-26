@@ -16,7 +16,7 @@ const borderClass = (didPass: boolean | null) => {
     ? "border-white"
     : didPass
     ? "border-lightning-500"
-    : "border-white";
+    : "border-silver";
 };
 
 const messages = {
@@ -52,7 +52,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
       <div className="md:w-1/3 sm:w-1/2 w-full md:mb-4 mb-5 sm:pr-2">
         <div
           className={classNames(
-            "bg-deepblue-400 border h-full p-5",
+            "bg-deepblue-400 border-2 h-full p-5",
             borderClass(report.details.ResponsibleDisclosure?.didPass ?? null)
           )}
         >
@@ -67,7 +67,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
       <div className="md:w-1/3 sm:w-1/2 w-full sm:pl-2 md:px-2 md:mb-4 mb-5">
         <div
           className={classNames(
-            "bg-deepblue-400 border h-full p-4",
+            "bg-deepblue-400 border-2 h-full p-4",
             borderClass(report.details.TLSv1_3?.didPass ?? null)
           )}
         >
@@ -82,7 +82,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
       <div className="md:w-1/3 sm:w-1/2 w-full sm:pr-2 md:pr-0 md:pl-2 md:mb-4 mb-5">
         <div
           className={classNames(
-            "bg-deepblue-400 border h-full p-4",
+            "bg-deepblue-400 border-2 h-full p-4",
             borderClass(report.details.TLSv1_1_Deactivated?.didPass ?? null)
           )}
         >
@@ -97,7 +97,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
       <div className="md:w-1/3 sm:w-1/2 w-full md:mb-4 mb-5 sm:pl-2 md:pl-0 md:pr-2">
         <div
           className={classNames(
-            "bg-deepblue-400 border h-full p-4",
+            "bg-deepblue-400 border-2 h-full p-4",
             borderClass(report.details.HSTS?.didPass ?? null)
           )}
         >
@@ -112,7 +112,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
       <div className="md:w-1/3 sm:w-1/2 w-full sm:pr-2 md:mb-4 mb-5 md:px-2">
         <div
           className={classNames(
-            "bg-deepblue-400 border h-full p-4",
+            "bg-deepblue-400 border-2 h-full p-4",
             borderClass(report.details.DNSSec?.didPass ?? null)
           )}
         >
@@ -127,7 +127,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
       <div className="md:w-1/3 sm:w-1/2 w-full md:mb-4 mb-5 sm:pl-2">
         <div
           className={classNames(
-            "bg-deepblue-400 border h-full p-4",
+            "bg-deepblue-400 border-2 h-full p-4",
             borderClass(report.details.RPKI?.didPass ?? null)
           )}
         >
