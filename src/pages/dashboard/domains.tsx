@@ -342,12 +342,11 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                     <Checkbox
                       checked={
                         selectedFQDNs.length > 0 &&
-                        selectedFQDNs.length === props.domains.data.length
+                        selectedFQDNs.length === domains.length
                       }
                       onChange={() => {
-                        console.log("change");
                         setSelection((prev) => {
-                          return props.domains.data.reduce((acc, domain) => {
+                          return domains.reduce((acc, domain) => {
                             acc[domain.fqdn] = !Boolean(prev[domain.fqdn]);
                             return acc;
                           }, {} as Record<string, boolean>);
