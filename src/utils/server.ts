@@ -9,7 +9,11 @@ export const getServerSession = (
   res: GetServerSidePropsContext["res"],
   options: AuthOptions
 ): Promise<ISession | null> => {
-  return unstable_getServerSession(req, res, options);
+  return unstable_getServerSession(
+    req,
+    res,
+    options
+  ) as any as Promise<ISession | null>;
 };
 
 export async function stream2buffer(stream: Stream): Promise<Buffer> {
