@@ -1,4 +1,4 @@
-import { PrismaClient, User } from "@prisma/client";
+import { PrismaClient, User, Domain } from "@prisma/client";
 import { config } from "../config";
 import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
 import {
@@ -15,7 +15,7 @@ const handleNewDomain = async (
   domain: { fqdn: string; group?: string },
   prisma: PrismaClient,
   connectToUser?: User
-): Promise<{ fqdn: string }> => {
+): Promise<Domain> => {
   // fetch the last existing report and check if we only need to update that one.
   let payload = {
     fqdn: domain.fqdn,
@@ -23,11 +23,14 @@ const handleNewDomain = async (
     group: domain.group ?? "unknown",
   };
 
-  await neverThrow(
-    prisma.domain.create({
-      data: payload,
-    })
-  );
+  const d = await prisma.domain.upsert({
+    where: {
+      fqdn: payload.fqdn,
+    },
+    update: {},
+    create: payload,
+  });
+
   if (connectToUser) {
     await neverThrow(
       prisma.userDomainRelation.create({
@@ -39,7 +42,7 @@ const handleNewDomain = async (
     );
   }
 
-  return payload;
+  return d;
 };
 
 const handleDomainScanError = async (

@@ -72,7 +72,11 @@ const handlePost = async (
       (await stream2buffer(req)).toString()
     );
 
-    await domainService.handleNewDomain({ fqdn: domain }, prisma, session.user);
+    const d = await domainService.handleNewDomain(
+      { fqdn: domain },
+      prisma,
+      session.user
+    );
     // force the regeneration of all stats
     statService.generateStatsForUser(session.user, prisma, true).then(() => {
       logger.info(
@@ -80,7 +84,7 @@ const handlePost = async (
         `domain import - stats regenerated.`
       );
     });
-    return res.send({ success: true, fqdn: domain });
+    return res.send(d);
   }
 
   // the user uploads a file with domains.

@@ -2,6 +2,7 @@ import {
   faCheck,
   faQuestion,
   faTimes,
+  faWarning,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
@@ -26,14 +27,14 @@ const ResultBox: FunctionComponent<Props> = (props) => {
               ? "text-white"
               : props.didPass
               ? "text-lightning-500"
-              : "text-white"
+              : "text-yellow-500"
           )}
           icon={
             props.didPass === null
               ? faQuestion
               : props.didPass
               ? faCheck
-              : faTimes
+              : faWarning
           }
         />
         <div className={classNames("flex ml-4 md:ml-2 flex-col mt-0.5")}>
@@ -45,7 +46,7 @@ const ResultBox: FunctionComponent<Props> = (props) => {
                   ? "text-white"
                   : props.didPass
                   ? "text-lightning-500"
-                  : "text-white"
+                  : "text-yellow-500"
               )}
             >
               {props.title}

@@ -43,17 +43,6 @@ services:
       - .env
     volumes:
       - mysql_data:/var/lib/mysql
-  mongodb:
-    image: mongo
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=ozgsec
-      - MONGO_INITDB_ROOT_PASSWORD=secret12345
-      - MONGO_INITDB_DATABASE=ozgsec
-    ports:
-      - 27017:27017
-    volumes:
-      - db-data:/data/db
-      - mongo-config:/data/configdb
 
   influxdb:
     image: influxdb:2.6
@@ -80,7 +69,5 @@ services:
 
  
 volumes:
-  db-data:
-  mongo-config:
   redis_data:
   mysql_data:

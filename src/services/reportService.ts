@@ -93,7 +93,7 @@ const handleNewScanReport = async (
         queued: false,
         lastScan: result.timestamp,
         errorCount: 0,
-        details: {} as Record<string, any>,
+        details: scanResult2DomainDetails(result),
       },
     });
 

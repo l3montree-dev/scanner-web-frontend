@@ -176,19 +176,15 @@ const Dashboard: FunctionComponent<Props> = (props) => {
     );
 
     if (response.ok) {
-      const data: DetailedDomain = await response.json();
+      const data: DTO<DetailedDomain> = await response.json();
       // inject it into the domains
       setDomains((prev) => {
-        const index = prev.findIndex((d) => d.fqdn === fqdn);
-        if (index === -1) {
-          return prev;
-        }
-        const newDomains = [...prev];
-        newDomains[index] = {
-          ...newDomains[index],
-          lastScan: data.lastScan,
-        };
-        return newDomains;
+        return prev.map((d) => {
+          if (d.fqdn === data.fqdn) {
+            return data;
+          }
+          return d;
+        });
       });
       scanRequest.success();
     } else {
@@ -225,6 +221,8 @@ const Dashboard: FunctionComponent<Props> = (props) => {
     if (!res.ok) {
       throw res;
     }
+    const detailedDomain = await res.json();
+    setDomains((prev) => [...prev, detailedDomain]);
   };
 
   const handleFileFormSubmit = async (files: File[]) => {
