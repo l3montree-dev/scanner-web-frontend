@@ -107,3 +107,6 @@ th > div {
     min-width: 600px;
 }
 
+.line-height-0 {
+    line-height: 0;
+}

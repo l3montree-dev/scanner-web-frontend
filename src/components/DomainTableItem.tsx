@@ -1,20 +1,23 @@
 import {
-  faQuestionCircle,
   faEllipsisVertical,
   faPlus,
+  faQuestionCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { FunctionComponent } from "react";
+import { FunctionComponent, useState } from "react";
 import useLoading from "../hooks/useLoading";
 import { DetailedDomain } from "../types";
 import { classNames } from "../utils/common";
 import { DTO } from "../utils/server";
+import Button from "./Button";
 import Checkbox from "./Checkbox";
 import Menu from "./Menu";
 import MenuItem from "./MenuItem";
 import MenuList from "./MenuList";
 import ResultIcon from "./ResultIcon";
 import Tooltip from "./Tooltip";
+
+const colors = ["#eab308", "#f97316", "#84cc16", "#0d9488", "#ef4444"];
 
 interface Props {
   domain: DTO<DetailedDomain>;
@@ -37,6 +40,8 @@ const DomainTableItem: FunctionComponent<Props> = ({
   totalElements,
   scanRequest,
 }) => {
+  const [tagName, setTagName] = useState("");
+  const [tagColor, setTagColor] = useState(colors[0]);
   return (
     <div
       className={classNames(
@@ -153,16 +158,17 @@ const DomainTableItem: FunctionComponent<Props> = ({
         >
           <ResultIcon didPass={domain.details?.RPKI?.didPass} />
         </div>
-        <div className="flex flex-row p-2 basis-2/16 flex-wrap gap-1 text-xs">
+        <div className="flex flex-row p-2 basis-2/16 flex-wrap gap-1">
           {["Steuern", "OZG"].map((item) => (
             <div
-              className="border border-deepblue-50 text-slate-200 bg-deepblue-100 px-2 py-1 flex-row flex items-center justify-center rounded-full"
+              className="border text-xs border-deepblue-50 text-slate-200 bg-deepblue-100 px-2 py-1 flex-row flex items-center justify-center rounded-full"
               key={item}
             >
               <span>{item}</span>
             </div>
           ))}
           <Menu
+            menuCloseIndex={0}
             Button={
               <div className="border transition-all border-deepblue-50 hover:bg-deepblue-100 text-slate-200 flex flex-row items-center w-7 h-7 justify-center rounded-full">
                 <FontAwesomeIcon icon={faPlus} />
@@ -170,15 +176,51 @@ const DomainTableItem: FunctionComponent<Props> = ({
             }
             Menu={
               <MenuList>
-                <MenuItem>
-                  <input />
-                </MenuItem>
+                <div className="p-2">
+                  <div className="flex items-center line-height-0 flex-row">
+                    <Menu
+                      menuCloseIndex={1}
+                      Button={
+                        <div
+                          className="w-9 mr-1 h-9 rounded-sm"
+                          style={{ backgroundColor: tagColor }}
+                        />
+                      }
+                      Menu={
+                        <div className="flex mb-2 bg-deepblue-50 p-2 flex-wrap gap-1 justify-start items-center">
+                          {colors.map((color) => (
+                            <div
+                              onClick={() => setTagColor(color)}
+                              key={color}
+                              className="w-9 h-9 rounded-sm"
+                              style={{ backgroundColor: color }}
+                            />
+                          ))}
+                        </div>
+                      }
+                    />
+                    <input
+                      placeholder="Neues Tag erstellen"
+                      className="px-3 py-2 text-sm outline-lightning-500 text-deepblue-500 w-56"
+                    />
+                  </div>
+                  <div className="flex text-sm flex-row justify-end">
+                    <Button
+                      className="bg-lightning-500 font-bold text-deepblue-500 hover:bg-lightning-800 transition-all px-3 py-2 mt-2 text-center"
+                      loading={false}
+                      type="submit"
+                    >
+                      Erstellen
+                    </Button>
+                  </div>
+                </div>
               </MenuList>
             }
           />
         </div>
         <div className="text-right basis-1/16 p-2">
           <Menu
+            menuCloseIndex={0}
             Button={
               <div className="p-2 h-8 w-8 flex flex-row items-center justify-center">
                 <FontAwesomeIcon icon={faEllipsisVertical} />

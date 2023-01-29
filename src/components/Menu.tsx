@@ -1,7 +1,9 @@
 import React, {
   FunctionComponent,
   MouseEventHandler,
+  useCallback,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import { classNames } from "../utils/common";
@@ -9,31 +11,64 @@ import { classNames } from "../utils/common";
 interface Props {
   Button: React.ReactNode;
   Menu: React.ReactNode;
+  // clicking on a menu will always close all menus, which have a greater index than the clicked menu
+  menuCloseIndex: number;
 }
-const Menu: FunctionComponent<Props> = ({ Button, Menu }) => {
+
+const selfDestroyingListener = (
+  element: Node,
+  eventType: string,
+  callback: (e: any) => boolean
+) => {
+  let handler = (e: any) => {
+    const shouldRemove = callback(e);
+    if (shouldRemove) {
+      element.removeEventListener(eventType, handler);
+    }
+  };
+  element.addEventListener(eventType, handler);
+};
+
+const Menu: FunctionComponent<Props> = ({ Button, Menu, menuCloseIndex }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleMenuClick: MouseEventHandler = (e) => {
     e.stopPropagation();
+
+    document.dispatchEvent(
+      new CustomEvent("menu-click", { bubbles: true, detail: menuCloseIndex })
+    );
+  };
+
+  const maybeCloseMenuAndUnregisterListener = (e: CustomEvent) => {
+    let event = e as CustomEvent;
+    if (event.detail !== undefined && event.detail >= menuCloseIndex) {
+      return false;
+    }
+
+    setIsOpen(false);
+    return true;
   };
 
   const openMenu: MouseEventHandler = (e) => {
     const current = isOpen;
     setIsOpen((prev) => !prev);
     if (!current) {
-      setTimeout(
-        () =>
-          document.addEventListener(
-            "click",
-            () => {
-              setIsOpen(false);
-            },
-            {
-              once: true,
-            }
-          ),
-        0
-      );
+      setTimeout(() => {
+        selfDestroyingListener(
+          document,
+          "menu-click",
+          maybeCloseMenuAndUnregisterListener
+        );
+
+        document.addEventListener(
+          "click",
+          () => {
+            setIsOpen(false);
+          },
+          { once: true }
+        );
+      }, 100);
     }
   };
 
