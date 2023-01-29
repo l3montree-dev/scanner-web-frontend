@@ -1,36 +1,21 @@
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import {
-  faCaretDown,
-  faCaretUp,
-  faEllipsisVertical,
-  faQuestionCircle,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
 import { FunctionComponent, useEffect, useMemo, useState } from "react";
-import Button from "../../components/Button";
-import Checkbox from "../../components/Checkbox";
 import DashboardPage from "../../components/DashboardPage";
 import DomainOverviewForm from "../../components/DomainOverviewForm";
+import DomainTableHeader from "../../components/DomainTableHeader";
+import DomainTableItem from "../../components/DomainTableItem";
 import Menu from "../../components/Menu";
 import MenuItem from "../../components/MenuItem";
 import MenuList from "../../components/MenuList";
 import Pagination from "../../components/Pagination";
-import ResultIcon from "../../components/ResultIcon";
 import SideNavigation from "../../components/SideNavigation";
-import Tooltip from "../../components/Tooltip";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
 import { withCurrentUser } from "../../decorators/withCurrentUser";
 import { withDB } from "../../decorators/withDB";
 import useLoading from "../../hooks/useLoading";
-import {
-  DomainInspectionType,
-  HeaderInspectionType,
-  InspectionType,
-  NetworkInspectionType,
-  OrganizationalInspectionType,
-  TLSInspectionType,
-} from "../../inspection/scans";
+import { InspectionType } from "../../inspection/scans";
 import { clientHttpClient } from "../../services/clientHttpClient";
 import { domainService } from "../../services/domainService";
 
@@ -46,28 +31,6 @@ import { DTO } from "../../utils/server";
 interface Props {
   domains: PaginateResult<DTO<DetailedDomain>>;
 }
-
-const SortButton: FunctionComponent<{
-  sortKey: "fqdn" | keyof IScanSuccessResponse["result"];
-  onSort: (key: "fqdn" | keyof IScanSuccessResponse["result"]) => void;
-  active: boolean;
-  getIcon: () => IconProp;
-}> = ({ sortKey: key, onSort, active, getIcon }) => {
-  return (
-    <button
-      onClick={() => {
-        onSort(key);
-      }}
-      className={classNames(
-        "hover:bg-deepblue-200 ml-2 transition-all w-8 h-8 hover:text-white",
-        !active && "text-gray-500",
-        active && "text-white"
-      )}
-    >
-      <FontAwesomeIcon icon={getIcon()} />
-    </button>
-  );
-};
 
 const translateDomainType = (type: DomainType) => {
   switch (type) {
@@ -103,13 +66,6 @@ const Dashboard: FunctionComponent<Props> = (props) => {
       sort: instructions.key,
       sortDirection: instructions.direction.toString(),
     });
-  };
-
-  const getIcon = (key: InspectionType | "fqdn") => {
-    if (sort.key === key) {
-      return sort.direction === 1 ? faCaretUp : faCaretDown;
-    }
-    return faCaretUp;
   };
 
   const patchQuery = (query: Record<string, string>) => {
@@ -251,7 +207,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
       <div className="flex-1">
         <div className="text-white">
           <h1 className="text-4xl mb-5 font-bold">Domainübersicht</h1>
-          <p className="mb-10 w-1/2 text-slate-300">
+          <p className="mb-10 w-2/3 text-slate-300">
             Auf der Domainübersicht finden Sie alle Testergebnisse für Ihre
             Domains auf einen Blick. Hier können Sie schnell und einfach
             vergleichen, wie gut die verschiedenen Domains in Bezug auf die
@@ -335,267 +291,37 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                 }
               />
             </div>
-            <table className="w-full">
-              <thead className="">
-                <tr className="bg-deepblue-200 text-sm border-b border-b-deepblue-50 text-left">
-                  <th className="p-2 pr-0">
-                    <Checkbox
-                      checked={
-                        selectedFQDNs.length > 0 &&
-                        selectedFQDNs.length === domains.length
-                      }
-                      onChange={() => {
-                        setSelection((prev) => {
-                          return domains.reduce((acc, domain) => {
-                            acc[domain.fqdn] = !Boolean(prev[domain.fqdn]);
-                            return acc;
-                          }, {} as Record<string, boolean>);
+            <div className="w-full">
+              <DomainTableHeader
+                selectedFQDNs={selectedFQDNs}
+                domains={domains}
+                setSelection={setSelection}
+                sort={sort}
+                handleSort={handleSort}
+              />
+              <div>
+                {domains.map((domain, i) => {
+                  return (
+                    <DomainTableItem
+                      domain={domain}
+                      key={domain.fqdn}
+                      i={i}
+                      selection={selection}
+                      deleteFQDN={deleteFQDN}
+                      scanFQDN={scanFQDN}
+                      scanRequest={scanRequest}
+                      totalElements={domains.length}
+                      select={(fqdn) => {
+                        setSelection({
+                          ...selection,
+                          [fqdn]: !Boolean(selection[fqdn]),
                         });
                       }}
                     />
-                  </th>
-                  <th className="p-2">
-                    <div>
-                      <span>Domain</span>
-                      <SortButton
-                        sortKey="fqdn"
-                        onSort={handleSort}
-                        active={sort.key === "fqdn"}
-                        getIcon={() => getIcon("fqdn")}
-                      />
-                    </div>
-                  </th>
-                  <th className="p-2">
-                    <div>
-                      <span>Responsible Disclosure</span>
-                      <SortButton
-                        sortKey={
-                          OrganizationalInspectionType.ResponsibleDisclosure
-                        }
-                        onSort={handleSort}
-                        active={
-                          sort.key ===
-                          OrganizationalInspectionType.ResponsibleDisclosure
-                        }
-                        getIcon={() =>
-                          getIcon(
-                            OrganizationalInspectionType.ResponsibleDisclosure
-                          )
-                        }
-                      />
-                    </div>
-                  </th>
-                  <th className="p-2">
-                    <div>
-                      <span>TLS 1.3</span>
-                      <SortButton
-                        sortKey={TLSInspectionType.TLSv1_3}
-                        onSort={handleSort}
-                        active={sort.key === TLSInspectionType.TLSv1_3}
-                        getIcon={() => getIcon(TLSInspectionType.TLSv1_3)}
-                      />
-                    </div>
-                  </th>
-                  <th className="p-2">
-                    <div>
-                      <span>
-                        Veraltete TLS/ SSL
-                        <br /> Protokolle deaktiviert
-                      </span>
-                      <SortButton
-                        sortKey={TLSInspectionType.TLSv1_1_Deactivated}
-                        onSort={handleSort}
-                        active={
-                          sort.key === TLSInspectionType.TLSv1_1_Deactivated
-                        }
-                        getIcon={() =>
-                          getIcon(TLSInspectionType.TLSv1_1_Deactivated)
-                        }
-                      />
-                    </div>
-                  </th>
-                  <th className="p-2">
-                    <div>
-                      <span className="whitespace-nowrap">HSTS</span>
-                      <SortButton
-                        sortKey={HeaderInspectionType.HSTS}
-                        onSort={handleSort}
-                        active={sort.key === HeaderInspectionType.HSTS}
-                        getIcon={() => getIcon(HeaderInspectionType.HSTS)}
-                      />
-                    </div>
-                  </th>
-                  <th className="p-2">
-                    <div>
-                      <span>DNSSEC</span>
-                      <SortButton
-                        sortKey={DomainInspectionType.DNSSec}
-                        onSort={handleSort}
-                        active={sort.key === DomainInspectionType.DNSSec}
-                        getIcon={() => getIcon(DomainInspectionType.DNSSec)}
-                      />
-                    </div>
-                  </th>
-                  <th className="p-2">
-                    <div>
-                      <span className="whitespace-nowrap">RPKI</span>
-                      <SortButton
-                        sortKey={NetworkInspectionType.RPKI}
-                        onSort={handleSort}
-                        active={sort.key === NetworkInspectionType.RPKI}
-                        getIcon={() => getIcon(NetworkInspectionType.RPKI)}
-                      />
-                    </div>
-                  </th>
-                  <th className="p-2">
-                    <div>
-                      <span>Aktionen</span>
-                    </div>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {domains.map((domain, i) => {
-                  return (
-                    <tr
-                      onClick={() => {
-                        setSelection((prev) => {
-                          if (prev[domain.fqdn] === undefined) {
-                            prev[domain.fqdn] = true;
-                            return { ...prev };
-                          }
-                          return {
-                            ...prev,
-                            [domain.fqdn]: !prev[domain.fqdn],
-                          };
-                        });
-                      }}
-                      className={classNames(
-                        "cursor-pointer",
-                        i !== domains.length - 1 && "border-b",
-                        "border-b-deepblue-300 transition-all",
-                        domain.errorCount !== null && domain.errorCount >= 5
-                          ? "line-through"
-                          : "",
-                        selection[domain.fqdn]
-                          ? "bg-deepblue-200"
-                          : i % 2 === 0
-                          ? "bg-deepblue-400"
-                          : "bg-deepblue-500"
-                      )}
-                      key={domain.fqdn}
-                    >
-                      <td className="p-2 pr-0">
-                        <div className="flex flex-row items-center">
-                          <Checkbox
-                            onChange={() => {
-                              setSelection((prev) => {
-                                if (prev[domain.fqdn] === undefined) {
-                                  prev[domain.fqdn] = true;
-                                  return { ...prev };
-                                }
-                                return {
-                                  ...prev,
-                                  [domain.fqdn]: !prev[domain.fqdn],
-                                };
-                              });
-                            }}
-                            checked={Boolean(selection[domain.fqdn])}
-                          />
-                        </div>
-                      </td>
-                      <td className="p-2">
-                        {domain.fqdn}
-                        <div className="inline ml-2">
-                          <Tooltip
-                            tooltip={
-                              domain.lastScan !== null
-                                ? `Letzter Scan: ${new Date(
-                                    domain.lastScan
-                                  ).toLocaleString()}${
-                                    domain.errorCount !== null &&
-                                    domain.errorCount > 0
-                                      ? ` (${domain.errorCount} Fehler)`
-                                      : ""
-                                  }${
-                                    domain.errorCount !== null &&
-                                    domain.errorCount >= 5
-                                      ? " Domain wird nicht mehr automatisiert gescanned, da 5 Fehler überschritten wurden"
-                                      : ""
-                                  }`
-                                : "Noch nicht gescannt"
-                            }
-                          >
-                            <FontAwesomeIcon
-                              className="opacity-50"
-                              icon={faQuestionCircle}
-                            />
-                          </Tooltip>
-                        </div>
-                      </td>
-                      <td className="p-2">
-                        <ResultIcon
-                          didPass={
-                            domain.details?.ResponsibleDisclosure?.didPass
-                          }
-                        />
-                      </td>
-                      <td className="p-2">
-                        <ResultIcon
-                          didPass={domain.details?.TLSv1_3?.didPass}
-                        />
-                      </td>
-                      <td className="p-2">
-                        <ResultIcon
-                          didPass={domain.details?.TLSv1_1_Deactivated?.didPass}
-                        />
-                      </td>
-                      <td className="p-2">
-                        <ResultIcon didPass={domain.details?.HSTS?.didPass} />
-                      </td>
-                      <td className="p-2">
-                        <ResultIcon didPass={domain.details?.DNSSec?.didPass} />
-                      </td>
-                      <td className="p-2">
-                        <ResultIcon didPass={domain.details?.RPKI?.didPass} />
-                      </td>
-                      <td className="text-right p-2">
-                        <Menu
-                          Button={
-                            <div className="p-2 h-8 w-8 flex flex-row items-center justify-center">
-                              <FontAwesomeIcon icon={faEllipsisVertical} />
-                            </div>
-                          }
-                          Menu={
-                            <MenuList>
-                              <MenuItem
-                                loading={
-                                  scanRequest.key === domain.fqdn &&
-                                  scanRequest.isLoading
-                                }
-                                onClick={() => scanFQDN(domain.fqdn)}
-                              >
-                                <div>
-                                  <div>Erneut scannen</div>
-                                  {scanRequest.key === domain.fqdn && (
-                                    <span className="block text-red-500 text-sm">
-                                      {scanRequest.errorMessage}
-                                    </span>
-                                  )}
-                                </div>
-                              </MenuItem>
-                              <MenuItem onClick={() => deleteFQDN(domain.fqdn)}>
-                                <div>Löschen</div>
-                              </MenuItem>
-                            </MenuList>
-                          }
-                        />
-                      </td>
-                    </tr>
                   );
                 })}
-              </tbody>
-            </table>
+              </div>
+            </div>
           </div>
           <div className="mt-5 flex flex-row justify-center">
             <Pagination

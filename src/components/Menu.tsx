@@ -18,21 +18,23 @@ const Menu: FunctionComponent<Props> = ({ Button, Menu }) => {
   };
 
   const openMenu: MouseEventHandler = (e) => {
-    e.stopPropagation();
-    setIsOpen(true);
-    setTimeout(
-      () =>
-        document.addEventListener(
-          "click",
-          () => {
-            setIsOpen(false);
-          },
-          {
-            once: true,
-          }
-        ),
-      0
-    );
+    const current = isOpen;
+    setIsOpen((prev) => !prev);
+    if (!current) {
+      setTimeout(
+        () =>
+          document.addEventListener(
+            "click",
+            () => {
+              setIsOpen(false);
+            },
+            {
+              once: true,
+            }
+          ),
+        0
+      );
+    }
   };
 
   useEffect(() => {}, []);

@@ -60,13 +60,14 @@ const ResultBox: FunctionComponent<Props> = (props) => {
 
       {props.link !== undefined && (
         <div className="flex flex-row justify-end">
-          <Link
+          <a
             target={"_blank"}
             href={props.link}
             className="text-sm w-full inline-block overflow-hidden truncate text-right whitespace-nowrap top-1 underline right-0 mt-2 px-5"
+            rel="noreferrer"
           >
             Was ist &quot;{props.title}&quot;?
-          </Link>
+          </a>
         </div>
       )}
     </div>

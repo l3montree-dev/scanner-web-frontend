@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
@@ -14,7 +14,7 @@ datasource db {
 model ScanReport {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   ipAddress String? @db.VarChar(255)
   duration  Int
@@ -61,7 +61,6 @@ model ScanReport {
   ValidCertificateChain   Boolean?
 
   @@index([createdAt])
-
   @@index([fqdn])
   @@index([SubResourceIntegrity])
   @@index([NoMixedContent])
@@ -100,7 +99,7 @@ model Domain {
   fqdn String @id
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   lastScan   BigInt?
   errorCount Int     @default(0)
@@ -116,30 +115,32 @@ model Domain {
   // the full report
   details Json?
 
+  tags Tag[] @relation("domain_tags")
+
   @@index([group])
   @@index([lastScan])
-  @@map("domains")
-
   @@fulltext([fqdn])
+  @@map("domains")
 }
 
 model UserDomainRelation {
-  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId   String
-  domain   Domain @relation(fields: [fqdn], references: [fqdn], onDelete: Cascade)
-  fqdn String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  domain Domain @relation(fields: [fqdn], references: [fqdn], onDelete: Cascade)
+  fqdn   String
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@id([userId, fqdn])
   @@map("user_domain_relations")
 }
 
 model User {
-  id         String               @id
-  role       String?
-  domains    UserDomainRelation[]
+  id      String               @id
+  role    String?
+  domains UserDomainRelation[]
+  tags    Tag[]
 
   @@map("users")
 }
@@ -157,12 +158,25 @@ model Network {
   @@map("networks")
 }
 
-
 model Stat {
-    subject String
-    time BigInt
-    value Json
+  subject String
+  time    BigInt
+  value   Json
 
-    @@id([subject, time])
-    @@map("stats")
+  @@id([subject, time])
+  @@map("stats")
+}
+
+model Tag {
+  id      Int      @id @default(autoincrement())
+  title   String
+  domains Domain[] @relation("domain_tags")
+  user    User     @relation(fields: [userId], references: [id])
+  userId  String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@unique([title, userId])
+  @@map("tags")
 }

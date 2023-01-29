@@ -82,7 +82,7 @@ const DomainOverviewForm: FunctionComponent<{
           <div>
             <Button
               spinnerSize={32}
-              className="bg-deepblue-100 border border-deepblue-100 ml-5 hover:bg-deepblue-300 text-white p-2"
+              className="bg-deepblue-100 border border-deepblue-100 ml-2 hover:bg-deepblue-300 text-white p-2"
               type="submit"
               spinnerColor="white"
               loading={searchRequest.isLoading}
@@ -94,7 +94,7 @@ const DomainOverviewForm: FunctionComponent<{
         <div>
           <Button
             className={classNames(
-              "border border-deepblue-100 ml-5 transition-all text-white p-2",
+              "border border-deepblue-100 ml-2 transition-all text-white p-2",
               addDomainIsOpen
                 ? "bg-deepblue-100 hover:bg-deepblue-300"
                 : "hover:bg-deepblue-200"
@@ -130,7 +130,7 @@ const DomainOverviewForm: FunctionComponent<{
                 <Button
                   spinnerSize={32}
                   spinnerColor="white"
-                  className="bg-deepblue-100 ml-5 text-white border border-deepblue-100 p-2 transition-all hover:bg-deepblue-300"
+                  className="bg-deepblue-100 ml-2 text-white border border-deepblue-100 p-2 transition-all hover:bg-deepblue-300"
                   type="submit"
                   loading={createRequest.isLoading}
                 >
@@ -203,7 +203,7 @@ const DomainOverviewForm: FunctionComponent<{
                       Domains dem System hinzufügen
                     </Button>
                     <Button
-                      className="border hover:bg-deepblue-200 transition-all border-deepblue-100 ml-5 text-white p-2"
+                      className="border hover:bg-deepblue-200 transition-all border-deepblue-100 ml-2 text-white p-2"
                       type="submit"
                       loading={createRequest.isLoading}
                       onClick={() => setAddDomainIsOpen(false)}
