@@ -184,14 +184,6 @@ const Home: NextPage<Props> = ({ displayNotAvailable }) => {
             refreshRequest={refreshRequest}
             amountPassed={amountPassed}
           />
-          <div className="flex flex-row justify-center mt-4">
-            <a
-              className="bg-lightning-500 hover:bg-lightning-900 hover:no-underline text-deepblue-500 transition-all font-bold px-8 py-4"
-              href="docs.ozgsec.de"
-            >
-              Hilfe
-            </a>
-          </div>
         </div>
       </div>
     </Page>
