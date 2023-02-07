@@ -198,7 +198,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   // check if the user does provide a valid query parameter
   const code = query["s"];
   if (
-    context.req.headers.host === "localhost:3000" ||
+    /*context.req.headers.host === "localhost:3000"*/ false ||
     (code && (+code === 423333 || +code % 42 === 0))
   ) {
     return {

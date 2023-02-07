@@ -6,7 +6,10 @@ const calculateTimeLeft = (): {
   minutes: number;
   seconds: number;
 } => {
-  const difference = new Date("2023-02-08").getTime() - new Date().getTime();
+  const endDate = new Date("2023-02-08");
+
+  const difference =
+    endDate.getTime() - Date.now() + 1000 * 60 * endDate.getTimezoneOffset();
   let timeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0 };
 
   if (difference > 0) {
@@ -36,28 +39,28 @@ const Countdown: FunctionComponent = () => {
     return () => clearInterval(timer);
   }, []);
   return (
-    <div className="grid grid-flow-col gap-5 text-center auto-cols-max text-white justify-center">
-      <div className="flex flex-col p-4 rounded bg-deepblue-200">
+    <div className="text-center flex flex-row gap-5 text-white justify-center">
+      <div className="flex flex-col flex-1 p-4 bg-deepblue-200">
         <span className="text-5xl">
-          <span> {timeLeft.days} </span>
+          <span>{timeLeft.days}</span>
         </span>
         Tagen
       </div>
-      <div className="flex flex-col p-4 rounded bg-deepblue-200">
+      <div className="flex flex-1 flex-col p-4 bg-deepblue-200">
         <span className="text-5xl">
-          <span> {timeLeft.hours} </span>
+          <span>{timeLeft.hours}</span>
         </span>
         Stunden
       </div>
-      <div className="flex flex-col p-4 rounded bg-deepblue-200">
+      <div className="flex flex-1 flex-col p-4 bg-deepblue-200">
         <span className="text-5xl">
-          <span> {timeLeft.minutes} </span>
+          <span>{timeLeft.minutes}</span>
         </span>
         Minuten
       </div>
-      <div className="flex flex-col p-4 rounded bg-deepblue-200">
+      <div className="flex flex-1 flex-col p-4 bg-deepblue-200">
         <span className="text-5xl">
-          <span> {timeLeft.seconds} </span>
+          <span>{timeLeft.seconds}</span>
         </span>
         Sekunden
       </div>
