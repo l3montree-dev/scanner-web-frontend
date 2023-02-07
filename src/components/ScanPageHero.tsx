@@ -24,7 +24,7 @@ const ScanPageHero: FunctionComponent<Props> = ({
   scanRequest,
 }) => {
   return (
-    <div className="md:bg-deepblue-400 p-4 pb-14 md:mt-0 mt-10 md:p-10">
+    <div className="md:bg-deepblue-400 p-4 md:mt-0 mt-10 md:p-10">
       <div className="flex flex-wrap sm:flex-nowrap flex-row items-start justify-between">
         <h1 className="text-5xl sm:order-1 order-2 mb-3 text-white font-bold">
           OZG Security Challenge 2023
@@ -58,10 +58,10 @@ const ScanPageHero: FunctionComponent<Props> = ({
         )}
       </div>
       <p className="text-white">
-        Mit diesem Tool kann ein Schnelltest einer Webseite in Bezug auf
-        ausgewählte IT-Sicherheitskriterien und Best Practices durchgeführt
-        werden. Um einen Scan zu starten, geben Sie eine Webseite-Domain ein und
-        drücken Sie auf den Button „Scan starten“.
+        Mit diesem Schnelltest können Sie Ihre Webseite in Bezug auf sechs
+        spezifische IT-Sicherheitskriterien testen. Machen Sie mit und tragen
+        Sie zur weiteren Steigerung der Sicherheit der öffentlichen Verwaltung
+        bei.
       </p>
     </div>
   );
