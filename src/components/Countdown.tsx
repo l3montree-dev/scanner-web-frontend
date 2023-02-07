@@ -41,25 +41,25 @@ const Countdown: FunctionComponent = () => {
   return (
     <div className="text-center mx-5 flex-wrap flex flex-row gap-4 text-white justify-center">
       <div className="flex flex-col whitespace-nowrap flex-1 p-4 bg-deepblue-200">
-        <span className="text-5xl">
+        <span className="text-4xl">
           <span>{timeLeft.days}</span>
         </span>
         Tagen
       </div>
       <div className="flex flex-1 whitespace-nowrap flex-col p-4 bg-deepblue-200">
-        <span className="text-5xl">
+        <span className="text-4xl">
           <span>{timeLeft.hours}</span>
         </span>
         Stunden
       </div>
       <div className="flex flex-1  whitespace-nowrap flex-col p-4 bg-deepblue-200">
-        <span className="text-5xl">
+        <span className="text-4xl">
           <span>{timeLeft.minutes}</span>
         </span>
         Minuten
       </div>
       <div className="flex flex-1 flex-col p-4 bg-deepblue-200">
-        <span className="text-5xl">
+        <span className="text-4xl">
           <span>{timeLeft.seconds}</span>
         </span>
         Sekunden

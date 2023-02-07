@@ -166,3 +166,9 @@ model Stat {
     @@id([subject, time])
     @@map("stats")
 }
+
+model Email {
+    email String @id
+
+    @@map("emails")
+}

@@ -1,6 +1,6 @@
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { FunctionComponent, useState } from "react";
+import { FunctionComponent } from "react";
 import { classNames } from "../utils/common";
 
 interface Props {
@@ -19,6 +19,12 @@ const Checkbox: FunctionComponent<Props> = (props) => {
         props.checked ? "bg-lightning-500" : "bg-deepblue-100"
       )}
     >
+      <input
+        type={"checkbox"}
+        checked={props.checked}
+        onChange={props.onChange}
+        className={"hidden"}
+      />
       {props.checked && (
         <FontAwesomeIcon className="text-deepblue-500" icon={faCheck} />
       )}
