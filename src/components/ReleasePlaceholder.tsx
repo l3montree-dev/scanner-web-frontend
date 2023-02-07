@@ -1,15 +1,51 @@
 import React, { FunctionComponent } from "react";
 import useCheckbox from "../hooks/useCheckbox";
 import useInput from "../hooks/useInput";
+import useRequest from "../hooks/useRequest";
+import { clientHttpClient } from "../services/clientHttpClient";
 import Button from "./Button";
 import Checkbox from "./Checkbox";
 import Countdown from "./Countdown";
 import FormInput from "./FormInput";
 import PrimaryButton from "./PrimaryButton";
 
+const emailRegex = new RegExp(
+  /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*$/
+);
 const ReleasePlaceHolder: FunctionComponent = () => {
   const email = useInput();
   const check = useCheckbox();
+
+  const submitRequest = useRequest();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!email.value || !emailRegex.test(email.value)) {
+      return;
+    }
+
+    if (!check.value) {
+      return;
+    }
+
+    const data = {
+      email: email.value,
+      check: check.value,
+    };
+
+    submitRequest
+      .run(
+        clientHttpClient("/api/subscribe", crypto.randomUUID(), {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        })
+      )
+      .catch();
+  };
   return (
     <div className="flex md:py-10 flex-col w-full justify-center text-white">
       <div className="max-w-screen-lg w-full md:p-5 mx-auto">
@@ -35,9 +71,10 @@ const ReleasePlaceHolder: FunctionComponent = () => {
             Melden Sie sich jetzt für die OZG Security Challenge an und erhalten
             Sie exklusive Infos:
           </p>
-          <form className="text-black mt-5">
+          <form onSubmit={handleSubmit} className="text-black mt-5">
             <div className="">
               <FormInput
+                type="email"
                 placeholder="Geben Sie hier Ihre E-Mail Adresse ein"
                 {...email}
                 label="E-Mail Adresse"
@@ -67,7 +104,7 @@ const ReleasePlaceHolder: FunctionComponent = () => {
                 </div>
                 <div className="whitespace-nowrap">
                   <PrimaryButton
-                    disabled={!check.checked}
+                    disabled={!check.checked || !emailRegex.test(email.value)}
                     loading={false}
                     type="submit"
                   >
@@ -76,6 +113,17 @@ const ReleasePlaceHolder: FunctionComponent = () => {
                 </div>
               </div>
             </div>
+            {submitRequest.isError && (
+              <div className="text-red-500 text-right mt-2">
+                Ein Fehler ist aufgetreten. Bitte versuchen Sie es später noch
+                mal.
+              </div>
+            )}
+            {submitRequest.isSuccess && (
+              <div className="text-lightning-500 text-right mt-2">
+                Vielen Dank für Ihre Anmeldung.
+              </div>
+            )}
           </form>
         </div>
       </div>
