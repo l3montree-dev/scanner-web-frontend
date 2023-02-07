@@ -6,7 +6,7 @@ const calculateTimeLeft = (): {
   minutes: number;
   seconds: number;
 } => {
-  const endDate = new Date("2023-02-08");
+  const endDate = new Date("2023-03-29");
 
   const difference =
     endDate.getTime() - Date.now() + 1000 * 60 * endDate.getTimezoneOffset();
@@ -39,20 +39,20 @@ const Countdown: FunctionComponent = () => {
     return () => clearInterval(timer);
   }, []);
   return (
-    <div className="text-center flex flex-row gap-5 text-white justify-center">
-      <div className="flex flex-col flex-1 p-4 bg-deepblue-200">
+    <div className="text-center mx-5 flex-wrap flex flex-row gap-4 text-white justify-center">
+      <div className="flex flex-col whitespace-nowrap flex-1 p-4 bg-deepblue-200">
         <span className="text-5xl">
           <span>{timeLeft.days}</span>
         </span>
         Tagen
       </div>
-      <div className="flex flex-1 flex-col p-4 bg-deepblue-200">
+      <div className="flex flex-1 whitespace-nowrap flex-col p-4 bg-deepblue-200">
         <span className="text-5xl">
           <span>{timeLeft.hours}</span>
         </span>
         Stunden
       </div>
-      <div className="flex flex-1 flex-col p-4 bg-deepblue-200">
+      <div className="flex flex-1  whitespace-nowrap flex-col p-4 bg-deepblue-200">
         <span className="text-5xl">
           <span>{timeLeft.minutes}</span>
         </span>
