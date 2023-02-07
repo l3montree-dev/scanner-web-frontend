@@ -6,7 +6,7 @@ const calculateTimeLeft = (): {
   minutes: number;
   seconds: number;
 } => {
-  const difference = +new Date("2023-03-29") - +new Date();
+  const difference = new Date("2023-02-08").getTime() - new Date().getTime();
   let timeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0 };
 
   if (difference > 0) {
@@ -22,13 +22,19 @@ const calculateTimeLeft = (): {
 };
 
 const Countdown: FunctionComponent = () => {
-  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+  const [timeLeft, setTimeLeft] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
   useEffect(() => {
-    const timer = setTimeout(() => {
+    setTimeLeft(calculateTimeLeft());
+    const timer = setInterval(() => {
       setTimeLeft(calculateTimeLeft());
     }, 1000);
-    return () => clearTimeout(timer);
-  });
+    return () => clearInterval(timer);
+  }, []);
   return (
     <div className="grid grid-flow-col gap-5 text-center auto-cols-max text-white justify-center">
       <div className="flex flex-col p-4 rounded bg-deepblue-200">
