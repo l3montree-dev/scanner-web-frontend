@@ -9,6 +9,8 @@ gitguardianscan:
     image: gitguardian/ggshield:v1.13.5@sha256:82b46a5ebda17645a8aabd3d20cfb65cd65938db4fb6d31275bc91132ff21472
     stage: test
     script: ggshield secret scan ci
+    rules:
+      - if: '$CI_COMMIT_REF_PROTECTED == "true"'
 
 jest:
     image: node:18@sha256:9d8a6466c6385e05f62f8ccf173e80209efb0ff4438f321f09ddf552b05af3ba
