@@ -1,9 +1,7 @@
 import React, {
   FunctionComponent,
   MouseEventHandler,
-  useCallback,
   useEffect,
-  useRef,
   useState,
 } from "react";
 import { classNames } from "../utils/common";

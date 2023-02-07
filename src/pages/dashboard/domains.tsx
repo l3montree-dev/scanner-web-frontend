@@ -1,5 +1,6 @@
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Tag } from "@prisma/client";
 import { useRouter } from "next/router";
 import { FunctionComponent, useEffect, useMemo, useState } from "react";
 import DashboardPage from "../../components/DashboardPage";
@@ -47,6 +48,8 @@ const Dashboard: FunctionComponent<Props> = (props) => {
   const [domains, setDomains] = useState<Array<DTO<DetailedDomain>>>(
     props.domains.data
   );
+
+  const [tags, setTags] = useState<Array<DTO<Tag>>>([]);
 
   const [selection, setSelection] = useState<{ [fqdn: string]: boolean }>({});
   const scanAllLoading = useLoading();
@@ -96,6 +99,30 @@ const Dashboard: FunctionComponent<Props> = (props) => {
     );
     if (response.ok) {
       setDomains((prev) => prev.filter((d) => d.fqdn !== fqdn));
+    }
+  };
+
+  const handleCreateTag = async (tag: { title: string; color: string }) => {
+    const response = await clientHttpClient(`/api/tags`, crypto.randomUUID(), {
+      method: "POST",
+      body: JSON.stringify(tag),
+    });
+    if (response.ok) {
+      const data: DTO<Tag> = await response.json();
+      setTags((prev) => [...prev, data]);
+    }
+  };
+
+  const handleDeleteTag = async (tag: DTO<Tag>) => {
+    const response = await clientHttpClient(
+      `/api/tags/${tag.id}`,
+      crypto.randomUUID(),
+      {
+        method: "DELETE",
+      }
+    );
+    if (response.ok) {
+      setTags((prev) => prev.filter((t) => t.id !== tag.id));
     }
   };
 
@@ -233,6 +260,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                 )}
               >
                 <Menu
+                  menuCloseIndex={0}
                   Button={
                     <div className="p-2 bg-deepblue-100 border border-deepblue-100 m-2 flex flex-row items-center justify-center">
                       Gruppenaktionen ({selectedFQDNs.length})
@@ -266,6 +294,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                 />
               </div>
               <Menu
+                menuCloseIndex={0}
                 Button={
                   <div className="p-2 bg-deepblue-100 border border-deepblue-100 my-2 flex flex-row items-center justify-center">
                     Zeige: {translateDomainType(viewedDomainType)} (
@@ -309,6 +338,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                       selection={selection}
                       deleteFQDN={deleteFQDN}
                       scanFQDN={scanFQDN}
+                      onCreateTag={handleCreateTag}
                       scanRequest={scanRequest}
                       totalElements={domains.length}
                       select={(fqdn) => {
