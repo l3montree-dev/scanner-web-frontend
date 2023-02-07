@@ -1,11 +1,7 @@
-import { faRefresh } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { GetServerSideProps, NextPage } from "next";
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import Button from "../components/Button";
 import Meta from "../components/Meta";
 import Page from "../components/Page";
-import ResultGrid from "../components/ResultGrid";
 import useLoading from "../hooks/useLoading";
 import {
   DomainInspectionType,
@@ -16,9 +12,12 @@ import {
   TLSInspectionType,
 } from "../inspection/scans";
 
+import ReleasePlaceHolder from "../components/ReleasePlaceholder";
+import ResultEnvelope from "../components/ResultEnvelope";
+import ScanPageHero from "../components/ScanPageHero";
 import { clientHttpClient } from "../services/clientHttpClient";
 import { DetailedDomain, IScanSuccessResponse } from "../types";
-import { classNames, sanitizeFQDN } from "../utils/common";
+import { sanitizeFQDN } from "../utils/common";
 
 const hostnameRegex = new RegExp(
   /^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
@@ -161,19 +160,7 @@ const Home: NextPage<Props> = ({ displayNotAvailable }) => {
     return (
       <Page hideLogin>
         <Meta />
-        <div className="flex md:py-10 flex-col w-full justify-center">
-          <div className="max-w-screen-lg w-full md:p-5 mx-auto">
-            <div className="md:mt-0 mt-10 md:p-10 text-white text-center pb-14 p-5">
-              <h1 className="text-5xl sm:order-1 order-2 mb-3 font-bold">
-                OZG Security Challenge 2023
-              </h1>
-              <p className="text-white text-xl mt-10">
-                Hier entsteht ein Schnelltest einer Webseite in Bezug auf
-                ausgewählte IT-Sicherheitsmaßnahmen und Best-Practices.
-              </p>
-            </div>
-          </div>
-        </div>
+        <ReleasePlaceHolder />
       </Page>
     );
   }
@@ -182,100 +169,20 @@ const Home: NextPage<Props> = ({ displayNotAvailable }) => {
       <Meta />
       <div className="flex md:py-10 flex-col w-full justify-center">
         <div className="max-w-screen-lg w-full md:p-5 mx-auto">
-          <div className="md:bg-deepblue-400 p-4 pb-14 md:mt-0 mt-10 md:p-10">
-            <div className="flex flex-wrap sm:flex-nowrap flex-row items-start justify-between">
-              <h1 className="text-5xl sm:order-1 order-2 mb-3 text-white font-bold">
-                OZG Security Challenge 2023
-              </h1>
-              <div className="p-2 mb-4 sm:mb-0 order-1 bg-deepblue-200">
-                <span className="text-white whitespace-nowrap">BETA</span>
-              </div>
-            </div>
-            <h2 className="text-white text-2xl">OZG Security Schnelltest</h2>
-            <div className="pb-14">
-              <form onSubmit={onSubmit} className="pt-10  flex">
-                <input
-                  onChange={(e) => setWebsite(e.target.value)}
-                  value={website}
-                  placeholder="example.com"
-                  className="sm:p-5 p-4 text-sm sm:text-base flex-1 outline-lightning-900 transition-all mr-3"
-                />
-                <Button
-                  loading={scanRequest.isLoading}
-                  type="submit"
-                  className="bg-lightning-500 text-sm sm:text-base p-2 sm:p-3 hover:bg-lightning-900 font-bold leading-4 transition-all"
-                >
-                  Scan starten
-                </Button>
-              </form>
+          <ScanPageHero
+            onSubmit={onSubmit}
+            setWebsite={setWebsite}
+            website={website}
+            scanRequest={scanRequest}
+          />
 
-              {scanRequest.errored && (
-                <small className="text-red-600 absolute mt-3 block">
-                  {scanRequest.errorMessage}
-                </small>
-              )}
-            </div>
-            <p className="text-white">
-              Mit diesem Tool kann ein Schnelltest einer Webseite in Bezug auf
-              ausgewählte IT-Sicherheitsmaßnahmen und Best-Practices
-              durchgeführt werden. Um einen Scan zu starten, geben Sie eine
-              Webseite-Domain ein und drücken Sie auf den Button „Scan starten“
-            </p>
-          </div>
-
-          {domain !== null && (
-            <div className="mt-10 p-5 md:p-0 text-white">
-              <h2 id="test-results" className="text-white text-2xl">
-                Testergebnisse für{" "}
-                <a
-                  target={"_blank"}
-                  className="underline"
-                  rel="noopener noreferrer"
-                  href={`//${domain.fqdn}`}
-                >
-                  {domain.fqdn}{" "}
-                </a>
-              </h2>
-              {domain.fqdn !== domain.details.sut && (
-                <>
-                  Weiterleitung auf:{" "}
-                  <a
-                    target={"_blank"}
-                    className="underline"
-                    rel="noopener noreferrer"
-                    href={`//${domain.details.sut}`}
-                  >
-                    {domain.details.sut}
-                  </a>
-                </>
-              )}
-              <div className="flex items-center mt-4 flex-row">
-                <p>{dateString.substring(0, dateString.length - 3)}</p>
-                <button
-                  onClick={handleRefresh}
-                  title="Testergebnisse aktualisieren"
-                  className={classNames("ml-2 bg-deepblue-200 w-8 h-8")}
-                >
-                  <FontAwesomeIcon
-                    className={refreshRequest.isLoading ? "rotate" : ""}
-                    icon={faRefresh}
-                  />
-                </button>
-              </div>
-
-              {refreshRequest.errored && (
-                <p className={classNames("text-red-500")}>
-                  {refreshRequest.errorMessage}
-                </p>
-              )}
-              {!refreshRequest.isLoading && !refreshRequest.errored && (
-                <div>
-                  <p>Erfüllt: {amountPassed}/6</p>
-                  <ResultGrid report={domain} />
-                </div>
-              )}
-            </div>
-          )}
+          <ResultEnvelope
+            domain={domain}
+            dateString={dateString}
+            handleRefresh={handleRefresh}
+            refreshRequest={refreshRequest}
+            amountPassed={amountPassed}
+          />
         </div>
       </div>
     </Page>
@@ -287,7 +194,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   // check if the user does provide a valid query parameter
   const code = query["s"];
   if (
-    context.req.headers.host === "localhost:3000" ||
+    /*context.req.headers.host === "localhost:3000"*/ false ||
     (code && (+code === 423333 || +code % 42 === 0))
   ) {
     return {

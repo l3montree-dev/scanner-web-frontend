@@ -246,3 +246,7 @@ export const dateFormat = {
   month: "2-digit" as const,
   year: "2-digit" as const,
 };
+
+export const emailRegex = new RegExp(
+  /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*$/
+);
