@@ -65,7 +65,7 @@ const ResultBox: FunctionComponent<Props> = (props) => {
             href={props.link}
             className="text-sm w-full inline-block overflow-hidden truncate text-right whitespace-nowrap top-1 underline right-0 mt-2 px-5"
           >
-            Was ist &quot;{props.title}&quot;?
+            &quot;{props.title}&quot; jetzt umsetzen!
           </Link>
         </div>
       )}

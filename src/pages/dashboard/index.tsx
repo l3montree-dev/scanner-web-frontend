@@ -494,7 +494,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                           href={linkMapper[key]}
                           className="text-sm absolute w-full inline-block overflow-hidden truncate text-right whitespace-nowrap top-1 underline right-0 mt-2 px-5"
                         >
-                          Was ist &quot;{mapping[key]}&quot;?
+                          &quot;{mapping[key]}&quot; jetzt umsetzen!
                         </Link>
                       )}
                       <svg style={{ height: 0 }}>
