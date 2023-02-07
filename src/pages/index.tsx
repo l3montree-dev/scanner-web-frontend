@@ -1,11 +1,7 @@
-import { faRefresh } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { GetServerSideProps, NextPage } from "next";
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import Button from "../components/Button";
 import Meta from "../components/Meta";
 import Page from "../components/Page";
-import ResultGrid from "../components/ResultGrid";
 import useLoading from "../hooks/useLoading";
 import {
   DomainInspectionType,
@@ -16,12 +12,12 @@ import {
   TLSInspectionType,
 } from "../inspection/scans";
 
+import ReleasePlaceHolder from "../components/ReleasePlaceholder";
+import ResultEnvelope from "../components/ResultEnvelope";
+import ScanPageHero from "../components/ScanPageHero";
 import { clientHttpClient } from "../services/clientHttpClient";
 import { DetailedDomain, IScanSuccessResponse } from "../types";
-import { classNames, sanitizeFQDN } from "../utils/common";
-import ScanPageHero from "../components/ScanPageHero";
-import ResultEnvelope from "../components/ResultEnvelope";
-import ReleasePlaceHolder from "../components/ReleasePlaceholder";
+import { sanitizeFQDN } from "../utils/common";
 
 const hostnameRegex = new RegExp(
   /^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/

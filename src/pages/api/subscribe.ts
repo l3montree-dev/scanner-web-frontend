@@ -2,7 +2,9 @@ import { PrismaClient } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 import { decorate } from "../../decorators/decorate";
 import { withDB } from "../../decorators/withDB";
+import BadRequestException from "../../errors/BadRequestException";
 import MethodNotAllowed from "../../errors/MethodNotAllowed";
+import { emailRegex } from "../../utils/common";
 
 const handlePost = async (
   req: NextApiRequest,
@@ -10,7 +12,9 @@ const handlePost = async (
   prisma: PrismaClient
 ) => {
   const { email } = req.body;
-  console.log(req.body);
+  if (!emailRegex.test(email)) {
+    throw new BadRequestException();
+  }
 
   await prisma.email.upsert({
     where: {

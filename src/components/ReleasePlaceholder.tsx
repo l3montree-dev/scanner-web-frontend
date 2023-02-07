@@ -3,15 +3,12 @@ import useCheckbox from "../hooks/useCheckbox";
 import useInput from "../hooks/useInput";
 import useRequest from "../hooks/useRequest";
 import { clientHttpClient } from "../services/clientHttpClient";
-import Button from "./Button";
+import { emailRegex } from "../utils/common";
 import Checkbox from "./Checkbox";
 import Countdown from "./Countdown";
 import FormInput from "./FormInput";
 import PrimaryButton from "./PrimaryButton";
 
-const emailRegex = new RegExp(
-  /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*$/
-);
 const ReleasePlaceHolder: FunctionComponent = () => {
   const email = useInput();
   const check = useCheckbox();
