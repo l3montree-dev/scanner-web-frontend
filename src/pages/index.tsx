@@ -186,6 +186,8 @@ const Home: NextPage<Props> = ({ displayNotAvailable }) => {
           <div className="bg-deepblue-400 justify-center mx-5 md:mx-0 mb-5 flex flex-col md:flex-row md:justify-between items-center text-white mt-5 p-4">
             <p>Die OZG Security Challenge: Hintergrundinfos und Vieles mehr.</p>
             <a
+              target={"_blank"}
+              rel={"noopener noreferrer"}
               className="bg-lightning-500 mt-5 md:mt-0 px-5 py-2 text-deepblue-500 text-center font-bold"
               href="https://www.onlinezugangsgesetz.de/Webs/OZG/DE/startseite/startseite-node.html"
             >
