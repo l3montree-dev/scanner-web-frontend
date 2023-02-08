@@ -40,7 +40,7 @@ import {
   IScanSuccessResponse,
   PaginateResult,
 } from "../../types";
-import { classNames } from "../../utils/common";
+import { classNames, toGermanDate } from "../../utils/common";
 import { DTO } from "../../utils/server";
 
 interface Props {
@@ -505,32 +505,39 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                         </div>
                       </td>
                       <td className="p-2">
-                        {domain.fqdn}
-                        <div className="inline ml-2">
-                          <Tooltip
-                            tooltip={
-                              domain.lastScan !== null
-                                ? `Letzter Scan: ${new Date(
-                                    domain.lastScan
-                                  ).toLocaleString()}${
-                                    domain.errorCount !== null &&
-                                    domain.errorCount > 0
-                                      ? ` (${domain.errorCount} Fehler)`
-                                      : ""
-                                  }${
-                                    domain.errorCount !== null &&
-                                    domain.errorCount >= 5
-                                      ? " Domain wird nicht mehr automatisiert gescanned, da 5 Fehler überschritten wurden"
-                                      : ""
-                                  }`
-                                : "Noch nicht gescannt"
-                            }
+                        <div className="flex flex-row">
+                          <span
+                            title={domain.fqdn}
+                            className="whitespace-nowrap overflow-hidden text-ellipsis max-w-xs block"
                           >
-                            <FontAwesomeIcon
-                              className="opacity-50"
-                              icon={faQuestionCircle}
-                            />
-                          </Tooltip>
+                            {domain.fqdn}
+                          </span>
+                          <div className="inline ml-2">
+                            <Tooltip
+                              tooltip={
+                                domain.lastScan !== null
+                                  ? `Letzter Scan: ${toGermanDate(
+                                      new Date(domain.lastScan)
+                                    )}${
+                                      domain.errorCount !== null &&
+                                      domain.errorCount > 0
+                                        ? ` (${domain.errorCount} Fehler)`
+                                        : ""
+                                    }${
+                                      domain.errorCount !== null &&
+                                      domain.errorCount >= 5
+                                        ? " Domain wird nicht mehr automatisiert gescanned, da 5 Fehler überschritten wurden"
+                                        : ""
+                                    }`
+                                  : "Noch nicht gescannt"
+                              }
+                            >
+                              <FontAwesomeIcon
+                                className="opacity-50"
+                                icon={faQuestionCircle}
+                              />
+                            </Tooltip>
+                          </div>
                         </div>
                       </td>
                       <td className="p-2">

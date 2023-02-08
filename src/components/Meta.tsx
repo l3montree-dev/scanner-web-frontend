@@ -9,7 +9,7 @@ export interface Props {
 const Meta: FunctionComponent<Props> = ({ title, description, keywords }) => {
   return (
     <Head>
-      <title>{title ?? "OZG Security Challenge 2023"}</title>
+      <title>{title ?? "OZG-Security-Challenge 2023"}</title>
       <meta
         name="description"
         content={
@@ -33,7 +33,7 @@ const Meta: FunctionComponent<Props> = ({ title, description, keywords }) => {
       <meta property="og:url" content="https://ozgsec.de/" />
       <meta
         property="og:title"
-        content={title ?? "OZG Security Challenge 2023"}
+        content={title ?? "OZG-Security-Challenge 2023"}
       />
       <meta
         property="og:description"
@@ -47,7 +47,7 @@ const Meta: FunctionComponent<Props> = ({ title, description, keywords }) => {
       <meta property="twitter:url" content="https://ozgsec.de/" />
       <meta
         property="twitter:title"
-        content={title ?? "OZG Security Challenge 2023"}
+        content={title ?? "OZG-Security-Challenge 2023"}
       />
       <meta
         property="twitter:description"

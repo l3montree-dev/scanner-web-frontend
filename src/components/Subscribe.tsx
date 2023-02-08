@@ -46,7 +46,7 @@ const Subscribe = () => {
   return (
     <div className="border border-deepblue-50 p-4">
       <p>
-        Melden Sie sich jetzt für die OZG Security Challenge an und erhalten Sie
+        Melden Sie sich jetzt für die OZG-Security-Challenge an und erhalten Sie
         exklusive Infos:
       </p>
       <form onSubmit={handleSubmit} className="text-black mt-5">
@@ -76,7 +76,7 @@ const Subscribe = () => {
                 >
                   Datenschutzerklärung
                 </a>
-                , sowie dem Erhalt des OZG Security Challenge Newsletters zu.
+                , sowie dem Erhalt des OZG-Security-Challenge Newsletters zu.
               </p>
             </div>
             <div className="whitespace-nowrap">

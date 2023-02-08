@@ -89,6 +89,7 @@ export default decorate(
 
     const result = await inspectRPC(requestId, siteToScan);
 
+    console.log(result, siteToScan);
     if (isScanError(result)) {
       if (result.result.error === "fetch failed") {
         logger.error(

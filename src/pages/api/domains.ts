@@ -13,7 +13,7 @@ import { domainService } from "../../services/domainService";
 import { getLogger } from "../../services/logger";
 import { statService } from "../../services/statService";
 import { ISession } from "../../types";
-import { splitLineBreak } from "../../utils/common";
+import { sanitizeFQDN, splitLineBreak } from "../../utils/common";
 import { stream2buffer } from "../../utils/server";
 
 const logger = getLogger(__filename);
@@ -72,8 +72,13 @@ const handlePost = async (
       (await stream2buffer(req)).toString()
     );
 
+    const sanitized = sanitizeFQDN(domain);
+    if (!sanitized) {
+      return res.status(400).send({ error: "invalid domain" });
+    }
+
     const d = await domainService.handleNewDomain(
-      { fqdn: domain },
+      { fqdn: sanitized },
       prisma,
       session.user
     );
@@ -143,7 +148,10 @@ const handlePost = async (
   promiseQueue
     .addAll(
       entries
-        .filter((domain) => domain.length > 0)
+        .map((domain) => sanitizeFQDN(domain))
+        .filter(
+          (domain): domain is string => domain !== null && domain.length > 0
+        )
         .map((domain) => {
           return async () => {
             try {

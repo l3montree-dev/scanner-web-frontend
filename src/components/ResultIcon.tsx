@@ -3,6 +3,7 @@ import {
   faCheckCircle,
   faQuestion,
   faTimes,
+  faWarning,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { FunctionComponent } from "react";
@@ -17,11 +18,11 @@ const ResultIcon: FunctionComponent<Props> = ({ didPass }) => {
         didPass
           ? "text-lightning-500"
           : didPass === false
-          ? "text-red-500"
+          ? "text-yellow-500"
           : "text-gray-500"
       }
       fontSize={24}
-      icon={didPass ? faCheck : didPass === false ? faTimes : faQuestion}
+      icon={didPass ? faCheck : didPass === false ? faWarning : faQuestion}
     />
   );
 };

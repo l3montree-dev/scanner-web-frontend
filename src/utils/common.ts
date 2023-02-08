@@ -250,3 +250,7 @@ export const dateFormat = {
 export const emailRegex = new RegExp(
   /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*$/
 );
+
+export const toGermanDate = (date: Date): string => {
+  return date.toLocaleDateString("de-DE", dateFormat);
+};

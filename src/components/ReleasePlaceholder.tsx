@@ -9,22 +9,22 @@ const ReleasePlaceHolder: FunctionComponent = () => {
       <div className="max-w-screen-lg w-full md:p-5 mx-auto">
         <div className="md:mt-0 mt-10 md:p-10 text-center pb-14 p-5">
           <h1 className="text-5xl sm:order-1 order-2 mb-3 font-bold">
-            OZG Security Challenge 2023
+            OZG-Security-Challenge 2023
           </h1>
           <p className="text-white mt-10">
-            Der Countdown läuft - die OZG Security Challenge starte in:
+            Der Countdown läuft - die OZG-Security-Challenge startet in:
           </p>
         </div>
         <Countdown />
         <div className="md:mt-0 mt-10 md:p-10 text-white text-center pb-14 p-5">
           <p className="text-white">
             Mit unserem hier entstehenden Schnelltest können Sie Ihre Webseite
-            in Bezug auf sechs spezifische IT-Sicherheitskriterien testen.
+            in Bezug auf sechs spezifische IT-Sicherheitsmaßnahmen testen.
             Machen Sie mit und tragen Sie zur weiteren Steigerung der Sicherheit
             der öffentlichen Verwaltung bei.
           </p>
         </div>
-        <Subscribe />
+        {/*<Subscribe />*/}
       </div>
     </div>
   );

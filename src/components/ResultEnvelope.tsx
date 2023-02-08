@@ -78,7 +78,7 @@ const ResultEnvelope: FunctionComponent<Props> = ({
           </div>
           <p>Erfüllt: {amountPassed}/6</p>
         </div>
-        <div className="bg-deepblue-400 mt-5 w-full md:w-1/2 p-4 mb-5">
+        {/*<div className="bg-deepblue-400 mt-5 w-full md:w-1/2 p-4 mb-5">
           <div className="flex-row flex items-center">
             <FontAwesomeIcon
               className="text-lightning-500 text-2xl w-6"
@@ -104,7 +104,7 @@ const ResultEnvelope: FunctionComponent<Props> = ({
               Verpflichtendes Kriterium nicht erfüllt
             </span>
           </div>
-        </div>
+      </div>*/}
       </div>
 
       {refreshRequest.errored && (
@@ -115,14 +115,14 @@ const ResultEnvelope: FunctionComponent<Props> = ({
       {!refreshRequest.isLoading && !refreshRequest.errored && (
         <div>
           <ResultGrid report={domain} />
-          <div className="flex flex-row justify-center mt-4">
+          {/*<div className="flex flex-row justify-center mt-4">
             <a
               className="bg-lightning-500 hover:bg-lightning-900 hover:no-underline text-deepblue-500 transition-all font-bold px-8 py-4"
               href="//docs.ozgsec.de"
             >
               Hilfe
             </a>
-          </div>
+      </div>*/}
         </div>
       )}
     </div>

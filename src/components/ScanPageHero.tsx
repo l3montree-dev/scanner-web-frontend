@@ -27,13 +27,13 @@ const ScanPageHero: FunctionComponent<Props> = ({
     <div className="md:bg-deepblue-400 p-4 md:mt-0 mt-10 md:p-10">
       <div className="flex flex-wrap sm:flex-nowrap flex-row items-start justify-between">
         <h1 className="text-5xl sm:order-1 order-2 mb-3 text-white font-bold">
-          OZG Security Challenge 2023
+          OZG-Security-Challenge 2023
         </h1>
         <div className="p-2 mb-4 sm:mb-0 order-1 bg-deepblue-200">
           <span className="text-white whitespace-nowrap">BETA</span>
         </div>
       </div>
-      <h2 className="text-white text-2xl">OZG Security Schnelltest</h2>
+      <h2 className="text-white text-2xl">OZG-Security-Schnelltest</h2>
       <div className="pb-14">
         <form onSubmit={onSubmit} className="pt-10  flex">
           <input
@@ -59,7 +59,7 @@ const ScanPageHero: FunctionComponent<Props> = ({
       </div>
       <p className="text-white">
         Mit diesem Schnelltest können Sie Ihre Webseite in Bezug auf sechs
-        spezifische IT-Sicherheitskriterien testen. Machen Sie mit und tragen
+        spezifische IT-Sicherheitsmaßnahmen testen. Machen Sie mit und tragen
         Sie zur weiteren Steigerung der Sicherheit der öffentlichen Verwaltung
         bei.
       </p>
