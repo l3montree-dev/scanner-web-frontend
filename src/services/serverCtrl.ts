@@ -99,12 +99,6 @@ const startScanResponseLoop = once(() => {
   rabbitMQClient.subscribe("scan-response", async (msg) => {
     const content = JSON.parse(msg.content.toString()).data as IScanResponse;
 
-    let address = content.ipAddress;
-    if (!address) {
-      logger.error({ target: content.target }, "no ip found");
-      // we cannot do anything...
-      return;
-    }
     if (isScanError(content)) {
       try {
         await domainService.handleDomainScanError(content, prisma);
