@@ -87,7 +87,6 @@ const Home: NextPage<Props> = ({ displayNotAvailable }) => {
   useEffect(() => {
     if (domain) {
       const rec = document.getElementById("test-results");
-      console.log(rec);
       if (rec && !isInViewport(rec)) {
         window.scrollTo({
           top:
