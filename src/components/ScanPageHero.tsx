@@ -1,3 +1,5 @@
+import { faCheck, faWarning, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { FormEvent, FunctionComponent, SetStateAction } from "react";
 import Button from "./Button";
 
@@ -63,6 +65,31 @@ const ScanPageHero: FunctionComponent<Props> = ({
         Sie zur weiteren Steigerung der Sicherheit der öffentlichen Verwaltung
         bei.
       </p>
+      <div className="bg-deepblue-400 p-4 md:p-0 text-white mt-5">
+        <div className="flex-row flex items-center">
+          <FontAwesomeIcon
+            className="text-lightning-500 text-2xl w-6"
+            icon={faCheck}
+          />
+          <span className="ml-4">Maßnahme umgesetzt</span>
+        </div>
+        <div className="flex-row flex mt-2 items-center">
+          <FontAwesomeIcon
+            className="text-yellow-500 text-2xl w-6"
+            icon={faWarning}
+          />
+          <span className="ml-4">Maßnahme nicht umgesetzt</span>
+        </div>
+        <div className="flex-row flex mt-2 items-center">
+          <div className="w-6">
+            <FontAwesomeIcon
+              className="text-red-500 text-2xl w-6"
+              icon={faTimes}
+            />
+          </div>
+          <span className="ml-4">Fehlerhafte Umsetzung der Maßnahme</span>
+        </div>
+      </div>
     </div>
   );
 };

@@ -24,7 +24,7 @@ const ReleasePlaceHolder: FunctionComponent = () => {
             der öffentlichen Verwaltung bei.
           </p>
         </div>
-        {/*<Subscribe />*/}
+        <Subscribe />
       </div>
     </div>
   );
