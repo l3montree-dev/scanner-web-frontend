@@ -26,7 +26,7 @@ const ScanPageHero: FunctionComponent<Props> = ({
   scanRequest,
 }) => {
   return (
-    <div className="md:bg-deepblue-400 p-4 md:mt-0 mt-10 md:p-10">
+    <div className="md:bg-deepblue-400 px-4 pt-4 md:mt-0 mt-10 md:p-10">
       <div className="flex flex-wrap sm:flex-nowrap flex-row items-start justify-between">
         <h1 className="text-5xl sm:order-1 order-2 mb-3 text-white font-bold">
           OZG-Security-Challenge 2023
