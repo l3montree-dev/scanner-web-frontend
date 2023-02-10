@@ -26,15 +26,15 @@ const ResultBox: FunctionComponent<Props> = (props) => {
             props.didPass === null
               ? "text-white"
               : props.didPass
-                ? "text-lightning-500"
-                : "text-yellow-500"
+              ? "text-lightning-500"
+              : "text-yellow-500"
           )}
           icon={
             props.didPass === null
               ? faQuestion
               : props.didPass
-                ? faCheck
-                : faWarning
+              ? faCheck
+              : faWarning
           }
         />
         <div className={classNames("flex ml-4 md:ml-2 flex-col mt-0.5")}>
@@ -45,8 +45,8 @@ const ResultBox: FunctionComponent<Props> = (props) => {
                 props.didPass === null
                   ? "text-white"
                   : props.didPass
-                    ? "text-lightning-500"
-                    : "text-yellow-500"
+                  ? "text-lightning-500"
+                  : "text-yellow-500"
               )}
             >
               {props.title}
