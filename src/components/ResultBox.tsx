@@ -26,15 +26,15 @@ const ResultBox: FunctionComponent<Props> = (props) => {
             props.didPass === null
               ? "text-white"
               : props.didPass
-              ? "text-lightning-500"
-              : "text-yellow-500"
+                ? "text-lightning-500"
+                : "text-yellow-500"
           )}
           icon={
             props.didPass === null
               ? faQuestion
               : props.didPass
-              ? faCheck
-              : faWarning
+                ? faCheck
+                : faWarning
           }
         />
         <div className={classNames("flex ml-4 md:ml-2 flex-col mt-0.5")}>
@@ -45,8 +45,8 @@ const ResultBox: FunctionComponent<Props> = (props) => {
                 props.didPass === null
                   ? "text-white"
                   : props.didPass
-                  ? "text-lightning-500"
-                  : "text-yellow-500"
+                    ? "text-lightning-500"
+                    : "text-yellow-500"
               )}
             >
               {props.title}
@@ -63,9 +63,11 @@ const ResultBox: FunctionComponent<Props> = (props) => {
           <Link
             target={"_blank"}
             href={props.link}
-            className="text-sm w-full inline-block overflow-hidden truncate text-right whitespace-nowrap top-1 underline right-0 mt-2 px-5"
+            className="text-sm w-full inline-block  text-right top-1 underline right-0 mt-2 px-5"
           >
-            &quot;{props.title}&quot; jetzt umsetzen!
+            {!!props.didPass
+              ? `Was ist "${props.title}"?`
+              : `"${props.title}" jetzt umsetzen!`}
           </Link>
         </div>
       )}

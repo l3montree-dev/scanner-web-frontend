@@ -31,11 +31,21 @@ const ScanPageHero: FunctionComponent<Props> = ({
         <h1 className="text-5xl sm:order-1 order-2 mb-3 text-white font-bold">
           OZG-Security-Challenge 2023
         </h1>
-        <div className="p-2 mb-4 sm:mb-0 order-1 bg-deepblue-200">
+        <div className="sm:order-2 mb-5">
+          <img
+            width={150}
+            //height={150}
+            src={"/assets/sticker_challenge_white.svg"}
+            alt="OZG-Logo"
+          />
+        </div>
+      </div>
+      <div className="flex-row items-center flex">
+        <h2 className="text-white text-2xl">Schnelltest </h2>
+        <div className="px-2 py-1 flex flex-row justify-center items-center ml-5 order-1 bg-deepblue-200">
           <span className="text-white whitespace-nowrap">BETA</span>
         </div>
       </div>
-      <h2 className="text-white text-2xl">OZG-Security-Schnelltest</h2>
       <div className="pb-14">
         <form onSubmit={onSubmit} className="pt-10  flex">
           <input
@@ -60,36 +70,11 @@ const ScanPageHero: FunctionComponent<Props> = ({
         )}
       </div>
       <p className="text-white">
-        Mit diesem Schnelltest können Sie Ihre Webseite in Bezug auf sechs
-        spezifische IT-Sicherheitsmaßnahmen testen. Machen Sie mit und tragen
-        Sie zur weiteren Steigerung der Sicherheit der öffentlichen Verwaltung
-        bei.
+        Hier können Sie Ihre Webseite in Bezug auf sechs spezifische
+        IT-Sicherheitsmaßnahmen testen. Nutzen Sie unseren Schnelltest und
+        tragen Sie zur weiteren Steigerung der IT-Sicherheit in der öffentlichen
+        Verwaltung bei.
       </p>
-      <div className="bg-deepblue-400 p-4 md:p-0 text-white mt-5">
-        <div className="flex-row flex items-center">
-          <FontAwesomeIcon
-            className="text-lightning-500 text-2xl w-6"
-            icon={faCheck}
-          />
-          <span className="ml-4">Maßnahme umgesetzt</span>
-        </div>
-        <div className="flex-row flex mt-2 items-center">
-          <FontAwesomeIcon
-            className="text-yellow-500 text-2xl w-6"
-            icon={faWarning}
-          />
-          <span className="ml-4">Maßnahme nicht umgesetzt</span>
-        </div>
-        <div className="flex-row flex mt-2 items-center">
-          <div className="w-6">
-            <FontAwesomeIcon
-              className="text-red-500 text-2xl w-6"
-              icon={faTimes}
-            />
-          </div>
-          <span className="ml-4">Fehlerhafte Umsetzung der Maßnahme</span>
-        </div>
-      </div>
     </div>
   );
 };
