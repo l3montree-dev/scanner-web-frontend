@@ -7,7 +7,7 @@ EXPOSE 3000
 
 COPY package.json .
 COPY ./prisma prisma
-RUN npm install
+RUN npm ci --include=dev
 
 COPY . .
 
