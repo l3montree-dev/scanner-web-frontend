@@ -44,7 +44,7 @@ const Subscribe = () => {
     } catch {}
   };
   return (
-    <div className="border border-deepblue-50 p-4">
+    <div className="p-4 text-white bg-deepblue-400">
       <p>
         Melden Sie sich jetzt für die OZG-Security-Challenge an und erhalten Sie
         exklusive Infos:

@@ -63,9 +63,11 @@ const ResultBox: FunctionComponent<Props> = (props) => {
           <Link
             target={"_blank"}
             href={props.link}
-            className="text-sm w-full inline-block overflow-hidden truncate text-right whitespace-nowrap top-1 underline right-0 mt-2 px-5"
+            className="text-sm w-full inline-block  text-right top-1 underline right-0 mt-2 px-5"
           >
-            &quot;{props.title}&quot; jetzt umsetzen!
+            {!!props.didPass
+              ? `Was ist "${props.title}"?`
+              : `"${props.title}" jetzt umsetzen!`}
           </Link>
         </div>
       )}

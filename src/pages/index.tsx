@@ -184,7 +184,7 @@ const Home: NextPage<Props> = ({ displayNotAvailable }) => {
             amountPassed={amountPassed}
           />
           <div className="bg-deepblue-400 justify-center mx-5 md:mx-0 mb-5 flex flex-col md:flex-row md:justify-between items-center text-white mt-5 p-4">
-            <p>Die OZG Security Challenge: Hintergrundinfos und Vieles mehr.</p>
+            <p>Die OZG-Security-Challenge: Hintergrundinfos und Vieles mehr.</p>
             <a
               title="Mehr Informationen zur OZG-Security-Challenge 2023"
               target={"_blank"}
@@ -195,6 +195,7 @@ const Home: NextPage<Props> = ({ displayNotAvailable }) => {
               Mehr erfahren
             </a>
           </div>
+          <Subscribe />
         </div>
       </div>
     </Page>
