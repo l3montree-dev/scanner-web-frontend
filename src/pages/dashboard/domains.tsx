@@ -42,6 +42,7 @@ import {
 } from "../../types";
 import { classNames, toGermanDate } from "../../utils/common";
 import { DTO } from "../../utils/server";
+import { didPass2CheckResult } from "../../utils/view";
 
 interface Props {
   domains: PaginateResult<DTO<DetailedDomain>>;
@@ -542,29 +543,45 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                       </td>
                       <td className="p-2">
                         <ResultIcon
-                          didPass={
+                          checkResult={didPass2CheckResult(
                             domain.details?.ResponsibleDisclosure?.didPass
-                          }
+                          )}
                         />
                       </td>
                       <td className="p-2">
                         <ResultIcon
-                          didPass={domain.details?.TLSv1_3?.didPass}
+                          checkResult={didPass2CheckResult(
+                            domain.details?.TLSv1_3?.didPass
+                          )}
                         />
                       </td>
                       <td className="p-2">
                         <ResultIcon
-                          didPass={domain.details?.TLSv1_1_Deactivated?.didPass}
+                          checkResult={didPass2CheckResult(
+                            domain.details?.TLSv1_1_Deactivated?.didPass
+                          )}
                         />
                       </td>
                       <td className="p-2">
-                        <ResultIcon didPass={domain.details?.HSTS?.didPass} />
+                        <ResultIcon
+                          checkResult={didPass2CheckResult(
+                            domain.details?.HSTS?.didPass
+                          )}
+                        />
                       </td>
                       <td className="p-2">
-                        <ResultIcon didPass={domain.details?.DNSSec?.didPass} />
+                        <ResultIcon
+                          checkResult={didPass2CheckResult(
+                            domain.details?.DNSSec?.didPass
+                          )}
+                        />
                       </td>
                       <td className="p-2">
-                        <ResultIcon didPass={domain.details?.RPKI?.didPass} />
+                        <ResultIcon
+                          checkResult={didPass2CheckResult(
+                            domain.details?.RPKI?.didPass
+                          )}
+                        />
                       </td>
                       <td className="text-right p-2">
                         <Menu

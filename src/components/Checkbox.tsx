@@ -27,7 +27,7 @@ const Checkbox: FunctionComponent<Props> = (props) => {
         onBlur={() => setFocused(false)}
         checked={props.checked}
         onChange={props.onChange}
-        className={"opacity-0 absolute"}
+        className={"opacity-0 absolute pointer-events-none"}
       />
       {props.checked && (
         <FontAwesomeIcon className="text-deepblue-500" icon={faCheck} />

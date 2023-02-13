@@ -93,9 +93,13 @@ th > div {
     min-width: 200px;
 }
 
+.tooltip-container .tooltip {
+    pointer-events: none;
+}
 .tooltip-container:hover .tooltip {
     opacity: 1;
     transform: scale(1);
+    pointer-events: all;
 }
 
 .tooltip {

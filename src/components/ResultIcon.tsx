@@ -1,29 +1,25 @@
-import {
-  faCheck,
-  faCheckCircle,
-  faQuestion,
-  faTimes,
-  faWarning,
-} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { FunctionComponent } from "react";
+import { FunctionComponent } from "react";
+import { legendMessages } from "../messages/legend";
+import {
+  CheckResult,
+  checkResult2ColorClassName,
+  checkResult2Icon,
+} from "../utils/view";
+import Tooltip from "./Tooltip";
 
 interface Props {
-  didPass?: boolean | null;
+  checkResult: CheckResult;
 }
-const ResultIcon: FunctionComponent<Props> = ({ didPass }) => {
+const ResultIcon: FunctionComponent<Props> = ({ checkResult }) => {
   return (
-    <FontAwesomeIcon
-      className={
-        didPass
-          ? "text-lightning-500"
-          : didPass === false
-          ? "text-yellow-500"
-          : "text-gray-500"
-      }
-      fontSize={24}
-      icon={didPass ? faCheck : didPass === false ? faWarning : faQuestion}
-    />
+    <Tooltip tooltip={legendMessages(checkResult)}>
+      <FontAwesomeIcon
+        className={`text-${checkResult2ColorClassName(checkResult)}`}
+        fontSize={24}
+        icon={checkResult2Icon(checkResult)}
+      />
+    </Tooltip>
   );
 };
 

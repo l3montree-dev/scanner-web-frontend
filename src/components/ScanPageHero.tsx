@@ -28,10 +28,19 @@ const ScanPageHero: FunctionComponent<Props> = ({
   return (
     <div className="md:bg-deepblue-400 px-4 pt-4 md:mt-0 mt-10 p-10">
       <div className="flex flex-wrap sm:flex-nowrap flex-row items-start justify-between">
-        <h1 className="text-5xl sm:order-1 order-2 mb-3 text-white font-bold">
-          OZG-Security-Challenge 2023
-        </h1>
-        <div className="sm:order-2 mb-5">
+        <div className="sm:order-1 order-2">
+          <h1 className="text-5xl mb-5 sm:mb-10 text-white font-bold">
+            OZG-Security-Challenge 2023
+          </h1>
+          <div className="flex-row items-center mt-0 md:-mt-5 flex">
+            <h2 className="text-white text-2xl">Schnelltest </h2>
+            <div className="px-2 py-1 flex flex-row justify-center items-center ml-5 order-1 bg-deepblue-200">
+              <span className="text-white whitespace-nowrap">BETA</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="sm:order-1 mb-10 sm:mb-0">
           <img
             width={150}
             //height={150}
@@ -40,12 +49,7 @@ const ScanPageHero: FunctionComponent<Props> = ({
           />
         </div>
       </div>
-      <div className="flex-row items-center mt-0 md:-mt-5 flex">
-        <h2 className="text-white text-2xl">Schnelltest </h2>
-        <div className="px-2 py-1 flex flex-row justify-center items-center ml-5 order-1 bg-deepblue-200">
-          <span className="text-white whitespace-nowrap">BETA</span>
-        </div>
-      </div>
+
       <div className="pb-10">
         <form onSubmit={onSubmit} className="pt-10  flex">
           <input

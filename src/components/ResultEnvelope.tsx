@@ -7,9 +7,15 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { FunctionComponent } from "react";
+import { legendMessages } from "../messages/legend";
 import Subscribe from "../pages/api/subscribe";
 import { DetailedDomain } from "../types";
 import { classNames } from "../utils/common";
+import {
+  CheckResult,
+  checkResult2ColorClassName,
+  checkResult2Icon,
+} from "../utils/view";
 import ResultGrid from "./ResultGrid";
 
 interface Props {
@@ -87,26 +93,32 @@ const ResultEnvelope: FunctionComponent<Props> = ({
         <div className="bg-deepblue-400 md:w-1/3 mt-5 md:mt-0 p-4 text-white">
           <div className="flex-row flex items-center">
             <FontAwesomeIcon
-              className="text-lightning-500 text-2xl w-6"
-              icon={faCheck}
+              className={`text-${checkResult2ColorClassName(
+                CheckResult.Passed
+              )} text-2xl w-6`}
+              icon={checkResult2Icon(CheckResult.Passed)}
             />
-            <span className="ml-4">Maßnahme umgesetzt</span>
+            <span className="ml-4">{legendMessages(CheckResult.Passed)}</span>
           </div>
           <div className="flex-row flex mt-2 items-center">
             <FontAwesomeIcon
-              className="text-yellow-500 text-2xl w-6"
-              icon={faWarning}
+              className={`text-${checkResult2ColorClassName(
+                CheckResult.Failed
+              )} text-2xl w-6`}
+              icon={checkResult2Icon(CheckResult.Failed)}
             />
-            <span className="ml-4">Maßnahme nicht umgesetzt</span>
+            <span className="ml-4">{legendMessages(CheckResult.Failed)}</span>
           </div>
           <div className="flex-row flex mt-2 items-center">
             <div className="w-6 flex flex-row items-center">
               <FontAwesomeIcon
-                className="text-red-500 text-2xl w-6"
-                icon={faTimes}
+                className={`text-${checkResult2ColorClassName(
+                  CheckResult.Critical
+                )} text-2xl w-6`}
+                icon={checkResult2Icon(CheckResult.Critical)}
               />
             </div>
-            <span className="ml-4">sofortiger Handlungsbedarf</span>
+            <span className="ml-4">{legendMessages(CheckResult.Critical)}</span>
           </div>
         </div>
 
