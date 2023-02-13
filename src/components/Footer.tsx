@@ -1,9 +1,10 @@
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import Imprint from "./Imprint";
 import Privacy from "./Privacy";
 import Modal from "./Modal";
+import { useRouter } from "next/router";
 
 interface Props {
   hideLogin?: boolean;
@@ -12,6 +13,16 @@ const Footer: FunctionComponent<Props> = ({ hideLogin }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isPrivacyOpen, setPrivacyIsOpen] = useState(false);
   const session = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (router.query["action"] === "openImprintModal") {
+      setIsOpen(true);
+    }
+    if (router.query["action"] === "openPrivacyModal") {
+      setPrivacyIsOpen(true);
+    }
+  }, []);
 
   return (
     <>
