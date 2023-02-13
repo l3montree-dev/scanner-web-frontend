@@ -13,7 +13,7 @@ import { DetailedDomain } from "../types";
 import { classNames } from "../utils/common";
 import {
   CheckResult,
-  checkResult2ColorClassName,
+  checkResult2BorderClassName,
   checkResult2Icon,
 } from "../utils/view";
 import ResultGrid from "./ResultGrid";
@@ -93,7 +93,7 @@ const ResultEnvelope: FunctionComponent<Props> = ({
         <div className="bg-deepblue-400 md:w-1/3 mt-5 md:mt-0 p-4 text-white">
           <div className="flex-row flex items-center">
             <FontAwesomeIcon
-              className={`text-${checkResult2ColorClassName(
+              className={`text-${checkResult2BorderClassName(
                 CheckResult.Passed
               )} text-2xl w-6`}
               icon={checkResult2Icon(CheckResult.Passed)}
@@ -102,7 +102,7 @@ const ResultEnvelope: FunctionComponent<Props> = ({
           </div>
           <div className="flex-row flex mt-2 items-center">
             <FontAwesomeIcon
-              className={`text-${checkResult2ColorClassName(
+              className={`text-${checkResult2BorderClassName(
                 CheckResult.Failed
               )} text-2xl w-6`}
               icon={checkResult2Icon(CheckResult.Failed)}
@@ -112,7 +112,7 @@ const ResultEnvelope: FunctionComponent<Props> = ({
           <div className="flex-row flex mt-2 items-center">
             <div className="w-6 flex flex-row items-center">
               <FontAwesomeIcon
-                className={`text-${checkResult2ColorClassName(
+                className={`text-${checkResult2BorderClassName(
                   CheckResult.Critical
                 )} text-2xl w-6`}
                 icon={checkResult2Icon(CheckResult.Critical)}

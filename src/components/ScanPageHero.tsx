@@ -1,6 +1,4 @@
-import { faCheck, faWarning, faTimes } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { FormEvent, FunctionComponent, SetStateAction } from "react";
+import { FormEvent, FunctionComponent, SetStateAction } from "react";
 import Button from "./Button";
 
 interface Props {

@@ -30,7 +30,7 @@ export const didPass2CheckResult = (
   }
 };
 
-export const checkResult2ColorClassName = (checkResult: CheckResult) => {
+export const checkResult2BorderClassName = (checkResult: CheckResult) => {
   switch (checkResult) {
     case CheckResult.Passed:
       return "lightning-500";
@@ -40,6 +40,19 @@ export const checkResult2ColorClassName = (checkResult: CheckResult) => {
       return "red-500";
     default:
       return "gray-500";
+  }
+};
+
+export const checkResult2TextClassName = (checkResult: CheckResult) => {
+  switch (checkResult) {
+    case CheckResult.Passed:
+      return checkResult2BorderClassName(checkResult);
+    case CheckResult.Failed:
+      return checkResult2BorderClassName(checkResult);
+    case CheckResult.Critical:
+      return checkResult2BorderClassName(checkResult);
+    default:
+      return "white";
   }
 };
 

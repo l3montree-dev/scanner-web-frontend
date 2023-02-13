@@ -5,6 +5,16 @@ module.exports = {
         "./src/pages/**/*.{js,ts,jsx,tsx}",
         "./src/components/**/*.{js,ts,jsx,tsx}",
     ],
+    safelist: [
+        "text-yellow-500",
+        "text-red-500",
+        "border-red-500",
+        "text-red-500",
+        "text-lightning-500",
+        "border-lightning-500",
+        "text-gray-500",
+        "border-gray-500",
+    ],
     theme: {
         extend: {
             fontFamily: {

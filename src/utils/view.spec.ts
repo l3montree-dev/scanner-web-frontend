@@ -1,6 +1,6 @@
 import {
   CheckResult,
-  checkResult2ColorClassName,
+  checkResult2BorderClassName,
   checkResult2Icon,
   didPass2CheckResult,
 } from "./view";
@@ -34,7 +34,7 @@ describe("view test suite", () => {
   ])(
     "should transform a checkResult to the correct tailwind classname",
     (param, expected) => {
-      const result = checkResult2ColorClassName(param);
+      const result = checkResult2BorderClassName(param);
       expect(result).toEqual(expected);
     }
   );
