@@ -183,19 +183,18 @@ const Home: NextPage<Props> = ({ displayNotAvailable }) => {
             refreshRequest={refreshRequest}
             amountPassed={amountPassed}
           />
-          <div className="bg-deepblue-400 justify-center mx-5 md:mx-0 mb-5 flex flex-col md:flex-row md:justify-between items-center text-white mt-5 p-4">
+          {/*<div className="bg-deepblue-400 justify-center mx-5 md:mx-0 mb-5 flex flex-col md:flex-row md:justify-between items-center text-white mt-5 p-4">
             <p>Die OZG-Security-Challenge: Hintergrundinfos und Vieles mehr.</p>
             <a
               title="Mehr Informationen zur OZG-Security-Challenge 2023"
               target={"_blank"}
               rel={"noopener noreferrer"}
-              className="bg-lightning-500 mt-5 md:mt-0 px-5 py-2 text-deepblue-500 text-center font-bold"
-              href="https://www.onlinezugangsgesetz.de/Webs/OZG/DE/startseite/startseite-node.html"
+              className="bg-lightning-500 hover:bg-lightning-900 mt-5 md:mt-0 transition-all px-5 py-2 text-deepblue-500 text-center font-bold"
+              href="www.onlinezugangsgesetz.de/ozgsec"
             >
               Mehr erfahren
             </a>
-          </div>
-          <Subscribe />
+  </div>*/}
         </div>
       </div>
     </Page>

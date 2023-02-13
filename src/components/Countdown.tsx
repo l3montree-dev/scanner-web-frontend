@@ -58,7 +58,7 @@ const Countdown: FunctionComponent = () => {
         </span>
         Minuten
       </div>
-      <div className="flex flex-1 flex-col p-4 bg-deepblue-200">
+      <div className="flex flex-1 flex-col p-4 whitespace-nowrap bg-deepblue-200">
         <span className="text-4xl">
           <span>{timeLeft.seconds}</span>
         </span>

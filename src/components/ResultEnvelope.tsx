@@ -100,13 +100,13 @@ const ResultEnvelope: FunctionComponent<Props> = ({
             <span className="ml-4">Maßnahme nicht umgesetzt</span>
           </div>
           <div className="flex-row flex mt-2 items-center">
-            <div className="w-6">
+            <div className="w-6 flex flex-row items-center">
               <FontAwesomeIcon
                 className="text-red-500 text-2xl w-6"
                 icon={faTimes}
               />
             </div>
-            <span className="ml-4">Fehlerhafte Umsetzung</span>
+            <span className="ml-4">sofortiger Handlungsbedarf</span>
           </div>
         </div>
 
