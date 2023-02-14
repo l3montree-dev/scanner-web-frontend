@@ -74,10 +74,6 @@ const Privacy = () => {
       <a href="ozgsec@neuland-homeland.de">ozgsec@neuland-homeland.de</a>
       <br />
       <br />
-      Eine Vereinbarung über die Auftragsverarbeitung gemäß Artikel 28 DSGVO
-      wurde geschlossen.
-      <br />
-      <br />
       <br />
       <b>2. Erhebung und Speicherung personenbezogener Daten</b>
       <br />
