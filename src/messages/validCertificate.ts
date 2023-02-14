@@ -6,7 +6,7 @@ export const getValidCertificateMessage = (report: DetailedDomain) => {
     report.details[CertificateInspectionType.ValidCertificate]?.didPass ===
     false
   ) {
-    return `Das Zertifikat des Servers ist abgelaufen.`;
+    return `"Das Zertifikat der Domain oder des Weiterleitungsziels ist abgelaufen.`;
   }
-  return `Das Zertifikat des Servers ist valide.`;
+  return `Das Zertifikat der Domain oder des Weiterleitungsziels ist valide.`;
 };

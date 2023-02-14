@@ -82,10 +82,33 @@ export const InspectionTypeEnum = {
   ...ContentInspectionType,
   ...HeaderInspectionType,
 };
-export interface InspectResultDTO {
-  type: InspectionType;
-  didPass: boolean | null;
+export type InspectResultDTO =
+  | SuccessInspectResultDTO
+  | ErrorInspectResultDTO
+  | UnknownInspectResultDTO;
+
+export interface SuccessInspectResultDTO {
+  didPass: true;
   actualValue: Record<string, any>;
   errors?: string[];
   recommendations?: string[];
+}
+
+export interface ErrorInspectResultDTO {
+  didPass: false;
+  actualValue: Record<string, any>;
+  errors?: string[];
+  recommendations?: string[];
+}
+
+export interface UnknownInspectResultDTO {
+  didPass: null;
+  actualValue: {
+    error: {
+      code: string;
+      message: string;
+    };
+  };
+  errors?: string[];
+  recommendations: undefined;
 }

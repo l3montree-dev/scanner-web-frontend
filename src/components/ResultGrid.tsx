@@ -3,12 +3,14 @@ import {
   CertificateInspectionType,
   DomainInspectionType,
   HeaderInspectionType,
+  HttpInspectionType,
   NetworkInspectionType,
   OrganizationalInspectionType,
   TLSInspectionType,
 } from "../inspection/scans";
 import { getDNSSecReportMessage } from "../messages/dnsSec";
 import { getHSTSReportMessage } from "../messages/hsts";
+import { getHttpMessage, immediateActionHTTPErrors } from "../messages/http";
 import { getMatchesHostnameMessage } from "../messages/matchesHostname";
 import { getResponsibleDisclosureReportMessage } from "../messages/responsibleDisclosure";
 import getRPKIReportMessage from "../messages/rpki";
@@ -34,6 +36,7 @@ const messages = {
   RPKI: getRPKIReportMessage,
   MatchesHostname: getMatchesHostnameMessage,
   ValidCertificate: getValidCertificateMessage,
+  HTTP: getHttpMessage,
 };
 
 const regularChecks = [
@@ -48,17 +51,34 @@ const regularChecks = [
 const immediateActionRequired = [
   CertificateInspectionType.MatchesHostname,
   CertificateInspectionType.ValidCertificate,
+  HttpInspectionType.HTTP,
 ] as const;
 
 const titleMapper = {
   DNSSec: "DNSSEC",
   RPKI: "RPKI",
   TLSv1_3: "TLS 1.3",
+  HTTP: "HTTP",
   TLSv1_1_Deactivated: "Deaktivierung von veralteten TLS/ SSL Protokollen",
   HSTS: "HSTS",
   ResponsibleDisclosure: "Responsible Disclosure",
   MatchesHostname: "Übereinstimmung des Hostnamens im Zertifikat",
   ValidCertificate: "Gültiges Zertifikat",
+};
+
+const shouldDisplayImmediateActionRequired = (
+  report: DetailedDomain,
+  check: typeof immediateActionRequired[number]
+): boolean => {
+  if (check === HttpInspectionType.HTTP) {
+    return (
+      report.details[check]?.didPass === null &&
+      immediateActionHTTPErrors.includes(
+        report.details[check]?.actualValue.error.code
+      )
+    );
+  }
+  return report.details[check]?.didPass === false;
 };
 
 const getDescription = (
@@ -74,8 +94,8 @@ interface Props {
 const ResultGrid: FunctionComponent<Props> = (props) => {
   const { report } = props;
 
-  const immediateActionRequiredChecks = immediateActionRequired.filter(
-    (check) => report.details[check]?.didPass === false
+  const immediateActionRequiredChecks = immediateActionRequired.filter((key) =>
+    shouldDisplayImmediateActionRequired(report, key)
   );
   return (
     <>
