@@ -98,12 +98,14 @@ export type IScanSuccessResponse = {
   sut: string;
 };
 
+export type ErrorCode = "" | string;
+
 export type IScanErrorResponse = {
   target: string;
   timestamp: number;
   ipAddress: string;
   duration: number;
-  result: { error: any };
+  result: { error: { message: string; code: ErrorCode } };
 };
 
 export type IScanResponse = IScanErrorResponse | IScanSuccessResponse;

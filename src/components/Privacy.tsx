@@ -1,6 +1,4 @@
 import React from "react";
-import style from "react-syntax-highlighter/dist/esm/styles/hljs/a11y-dark";
-import { classNames } from "../utils/common";
 
 const Privacy = () => {
   return (
