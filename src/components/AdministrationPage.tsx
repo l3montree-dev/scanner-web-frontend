@@ -6,6 +6,7 @@ import { Props as MetaProps } from "./Meta";
 
 interface Props extends MetaProps {
   children: [React.ReactNode, React.ReactNode];
+  keycloakIssuer: string;
 }
 const AdministrationPage: FunctionComponent<Props> = (props) => {
   const { children, ...rest } = props;

@@ -20,6 +20,7 @@ import { networkService } from "../../services/networkService";
 import { classNames, isAdmin } from "../../utils/common";
 
 interface Props {
+  keycloakIssuer: string;
   networks: Array<Network>;
 }
 const Network: FunctionComponent<Props> = (props) => {
@@ -88,7 +89,10 @@ const Network: FunctionComponent<Props> = (props) => {
 
   return (
     <>
-      <AdministrationPage title="Netzwerkverwaltung">
+      <AdministrationPage
+        keycloakIssuer={props.keycloakIssuer}
+        title="Netzwerkverwaltung"
+      >
         <SideNavigation />
         <div>
           <div className="flex items-start flex-row">
@@ -197,6 +201,7 @@ export const getServerSideProps: GetServerSideProps = decorateServerSideProps(
     return {
       props: {
         networks: await networkService.getAll(db),
+        keycloakIssuer: process.env.KEYCLOAK_ISSUER,
       },
     };
   },

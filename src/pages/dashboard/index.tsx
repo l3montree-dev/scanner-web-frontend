@@ -39,6 +39,7 @@ import { dateFormat, linkMapper } from "../../utils/common";
 
 interface Props {
   dashboard: IDashboard;
+  keycloakIssuer: string;
   referenceChartData: {
     [referenceName: string]: Array<ChartData & { date: number }>;
   };
@@ -288,7 +289,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
 
   return (
     <>
-      <DashboardPage title="Dashboard">
+      <DashboardPage keycloakIssuer={props.keycloakIssuer} title="Dashboard">
         <SideNavigation />
         <div className="flex-1 text-white mb-10">
           <h1 className="text-4xl mb-5 font-bold">Dashboard</h1>
@@ -618,6 +619,7 @@ export const getServerSideProps = decorateServerSideProps(
       props: {
         dashboard,
         referenceChartData,
+        keycloakIssuer: process.env.KEYCLOAK_ISSUER,
       },
     };
   },
