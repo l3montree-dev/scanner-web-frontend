@@ -121,16 +121,17 @@ const ResultEnvelope: FunctionComponent<Props> = ({
             <span className="ml-4">{legendMessages(CheckResult.Critical)}</span>
           </div>
         </div>
-
-        {refreshRequest.errored && (
-          <p className={classNames("text-red-500")}>
-            {refreshRequest.errorMessage}
-          </p>
-        )}
       </div>
       {!refreshRequest.isLoading && !refreshRequest.errored && (
         <div>
           <ResultGrid report={domain} />
+        </div>
+      )}
+      {refreshRequest.errored && (
+        <div>
+          <p className={classNames("text-red-500")}>
+            {refreshRequest.errorMessage}
+          </p>
         </div>
       )}
     </div>

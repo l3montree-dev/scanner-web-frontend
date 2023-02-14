@@ -2,7 +2,7 @@
 import { randomUUID } from "crypto";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { Domain, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { decorate } from "../../decorators/decorate";
 import { withDB } from "../../decorators/withDB";
 import { inspectRPC } from "../../inspection/inspect";
@@ -89,40 +89,27 @@ export default decorate(
 
     const result = await inspectRPC(requestId, siteToScan);
 
-    console.log(result, siteToScan);
     if (isScanError(result)) {
-      if (result.result.error === "fetch failed") {
-        logger.error(
-          { err: result.result.error, duration: Date.now() - start, requestId },
-          `failed to fetch site: ${siteToScan}`
-        );
-        return res.status(400).json({
-          error:
-            "Invalid site provided. Please provide a valid fully qualified domain name as site query parameter. Example: ?site=example.com",
-          fqdn: result.target,
-        });
-      } else {
-        // do not monitor this domain if it does not exist yet - this means, that there is a user which scans the domain for the first time.
-        // it is not necessary to do any re-scans.
-        await neverThrow(
-          scanCB.run(
-            async () =>
-              await timeout(domainService.handleDomainScanError(result, prisma))
-          )
-        );
-        logger.error(
-          {
-            err: result.result.error.message,
-            duration: Date.now() - start,
-            requestId,
-          },
-          `failed to scan site: ${siteToScan}`
-        );
-        return res.status(500).json({
-          error: "Error happened...",
-          fqdn: result.target,
-        });
-      }
+      // do not monitor this domain if it does not exist yet - this means, that there is a user which scans the domain for the first time.
+      // it is not necessary to do any re-scans.
+      await neverThrow(
+        scanCB.run(
+          async () =>
+            await timeout(domainService.handleDomainScanError(result, prisma))
+        )
+      );
+      logger.error(
+        {
+          err: result.result.error.message,
+          duration: Date.now() - start,
+          requestId,
+        },
+        `failed to scan site: ${siteToScan}`
+      );
+      return res.status(422).json({
+        error: result.result.error.code,
+        fqdn: result.target,
+      });
     } else {
       logger.info(
         { duration: Date.now() - start, requestId },

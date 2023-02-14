@@ -18,6 +18,7 @@ import ScanPageHero from "../components/ScanPageHero";
 import { clientHttpClient } from "../services/clientHttpClient";
 import { DetailedDomain, IScanSuccessResponse } from "../types";
 import { sanitizeFQDN } from "../utils/common";
+import { getErrorMessage } from "../utils/error";
 
 const hostnameRegex = new RegExp(
   /^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
@@ -64,11 +65,11 @@ const Home: NextPage<Props> = ({ displayNotAvailable }) => {
       );
 
       if (!response.ok) {
-        if (response.status === 400) {
-          return scanRequest.error("Die Domain konnte nicht gefunden werden.");
-        }
+        const err = await response.json();
         return scanRequest.error(
-          "Es ist ein Fehler aufgetreten. Bitte versuche es später erneut."
+          `Es ist ein Fehler aufgetreten - Fehlermeldung: ${getErrorMessage(
+            err.error.code
+          )}`
         );
       }
 
@@ -108,13 +109,11 @@ const Home: NextPage<Props> = ({ displayNotAvailable }) => {
         crypto.randomUUID()
       );
       if (!response.ok) {
-        if (response.status === 400) {
-          return refreshRequest.error(
-            "Die Domain konnte nicht gefunden werden."
-          );
-        }
+        const err = await response.json();
         return refreshRequest.error(
-          "Es ist ein Fehler aufgetreten. Bitte versuche es später erneut."
+          `Es ist ein Fehler aufgetreten - Fehlermeldung: ${getErrorMessage(
+            err.error.code
+          )}`
         );
       }
       const obj = await response.json();
