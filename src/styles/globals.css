@@ -110,3 +110,8 @@ th > div {
     min-width: 600px;
 }
 
+@media screen and (max-width: 768px) {
+    .modal {
+        min-width: 100vw;
+    }
+}
