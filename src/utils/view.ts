@@ -12,14 +12,7 @@ export enum CheckResult {
   Unknown = "unknown",
 }
 
-export const didPass2CheckResult = (
-  didPass?: boolean | null,
-  overwriteAsCritical = false
-) => {
-  if (overwriteAsCritical) {
-    return CheckResult.Critical;
-  }
-
+export const didPass2CheckResult = (didPass?: boolean | null) => {
   switch (didPass) {
     case true:
       return CheckResult.Passed;

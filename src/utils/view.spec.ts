@@ -6,13 +6,6 @@ import {
 } from "./view";
 
 describe("view test suite", () => {
-  it("should overwrite the didPass value as critical if the overwriteAsCritical is true", () => {
-    const didPass = true;
-    const overwriteAsCritical = true;
-    const result = didPass2CheckResult(didPass, overwriteAsCritical);
-    expect(result).toEqual(CheckResult.Critical);
-  });
-
   it.each([
     [true, CheckResult.Passed],
     [false, CheckResult.Failed],

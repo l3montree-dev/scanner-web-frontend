@@ -43,11 +43,11 @@ const ResultBox: FunctionComponent<Props> = (props) => {
         </div>
       </div>
 
-      {props.link !== undefined && (
+      {Boolean(props.link) && (
         <div className="flex flex-row justify-end">
           <Link
             target={"_blank"}
-            href={props.link}
+            href={props.link as string}
             className="text-sm w-full inline-block  text-right top-1 underline right-0 mt-2"
           >
             {props.checkResult === CheckResult.Passed

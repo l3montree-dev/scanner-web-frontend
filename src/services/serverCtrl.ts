@@ -103,7 +103,7 @@ const startScanResponseLoop = once(() => {
       try {
         await domainService.handleDomainScanError(content, prisma);
       } finally {
-        logger.error({ target: content.target }, content.result.error);
+        logger.error({ target: content.target }, content.result.error.message);
         return;
       }
     }
