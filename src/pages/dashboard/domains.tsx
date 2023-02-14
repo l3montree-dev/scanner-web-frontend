@@ -46,6 +46,7 @@ import { didPass2CheckResult } from "../../utils/view";
 
 interface Props {
   domains: PaginateResult<DTO<DetailedDomain>>;
+  keycloakIssuer: string;
 }
 
 const SortButton: FunctionComponent<{
@@ -247,7 +248,10 @@ const Dashboard: FunctionComponent<Props> = (props) => {
   };
 
   return (
-    <DashboardPage title="Domainübersicht">
+    <DashboardPage
+      keycloakIssuer={props.keycloakIssuer}
+      title="Domainübersicht"
+    >
       <SideNavigation />
       <div className="flex-1">
         <div className="text-white">
@@ -659,6 +663,7 @@ export const getServerSideProps = decorateServerSideProps(
 
     return {
       props: {
+        keycloakIssuer: process.env.KEYCLOAK_ISSUER,
         domains,
       },
     };

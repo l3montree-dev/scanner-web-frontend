@@ -49,6 +49,7 @@ export const parseCreateUserForm = ({
 interface Props {
   error: boolean;
   users: Array<UserRepresentation & User & { id: string }>;
+  keycloakIssuer: string;
 }
 const Users: FunctionComponent<Props> = (props) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -122,7 +123,10 @@ const Users: FunctionComponent<Props> = (props) => {
   };
 
   return (
-    <AdministrationPage title="Nutzerverwaltung">
+    <AdministrationPage
+      keycloakIssuer={props.keycloakIssuer}
+      title="Nutzerverwaltung"
+    >
       <SideNavigation />
       <>
         <div className="flex-1">
@@ -239,6 +243,7 @@ export const getServerSideProps = decorateServerSideProps(
       return {
         props: {
           error: false,
+          keycloakIssuer: process.env.KEYCLOAK_ISSUER,
           users: kcUsers.map((user) => {
             const userFromDB = users.find((u) => u.id === user.id);
             return {
@@ -254,6 +259,7 @@ export const getServerSideProps = decorateServerSideProps(
         props: {
           error: true,
           users: [],
+          keycloakIssuer: process.env.KEYCLOAK_ISSUER,
         },
       };
     }
