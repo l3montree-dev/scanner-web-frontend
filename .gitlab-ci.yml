@@ -51,8 +51,16 @@ build-main:
     extends: .build-template
     variables:
         IMAGE_TAG: $CI_REGISTRY_IMAGE:unstable
+        
     only:
         - main
+    script:
+        - /kaniko/executor
+          --cleanup
+          --context $CI_PROJECT_DIR
+          --dockerfile $CI_PROJECT_DIR/Dockerfile
+          --destination $IMAGE_TAG
+          --build-arg NEXT_PUBLIC_ENVIRONMENT="development"
 
 
 helm:

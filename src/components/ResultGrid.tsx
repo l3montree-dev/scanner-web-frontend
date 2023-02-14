@@ -18,7 +18,7 @@ import { getTLSv1_1_DeactivatedReportMessage } from "../messages/tlsv1_1_Deactiv
 import { getTLSv1_3ReportMessage } from "../messages/tlsv1_3";
 import { getValidCertificateMessage } from "../messages/validCertificate";
 import { DetailedDomain } from "../types";
-import { classNames, linkMapper } from "../utils/common";
+import { classNames, devOnly, linkMapper } from "../utils/common";
 import {
   CheckResult,
   checkResult2BorderClassName,
@@ -101,31 +101,35 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
   );
   return (
     <>
-      {immediateActionRequiredChecks.length > 0 && (
-        <div className="mt-3 mb-4 flex flex-wrap flex-row gap-4">
-          {immediateActionRequiredChecks.map((key) => {
-            return (
-              <div key={key} className="w-full flex-none sm:flex-1">
-                <div
-                  className={classNames(
-                    "bg-deepblue-400 border-2 h-full p-5",
-                    `border-${checkResult2BorderClassName(
-                      CheckResult.Critical
-                    )}`
-                  )}
-                >
-                  <ResultBox
-                    title={titleMapper[key]}
-                    description={getDescription(report, key)}
-                    link={linkMapper[key]}
-                    checkResult={CheckResult.Critical}
-                  />
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
+      {devOnly(() => (
+        <>
+          {immediateActionRequiredChecks.length > 0 && (
+            <div className="mt-3 mb-4 flex flex-wrap flex-row gap-4">
+              {immediateActionRequiredChecks.map((key) => {
+                return (
+                  <div key={key} className="w-full flex-none sm:flex-1">
+                    <div
+                      className={classNames(
+                        "bg-deepblue-400 border-2 h-full p-5",
+                        `border-${checkResult2BorderClassName(
+                          CheckResult.Critical
+                        )}`
+                      )}
+                    >
+                      <ResultBox
+                        title={titleMapper[key]}
+                        description={getDescription(report, key)}
+                        link={linkMapper[key]}
+                        checkResult={CheckResult.Critical}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </>
+      ))}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 mt-3 gap-4">
         {regularChecks.map((key) => {
           return (

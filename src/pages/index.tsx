@@ -64,7 +64,7 @@ const Home: NextPage<Props> = ({ displayNotAvailable }) => {
         const err = await response.json();
         return scanRequest.error(
           `Es ist ein Fehler aufgetreten - Fehlermeldung: ${getErrorMessage(
-            err.error.code
+            err.error
           )}`
         );
       }
