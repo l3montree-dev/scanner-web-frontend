@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { FunctionComponent } from "react";
 import { useSession } from "../hooks/useSession";
+import { clientOnly } from "../utils/common";
 import Menu from "./Menu";
 import MenuItem from "./MenuItem";
 import MenuList from "./MenuList";
@@ -64,19 +65,21 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
                       />
                       Ausloggen
                     </MenuItem>
-                    <a
-                      href={`${keycloakIssuer}/protocol/openid-connect/auth?client_id=quicktest&redirect_uri=${encodeURIComponent(
-                        "https://ozgsec.de"
-                      )}&response_type=code&scope=openid&kc_action=UPDATE_PASSWORD`}
-                    >
-                      <MenuItem>
-                        <FontAwesomeIcon
-                          className="mr-2 text-white"
-                          icon={faArrowRightFromBracket}
-                        />
-                        Passwort ändern
-                      </MenuItem>
-                    </a>
+                    {clientOnly(() => (
+                      <a
+                        href={`${keycloakIssuer}/protocol/openid-connect/auth?client_id=quicktest&redirect_uri=${encodeURIComponent(
+                          `${window.location.protocol}//${window.location.host}`
+                        )}&response_type=code&scope=openid&kc_action=UPDATE_PASSWORD`}
+                      >
+                        <MenuItem>
+                          <FontAwesomeIcon
+                            className="mr-2 text-white"
+                            icon={faArrowRightFromBracket}
+                          />
+                          Passwort ändern
+                        </MenuItem>
+                      </a>
+                    ))}
                     <div className="p-2 text-white text-sm border-t border-t-deepblue-200 bg-deepblue-300">
                       Eingeloggt als: {session.data.user.name}
                     </div>

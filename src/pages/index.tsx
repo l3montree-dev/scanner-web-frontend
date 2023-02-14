@@ -18,8 +18,6 @@ import ScanPageHero from "../components/ScanPageHero";
 import { clientHttpClient } from "../services/clientHttpClient";
 import { DetailedDomain, IScanSuccessResponse } from "../types";
 import { sanitizeFQDN } from "../utils/common";
-import Subscribe from "../components/Subscribe";
-import PrimaryButton from "../components/PrimaryButton";
 
 const hostnameRegex = new RegExp(
   /^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
