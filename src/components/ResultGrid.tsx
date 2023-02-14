@@ -66,9 +66,11 @@ const titleMapper = {
   ValidCertificate: "Gültiges Zertifikat",
 };
 
+type ImmediateActions = typeof immediateActionRequired;
+
 const shouldDisplayImmediateActionRequired = (
   report: DetailedDomain,
-  check: typeof immediateActionRequired[number]
+  check: ImmediateActions[number]
 ): boolean => {
   if (check === HttpInspectionType.HTTP) {
     return (
