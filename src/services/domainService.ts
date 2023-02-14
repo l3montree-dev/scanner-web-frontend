@@ -12,7 +12,7 @@ import { neverThrow } from "../utils/common";
 import { DTO, shuffle, toDTO } from "../utils/server";
 
 const handleNewDomain = async (
-  domain: { fqdn: string; group?: string },
+  domain: { fqdn: string; group?: string; queued?: boolean },
   prisma: PrismaClient,
   connectToUser?: User
 ): Promise<Domain> => {
@@ -21,6 +21,7 @@ const handleNewDomain = async (
     fqdn: domain.fqdn,
     lastScan: null,
     group: domain.group ?? "unknown",
+    queued: domain.queued ?? false,
   };
 
   const d = await prisma.domain.upsert({

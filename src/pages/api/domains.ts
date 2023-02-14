@@ -8,6 +8,7 @@ import { withDB } from "../../decorators/withDB";
 import { withSession } from "../../decorators/withSession";
 import ForbiddenException from "../../errors/ForbiddenException";
 import MethodNotAllowed from "../../errors/MethodNotAllowed";
+import { inspectRPC } from "../../inspection/inspect";
 import { domainService } from "../../services/domainService";
 
 import { getLogger } from "../../services/logger";
@@ -78,10 +79,12 @@ const handlePost = async (
     }
 
     const d = await domainService.handleNewDomain(
-      { fqdn: sanitized },
+      { fqdn: sanitized, queued: true },
       prisma,
       session.user
     );
+
+    await inspectRPC(requestId, d.fqdn);
     // force the regeneration of all stats
     statService.generateStatsForUser(session.user, prisma, true).then(() => {
       logger.info(
@@ -156,10 +159,11 @@ const handlePost = async (
           return async () => {
             try {
               await domainService.handleNewDomain(
-                { fqdn: domain },
+                { fqdn: domain, queued: true },
                 prisma,
                 session.user
               );
+              await inspectRPC(requestId, domain);
               imported++;
             } catch (err: any) {
               return;
