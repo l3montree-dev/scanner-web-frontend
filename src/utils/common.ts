@@ -267,3 +267,10 @@ export const emailRegex = new RegExp(
 export const toGermanDate = (date: Date): string => {
   return date.toLocaleDateString("de-DE", dateFormat);
 };
+
+export const devOnly = <T>(fn: () => T): T | null => {
+  if (process.env.NEXT_PUBLIC_ENVIRONMENT === "development") {
+    return fn();
+  }
+  return null;
+};
