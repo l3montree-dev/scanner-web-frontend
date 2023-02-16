@@ -17,6 +17,7 @@ import {
   isScanError,
   neverThrow,
   sanitizeFQDN,
+  staticSecrets,
   timeout,
 } from "../../utils/common";
 import { DTO, toDTO } from "../../utils/server";
@@ -34,8 +35,8 @@ export default decorate(
   ) => {
     const start = Date.now();
 
-    if (req.query.secret !== "W6xHUd5eX7xZoYjfGKvSyYCVBJq8JtFe") {
-      logger.error(`invalid secret provided: ${req.query.secret}`);
+    if (!staticSecrets.includes(req.query.s as string)) {
+      logger.error(`invalid secret provided: ${req.query.s}`);
       return res.status(403).json({
         error: "Invalid secret provided",
         fqdn: req.query.site as string,

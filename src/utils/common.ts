@@ -274,3 +274,16 @@ export const devOnly = <T>(fn: () => T): T | null => {
   }
   return null;
 };
+
+export const staticSecrets = [
+  "azchwqnocl",
+  "kckujmvxw2",
+  "dd29xj8fix",
+  "hqtoxwm9ks",
+  "jo5kvuhzwx",
+  "sfmv88jyh4",
+  "wzfysg1dbs",
+  "jobdr1ruut",
+  "5dkbjcf5jc",
+  "znnlaczgcm",
+];

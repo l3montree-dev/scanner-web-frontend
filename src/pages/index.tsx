@@ -17,7 +17,7 @@ import ResultEnvelope from "../components/ResultEnvelope";
 import ScanPageHero from "../components/ScanPageHero";
 import { clientHttpClient } from "../services/clientHttpClient";
 import { DetailedDomain, IScanSuccessResponse } from "../types";
-import { sanitizeFQDN } from "../utils/common";
+import { sanitizeFQDN, staticSecrets } from "../utils/common";
 import { getErrorMessage } from "../messages/http";
 
 const isInViewport = (element: HTMLElement) => {
@@ -33,8 +33,9 @@ const isInViewport = (element: HTMLElement) => {
 
 interface Props {
   displayNotAvailable: boolean;
+  code: string;
 }
-const Home: NextPage<Props> = ({ displayNotAvailable }) => {
+const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
   const [website, setWebsite] = useState("");
   const scanRequest = useLoading();
   const refreshRequest = useLoading();
@@ -54,11 +55,10 @@ const Home: NextPage<Props> = ({ displayNotAvailable }) => {
     setDomain(null);
 
     // do the real api call.
+    // forward the secret of query param s to the backend
     try {
       const response = await clientHttpClient(
-        `/api/scan?site=${encodeURIComponent(
-          target
-        )}&secret=W6xHUd5eX7xZoYjfGKvSyYCVBJq8JtFe`,
+        `/api/scan?site=${encodeURIComponent(target)}&s=${code}`,
         crypto.randomUUID()
       );
 
@@ -105,7 +105,7 @@ const Home: NextPage<Props> = ({ displayNotAvailable }) => {
       const response = await clientHttpClient(
         `/api/scan?site=${encodeURIComponent(
           domain.fqdn
-        )}&refresh=true&secret=W6xHUd5eX7xZoYjfGKvSyYCVBJq8JtFe`,
+        )}&refresh=true&s=${code}`,
         crypto.randomUUID()
       );
       if (!response.ok) {
@@ -198,36 +198,25 @@ const Home: NextPage<Props> = ({ displayNotAvailable }) => {
   );
 };
 
-const secrets = [
-  "azchwqnocl",
-  "kckujmvxw2",
-  "dd29xj8fix",
-  "hqtoxwm9ks",
-  "jo5kvuhzwx",
-  "sfmv88jyh4",
-  "wzfysg1dbs",
-  "jobdr1ruut",
-  "5dkbjcf5jc",
-  "znnlaczgcm",
-];
-
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { query } = context;
   // check if the user does provide a valid query parameter
   const code = query["s"];
   if (
     /*context.req.headers.host === "localhost:3000"*/ false ||
-    (code && secrets.includes(code as string))
+    (code && staticSecrets.includes(code as string))
   ) {
     return {
       props: {
         displayNotAvailable: false,
+        code: code,
       },
     };
   }
   return {
     props: {
       displayNotAvailable: true,
+      code: code,
     },
   };
 };
