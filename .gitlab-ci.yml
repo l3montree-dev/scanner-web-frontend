@@ -6,7 +6,7 @@ stages:
     - publish
   
 gitguardianscan:
-    image: gitguardian/ggshield:v1.13.5@sha256:82b46a5ebda17645a8aabd3d20cfb65cd65938db4fb6d31275bc91132ff21472
+    image: gitguardian/ggshield:v1.14.3@sha256:46ade302e8834e98163a33170e2a2438bc0dd73290b828225c6cf508cfbec22c
     stage: test
     script: ggshield secret scan ci
     rules:
