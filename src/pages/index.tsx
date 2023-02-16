@@ -198,13 +198,26 @@ const Home: NextPage<Props> = ({ displayNotAvailable }) => {
   );
 };
 
+const secrets = [
+  "azchwqnocl",
+  "kckujmvxw2",
+  "dd29xj8fix",
+  "hqtoxwm9ks",
+  "jo5kvuhzwx",
+  "sfmv88jyh4",
+  "wzfysg1dbs",
+  "jobdr1ruut",
+  "5dkbjcf5jc",
+  "znnlaczgcm",
+];
+
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { query } = context;
   // check if the user does provide a valid query parameter
   const code = query["s"];
   if (
     /*context.req.headers.host === "localhost:3000"*/ false ||
-    (code && (+code === 423333 || +code % 42 === 0))
+    (code && secrets.includes(code as string))
   ) {
     return {
       props: {
