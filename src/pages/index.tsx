@@ -56,7 +56,9 @@ const Home: NextPage<Props> = ({ displayNotAvailable }) => {
     // do the real api call.
     try {
       const response = await clientHttpClient(
-        `/api/scan?site=${encodeURIComponent(target)}`,
+        `/api/scan?site=${encodeURIComponent(
+          target
+        )}&secret=W6xHUd5eX7xZoYjfGKvSyYCVBJq8JtFe`,
         crypto.randomUUID()
       );
 
@@ -101,7 +103,9 @@ const Home: NextPage<Props> = ({ displayNotAvailable }) => {
     refreshRequest.loading();
     try {
       const response = await clientHttpClient(
-        `/api/scan?site=${encodeURIComponent(domain.fqdn)}&refresh=true`,
+        `/api/scan?site=${encodeURIComponent(
+          domain.fqdn
+        )}&refresh=true&secret=W6xHUd5eX7xZoYjfGKvSyYCVBJq8JtFe`,
         crypto.randomUUID()
       );
       if (!response.ok) {

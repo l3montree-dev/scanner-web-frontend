@@ -34,6 +34,14 @@ export default decorate(
   ) => {
     const start = Date.now();
 
+    if (req.query.secret !== "W6xHUd5eX7xZoYjfGKvSyYCVBJq8JtFe") {
+      logger.error(`invalid secret provided: ${req.query.secret}`);
+      return res.status(403).json({
+        error: "Invalid secret provided",
+        fqdn: req.query.site as string,
+      });
+    }
+
     // check if the client does provide a request id.
     // if so, use this - otherwise generate a new one.
     const requestId =
