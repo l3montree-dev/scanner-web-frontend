@@ -1,6 +1,7 @@
-paths-ignore:
-  - 'test-server/*'
-
-matches-ignore:
-  - name: static-secret-api-scan
-    match: f298b9465a794a927534dcdfb8d2a7b02c61b926b91aa7049ae148ccb7976a7e
+secret:
+  ignored-matches:
+  - match: f298b9465a794a927534dcdfb8d2a7b02c61b926b91aa7049ae148ccb7976a7e
+    name: static-secret-api-scan
+  ignored-paths:
+  - test-server/*
+version: 2
