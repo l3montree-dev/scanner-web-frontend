@@ -12,11 +12,6 @@ const ReleasePlaceHolder: FunctionComponent = () => {
             alt="OZG-Logo"
           />
         </div>
-        <div className="md:mt-0 text-center p-5">
-          <h1 className="text-5xl sm:order-1 order-2 mb-3 font-bold">
-            OZG-Security-Challenge 2023
-          </h1>
-        </div>
         <div className="md:mt-0 text-white text-center pb-14 p-5 pt-0 md:pt-5">
           <p className="text-white">
             Neugierig?{" "}
