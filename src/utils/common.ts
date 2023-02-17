@@ -128,7 +128,7 @@ export const sanitizeFQDN = (providedValue: any): string | null => {
     return null;
   }
   // remove blank characters
-  providedValue = providedValue.replace(/\s/g, "");
+  providedValue = providedValue.trim();
 
   // add a protocol to the provided value, so that the URL constructor
   // can parse it correctly
