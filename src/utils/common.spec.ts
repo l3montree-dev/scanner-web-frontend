@@ -127,5 +127,8 @@ describe("common test suite", () => {
         "subdomain.example.com"
       );
     });
+    it("should work if blank characters are present", () => {
+      expect(sanitizeFQDN(" example.com ")).toBe("example.com");
+    });
   });
 });
