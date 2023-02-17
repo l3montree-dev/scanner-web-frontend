@@ -286,4 +286,6 @@ export const staticSecrets = [
   "jobdr1ruut",
   "5dkbjcf5jc",
   "znnlaczgcm",
+  // this one is for the dashboards
+  "oQ334umtB2Ve4XpTz2USFemZgC9ZLpXW",
 ];

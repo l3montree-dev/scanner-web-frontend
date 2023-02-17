@@ -216,7 +216,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       displayNotAvailable: true,
-      code: code,
+      code: !!code ? code : null,
     },
   };
 };
