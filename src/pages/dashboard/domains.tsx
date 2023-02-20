@@ -173,7 +173,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
     scanRequest.loading(fqdn);
 
     const response = await clientHttpClient(
-      `/api/scan?site=${fqdn}&refresh=true`,
+      `/api/scan?site=${fqdn}&refresh=true&s=oQ334umtB2Ve4XpTz2USFemZgC9ZLpXW`,
       crypto.randomUUID()
     );
 

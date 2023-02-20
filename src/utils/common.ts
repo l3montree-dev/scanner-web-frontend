@@ -127,6 +127,9 @@ export const sanitizeFQDN = (providedValue: any): string | null => {
   if (typeof providedValue !== "string" || !providedValue.includes(".")) {
     return null;
   }
+  // remove blank characters
+  providedValue = providedValue.trim();
+
   // add a protocol to the provided value, so that the URL constructor
   // can parse it correctly
   const url = new URL(
@@ -274,3 +277,18 @@ export const devOnly = <T>(fn: () => T): T | null => {
   }
   return null;
 };
+
+export const staticSecrets = [
+  "azchwqnocl",
+  "kckujmvxw2",
+  "dd29xj8fix",
+  "hqtoxwm9ks",
+  "jo5kvuhzwx",
+  "sfmv88jyh4",
+  "wzfysg1dbs",
+  "jobdr1ruut",
+  "5dkbjcf5jc",
+  "znnlaczgcm",
+  // this one is for the dashboards
+  "oQ334umtB2Ve4XpTz2USFemZgC9ZLpXW",
+];

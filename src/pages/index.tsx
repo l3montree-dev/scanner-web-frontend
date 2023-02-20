@@ -17,7 +17,7 @@ import ResultEnvelope from "../components/ResultEnvelope";
 import ScanPageHero from "../components/ScanPageHero";
 import { clientHttpClient } from "../services/clientHttpClient";
 import { DetailedDomain, IScanSuccessResponse } from "../types";
-import { sanitizeFQDN } from "../utils/common";
+import { sanitizeFQDN, staticSecrets } from "../utils/common";
 import { getErrorMessage } from "../messages/http";
 
 const isInViewport = (element: HTMLElement) => {
@@ -33,8 +33,9 @@ const isInViewport = (element: HTMLElement) => {
 
 interface Props {
   displayNotAvailable: boolean;
+  code: string;
 }
-const Home: NextPage<Props> = ({ displayNotAvailable }) => {
+const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
   const [website, setWebsite] = useState("");
   const scanRequest = useLoading();
   const refreshRequest = useLoading();
@@ -54,9 +55,10 @@ const Home: NextPage<Props> = ({ displayNotAvailable }) => {
     setDomain(null);
 
     // do the real api call.
+    // forward the secret of query param s to the backend
     try {
       const response = await clientHttpClient(
-        `/api/scan?site=${encodeURIComponent(target)}`,
+        `/api/scan?site=${encodeURIComponent(target)}&s=${code}`,
         crypto.randomUUID()
       );
 
@@ -101,7 +103,9 @@ const Home: NextPage<Props> = ({ displayNotAvailable }) => {
     refreshRequest.loading();
     try {
       const response = await clientHttpClient(
-        `/api/scan?site=${encodeURIComponent(domain.fqdn)}&refresh=true`,
+        `/api/scan?site=${encodeURIComponent(
+          domain.fqdn
+        )}&refresh=true&s=${code}`,
         crypto.randomUUID()
       );
       if (!response.ok) {
@@ -200,17 +204,19 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const code = query["s"];
   if (
     /*context.req.headers.host === "localhost:3000"*/ false ||
-    (code && (+code === 423333 || +code % 42 === 0))
+    (code && staticSecrets.includes(code as string))
   ) {
     return {
       props: {
         displayNotAvailable: false,
+        code: code,
       },
     };
   }
   return {
     props: {
       displayNotAvailable: true,
+      code: !!code ? code : null,
     },
   };
 };
