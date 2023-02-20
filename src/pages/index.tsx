@@ -1,5 +1,12 @@
 import type { GetServerSideProps, NextPage } from "next";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import {
+  FormEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import Meta from "../components/Meta";
 import Page from "../components/Page";
 import useLoading from "../hooks/useLoading";
@@ -12,13 +19,14 @@ import {
   TLSInspectionType,
 } from "../inspection/scans";
 
+import { useRouter } from "next/router";
 import ReleasePlaceHolder from "../components/ReleasePlaceholder";
 import ResultEnvelope from "../components/ResultEnvelope";
 import ScanPageHero from "../components/ScanPageHero";
+import { getErrorMessage } from "../messages/http";
 import { clientHttpClient } from "../services/clientHttpClient";
 import { DetailedDomain, IScanSuccessResponse } from "../types";
 import { sanitizeFQDN, staticSecrets } from "../utils/common";
-import { getErrorMessage } from "../messages/http";
 
 const isInViewport = (element: HTMLElement) => {
   const rect = element.getBoundingClientRect();
@@ -40,46 +48,48 @@ const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
   const scanRequest = useLoading();
   const refreshRequest = useLoading();
   const [domain, setDomain] = useState<null | DetailedDomain>(null);
+  const router = useRouter();
 
-  const onSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const onSubmit = useCallback(
+    async (e: FormEvent, site: string) => {
+      e.preventDefault();
 
-    // test if valid url
-    const target = sanitizeFQDN(website);
-    if (!target) {
-      scanRequest.error("Bitte trage einen gültigen Domainnamen ein.");
-      return;
-    }
-    // react will batch those two calls anyways.
-    scanRequest.loading();
-    setDomain(null);
-
-    // do the real api call.
-    // forward the secret of query param s to the backend
-    try {
-      const response = await clientHttpClient(
-        `/api/scan?site=${encodeURIComponent(target)}&s=${code}`,
-        crypto.randomUUID()
-      );
-
-      if (!response.ok) {
-        const err = await response.json();
-        return scanRequest.error(
-          `Es ist ein Fehler aufgetreten - Fehlermeldung: ${getErrorMessage(
-            err.error
-          )}`
+      // test if valid url
+      const target = sanitizeFQDN(site);
+      if (!target) {
+        scanRequest.error("Bitte trage einen gültigen Domainnamen ein.");
+        return;
+      }
+      // react will batch those two calls anyways.
+      scanRequest.loading();
+      setDomain(null);
+      // do the real api call.
+      // forward the secret of query param s to the backend
+      try {
+        const response = await clientHttpClient(
+          `/api/scan?site=${encodeURIComponent(target)}&s=${code}`,
+          crypto.randomUUID()
+        );
+        if (!response.ok) {
+          const err = await response.json();
+          return scanRequest.error(
+            `Es ist ein Fehler aufgetreten - Fehlermeldung: ${getErrorMessage(
+              err.error
+            )}`
+          );
+        }
+        const obj: DetailedDomain = await response.json();
+        setDomain(obj);
+        scanRequest.success();
+      } catch (e) {
+        console.log("e", e);
+        scanRequest.error(
+          "Es ist ein Fehler aufgetreten. Bitte versuche es später erneut."
         );
       }
-
-      const obj: DetailedDomain = await response.json();
-      setDomain(obj);
-      scanRequest.success();
-    } catch (e) {
-      scanRequest.error(
-        "Es ist ein Fehler aufgetreten. Bitte versuche es später erneut."
-      );
-    }
-  };
+    },
+    [scanRequest, code]
+  );
 
   useEffect(() => {
     if (domain) {
@@ -96,11 +106,27 @@ const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
     }
   }, [domain]);
 
+  const scannedSite = useRef<null | string>(null);
+
+  useEffect(() => {
+    if (router.query?.site && scannedSite.current !== router.query.site) {
+      scannedSite.current = router.query.site as string;
+      setWebsite(router.query.site as string);
+      onSubmit(
+        {
+          preventDefault: () => {},
+        } as FormEvent,
+        router.query.site as string
+      );
+    }
+  }, [router, onSubmit]);
+
   const handleRefresh = async () => {
     if (!domain) {
       return;
     }
     refreshRequest.loading();
+
     try {
       const response = await clientHttpClient(
         `/api/scan?site=${encodeURIComponent(
@@ -162,13 +188,20 @@ const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
       </Page>
     );
   }
+
   return (
     <Page>
       <Meta />
       <div className="flex md:py-10 flex-col w-full justify-center">
         <div className="max-w-screen-lg w-full md:p-5 mx-auto">
           <ScanPageHero
-            onSubmit={onSubmit}
+            onSubmit={(e) => {
+              e.preventDefault();
+              router.push({
+                pathname: router.pathname,
+                query: { ...router.query, site: website },
+              });
+            }}
             setWebsite={setWebsite}
             website={website}
             scanRequest={scanRequest}

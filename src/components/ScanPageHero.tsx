@@ -2,7 +2,7 @@ import { FormEvent, FunctionComponent, SetStateAction } from "react";
 import Button from "./Button";
 
 interface Props {
-  onSubmit: (e: FormEvent) => Promise<void>;
+  onSubmit: (e: FormEvent) => void;
   setWebsite: (value: SetStateAction<string>) => void;
   website: string;
   scanRequest: {

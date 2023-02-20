@@ -7,7 +7,6 @@ import {
   VictoryArea,
   VictoryAxis,
   VictoryChart,
-  VictoryContainer,
   VictoryLabel,
   VictoryLine,
   VictoryPie,
@@ -46,6 +45,7 @@ interface Props {
 }
 
 const fullConfig = resolveConfig(tailwindConfig);
+const tailwindColors = (fullConfig.theme as any).colors;
 
 const mapping: { [key in InspectionType]: string } = {
   [HttpInspectionType.HTTP]: "HTTP",
@@ -102,11 +102,11 @@ const referenceNameMapping: {
 } = {
   de_top_100000: {
     name: ".de",
-    color: (fullConfig.theme?.colors as any).slate["400"],
+    color: tailwindColors.slate["400"],
   },
   top_100000: {
     name: "global",
-    color: (fullConfig.theme?.colors as any).slate["400"],
+    color: tailwindColors.slate["400"],
   },
 };
 
@@ -121,11 +121,11 @@ const LabelComponent: FunctionComponent<any> = (props) => {
         renderInPortal={true}
         dx={30}
         backgroundStyle={{
-          fill: (fullConfig.theme?.colors as any).deepblue["600"],
+          fill: tailwindColors.deepblue["600"],
         }}
         style={{
           fontSize: 10,
-          fill: (fullConfig.theme?.colors as any).lightning["200"],
+          fill: tailwindColors.lightning["200"],
         }}
       />
     );
@@ -135,13 +135,13 @@ const LabelComponent: FunctionComponent<any> = (props) => {
       {...props}
       constrainToVisibleArea
       style={{
-        fill: (fullConfig.theme?.colors as any).lightning["200"],
+        fill: tailwindColors.lightning["200"],
         fontSize: 10,
       }}
       flyoutPadding={2.5}
       flyoutStyle={{
         stroke: "none",
-        fill: (fullConfig.theme?.colors as any).deepblue["600"],
+        fill: tailwindColors.deepblue["600"],
       }}
       dx={0}
       dy={-1.55}
@@ -168,11 +168,11 @@ const RefLabelComponent: FunctionComponent<any> = (props) => {
         dx={30}
         dy={-2}
         backgroundStyle={{
-          fill: (fullConfig.theme?.colors as any).deepblue["600"],
+          fill: tailwindColors.deepblue["600"],
         }}
         style={{
           fontSize: 10,
-          fill: (fullConfig.theme?.colors as any).slate["400"],
+          fill: tailwindColors.slate["400"],
         }}
       />
     );
@@ -188,7 +188,7 @@ const RefLabelComponent: FunctionComponent<any> = (props) => {
         dy={0}
         style={{
           fontSize: 10,
-          fill: (fullConfig.theme?.colors as any).slate["400"],
+          fill: tailwindColors.slate["400"],
         }}
       />
     );
@@ -385,17 +385,15 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                             }}
                             flyoutStyle={{
                               stroke: "none",
-                              fill: (fullConfig.theme?.colors as any).deepblue[
-                                "500"
-                              ],
+                              fill: tailwindColors.deepblue["500"],
                             }}
                             dx={0}
                             pointerLength={0}
                           />
                         }
                         colorScale={[
-                          (fullConfig.theme?.colors as any).lightning["500"],
-                          (fullConfig.theme?.colors as any).slate["600"],
+                          tailwindColors.lightning["500"],
+                          tailwindColors.slate["600"],
                         ]}
                         data={[
                           {
@@ -541,8 +539,8 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                           labels={({ datum }) => `${datum.y.toFixed(1)}%`}
                           labelComponent={<LabelComponent />}
                           colorScale={[
-                            (fullConfig.theme?.colors as any).lightning["500"],
-                            (fullConfig.theme?.colors as any).slate["600"],
+                            tailwindColors.lightning["500"],
+                            tailwindColors.slate["600"],
                           ]}
                           data={data}
                         />
@@ -584,8 +582,8 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                           animate
                           interpolation={"basis"}
                           colorScale={[
-                            (fullConfig.theme?.colors as any).lightning["500"],
-                            (fullConfig.theme?.colors as any).slate["600"],
+                            tailwindColors.lightning["500"],
+                            tailwindColors.slate["600"],
                           ]}
                           data={data}
                         />
