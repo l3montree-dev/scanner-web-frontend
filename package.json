@@ -19,7 +19,6 @@
         "@fortawesome/react-fontawesome": "^0.2.0",
         "@keycloak/keycloak-admin-client": "^20.0.2",
         "@prisma/client": "^4.8.1",
-        "@types/socket.io": "^3.0.2",
         "amqplib": "^0.10.3",
         "dotenv": "^16.0.3",
         "formidable": "^2.1.1",
@@ -35,6 +34,7 @@
         "victory": "^36.6.8"
     },
     "devDependencies": {
+        "@types/socket.io": "^3.0.2",
         "@types/amqplib": "^0.10.0",
         "@types/formidable": "^2.0.5",
         "@types/ip": "^1.1.0",
