@@ -3,7 +3,7 @@ import {
   NextApiRequest,
   NextApiResponse,
 } from "next";
-import { authOptions } from "../pages/api/auth/[...nextauth]";
+import { authOptions } from "../pages/api/auth/[...nextauth].api";
 import { ISession } from "../types";
 import { getServerSession } from "../utils/server";
 

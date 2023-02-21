@@ -1,6 +1,6 @@
 import { User } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
-import { authOptions } from "../pages/api/auth/[...nextauth]";
+import { authOptions } from "../pages/api/auth/[...nextauth].api";
 
 import { getServerSession } from "../utils/server";
 import { withDB } from "./withDB";
