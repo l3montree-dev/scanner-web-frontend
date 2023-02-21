@@ -15,8 +15,7 @@ export const isValidMask = (mask: string): boolean => {
   return prefixLength >= 0 && prefixLength <= 32;
 };
 
-export const isValidFqdn = (fqdn: string): boolean => {
-  /* 
+/* 
   The domain name should be a-z or A-Z or 0-9 and hyphen (-).
   The domain name should be between 1 and 63 characters long.
   The domain name should not start or end with a hyphen(-) (e.g. -geeksforgeeks.org or geeksforgeeks.org-).
@@ -25,8 +24,12 @@ export const isValidFqdn = (fqdn: string): boolean => {
   
   Ref: https://www.geeksforgeeks.org/how-to-validate-a-domain-name-using-regular-expression/
   */
-  const fqdnRegex = new RegExp(
-    /^(?!-)[A-Za-z0-9-]+([\-\.]{1}[a-z0-9]+)*\.[A-Za-z]{2,6}$/
-  );
-  return fqdnRegex.test(fqdn);
+
+// 7 characters as TLD is valid as well: https://en.wikipedia.org/wiki/Top-level_domain#Internationalized_top-level_domains
+const hostnameRegex = new RegExp(
+  /^(?!-)[A-Za-z0-9-]+([\-\.]{1}[a-z0-9]+)*\.[A-Za-z]{2,7}$/
+);
+
+export const isValidHostname = (fqdn: string): boolean => {
+  return hostnameRegex.test(fqdn);
 };

@@ -24,7 +24,11 @@ import {
   TLSInspectionType,
 } from "../inspection/scans";
 import { DTO } from "./server";
-import { isValidFqdn, isValidIp, isValidMask } from "./validator";
+import {
+  isValidHostname as isValidHostname,
+  isValidIp,
+  isValidMask,
+} from "./validator";
 
 export const serverOnly = <T>(fn: () => T): T | null => {
   if (typeof window === "undefined") {
@@ -140,7 +144,7 @@ export const sanitizeFQDN = (providedValue: any): string | null => {
 
   url.hostname = url.hostname.toLowerCase();
 
-  if (!isValidFqdn(url.hostname)) {
+  if (!isValidHostname(url.hostname)) {
     return null;
   }
 
