@@ -1,14 +1,7 @@
-import {
-  faCheck,
-  faCross,
-  faRefresh,
-  faTimes,
-  faWarning,
-} from "@fortawesome/free-solid-svg-icons";
+import { faRefresh } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { FunctionComponent } from "react";
+import { FunctionComponent } from "react";
 import { legendMessages } from "../messages/legend";
-import Subscribe from "../pages/api/subscribe";
 import { DetailedDomain } from "../types";
 import { classNames } from "../utils/common";
 import {

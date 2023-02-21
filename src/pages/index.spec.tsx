@@ -1,5 +1,5 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
-import Home from "./index";
+import Home from "./index.page";
 import "@testing-library/jest-dom";
 import mockRouter from "next-router-mock";
 import { buildJSONResponse, mockFetch } from "../test-utils/fetchUtils";
