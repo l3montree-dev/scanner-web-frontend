@@ -14,9 +14,6 @@ export const withCurrentUser = async (
   ]);
 
   if (!session) {
-    // return 500
-    ctx.res.statusCode = 500;
-    ctx.res.end();
     throw new Error("session is undefined");
   }
 
