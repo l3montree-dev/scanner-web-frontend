@@ -3,6 +3,7 @@ import Home from "./index.page";
 import "@testing-library/jest-dom";
 import mockRouter from "next-router-mock";
 import { buildJSONResponse, mockFetch } from "../test-utils/fetchUtils";
+import * as Head from "next/head";
 
 jest.mock("next-auth/react", () => ({
   useSession: () => [null, false],
@@ -64,5 +65,18 @@ describe("Quicktest Test", () => {
         site: "example.com",
       },
     });
+  });
+  it("should include the correct canonical url", () => {
+    mockRouter.push({
+      pathname: "/",
+    });
+
+    jest
+      .spyOn(Head, "default")
+      .mockImplementation(({ children }) => <div>{children}</div>);
+    render(<Home displayNotAvailable={false} code="unknown" />);
+    expect(screen.getByTestId("canonical").getAttribute("href")).toEqual(
+      "https://ozgsec.de/"
+    );
   });
 });
