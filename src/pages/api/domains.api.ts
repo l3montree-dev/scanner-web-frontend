@@ -26,14 +26,14 @@ export const config = {
 };
 
 const deleteDomainRelation = async (
-  domains: string[],
+  urls: string[],
   user: User,
   prisma: PrismaClient
 ) => {
   return prisma.userDomainRelation.deleteMany({
     where: {
-      fqdn: {
-        in: domains,
+      url: {
+        in: urls,
       },
       userId: user.id,
     },
