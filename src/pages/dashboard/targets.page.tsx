@@ -8,7 +8,6 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
 import { FunctionComponent, useEffect, useMemo, useState } from "react";
-import Button from "../../components/Button";
 import Checkbox from "../../components/Checkbox";
 import DashboardPage from "../../components/DashboardPage";
 import DomainOverviewForm from "../../components/DomainOverviewForm";
@@ -32,11 +31,11 @@ import {
   TLSInspectionType,
 } from "../../inspection/scans";
 import { clientHttpClient } from "../../services/clientHttpClient";
-import { domainService } from "../../services/domainService";
+import { targetService } from "../../services/targetService";
 
 import {
-  DetailedDomain,
-  DomainType,
+  DetailedTarget,
+  TargetType,
   IScanSuccessResponse,
   PaginateResult,
 } from "../../types";
@@ -45,13 +44,13 @@ import { DTO } from "../../utils/server";
 import { didPass2CheckResult } from "../../utils/view";
 
 interface Props {
-  domains: PaginateResult<DTO<DetailedDomain>>;
+  targets: PaginateResult<DTO<DetailedTarget>>;
   keycloakIssuer: string;
 }
 
 const SortButton: FunctionComponent<{
-  sortKey: "fqdn" | keyof IScanSuccessResponse["result"];
-  onSort: (key: "fqdn" | keyof IScanSuccessResponse["result"]) => void;
+  sortKey: "uri" | keyof IScanSuccessResponse["result"];
+  onSort: (key: "uri" | keyof IScanSuccessResponse["result"]) => void;
   active: boolean;
   getIcon: () => IconProp;
 }> = ({ sortKey: key, onSort, active, getIcon }) => {
@@ -71,31 +70,31 @@ const SortButton: FunctionComponent<{
   );
 };
 
-const translateDomainType = (type: DomainType) => {
+const translateDomainType = (type: TargetType) => {
   switch (type) {
-    case DomainType.reachable:
+    case TargetType.reachable:
       return "Erreichbare Domains";
-    case DomainType.unreachable:
+    case TargetType.unreachable:
       return "Nicht erreichbare Domains";
-    case DomainType.all:
+    case TargetType.all:
       return "Alle Domains";
   }
 };
 
 const Dashboard: FunctionComponent<Props> = (props) => {
-  const [domains, setDomains] = useState<Array<DTO<DetailedDomain>>>(
-    props.domains.data
+  const [targets, setTargets] = useState<Array<DTO<DetailedTarget>>>(
+    props.targets.data
   );
 
-  const [selection, setSelection] = useState<{ [fqdn: string]: boolean }>({});
+  const [selection, setSelection] = useState<{ [uri: string]: boolean }>({});
   const scanAllLoading = useLoading();
 
   const scanRequest = useLoading();
   const router = useRouter();
 
   const viewedDomainType =
-    (router.query.domainType as DomainType | undefined) ?? DomainType.all;
-  const handleSort = (key: InspectionType | "fqdn") => {
+    (router.query.domainType as TargetType | undefined) ?? TargetType.all;
+  const handleSort = (key: InspectionType | "uri") => {
     // check if we should reverse the order.
     const instructions = { key, direction: 1 as 1 | -1 };
     if (key === sort.key) {
@@ -107,7 +106,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
     });
   };
 
-  const getIcon = (key: InspectionType | "fqdn") => {
+  const getIcon = (key: InspectionType | "uri") => {
     if (sort.key === key) {
       return sort.direction === 1 ? faCaretUp : faCaretDown;
     }
@@ -126,22 +125,22 @@ const Dashboard: FunctionComponent<Props> = (props) => {
   };
 
   useEffect(() => {
-    setDomains(props.domains.data);
-  }, [props.domains]);
+    setTargets(props.targets.data);
+  }, [props.targets]);
 
-  const deleteFQDN = async (fqdn: string) => {
+  const deleteFQDN = async (uri: string) => {
     const response = await clientHttpClient(
       `/api/domains`,
       crypto.randomUUID(),
       {
         method: "DELETE",
         body: JSON.stringify({
-          domains: [fqdn],
+          domains: [uri],
         }),
       }
     );
     if (response.ok) {
-      setDomains((prev) => prev.filter((d) => d.fqdn !== fqdn));
+      setTargets((prev) => prev.filter((d) => d.uri !== uri));
     }
   };
 
@@ -165,24 +164,24 @@ const Dashboard: FunctionComponent<Props> = (props) => {
       }
     );
     if (response.ok) {
-      setDomains((prev) => prev.filter((d) => !selectedFQDNs.includes(d.fqdn)));
+      setTargets((prev) => prev.filter((d) => !selectedFQDNs.includes(d.uri)));
     }
   };
 
-  const scanFQDN = async (fqdn: string) => {
-    scanRequest.loading(fqdn);
+  const scanFQDN = async (uri: string) => {
+    scanRequest.loading(uri);
 
     const response = await clientHttpClient(
-      `/api/scan?site=${fqdn}&refresh=true&s=oQ334umtB2Ve4XpTz2USFemZgC9ZLpXW`,
+      `/api/scan?site=${uri}&refresh=true&s=oQ334umtB2Ve4XpTz2USFemZgC9ZLpXW`,
       crypto.randomUUID()
     );
 
     if (response.ok) {
-      const data: DTO<DetailedDomain> = await response.json();
+      const data: DTO<DetailedTarget> = await response.json();
       // inject it into the domains
-      setDomains((prev) => {
+      setTargets((prev) => {
         return prev.map((d) => {
-          if (d.fqdn === data.fqdn) {
+          if (d.uri === data.uri) {
             return data;
           }
           return d;
@@ -190,8 +189,8 @@ const Dashboard: FunctionComponent<Props> = (props) => {
       });
       scanRequest.success();
     } else {
-      setDomains((prev) => {
-        const index = prev.findIndex((d) => d.fqdn === fqdn);
+      setTargets((prev) => {
+        const index = prev.findIndex((d) => d.uri === uri);
         if (index === -1) {
           return prev;
         }
@@ -203,7 +202,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
         };
         return newDomains;
       });
-      scanRequest.error("Fehler beim Scannen der Domain.", fqdn);
+      scanRequest.error("Fehler beim Scannen der Domain.", uri);
     }
   };
 
@@ -224,7 +223,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
       throw res;
     }
     const detailedDomain = await res.json();
-    setDomains((prev) => [...prev, detailedDomain]);
+    setTargets((prev) => [...prev, detailedDomain]);
   };
 
   const handleFileFormSubmit = async (files: File[]) => {
@@ -243,7 +242,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
   };
 
   const sort = {
-    key: router.query.sort as "fqdn" | keyof IScanSuccessResponse["result"],
+    key: router.query.sort as "uri" | keyof IScanSuccessResponse["result"],
     direction: parseInt(router.query.sortDirection as string) as 1 | -1,
   };
 
@@ -318,13 +317,13 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                 Button={
                   <div className="p-2 bg-deepblue-100 border border-deepblue-100 my-2 flex flex-row items-center justify-center">
                     Zeige: {translateDomainType(viewedDomainType)} (
-                    {props.domains.total})
+                    {props.targets.total})
                     <FontAwesomeIcon className="ml-2" icon={faCaretDown} />
                   </div>
                 }
                 Menu={
                   <MenuList>
-                    {Object.values(DomainType).map((type) => (
+                    {Object.values(TargetType).map((type) => (
                       <MenuItem
                         key={type}
                         selected={type === viewedDomainType}
@@ -347,12 +346,12 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                     <Checkbox
                       checked={
                         selectedFQDNs.length > 0 &&
-                        selectedFQDNs.length === domains.length
+                        selectedFQDNs.length === targets.length
                       }
                       onChange={() => {
                         setSelection((prev) => {
-                          return domains.reduce((acc, domain) => {
-                            acc[domain.fqdn] = !Boolean(prev[domain.fqdn]);
+                          return targets.reduce((acc, domain) => {
+                            acc[domain.uri] = !Boolean(prev[domain.uri]);
                             return acc;
                           }, {} as Record<string, boolean>);
                         });
@@ -363,10 +362,10 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                     <div>
                       <span>Domain</span>
                       <SortButton
-                        sortKey="fqdn"
+                        sortKey="uri"
                         onSort={handleSort}
-                        active={sort.key === "fqdn"}
-                        getIcon={() => getIcon("fqdn")}
+                        active={sort.key === "uri"}
+                        getIcon={() => getIcon("uri")}
                       />
                     </div>
                   </th>
@@ -460,62 +459,62 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                 </tr>
               </thead>
               <tbody>
-                {domains.map((domain, i) => {
+                {targets.map((domain, i) => {
                   return (
                     <tr
                       onClick={() => {
                         setSelection((prev) => {
-                          if (prev[domain.fqdn] === undefined) {
-                            prev[domain.fqdn] = true;
+                          if (prev[domain.uri] === undefined) {
+                            prev[domain.uri] = true;
                             return { ...prev };
                           }
                           return {
                             ...prev,
-                            [domain.fqdn]: !prev[domain.fqdn],
+                            [domain.uri]: !prev[domain.uri],
                           };
                         });
                       }}
                       className={classNames(
                         "cursor-pointer",
-                        i !== domains.length - 1 && "border-b",
+                        i !== targets.length - 1 && "border-b",
                         "border-b-deepblue-300 transition-all",
                         domain.errorCount !== null && domain.errorCount >= 5
                           ? "line-through"
                           : "",
-                        selection[domain.fqdn]
+                        selection[domain.uri]
                           ? "bg-deepblue-200"
                           : i % 2 === 0
                           ? "bg-deepblue-400"
                           : "bg-deepblue-500"
                       )}
-                      key={domain.fqdn}
+                      key={domain.uri}
                     >
                       <td className="p-2 pr-0">
                         <div className="flex flex-row items-center">
                           <Checkbox
                             onChange={() => {
                               setSelection((prev) => {
-                                if (prev[domain.fqdn] === undefined) {
-                                  prev[domain.fqdn] = true;
+                                if (prev[domain.uri] === undefined) {
+                                  prev[domain.uri] = true;
                                   return { ...prev };
                                 }
                                 return {
                                   ...prev,
-                                  [domain.fqdn]: !prev[domain.fqdn],
+                                  [domain.uri]: !prev[domain.uri],
                                 };
                               });
                             }}
-                            checked={Boolean(selection[domain.fqdn])}
+                            checked={Boolean(selection[domain.uri])}
                           />
                         </div>
                       </td>
                       <td className="p-2">
                         <div className="flex flex-row">
                           <span
-                            title={domain.fqdn}
+                            title={domain.uri}
                             className="whitespace-nowrap overflow-hidden text-ellipsis max-w-xs block"
                           >
-                            {domain.fqdn}
+                            {domain.uri}
                           </span>
                           <div className="inline ml-2">
                             <Tooltip
@@ -598,21 +597,21 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                             <MenuList>
                               <MenuItem
                                 loading={
-                                  scanRequest.key === domain.fqdn &&
+                                  scanRequest.key === domain.uri &&
                                   scanRequest.isLoading
                                 }
-                                onClick={() => scanFQDN(domain.fqdn)}
+                                onClick={() => scanFQDN(domain.uri)}
                               >
                                 <div>
                                   <div>Erneut scannen</div>
-                                  {scanRequest.key === domain.fqdn && (
+                                  {scanRequest.key === domain.uri && (
                                     <span className="block text-red-500 text-sm">
                                       {scanRequest.errorMessage}
                                     </span>
                                   )}
                                 </div>
                               </MenuItem>
-                              <MenuItem onClick={() => deleteFQDN(domain.fqdn)}>
+                              <MenuItem onClick={() => deleteFQDN(domain.uri)}>
                                 <div>Löschen</div>
                               </MenuItem>
                             </MenuList>
@@ -630,7 +629,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
               onPageChange={(page) => {
                 patchQuery({ page: page.toString() });
               }}
-              {...props.domains}
+              {...props.targets}
             />
           </div>
         </div>
@@ -646,15 +645,15 @@ export const getServerSideProps = decorateServerSideProps(
     const search = context.query["search"] as string | undefined;
 
     const domains =
-      await domainService.getDomainsOfNetworksWithLatestTestResult(
+      await targetService.getDomainsOfNetworksWithLatestTestResult(
         currentUser,
         {
           pageSize: 50,
           page,
           search,
           type:
-            (context.query["domainType"] as DomainType | undefined) ||
-            DomainType.all,
+            (context.query["domainType"] as TargetType | undefined) ||
+            TargetType.all,
           sort: context.query["sort"] as string | undefined,
           sortDirection: context.query["sortDirection"] as string | undefined,
         },

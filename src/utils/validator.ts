@@ -30,6 +30,6 @@ const hostnameRegex = new RegExp(
   /^(?!-)[A-Za-z0-9-]+([\-\.]{1}[a-z0-9]+)*\.[A-Za-z]{2,7}$/
 );
 
-export const isValidHostname = (fqdn: string): boolean => {
-  return hostnameRegex.test(fqdn);
+export const isValidHostname = (uri: string): boolean => {
+  return hostnameRegex.test(uri);
 };

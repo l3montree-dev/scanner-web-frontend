@@ -1,32 +1,33 @@
-import { PrismaClient, User, Domain } from "@prisma/client";
+import { PrismaClient, Target, User } from "@prisma/client";
 import { config } from "../config";
 import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
 import {
-  DetailedDomain,
-  DomainType,
+  DetailedTarget,
+  TargetType,
   IScanErrorResponse,
   PaginateRequest,
   PaginateResult,
 } from "../types";
-import { neverThrow } from "../utils/common";
+import { getHostnameFromUri, neverThrow } from "../utils/common";
 import { DTO, shuffle, toDTO } from "../utils/server";
 
-const handleNewDomain = async (
-  domain: { fqdn: string; group?: string; queued?: boolean },
+const handleNewTarget = async (
+  target: { uri: string; group?: string; queued?: boolean },
   prisma: PrismaClient,
   connectToUser?: User
-): Promise<Domain> => {
+): Promise<Target> => {
   // fetch the last existing report and check if we only need to update that one.
   let payload = {
-    fqdn: domain.fqdn,
+    uri: target.uri,
     lastScan: null,
-    group: domain.group ?? "unknown",
-    queued: domain.queued ?? false,
+    group: target.group ?? "unknown",
+    queued: target.queued ?? false,
+    hostname: getHostnameFromUri(target.uri),
   };
 
-  const d = await prisma.domain.upsert({
+  const d = await prisma.target.upsert({
     where: {
-      fqdn: payload.fqdn,
+      uri: payload.uri,
     },
     update: {},
     create: payload,
@@ -37,7 +38,7 @@ const handleNewDomain = async (
       prisma.userDomainRelation.create({
         data: {
           userId: connectToUser.id,
-          fqdn: payload.fqdn,
+          uri: payload.uri,
         },
       })
     );
@@ -46,13 +47,13 @@ const handleNewDomain = async (
   return d;
 };
 
-const handleDomainScanError = async (
+const handleTargetScanError = async (
   content: IScanErrorResponse,
   prisma: PrismaClient
 ) => {
-  const res = await prisma.domain.upsert({
+  const res = await prisma.target.upsert({
     where: {
-      fqdn: content.target,
+      uri: content.target,
     },
     update: {
       lastScan: content.timestamp ?? Date.now(),
@@ -63,9 +64,10 @@ const handleDomainScanError = async (
     },
     create: {
       errorCount: 1,
-      fqdn: content.target,
+      uri: content.target,
       group: "unknown",
       lastScan: content.timestamp ?? Date.now(),
+      hostname: getHostnameFromUri(content.target),
     },
   });
 
@@ -81,16 +83,16 @@ const translateSortDirection = (
   return "ASC";
 };
 
-const translateSort = (sort?: string): `sr.${InspectionType}` | "d.fqdn" => {
+const translateSort = (sort?: string): `sr.${InspectionType}` | "d.uri" => {
   if (!sort) {
-    return "d.fqdn";
+    return "d.uri";
   }
 
   if (Object.keys(InspectionTypeEnum).includes(sort)) {
     return `sr.${sort as InspectionType}`;
   }
 
-  return "d.fqdn";
+  return "d.uri";
 };
 
 const getDomainsOfNetworksWithLatestTestResult = async (
@@ -98,10 +100,10 @@ const getDomainsOfNetworksWithLatestTestResult = async (
   paginateRequest: PaginateRequest & { search?: string } & {
     sort?: string;
     sortDirection?: string;
-    type?: DomainType;
+    type?: TargetType;
   },
   prisma: PrismaClient
-): Promise<PaginateResult<DTO<DetailedDomain>>> => {
+): Promise<PaginateResult<DTO<DetailedTarget>>> => {
   const sqlValues = [
     user.id,
     paginateRequest.pageSize,
@@ -111,8 +113,8 @@ const getDomainsOfNetworksWithLatestTestResult = async (
     sqlValues.unshift(paginateRequest.search);
   }
 
-  const [total, domains] = await Promise.all([
-    prisma.domain.count({
+  const [total, targets] = await Promise.all([
+    prisma.target.count({
       where: {
         users: {
           some: {
@@ -121,14 +123,14 @@ const getDomainsOfNetworksWithLatestTestResult = async (
         },
         ...(paginateRequest.search !== undefined &&
           paginateRequest.search !== "" && {
-            fqdn: {
-              search: sqlValues[0] as string,
+            uri: {
+              contains: sqlValues[0] as string,
             },
           }),
         ...(paginateRequest.type !== undefined &&
-          paginateRequest.type !== DomainType.all && {
+          paginateRequest.type !== TargetType.all && {
             errorCount: {
-              ...(paginateRequest.type === DomainType.unreachable
+              ...(paginateRequest.type === TargetType.unreachable
                 ? {
                     gte: 5,
                   }
@@ -142,21 +144,21 @@ const getDomainsOfNetworksWithLatestTestResult = async (
     prisma.$queryRawUnsafe(
       `
     SELECT d.* from user_domain_relations udr
-    INNER JOIN domains d on udr.fqdn = d.fqdn 
-    LEFT JOIN scan_reports sr on d.fqdn = sr.fqdn  
+    INNER JOIN targets d on udr.uri = d.uri 
+    LEFT JOIN scan_reports sr on d.uri = sr.uri  
     WHERE NOT EXISTS(
-        SELECT 1 from scan_reports sr2 where sr.fqdn = sr2.fqdn AND sr.createdAt < sr2.createdAt
+        SELECT 1 from scan_reports sr2 where sr.uri = sr2.uri AND sr.createdAt < sr2.createdAt
       )
       ${
         paginateRequest.search !== undefined && paginateRequest.search !== ""
-          ? "AND d.fqdn LIKE CONCAT('%', ?, '%')"
+          ? "AND d.uri LIKE CONCAT('%', ?, '%')"
           : ""
       }
       AND userId = ?
       ${
-        paginateRequest.type === DomainType.unreachable
+        paginateRequest.type === TargetType.unreachable
           ? "AND errorCount >= 5"
-          : paginateRequest.type === DomainType.reachable
+          : paginateRequest.type === TargetType.reachable
           ? "AND errorCount < 5"
           : ""
       }
@@ -174,13 +176,13 @@ const getDomainsOfNetworksWithLatestTestResult = async (
     total,
     page: paginateRequest.page,
     pageSize: paginateRequest.pageSize,
-    data: domains.map(toDTO),
+    data: targets.map(toDTO),
   };
 };
 
 const getDomains2Scan = async (prisma: PrismaClient) => {
   // get all domains which have not been scanned in the last 24 hours
-  const domains = await prisma.domain.findMany({
+  const targets = await prisma.target.findMany({
     where: {
       AND: [
         // it has not been scanned in the past scan interval days.
@@ -231,10 +233,10 @@ const getDomains2Scan = async (prisma: PrismaClient) => {
     take: 10_000,
   });
 
-  await prisma.domain.updateMany({
+  await prisma.target.updateMany({
     where: {
-      fqdn: {
-        in: domains.map((d) => d.fqdn),
+      uri: {
+        in: targets.map((d) => d.uri),
       },
     },
     data: {
@@ -242,12 +244,12 @@ const getDomains2Scan = async (prisma: PrismaClient) => {
     },
   });
 
-  return shuffle(domains);
+  return shuffle(targets);
 };
 
-export const domainService = {
-  handleNewDomain,
-  handleDomainScanError,
+export const targetService = {
+  handleNewDomain: handleNewTarget,
+  handleDomainScanError: handleTargetScanError,
   getDomainsOfNetworksWithLatestTestResult,
   getDomains2Scan,
 };

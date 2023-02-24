@@ -110,5 +110,5 @@ export interface UnknownInspectResultDTO {
     };
   };
   errors?: string[];
-  recommendations: undefined;
+  recommendations?: string[];
 }

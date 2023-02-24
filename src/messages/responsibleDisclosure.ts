@@ -1,35 +1,35 @@
 import { ResponsibleDisclosureValidationError } from "../inspection/result-enums/organizational.typings";
-import { DetailedDomain } from "../types";
+import { DetailedTarget } from "../types";
 
 export const getResponsibleDisclosureReportMessage = (
-  report: DetailedDomain
+  report: DetailedTarget
 ) => {
   const inspection = report.details["ResponsibleDisclosure"];
-  const fqdn = new URL(`http://${report.details.sut}`).hostname;
+  const uri = new URL(`http://${report.details.sut}`).hostname;
   if (inspection?.didPass === null || inspection?.didPass === undefined) {
-    return `Die Datei ${fqdn}/.well-known/security.txt konnte nicht überprüft werden.`;
+    return `Die Datei ${uri}/.well-known/security.txt konnte nicht überprüft werden.`;
   } else if (inspection.didPass) {
-    return `Die Datei ${fqdn}/.well-known/security.txt ist vorhanden und enthält die nötigen Einträge.`;
+    return `Die Datei ${uri}/.well-known/security.txt ist vorhanden und enthält die nötigen Einträge.`;
   } else {
     switch (true) {
       case inspection.errors?.includes(
         ResponsibleDisclosureValidationError.MissingContactField
       ):
-        return `Die Datei ${fqdn}/.well-known/security.txt ist vorhanden, enthält aber keinen Kontakt.`;
+        return `Die Datei ${uri}/.well-known/security.txt ist vorhanden, enthält aber keinen Kontakt.`;
       case inspection.errors?.includes(
         ResponsibleDisclosureValidationError.InvalidExpiresField
       ):
-        return `Die Datei ${fqdn}/.well-known/security.txt ist vorhanden, enthält aber keinen gültigen Expires Eintrag.`;
+        return `Die Datei ${uri}/.well-known/security.txt ist vorhanden, enthält aber keinen gültigen Expires Eintrag.`;
       case inspection.errors?.includes(
         ResponsibleDisclosureValidationError.Expired
       ):
-        return `Die Datei ${fqdn}/.well-known/security.txt ist vorhanden, aber abgelaufen.`;
+        return `Die Datei ${uri}/.well-known/security.txt ist vorhanden, aber abgelaufen.`;
 
       case inspection?.errors?.includes(
         ResponsibleDisclosureValidationError.MissingResponsibleDisclosure
       ):
       default:
-        return `Die Datei ${fqdn}/.well-known/security.txt ist nicht vorhanden.`;
+        return `Die Datei ${uri}/.well-known/security.txt ist nicht vorhanden.`;
     }
   }
 };

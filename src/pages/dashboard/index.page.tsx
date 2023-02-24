@@ -308,7 +308,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                     icon={faListCheck}
                   />
                   <div className="ml-5 text-xl">
-                    <b className="text-5xl">{dashboard.totals.uniqueDomains}</b>
+                    <b className="text-5xl">{dashboard.totals.uniqueTargets}</b>
                     <br />
                     Domains
                   </div>
@@ -322,7 +322,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
             Anfrage muss vom Server in maximal zehn Sekunden beantwortet werden,
             damit eine Domain als erreichbar gilt. Derzeit sind{" "}
             {dashboard.currentState.totalCount} von{" "}
-            {dashboard.totals.uniqueDomains} erreichbar.
+            {dashboard.totals.uniqueTargets} erreichbar.
           </p>
           <div className="flex mt-5 justify-start gap-2 flex-wrap flex-wrap flex-row">
             {displayKey.map((key) => {

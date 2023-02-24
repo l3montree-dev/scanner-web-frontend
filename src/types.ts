@@ -1,11 +1,11 @@
-import { Domain } from "@prisma/client";
+import { Target } from "@prisma/client";
 import { InspectionType, InspectResultDTO } from "./inspection/scans";
 
 export interface IDashboard {
   historicalData: Array<ChartData & { date: number }>;
   currentState: ChartData;
   totals: {
-    uniqueDomains: number;
+    uniqueTargets: number;
   };
 }
 
@@ -52,7 +52,7 @@ export type IIpLookupReportDTO = Omit<IIpLookupReportMsg, "results"> & {
   results: Array<{ domain: string; ip: string }>;
 };
 
-export enum DomainType {
+export enum TargetType {
   all = "all",
   reachable = "reachable",
   unreachable = "unreachable",
@@ -136,7 +136,9 @@ export interface IKcUser {
   notBefore: number;
 }
 
-export type DetailedDomain = Omit<Domain, "lastScan" | "details"> & {
-  details: IScanSuccessResponse["result"] & { sut: string };
+export type DetailsJSON = IScanSuccessResponse["result"] & { sut: string };
+
+export type DetailedTarget = Omit<Target, "lastScan" | "details"> & {
+  details: DetailsJSON;
   lastScan: number;
 };

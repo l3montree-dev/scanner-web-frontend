@@ -21,7 +21,7 @@ if (!prismaRef.value) {
   prismaRef.value = new PrismaClient({
     datasources: {
       db: {
-        url: `mysql://${databaseConnection.user}:${databaseConnection.password}@${databaseConnection.host}:${databaseConnection.port}/${databaseConnection.database}`,
+        url: `postgres://${databaseConnection.user}:${databaseConnection.password}@${databaseConnection.host}:${databaseConnection.port}/${databaseConnection.database}`,
       },
     },
   });

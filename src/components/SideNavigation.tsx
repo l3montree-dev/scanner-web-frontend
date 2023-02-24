@@ -19,7 +19,7 @@ const defaultLinks = [
   {
     icon: faListCheck,
     name: "Domainübersicht",
-    path: "/dashboard/domains",
+    path: "/dashboard/targets",
   },
 ];
 const getLinks = (isAdmin: boolean) => {

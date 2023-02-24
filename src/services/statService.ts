@@ -12,7 +12,7 @@ const logger = getLogger(__filename);
 const getTotalsOfUser = async (user: User, prisma: PrismaClient) => {
   // count the domains this user has access to
   return {
-    uniqueDomains: await prisma.userDomainRelation.count({
+    uniqueTargets: await prisma.userDomainRelation.count({
       where: {
         userId: user.id,
       },
@@ -72,9 +72,9 @@ const generateStatsForUser = async (
 
 const getTotals = async (
   prisma: PrismaClient
-): Promise<{ uniqueDomains: number }> => {
+): Promise<{ uniqueTargets: number }> => {
   return {
-    uniqueDomains: await prisma.domain.count(),
+    uniqueTargets: await prisma.target.count(),
   };
 };
 
@@ -118,20 +118,20 @@ SELECT AVG(SubResourceIntegrity) as SubResourceIntegrity,
     AVG(ValidCertificateChain) as ValidCertificateChain,
 
     COUNT(*) as totalCount
-from domains d INNER JOIN scan_reports sr1 on d.fqdn = sr1.fqdn
+from domains d INNER JOIN scan_reports sr1 on d.uri = sr1.uri
 WHERE d.group = ${group} AND ((
         NOT EXISTS(
-                SELECT 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr2.createdAt < ${new Date(
+                SELECT 1 from scan_reports sr2 where sr1.uri = sr2.uri AND sr2.createdAt < ${new Date(
                   until
                 )} 
                 AND sr1.createdAt < sr2.createdAt
         ) AND sr1.createdAt < ${new Date(until)}
     )
     OR (
-        NOT EXISTS(select 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr2.createdAt < ${new Date(
+        NOT EXISTS(select 1 from scan_reports sr2 where sr1.uri = sr2.uri AND sr2.createdAt < ${new Date(
           until
         )})
-        AND NOT EXISTS(select 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr1.createdAt > sr2.createdAt)
+        AND NOT EXISTS(select 1 from scan_reports sr2 where sr1.uri = sr2.uri AND sr1.createdAt > sr2.createdAt)
     ))`
   )) as any;
 
@@ -189,10 +189,10 @@ SELECT AVG(SubResourceIntegrity) as SubResourceIntegrity,
     AVG(ValidCertificateChain) as ValidCertificateChain,
  
     COUNT(*) as totalCount
-from user_domain_relations udr INNER JOIN scan_reports sr1 on udr.fqdn = sr1.fqdn
+from user_domain_relations udr INNER JOIN scan_reports sr1 on udr.uri = sr1.uri
 WHERE  udr.userId = ${user.id}  AND ((
     NOT EXISTS(
-        SELECT 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr2.createdAt < ${new Date(
+        SELECT 1 from scan_reports sr2 where sr1.uri = sr2.uri AND sr2.createdAt < ${new Date(
           until
         )} 
         AND sr1.createdAt < sr2.createdAt
@@ -200,10 +200,10 @@ WHERE  udr.userId = ${user.id}  AND ((
     AND sr1.createdAt < ${new Date(until)}
 )
 OR (
-    NOT EXISTS(select 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr2.createdAt < ${new Date(
+    NOT EXISTS(select 1 from scan_reports sr2 where sr1.uri = sr2.uri AND sr2.createdAt < ${new Date(
       until
     )})
-    AND NOT EXISTS(select 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr1.createdAt > sr2.createdAt)
+    AND NOT EXISTS(select 1 from scan_reports sr2 where sr1.uri = sr2.uri AND sr1.createdAt > sr2.createdAt)
 ))
 `
   )) as any;

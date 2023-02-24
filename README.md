@@ -28,7 +28,7 @@ The application can monitor the security state of selected sites. The requiremen
 ```json
 [
  {
-      "fqdn": "example.com",
+      "uri": "example.com",
       "interval": 10000,
  }
  ...

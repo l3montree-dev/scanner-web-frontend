@@ -9,7 +9,7 @@ import { withSession } from "../../decorators/withSession";
 import ForbiddenException from "../../errors/ForbiddenException";
 import MethodNotAllowed from "../../errors/MethodNotAllowed";
 import { inspectRPC } from "../../inspection/inspect";
-import { domainService } from "../../services/domainService";
+import { targetService } from "../../services/targetService";
 
 import { getLogger } from "../../services/logger";
 import { statService } from "../../services/statService";
@@ -26,14 +26,14 @@ export const config = {
 };
 
 const deleteDomainRelation = async (
-  urls: string[],
+  uris: string[],
   user: User,
   prisma: PrismaClient
 ) => {
   return prisma.userDomainRelation.deleteMany({
     where: {
-      url: {
-        in: urls,
+      uri: {
+        in: uris,
       },
       userId: user.id,
     },
@@ -78,13 +78,13 @@ const handlePost = async (
       return res.status(400).send({ error: "invalid domain" });
     }
 
-    const d = await domainService.handleNewDomain(
-      { fqdn: sanitized, queued: true },
+    const d = await targetService.handleNewDomain(
+      { uri: sanitized, queued: true },
       prisma,
       session.user
     );
 
-    await inspectRPC(requestId, d.fqdn);
+    await inspectRPC(requestId, d.uri);
     // force the regeneration of all stats
     statService.generateStatsForUser(session.user, prisma, true).then(() => {
       logger.info(
@@ -158,8 +158,8 @@ const handlePost = async (
         .map((domain) => {
           return async () => {
             try {
-              await domainService.handleNewDomain(
-                { fqdn: domain, queued: true },
+              await targetService.handleNewDomain(
+                { uri: domain, queued: true },
                 prisma,
                 session.user
               );

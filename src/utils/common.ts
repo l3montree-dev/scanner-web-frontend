@@ -90,6 +90,15 @@ export const limitStringValues = <T>(obj: T, charLimit = 255): T => {
   return obj;
 };
 
+export const getHostnameFromUri = (uri: string): string => {
+  if (uri.startsWith("http")) {
+    const url = new URL(uri);
+    return url.hostname;
+  }
+  const url = new URL(`http://${uri}`);
+  return url.hostname;
+};
+
 export const isAdmin = (session: ISession | null | undefined): boolean => {
   if (!session || !session.resource_access) {
     return false;
@@ -170,8 +179,6 @@ export const parseNetwork = (cidr: string): WithoutId<DTO<Network>> => {
   return {
     prefixLength: subnet.subnetMaskLength,
     networkAddress: subnet.networkAddress,
-    startAddress: subnet.firstAddress,
-    endAddress: subnet.lastAddress,
     cidr,
     comment: null,
     startAddressNumber: ip.toLong(subnet.firstAddress),

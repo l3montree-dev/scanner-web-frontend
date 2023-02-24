@@ -1,5 +1,5 @@
 import { HttpInspectionType } from "../inspection/scans";
-import { DetailedDomain, ErrorCode } from "../types";
+import { DetailedTarget, ErrorCode } from "../types";
 
 export const immediateActionHTTPErrors = [
   "EPROTO",
@@ -33,7 +33,7 @@ export const getErrorMessage = (code: ErrorCode) => {
   }
 };
 
-export const getHttpMessage = (report: DetailedDomain) => {
+export const getHttpMessage = (report: DetailedTarget) => {
   switch (report.details[HttpInspectionType.HTTP]?.didPass) {
     case null:
       if (

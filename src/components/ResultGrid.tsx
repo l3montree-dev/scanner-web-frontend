@@ -17,7 +17,7 @@ import getRPKIReportMessage from "../messages/rpki";
 import { getTLSv1_1_DeactivatedReportMessage } from "../messages/tlsv1_1_Deactivated";
 import { getTLSv1_3ReportMessage } from "../messages/tlsv1_3";
 import { getValidCertificateMessage } from "../messages/validCertificate";
-import { DetailedDomain } from "../types";
+import { DetailedTarget } from "../types";
 import { classNames, devOnly, linkMapper } from "../utils/common";
 import {
   CheckResult,
@@ -69,7 +69,7 @@ const titleMapper = {
 type ImmediateActions = typeof immediateActionRequired;
 
 const shouldDisplayImmediateActionRequired = (
-  report: DetailedDomain,
+  report: DetailedTarget,
   check: ImmediateActions[number]
 ): boolean => {
   if (check === HttpInspectionType.HTTP) {
@@ -84,13 +84,13 @@ const shouldDisplayImmediateActionRequired = (
 };
 
 const getDescription = (
-  report: DetailedDomain,
+  report: DetailedTarget,
   key: keyof typeof messages
 ): string => {
   return messages[key](report);
 };
 interface Props {
-  report: DetailedDomain;
+  report: DetailedTarget;
 }
 
 const ResultGrid: FunctionComponent<Props> = (props) => {

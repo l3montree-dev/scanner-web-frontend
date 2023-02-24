@@ -2,7 +2,7 @@ import { faRefresh } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FunctionComponent } from "react";
 import { legendMessages } from "../messages/legend";
-import { DetailedDomain } from "../types";
+import { DetailedTarget } from "../types";
 import { classNames } from "../utils/common";
 import {
   CheckResult,
@@ -12,7 +12,7 @@ import {
 import ResultGrid from "./ResultGrid";
 
 interface Props {
-  domain: DetailedDomain | null;
+  target: DetailedTarget | null;
   dateString: string;
   handleRefresh: () => Promise<void>;
   refreshRequest: {
@@ -29,13 +29,13 @@ interface Props {
 }
 
 const ResultEnvelope: FunctionComponent<Props> = ({
-  domain,
+  target,
   dateString,
   handleRefresh,
   refreshRequest,
   amountPassed,
 }) => {
-  return domain !== null ? (
+  return target !== null ? (
     <div className="mt-10 p-5 md:p-0 text-white">
       <div className="md:flex block mb-5 gap-5 flex-row justify-between">
         <div className="md:w-2/3">
@@ -45,21 +45,21 @@ const ResultEnvelope: FunctionComponent<Props> = ({
               target={"_blank"}
               className="underline"
               rel="noopener noreferrer"
-              href={`//${domain.fqdn}`}
+              href={`//${target.uri}`}
             >
-              {domain.fqdn}{" "}
+              {target.uri}{" "}
             </a>
           </h2>
-          {domain.fqdn !== domain.details.sut && (
+          {target.uri !== target.details.sut && (
             <>
               Weiterleitung auf:{" "}
               <a
                 target={"_blank"}
                 className="underline"
                 rel="noopener noreferrer"
-                href={`//${domain.details.sut}`}
+                href={`//${target.details.sut}`}
               >
-                {domain.details.sut}
+                {target.details.sut}
               </a>
             </>
           )}
@@ -117,7 +117,7 @@ const ResultEnvelope: FunctionComponent<Props> = ({
       </div>
       {!refreshRequest.isLoading && !refreshRequest.errored && (
         <div>
-          <ResultGrid report={domain} />
+          <ResultGrid report={target} />
         </div>
       )}
       {refreshRequest.errored && (

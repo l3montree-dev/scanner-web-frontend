@@ -25,7 +25,7 @@ import ResultEnvelope from "../components/ResultEnvelope";
 import ScanPageHero from "../components/ScanPageHero";
 import { getErrorMessage } from "../messages/http";
 import { clientHttpClient } from "../services/clientHttpClient";
-import { DetailedDomain, IScanSuccessResponse } from "../types";
+import { DetailedTarget, IScanSuccessResponse } from "../types";
 import { sanitizeFQDN, staticSecrets } from "../utils/common";
 
 const isInViewport = (element: HTMLElement) => {
@@ -47,7 +47,7 @@ const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
   const [website, setWebsite] = useState("");
   const scanRequest = useLoading();
   const refreshRequest = useLoading();
-  const [domain, setDomain] = useState<null | DetailedDomain>(null);
+  const [domain, setDomain] = useState<null | DetailedTarget>(null);
   const router = useRouter();
 
   const onSubmit = useCallback(
@@ -78,7 +78,7 @@ const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
             )}`
           );
         }
-        const obj: DetailedDomain = await response.json();
+        const obj: DetailedTarget = await response.json();
         setDomain(obj);
         scanRequest.success();
       } catch (e) {
@@ -130,7 +130,7 @@ const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
     try {
       const response = await clientHttpClient(
         `/api/scan?site=${encodeURIComponent(
-          domain.fqdn
+          domain.uri
         )}&refresh=true&s=${code}`,
         crypto.randomUUID()
       );
@@ -207,7 +207,7 @@ const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
             scanRequest={scanRequest}
           />
           <ResultEnvelope
-            domain={domain}
+            target={domain}
             dateString={dateString}
             handleRefresh={handleRefresh}
             refreshRequest={refreshRequest}

@@ -2,37 +2,37 @@
 import { getLogger } from "../services/logger";
 
 interface MonitoringItem {
-  fqdn: string;
+  uri: string;
   interval: number;
 }
 
 // avoid back pressure by storing running monitoring requests inside this object.
-const running: { [fqdn: string]: boolean } = {};
+const running: { [uri: string]: boolean } = {};
 
 const logger = getLogger(__filename);
 
-const monitoringFn = async (fqdn: string) => {
+const monitoringFn = async (uri: string) => {
   /*// only if this pod is the master
-  if (!isMaster() || running[fqdn]) {
+  if (!isMaster() || running[uri]) {
     return;
   }
-  running[fqdn] = true;
+  running[uri] = true;
   const now = Date.now();
   const [{ icon, results }, connection] = await Promise.all([
-    inspect("cron", fqdn),
+    inspect("cron", uri),
     getConnection(),
   ]);
 
   const report = new connection.models.Report({
-    fqdn,
+    uri,
     duration: Date.now() - now,
     iconHref: icon,
     result: results,
     version: 1,
   });
   await report.save();
-  logger.info({ duration: Date.now() - now }, `scanned site: ${fqdn}`);
-  running[fqdn] = false;
+  logger.info({ duration: Date.now() - now }, `scanned site: ${uri}`);
+  running[uri] = false;
 };
 
 export const startMonitoring = async () => {
@@ -40,12 +40,12 @@ export const startMonitoring = async () => {
   const data: MonitoringItem[] = JSON.parse(file);
   logger.info(`Monitoring ${data.length} items`);
 
-  data.forEach(({ fqdn, interval }) => {
+  data.forEach(({ uri, interval }) => {
     // start monitoring
     setInterval(
       async () => {
         try {
-          await monitoringFn(fqdn);
+          await monitoringFn(uri);
         } catch (e) {
           logger.error(e, "error while monitoring");
         }
