@@ -109,8 +109,9 @@ const getDomainsOfNetworksWithLatestTestResult = async (
     paginateRequest.pageSize,
     paginateRequest.page * paginateRequest.pageSize,
   ];
+
   if (paginateRequest.search !== undefined && paginateRequest.search !== "") {
-    sqlValues.unshift(paginateRequest.search);
+    sqlValues.push(paginateRequest.search);
   }
 
   const [total, targets] = await Promise.all([
@@ -143,30 +144,30 @@ const getDomainsOfNetworksWithLatestTestResult = async (
     // subject to sql injection!!!
     prisma.$queryRawUnsafe(
       `
-    SELECT d.* from user_domain_relations udr
-    INNER JOIN targets d on udr.uri = d.uri 
-    LEFT JOIN scan_reports sr on d.uri = sr.uri  
-    WHERE NOT EXISTS(
-        SELECT 1 from scan_reports sr2 where sr.uri = sr2.uri AND sr.createdAt < sr2.createdAt
-      )
-      ${
-        paginateRequest.search !== undefined && paginateRequest.search !== ""
-          ? "AND d.uri LIKE CONCAT('%', ?, '%')"
-          : ""
-      }
-      AND userId = ?
-      ${
-        paginateRequest.type === TargetType.unreachable
-          ? "AND errorCount >= 5"
-          : paginateRequest.type === TargetType.reachable
-          ? "AND errorCount < 5"
-          : ""
-      }
-      ORDER BY ${translateSort(paginateRequest.sort)} ${translateSortDirection(
-        paginateRequest.sortDirection
-      )}
-      LIMIT ?
-      OFFSET ?;
+      SELECT d.* from user_domain_relations udr
+      INNER JOIN targets d on udr.uri = d.uri 
+      LEFT JOIN scan_reports sr on d.uri = sr.uri  
+      WHERE NOT EXISTS(
+          SELECT 1 from scan_reports sr2 where sr.uri = sr2.uri AND sr."createdAt" < sr2."createdAt"
+        )
+        ${
+          paginateRequest.search !== undefined && paginateRequest.search !== ""
+            ? "AND d.uri LIKE CONCAT('%', $4, '%')"
+            : ""
+        }
+        AND udr."userId" = $1
+        ${
+          paginateRequest.type === TargetType.unreachable
+            ? "AND errorCount >= 5"
+            : paginateRequest.type === TargetType.reachable
+            ? "AND errorCount < 5"
+            : ""
+        }
+        ORDER BY ${translateSort(
+          paginateRequest.sort
+        )} ${translateSortDirection(paginateRequest.sortDirection)}
+        LIMIT $2
+        OFFSET $3;
 `,
       ...sqlValues
     ) as Promise<any[]>,

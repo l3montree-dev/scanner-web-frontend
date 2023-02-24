@@ -1,14 +1,14 @@
 export enum ResponsibleDisclosureValidationError {
-  MissingResponsibleDisclosure = "MissingResponsibleDisclosure",
-  MissingContactField = "MissingContactField",
-  InvalidExpiresField = "InvalidExpiresField",
-  Expired = "Expired",
+  MissingResponsibleDisclosure = "missingResponsibleDisclosure",
+  MissingContactField = "missingContactField",
+  InvalidExpiresField = "invalidExpiresField",
+  Expired = "expired",
 }
 
 // invalid means either missing or twice included
 export enum ResponsibleDisclosureRecommendation {
-  InvalidEncryption = "InvalidEncryption",
-  InvalidCanonical = "InvalidCanonical",
-  InvalidPreferredLanguages = "InvalidPreferredLanguages",
-  MissingPGPSignature = "MissingPGPSignature",
+  InvalidEncryption = "invalidEncryption",
+  InvalidCanonical = "invalidCanonical",
+  InvalidPreferredLanguages = "invalidPreferredLanguages",
+  MissingPGPSignature = "missingPGPSignature",
 }

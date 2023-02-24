@@ -9,7 +9,7 @@ const holderStr = (holder?: string) => {
 };
 
 export default function getRPKIReportMessage(report: DetailedTarget) {
-  const inspection = report.details["RPKI"];
+  const inspection = report.details["rpki"];
   const uri = report.details.sut;
 
   if (inspection?.didPass === null || inspection?.didPass === undefined) {

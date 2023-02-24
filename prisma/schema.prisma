@@ -22,41 +22,41 @@ model ScanReport {
 
   sut String?
 
-  SubResourceIntegrity  Boolean?
-  NoMixedContent        Boolean?
-  ResponsibleDisclosure Boolean?
-  DNSSec                Boolean?
-  CAA                   Boolean?
-  IPv6                  Boolean?
-  RPKI                  Boolean?
-  HTTP                  Boolean?
-  HTTP308               Boolean?
-  HTTPRedirectsToHttps  Boolean?
+  subResourceIntegrity  Boolean?
+  noMixedContent        Boolean?
+  responsibleDisclosure Boolean?
+  dnsSec                Boolean?
+  caa                   Boolean?
+  ipv6                  Boolean?
+  rpki                  Boolean?
+  http                  Boolean?
+  http308               Boolean?
+  httpRedirectsToHttps  Boolean?
 
-  HTTPS                 Boolean?
-  HSTS                  Boolean?
-  HSTSPreloaded         Boolean?
-  ContentSecurityPolicy Boolean?
-  XFrameOptions         Boolean?
-  XSSProtection         Boolean?
-  ContentTypeOptions    Boolean?
+  https                 Boolean?
+  hsts                  Boolean?
+  hstsPreloaded         Boolean?
+  contentSecurityPolicy Boolean?
+  xFrameOptions         Boolean?
+  xssProtection         Boolean?
+  contentTypeOptions    Boolean?
 
-  SecureSessionCookies Boolean?
-  TLSv1_2              Boolean?
-  TLSv1_3              Boolean?
+  secureSessionCookies Boolean?
+  tlsv1_2              Boolean?
+  tlsv1_3              Boolean?
 
-  TLSv1_1_Deactivated Boolean?
-  StrongKeyExchange   Boolean?
-  StrongCipherSuites  Boolean?
+  tlsv1_1_Deactivated Boolean?
+  strongKeyExchange   Boolean?
+  strongCipherSuites  Boolean?
 
-  ValidCertificate         Boolean?
-  StrongPrivateKey         Boolean?
-  StrongSignatureAlgorithm Boolean?
+  validCertificate         Boolean?
+  strongPrivateKey         Boolean?
+  strongSignatureAlgorithm Boolean?
 
-  MatchesHostname         Boolean?
-  NotRevoked              Boolean?
-  CertificateTransparency Boolean?
-  ValidCertificateChain   Boolean?
+  matchesHostname         Boolean?
+  notRevoked              Boolean?
+  certificateTransparency Boolean?
+  validCertificateChain   Boolean?
 
   @@index([createdAt])
   @@index([uri])
@@ -107,7 +107,6 @@ model UserDomainRelation {
   uri    String
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
 
   @@id([userId, uri])
   @@map("user_domain_relations")

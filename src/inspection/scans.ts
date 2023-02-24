@@ -1,63 +1,63 @@
 export enum ContentInspectionType {
-  SubResourceIntegrity = "SubResourceIntegrity",
-  NoMixedContent = "NoMixedContent",
+  SubResourceIntegrity = "subResourceIntegrity",
+  NoMixedContent = "noMixedContent",
 }
 
 export enum OrganizationalInspectionType {
-  ResponsibleDisclosure = "ResponsibleDisclosure",
+  ResponsibleDisclosure = "responsibleDisclosure",
 }
 
 export enum DomainInspectionType {
-  DNSSec = "DNSSec",
-  CAA = "CAA",
+  DNSSec = "dnsSec",
+  CAA = "caa",
 }
 
 export enum NetworkInspectionType {
-  IPv6 = "IPv6",
-  RPKI = "RPKI",
+  IPv6 = "ipv6",
+  RPKI = "rpki",
 }
 
 export enum HttpInspectionType {
-  HTTP = "HTTP",
+  HTTP = "http",
   // permanent redirect to https.
-  HTTP308 = "HTTP308",
+  HTTP308 = "http308",
   // redirect to https.
-  HTTPRedirectsToHttps = "HTTPRedirectsToHttps",
+  HTTPRedirectsToHttps = "httpRedirectsToHttps",
 }
 
 export enum HeaderInspectionType {
-  HTTPS = "HTTPS",
-  HSTS = "HSTS",
-  HSTSPreloaded = "HSTSPreloaded",
-  ContentSecurityPolicy = "ContentSecurityPolicy",
-  XFrameOptions = "XFrameOptions",
-  XSSProtection = "XSSProtection",
-  ContentTypeOptions = "ContentTypeOptions",
+  HTTPS = "https",
+  HSTS = "hsts",
+  HSTSPreloaded = "hstsPreloaded",
+  ContentSecurityPolicy = "contentSecurityPolicy",
+  XFrameOptions = "xFrameOptions",
+  XSSProtection = "xssProtection",
+  ContentTypeOptions = "contentTypeOptions",
 }
 
 export enum CookieInspectionType {
-  SecureSessionCookies = "SecureSessionCookies",
+  SecureSessionCookies = "secureSessionCookies",
 }
 export enum TLSInspectionType {
-  TLSv1_2 = "TLSv1_2",
-  TLSv1_3 = "TLSv1_3",
+  TLSv1_2 = "tlsv1_2",
+  TLSv1_3 = "tlsv1_3",
   // make sure, that TLS v.1.1 and older is not supported
-  TLSv1_1_Deactivated = "TLSv1_1_Deactivated",
+  TLSv1_1_Deactivated = "tlsv1_1_Deactivated",
   // string Key-Exchange (min. 2048 bit for DHE; min. 256 bit for
   // prefer ECDHE
-  StrongKeyExchange = "StrongKeyExchange",
-  StrongCipherSuites = "StrongCipherSuites",
+  StrongKeyExchange = "strongKeyExchange",
+  StrongCipherSuites = "strongCipherSuites",
 }
 
 export enum CertificateInspectionType {
-  ValidCertificate = "ValidCertificate",
+  ValidCertificate = "validCertificate",
   // EC min. 256 bit, RSA min. 2048 bit
-  StrongPrivateKey = "StrongPrivateKey",
-  StrongSignatureAlgorithm = "StrongSignatureAlgorithm",
-  MatchesHostname = "MatchesHostname",
-  NotRevoked = "NotRevoked",
-  CertificateTransparency = "CertificateTransparency",
-  ValidCertificateChain = "ValidCertificateChain",
+  StrongPrivateKey = "strongPrivateKey",
+  StrongSignatureAlgorithm = "strongSignatureAlgorithm",
+  MatchesHostname = "matchesHostname",
+  NotRevoked = "notRevoked",
+  CertificateTransparency = "certificateTransparency",
+  ValidCertificateChain = "validCertificateChain",
 }
 
 export type InspectionType =

@@ -28,15 +28,15 @@ import {
 import ResultBox from "./ResultBox";
 
 const messages = {
-  ResponsibleDisclosure: getResponsibleDisclosureReportMessage,
-  TLSv1_3: getTLSv1_3ReportMessage,
-  TLSv1_1_Deactivated: getTLSv1_1_DeactivatedReportMessage,
-  HSTS: getHSTSReportMessage,
-  DNSSec: getDNSSecReportMessage,
-  RPKI: getRPKIReportMessage,
-  MatchesHostname: getMatchesHostnameMessage,
-  ValidCertificate: getValidCertificateMessage,
-  HTTP: getHttpMessage,
+  responsibleDisclosure: getResponsibleDisclosureReportMessage,
+  tlsv1_3: getTLSv1_3ReportMessage,
+  tlsv1_1_Deactivated: getTLSv1_1_DeactivatedReportMessage,
+  hsts: getHSTSReportMessage,
+  dnsSec: getDNSSecReportMessage,
+  rpki: getRPKIReportMessage,
+  matchesHostname: getMatchesHostnameMessage,
+  validCertificate: getValidCertificateMessage,
+  http: getHttpMessage,
 };
 
 const regularChecks = [
@@ -55,15 +55,15 @@ const immediateActionRequired = [
 ] as const;
 
 const titleMapper = {
-  DNSSec: "DNSSEC",
-  RPKI: "RPKI",
-  TLSv1_3: "TLS 1.3",
-  HTTP: "HTTP",
-  TLSv1_1_Deactivated: "Deaktivierung von veralteten TLS/ SSL Protokollen",
-  HSTS: "HSTS",
-  ResponsibleDisclosure: "Responsible Disclosure",
-  MatchesHostname: "Übereinstimmung des Hostnamens im Zertifikat",
-  ValidCertificate: "Gültiges Zertifikat",
+  dnsSec: "DNSSEC",
+  rpki: "RPKI",
+  tlsv1_3: "TLS 1.3",
+  http: "HTTP",
+  tlsv1_1_Deactivated: "Deaktivierung von veralteten TLS/ SSL Protokollen",
+  hsts: "HSTS",
+  responsibleDisclosure: "Responsible Disclosure",
+  matchesHostname: "Übereinstimmung des Hostnamens im Zertifikat",
+  validCertificate: "Gültiges Zertifikat",
 };
 
 type ImmediateActions = typeof immediateActionRequired;

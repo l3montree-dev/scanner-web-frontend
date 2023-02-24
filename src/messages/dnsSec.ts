@@ -2,7 +2,7 @@ import { DetailedTarget } from "../types";
 import { getHostnameFromUri } from "../utils/common";
 
 export const getDNSSecReportMessage = (report: DetailedTarget) => {
-  const inspection = report.details.DNSSec;
+  const inspection = report.details.dnsSec;
   const hostname = getHostnameFromUri(report.details.sut);
   if (inspection === null || inspection === undefined) {
     return `DNSSEC konnte für die Domain ${hostname} nicht überprüft werden.`;

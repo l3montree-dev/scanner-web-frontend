@@ -45,7 +45,7 @@ const SideNavigation = () => {
   const { pathname } = useRouter();
 
   return (
-    <div className="bg-deepblue-700 border-r border-deepblue-200 h-full">
+    <div className="bg-deepblue-700 border-r border-deepblue-400 h-full">
       <div className="sticky top-0 pt-10">
         {getLinks(isAdmin(session.data)).map(({ path, name, icon }) => (
           <Link key={name} href={path}>

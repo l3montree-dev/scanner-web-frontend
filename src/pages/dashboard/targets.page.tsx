@@ -547,42 +547,42 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                       <td className="p-2">
                         <ResultIcon
                           checkResult={didPass2CheckResult(
-                            domain.details?.ResponsibleDisclosure?.didPass
+                            domain.details?.responsibleDisclosure?.didPass
                           )}
                         />
                       </td>
                       <td className="p-2">
                         <ResultIcon
                           checkResult={didPass2CheckResult(
-                            domain.details?.TLSv1_3?.didPass
+                            domain.details?.tlsv1_3?.didPass
                           )}
                         />
                       </td>
                       <td className="p-2">
                         <ResultIcon
                           checkResult={didPass2CheckResult(
-                            domain.details?.TLSv1_1_Deactivated?.didPass
+                            domain.details?.tlsv1_1_Deactivated?.didPass
                           )}
                         />
                       </td>
                       <td className="p-2">
                         <ResultIcon
                           checkResult={didPass2CheckResult(
-                            domain.details?.HSTS?.didPass
+                            domain.details?.hsts?.didPass
                           )}
                         />
                       </td>
                       <td className="p-2">
                         <ResultIcon
                           checkResult={didPass2CheckResult(
-                            domain.details?.DNSSec?.didPass
+                            domain.details?.dnsSec?.didPass
                           )}
                         />
                       </td>
                       <td className="p-2">
                         <ResultIcon
                           checkResult={didPass2CheckResult(
-                            domain.details?.RPKI?.didPass
+                            domain.details?.rpki?.didPass
                           )}
                         />
                       </td>
@@ -644,7 +644,7 @@ export const getServerSideProps = decorateServerSideProps(
     const page = +(context.query["page"] ?? 0);
     const search = context.query["search"] as string | undefined;
 
-    const domains =
+    const targets =
       await targetService.getDomainsOfNetworksWithLatestTestResult(
         currentUser,
         {
@@ -663,7 +663,7 @@ export const getServerSideProps = decorateServerSideProps(
     return {
       props: {
         keycloakIssuer: process.env.KEYCLOAK_ISSUER,
-        domains,
+        targets,
       },
     };
   },
