@@ -31,7 +31,9 @@ describe("Quicktest Test", () => {
     });
     const [fetchMock, resp] = mockFetch(
       buildJSONResponse({
-        details: {},
+        details: {
+          sut: "example.com",
+        },
       })
     );
     render(<Home displayNotAvailable={false} code="unknown" />);
@@ -47,7 +49,9 @@ describe("Quicktest Test", () => {
   it("should update the site query parameter after scanning", async () => {
     const [_, resp] = mockFetch(
       buildJSONResponse({
-        details: {},
+        details: {
+          sut: "example.com",
+        },
       })
     );
     render(<Home displayNotAvailable={false} code="unknown" />);
