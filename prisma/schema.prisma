@@ -13,6 +13,7 @@ datasource db {
 model ScanReport {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   ipAddress String?
   duration  Int
