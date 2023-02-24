@@ -19,7 +19,7 @@ const reportDidChange = (
 
 export const scanResult2TargetDetails = (
   scanResponse: IScanSuccessResponse
-): Record<string, any> => {
+): Record<string, any> & { sut: string } => {
   return {
     ...limitStringValues(scanResponse.result),
     // save the subject under test inside the details
@@ -109,7 +109,11 @@ const handleNewScanReport = async (
     await prisma.scanReport.create({
       data: { ...newReport },
     });
-    return toDTO(target) as DTO<DetailedTarget>;
+    return toDTO({
+      ...target,
+      lastScan: target.lastScan || 0,
+      details: scanResult2TargetDetails(result),
+    });
   }
 
   const target = await prisma.target.update({

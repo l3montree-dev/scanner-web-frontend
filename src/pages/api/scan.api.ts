@@ -133,22 +133,23 @@ export default decorate(
         { duration: Date.now() - start, requestId },
         `successfully scanned site: ${siteToScan}`
       );
-      const domain = await defaultOnError(
+      const target = await defaultOnError(
         scanCB.run(async () =>
           timeout(reportService.handleNewScanReport(result, prisma))
         ),
         {
           uri: result.target,
           lastScan: result.timestamp,
+          hostname: "",
           errorCount: 0,
           group: "",
           queued: false,
           createdAt: new Date(result.timestamp).toString(),
           updatedAt: new Date(result.timestamp).toString(),
           details: scanResult2TargetDetails(result),
-        } as DTO<DetailedTarget>
+        }
       );
-      return res.json(domain);
+      return res.json(target);
     }
   },
   withDB
