@@ -46,7 +46,7 @@ model ScanReport {
   tlsv1_2              Boolean?
   tlsv1_3              Boolean?
 
-  tlsv1_1_Deactivated Boolean?
+  deprecatedTLSDeactivated Boolean?
   strongKeyExchange   Boolean?
   strongCipherSuites  Boolean?
 

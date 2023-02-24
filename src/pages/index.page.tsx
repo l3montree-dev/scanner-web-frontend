@@ -159,7 +159,7 @@ const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
         (
           [
             TLSInspectionType.TLSv1_3,
-            TLSInspectionType.TLSv1_1_Deactivated,
+            TLSInspectionType.DeprecatedTLSDeactivated,
             NetworkInspectionType.RPKI,
             DomainInspectionType.DNSSec,
             HeaderInspectionType.HSTS,

@@ -53,7 +53,7 @@ const mapping: { [key in InspectionType]: string } = {
   [HttpInspectionType.HTTPRedirectsToHttps]: "HTTP Weiterleitung zu HTTPS",
   [TLSInspectionType.TLSv1_2]: "TLS 1.2",
   [TLSInspectionType.TLSv1_3]: "TLS 1.3",
-  [TLSInspectionType.TLSv1_1_Deactivated]:
+  [TLSInspectionType.DeprecatedTLSDeactivated]:
     "Deaktivierung von veralteten TLS/ SSL Protokollen",
   [TLSInspectionType.StrongKeyExchange]: "Strong-Key-Exchange",
   [TLSInspectionType.StrongCipherSuites]: "Strong-Cipher-Suites",
@@ -88,7 +88,7 @@ const mapping: { [key in InspectionType]: string } = {
 const displayKey: Array<InspectionType> = [
   OrganizationalInspectionType.ResponsibleDisclosure,
   TLSInspectionType.TLSv1_3,
-  TLSInspectionType.TLSv1_1_Deactivated,
+  TLSInspectionType.DeprecatedTLSDeactivated,
   HeaderInspectionType.HSTS,
   DomainInspectionType.DNSSec,
   NetworkInspectionType.RPKI,

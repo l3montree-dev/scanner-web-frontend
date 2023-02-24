@@ -39,14 +39,14 @@ export enum CookieInspectionType {
   SecureSessionCookies = "secureSessionCookies",
 }
 export enum TLSInspectionType {
-  tlsv1_2 = "tlsv1_2",
-  tlsv1_3 = "tlsv1_3",
+  TLSv1_2 = "tlsv1_2",
+  TLSv1_3 = "tlsv1_3",
   // make sure, that TLS v.1.1 and older is not supported
-  deprecatedTLSDeactivated = "deprecatedTLSDeactivated",
+  DeprecatedTLSDeactivated = "deprecatedTLSDeactivated",
   // string Key-Exchange (min. 2048 bit for DHE; min. 256 bit for
   // prefer ECDHE
-  strongKeyExchange = "strongKeyExchange",
-  strongCipherSuites = "strongCipherSuites",
+  StrongKeyExchange = "strongKeyExchange",
+  StrongCipherSuites = "strongCipherSuites",
 }
 
 export enum CertificateInspectionType {

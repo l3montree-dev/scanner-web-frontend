@@ -407,13 +407,14 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                         <br /> Protokolle deaktiviert
                       </span>
                       <SortButton
-                        sortKey={TLSInspectionType.TLSv1_1_Deactivated}
+                        sortKey={TLSInspectionType.DeprecatedTLSDeactivated}
                         onSort={handleSort}
                         active={
-                          sort.key === TLSInspectionType.TLSv1_1_Deactivated
+                          sort.key ===
+                          TLSInspectionType.DeprecatedTLSDeactivated
                         }
                         getIcon={() =>
-                          getIcon(TLSInspectionType.TLSv1_1_Deactivated)
+                          getIcon(TLSInspectionType.DeprecatedTLSDeactivated)
                         }
                       />
                     </div>
@@ -561,7 +562,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                       <td className="p-2">
                         <ResultIcon
                           checkResult={didPass2CheckResult(
-                            domain.details?.tlsv1_1_Deactivated?.didPass
+                            domain.details?.deprecatedTLSDeactivated?.didPass
                           )}
                         />
                       </td>

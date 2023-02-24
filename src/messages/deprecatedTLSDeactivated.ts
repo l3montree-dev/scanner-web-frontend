@@ -1,6 +1,8 @@
 import { DetailedTarget } from "../types";
 
-export const getTLSv1_1_DeactivatedReportMessage = (report: DetailedTarget) => {
+export const getDeprecatedTLSDeactivatedReportMessage = (
+  report: DetailedTarget
+) => {
   const inspection = report.details["deprecatedTLSDeactivated"];
   if (inspection?.didPass === null || inspection?.didPass === undefined) {
     return "Die Überprüfung der Protokolle TLS 1.1 und älter sowie SSL konnte nicht durchgeführt werden.";

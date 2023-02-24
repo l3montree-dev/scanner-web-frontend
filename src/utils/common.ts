@@ -217,12 +217,12 @@ export const linkMapper: { [key in InspectionType]: string } = {
   [HttpInspectionType.HTTP]: "",
   [HttpInspectionType.HTTP308]: "",
   [HttpInspectionType.HTTPRedirectsToHttps]: "",
-  [TLSInspectionType.tlsv1_2]: "",
-  [TLSInspectionType.tlsv1_3]: "/one-pager/TLS1_3-One-Pager.pdf",
-  [TLSInspectionType.deprecatedTLSDeactivated]:
+  [TLSInspectionType.TLSv1_2]: "",
+  [TLSInspectionType.TLSv1_3]: "/one-pager/TLS1_3-One-Pager.pdf",
+  [TLSInspectionType.DeprecatedTLSDeactivated]:
     "/one-pager/TLS1_1_off-One-Pager.pdf",
-  [TLSInspectionType.strongKeyExchange]: "",
-  [TLSInspectionType.strongCipherSuites]: "",
+  [TLSInspectionType.StrongKeyExchange]: "",
+  [TLSInspectionType.StrongCipherSuites]: "",
   [CertificateInspectionType.ValidCertificate]: "",
   [CertificateInspectionType.StrongPrivateKey]: "",
   [CertificateInspectionType.StrongSignatureAlgorithm]: "",
