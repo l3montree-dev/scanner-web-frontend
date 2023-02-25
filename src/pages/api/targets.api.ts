@@ -30,7 +30,7 @@ const deleteDomainRelation = async (
   user: User,
   prisma: PrismaClient
 ) => {
-  return prisma.userDomainRelation.deleteMany({
+  return prisma.userTargetRelation.deleteMany({
     where: {
       uri: {
         in: uris,
@@ -47,8 +47,8 @@ const handleDelete = async (
   prisma: PrismaClient
 ) => {
   const requestId = req.headers["x-request-id"] as string;
-  const { domains } = JSON.parse((await stream2buffer(req)).toString());
-  await deleteDomainRelation(domains, session.user, prisma);
+  const { targets } = JSON.parse((await stream2buffer(req)).toString());
+  await deleteDomainRelation(targets, session.user, prisma);
   statService.generateStatsForUser(session.user, prisma, true).then(() => {
     logger.info(
       { userId: session.user.id, requestId },
@@ -69,11 +69,11 @@ const handlePost = async (
   if (req.headers["content-type"]?.includes("application/json")) {
     // the user does only send a single domain.
 
-    const { domain }: { domain: string } = JSON.parse(
+    const { target }: { target: string } = JSON.parse(
       (await stream2buffer(req)).toString()
     );
 
-    const sanitized = sanitizeFQDN(domain);
+    const sanitized = sanitizeFQDN(target);
     if (!sanitized) {
       return res.status(400).send({ error: "invalid domain" });
     }
@@ -89,7 +89,7 @@ const handlePost = async (
     statService.generateStatsForUser(session.user, prisma, true).then(() => {
       logger.info(
         { requestId, userId: session.user.id },
-        `domain import - stats regenerated.`
+        `target import - stats regenerated.`
       );
     });
     return res.send(d);

@@ -6,7 +6,7 @@ import Button from "./Button";
 import DragAndDrop from "./DragAndDrop";
 import FormInput from "./FormInput";
 
-const DomainOverviewForm: FunctionComponent<{
+const TargetOverviewForm: FunctionComponent<{
   onSearch: (search: string) => Promise<void>;
   onNewDomain: (domain: string) => Promise<void>;
   onFileFormSubmit: (files: File[]) => Promise<void>;
@@ -43,7 +43,7 @@ const DomainOverviewForm: FunctionComponent<{
       createRequest.success();
     } catch (err) {
       createRequest.error(
-        "Leider ist ein Fehler aufgetreten. Bitte überprüfen Sie, ob die Domain innerhalb ihres Netzwerks liegt."
+        "Leider ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut."
       );
     }
   };
@@ -231,4 +231,4 @@ const DomainOverviewForm: FunctionComponent<{
   );
 };
 
-export default DomainOverviewForm;
+export default TargetOverviewForm;

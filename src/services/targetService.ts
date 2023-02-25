@@ -35,7 +35,7 @@ const handleNewTarget = async (
 
   if (connectToUser) {
     await neverThrow(
-      prisma.userDomainRelation.create({
+      prisma.userTargetRelation.create({
         data: {
           userId: connectToUser.id,
           uri: payload.uri,
@@ -83,13 +83,13 @@ const translateSortDirection = (
   return "ASC";
 };
 
-const translateSort = (sort?: string): `sr.${InspectionType}` | "d.uri" => {
+const translateSort = (sort?: string): `sr."${InspectionType}"` | "d.uri" => {
   if (!sort) {
     return "d.uri";
   }
 
   if (Object.keys(InspectionTypeEnum).includes(sort)) {
-    return `sr.${sort as InspectionType}`;
+    return `sr."${sort as InspectionType}"`;
   }
 
   return "d.uri";
@@ -144,9 +144,10 @@ const getDomainsOfNetworksWithLatestTestResult = async (
     // subject to sql injection!!!
     prisma.$queryRawUnsafe(
       `
-      SELECT d.* from user_domain_relations udr
+      SELECT d.*, lsd.details as details from user_target_relations udr
       INNER JOIN targets d on udr.uri = d.uri 
-      LEFT JOIN scan_reports sr on d.uri = sr.uri  
+      LEFT JOIN scan_reports sr on d.uri = sr.uri
+      LEFT JOIN last_scan_details lsd on d.uri = lsd.uri
       WHERE NOT EXISTS(
           SELECT 1 from scan_reports sr2 where sr.uri = sr2.uri AND sr."createdAt" < sr2."createdAt"
         )
@@ -158,9 +159,9 @@ const getDomainsOfNetworksWithLatestTestResult = async (
         AND udr."userId" = $1
         ${
           paginateRequest.type === TargetType.unreachable
-            ? "AND errorCount >= 5"
+            ? 'AND "errorCount" >= 5'
             : paginateRequest.type === TargetType.reachable
-            ? "AND errorCount < 5"
+            ? 'AND "errorCount" < 5'
             : ""
         }
         ORDER BY ${translateSort(

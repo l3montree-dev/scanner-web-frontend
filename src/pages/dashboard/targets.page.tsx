@@ -10,7 +10,7 @@ import { useRouter } from "next/router";
 import { FunctionComponent, useEffect, useMemo, useState } from "react";
 import Checkbox from "../../components/Checkbox";
 import DashboardPage from "../../components/DashboardPage";
-import DomainOverviewForm from "../../components/DomainOverviewForm";
+import TargetOverviewForm from "../../components/DomainOverviewForm";
 import Menu from "../../components/Menu";
 import MenuItem from "../../components/MenuItem";
 import MenuList from "../../components/MenuList";
@@ -210,13 +210,13 @@ const Dashboard: FunctionComponent<Props> = (props) => {
     patchQuery({ search: value, page: "0" });
   };
 
-  const handleAddRecord = async (domain: string) => {
-    const res = await clientHttpClient(`/api/domains`, crypto.randomUUID(), {
+  const handleAddRecord = async (target: string) => {
+    const res = await clientHttpClient(`/api/targets`, crypto.randomUUID(), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ domain }),
+      body: JSON.stringify({ target }),
     });
 
     if (!res.ok) {
@@ -264,7 +264,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
           <div className="w-full border-deepblue-50 border bg-deepblue-500">
             <div className="p-5">
               <div className="text-black">
-                <DomainOverviewForm
+                <TargetOverviewForm
                   onSearch={handleSearch}
                   onNewDomain={handleAddRecord}
                   onFileFormSubmit={handleFileFormSubmit}

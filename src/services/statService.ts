@@ -12,7 +12,7 @@ const logger = getLogger(__filename);
 const getTotalsOfUser = async (user: User, prisma: PrismaClient) => {
   // count the domains this user has access to
   return {
-    uniqueTargets: await prisma.userDomainRelation.count({
+    uniqueTargets: await prisma.userTargetRelation.count({
       where: {
         userId: user.id,
       },
@@ -86,52 +86,52 @@ const getGroupFailedSuccessPercentage = async (
   let [res] = (await prisma.$queryRaw(
     // this query will pick the latest scan report for each domain and calculate the average of all the inspection types. If there was no scan report done before "until", it will pick the closest one of the future - this fakes the stats but was requested by the customer
     Prisma.sql`
-SELECT AVG(SubResourceIntegrity) as SubResourceIntegrity,
-    AVG(NoMixedContent) as NoMixedContent,
-    AVG(ResponsibleDisclosure) as ResponsibleDisclosure,
-    AVG(DNSSec) as DNSSec,
-    AVG(CAA) as CAA,
-    AVG(IPv6) as IPv6,
-    AVG(RPKI) as RPKI,
-    AVG(HTTP) as HTTP,
-    AVG(HTTPS) as HTTPS,
-    AVG(HTTP308) as HTTP308,
-    AVG(HTTPRedirectsToHttps) as HTTPRedirectsToHttps,
-    AVG(HSTS) as HSTS, 
-    AVG(HSTSPreloaded) as HSTSPreloaded,
-    AVG(ContentSecurityPolicy) as ContentSecurityPolicy,
-    AVG(XFrameOptions) as XFrameOptions,
-    AVG(XSSProtection) as XSSProtection,
-    AVG(ContentTypeOptions) as ContentTypeOptions,
-    AVG(SecureSessionCookies) as SecureSessionCookies,
-    AVG(tlsv1_2) as tlsv1_2,
-    AVG(tlsv1_3) as tlsv1_3, 
-    AVG(deprecatedTLSDeactivated) as deprecatedTLSDeactivated, 
-    AVG(strongKeyExchange) as strongKeyExchange,
-    AVG(strongCipherSuites) as strongCipherSuites,
-    AVG(ValidCertificate) as ValidCertificate,
-    AVG(StrongPrivateKey) as StrongPrivateKey,
-    AVG(StrongSignatureAlgorithm) as StrongSignatureAlgorithm,
-    AVG(MatchesHostname) as MatchesHostname,
-    AVG(NotRevoked) as NotRevoked,
-    AVG(CertificateTransparency) as CertificateTransparency,
-    AVG(ValidCertificateChain) as ValidCertificateChain,
+SELECT AVG("subResourceIntegrity") as "subResourceIntegrity",
+    AVG("noMixedContent") as "noMixedContent",
+    AVG("responsibleDisclosure") as "responsibleDisclosure",
+    AVG("dnsSec") as "dnsSec",
+    AVG("caa") as "caa",
+    AVG("ipv6") as "ipv6",
+    AVG("rpki") as "rpki",
+    AVG("http") as "http",
+    AVG("https") as "https",
+    AVG("http308") as "http308",
+    AVG("httpRedirectsToHttps") as "httpRedirectsToHttps",
+    AVG("hsts") as "hsts", 
+    AVG("hstsPreloaded") as "hstsPreloaded",
+    AVG("contentSecurityPolicy") as "contentSecurityPolicy",
+    AVG("xFrameOptions") as "xFrameOptions",
+    AVG("xssProtection") as "xssProtection",
+    AVG("contentTypeOptions") as "contentTypeOptions",
+    AVG("secureSessionCookies") as "secureSessionCookies",
+    AVG("tlsv1_2") as "tlsv1_2",
+    AVG("tlsv1_3") as "tlsv1_3", 
+    AVG("deprecatedTLSDeactivated") as "deprecatedTLSDeactivated", 
+    AVG("strongKeyExchange") as "strongKeyExchange",
+    AVG("strongCipherSuites") as "strongCipherSuites",
+    AVG("validCertificate") as "validCertificate",
+    AVG("strongPrivateKey") as "strongPrivateKey",
+    AVG("strongSignatureAlgorithm") as "strongSignatureAlgorithm",
+    AVG("matchesHostname") as "matchesHostname",
+    AVG("notRevoked") as "notRevoked",
+    AVG("certificateTransparency") as "certificateTransparency",
+    AVG("validCertificateChain") as "validCertificateChain",
 
     COUNT(*) as totalCount
 from domains d INNER JOIN scan_reports sr1 on d.uri = sr1.uri
 WHERE d.group = ${group} AND ((
         NOT EXISTS(
-                SELECT 1 from scan_reports sr2 where sr1.uri = sr2.uri AND sr2.createdAt < ${new Date(
+                SELECT 1 from scan_reports sr2 where sr1.uri = sr2.uri AND sr2."createdAt" < ${new Date(
                   until
-                )} 
-                AND sr1.createdAt < sr2.createdAt
-        ) AND sr1.createdAt < ${new Date(until)}
+                )}
+                AND sr1."createdAt" < sr2."createdAt"
+        ) AND sr1."createdAt" < ${new Date(until)}
     )
     OR (
-        NOT EXISTS(select 1 from scan_reports sr2 where sr1.uri = sr2.uri AND sr2.createdAt < ${new Date(
+        NOT EXISTS(select 1 from scan_reports sr2 where sr1.uri = sr2.uri AND sr2."createdAt" < ${new Date(
           until
         )})
-        AND NOT EXISTS(select 1 from scan_reports sr2 where sr1.uri = sr2.uri AND sr1.createdAt > sr2.createdAt)
+        AND NOT EXISTS(select 1 from scan_reports sr2 where sr1.uri = sr2.uri AND sr1."createdAt" > sr2."createdAt")
     ))`
   )) as any;
 
@@ -157,53 +157,53 @@ const getUserFailedSuccessPercentage = async (
   let [res] = (await prisma.$queryRaw(
     // this query will pick the latest scan report for each domain and calculate the average of all the inspection types. If there was no scan report done before "until", it will pick the closest one of the future - this fakes the stats but was requested by the customer
     Prisma.sql`
-SELECT AVG(SubResourceIntegrity) as SubResourceIntegrity,
-    AVG(NoMixedContent) as NoMixedContent,
-    AVG(ResponsibleDisclosure) as ResponsibleDisclosure,
-    AVG(DNSSec) as DNSSec,
-    AVG(CAA) as CAA,
-    AVG(IPv6) as IPv6,
-    AVG(RPKI) as RPKI,
-    AVG(HTTP) as HTTP,
-    AVG(HTTPS) as HTTPS,
-    AVG(HTTP308) as HTTP308,
-    AVG(HTTPRedirectsToHttps) as HTTPRedirectsToHttps,
-    AVG(HSTS) as HSTS, 
-    AVG(HSTSPreloaded) as HSTSPreloaded,
-    AVG(ContentSecurityPolicy) as ContentSecurityPolicy,
-    AVG(XFrameOptions) as XFrameOptions,
-    AVG(XSSProtection) as XSSProtection,
-    AVG(ContentTypeOptions) as ContentTypeOptions,
-    AVG(SecureSessionCookies) as SecureSessionCookies,
-    AVG(tlsv1_2) as tlsv1_2,
-    AVG(tlsv1_3) as tlsv1_3, 
-    AVG(deprecatedTLSDeactivated) as deprecatedTLSDeactivated, 
-    AVG(strongKeyExchange) as strongKeyExchange,
-    AVG(strongCipherSuites) as strongCipherSuites,
-    AVG(ValidCertificate) as ValidCertificate,
-    AVG(StrongPrivateKey) as StrongPrivateKey,
-    AVG(StrongSignatureAlgorithm) as StrongSignatureAlgorithm,
-    AVG(MatchesHostname) as MatchesHostname,
-    AVG(NotRevoked) as NotRevoked,
-    AVG(CertificateTransparency) as CertificateTransparency,
-    AVG(ValidCertificateChain) as ValidCertificateChain,
+SELECT AVG("subResourceIntegrity") as "subResourceIntegrity",
+    AVG("noMixedContent") as "noMixedContent",
+    AVG("responsibleDisclosure") as "responsibleDisclosure",
+    AVG("dnsSec") as "dnsSec",
+    AVG("caa") as "caa",
+    AVG("ipv6") as "ipv6",
+    AVG("rpki") as "rpki",
+    AVG("http") as "http",
+    AVG("https") as "https",
+    AVG("http308") as "http308",
+    AVG("httpRedirectsToHttps") as "httpRedirectsToHttps",
+    AVG("hsts") as "hsts", 
+    AVG("hstsPreloaded") as "hstsPreloaded",
+    AVG("contentSecurityPolicy") as "contentSecurityPolicy",
+    AVG("xFrameOptions") as "xFrameOptions",
+    AVG("xssProtection") as "xssProtection",
+    AVG("contentTypeOptions") as "contentTypeOptions",
+    AVG("secureSessionCookies") as "secureSessionCookies",
+    AVG("tlsv1_2") as "tlsv1_2",
+    AVG("tlsv1_3") as "tlsv1_3", 
+    AVG("deprecatedTLSDeactivated") as "deprecatedTLSDeactivated", 
+    AVG("strongKeyExchange") as "strongKeyExchange",
+    AVG("strongCipherSuites") as "strongCipherSuites",
+    AVG("validCertificate") as "validCertificate",
+    AVG("strongPrivateKey") as "strongPrivateKey",
+    AVG("strongSignatureAlgorithm") as "strongSignatureAlgorithm",
+    AVG("matchesHostname") as "matchesHostname",
+    AVG("notRevoked") as "notRevoked",
+    AVG("certificateTransparency") as "certificateTransparency",
+    AVG("validCertificateChain") as "validCertificateChain",
  
     COUNT(*) as totalCount
-from user_domain_relations udr INNER JOIN scan_reports sr1 on udr.uri = sr1.uri
+from user_target_relations udr INNER JOIN scan_reports sr1 on udr.uri = sr1.uri
 WHERE  udr.userId = ${user.id}  AND ((
     NOT EXISTS(
-        SELECT 1 from scan_reports sr2 where sr1.uri = sr2.uri AND sr2.createdAt < ${new Date(
+        SELECT 1 from scan_reports sr2 where sr1.uri = sr2.uri AND sr2."createdAt" < ${new Date(
           until
         )} 
-        AND sr1.createdAt < sr2.createdAt
+        AND sr1."createdAt" < sr2."createdAt"
     ) 
-    AND sr1.createdAt < ${new Date(until)}
+    AND sr1."createdAt" < ${new Date(until)}
 )
 OR (
-    NOT EXISTS(select 1 from scan_reports sr2 where sr1.uri = sr2.uri AND sr2.createdAt < ${new Date(
+    NOT EXISTS(select 1 from scan_reports sr2 where sr1.uri = sr2.uri AND sr2."createdAt" < ${new Date(
       until
     )})
-    AND NOT EXISTS(select 1 from scan_reports sr2 where sr1.uri = sr2.uri AND sr1.createdAt > sr2.createdAt)
+    AND NOT EXISTS(select 1 from scan_reports sr2 where sr1.uri = sr2.uri AND sr1."createdAt" > sr2."createdAt")
 ))
 `
   )) as any;
