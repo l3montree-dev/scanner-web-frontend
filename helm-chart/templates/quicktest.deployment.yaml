@@ -77,32 +77,19 @@ spec:
             - name: http
               containerPort: 3000
           env:
-            - name: MONGODB_PASSWORD
+            - name: POSTGRES_USER
+              value: quickTest
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: POSTGRES_DATABASE
+              value: quickTest
+            - name: POSTGRES_HOST
+              value: {{.Release.Name}}-postgresql
+            - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: mongodb-credentials
-                  key: mongodb-passwords
-            - name: MONGODB_USER
-              value: ozgsec
-            - name: MONGODB_HOST
-              value: {{.Release.Name}}-mongodb
-            - name: MONGODB_PORT
-              value: "27017"
-            - name: MONGODB_DATABASE  
-              value: "ozgsec"
-            - name: MYSQL_USER
-              value: quickTest
-            - name: MYSQL_PORT
-              value: "3306"
-            - name: MYSQL_DATABASE
-              value: quickTest
-            - name: MYSQL_HOST
-              value: {{.Release.Name}}-mysql
-            - name: MYSQL_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: mysql-quicktest
-                  key: QUICKTEST_PASSWORD
+                  name: postgresql-credentials
+                  key: password
             - name: RABBITMQ_HOST
               value: {{.Release.Name}}-rabbitmq
             - name : RABBITMQ_PORT
@@ -146,13 +133,13 @@ spec:
               value: {{.Values.quicktest.scanInterval | default "7" | quote}}
           livenessProbe:
             initialDelaySeconds: 10
-            periodSeconds: 30
+            periodSeconds: 10
             httpGet:
               path: /api/health
               port: http
           readinessProbe:
             initialDelaySeconds: 10
-            periodSeconds: 30
+            periodSeconds: 10
             httpGet:
               path: /api/health
               port: http
