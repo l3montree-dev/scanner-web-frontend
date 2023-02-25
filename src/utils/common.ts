@@ -90,6 +90,15 @@ export const limitStringValues = <T>(obj: T, charLimit = 255): T => {
   return obj;
 };
 
+export const getHostnameFromUri = (uri: string): string => {
+  if (uri.startsWith("http")) {
+    const url = new URL(uri);
+    return url.hostname;
+  }
+  const url = new URL(`http://${uri}`);
+  return url.hostname;
+};
+
 export const isAdmin = (session: ISession | null | undefined): boolean => {
   if (!session || !session.resource_access) {
     return false;
@@ -170,8 +179,6 @@ export const parseNetwork = (cidr: string): WithoutId<DTO<Network>> => {
   return {
     prefixLength: subnet.subnetMaskLength,
     networkAddress: subnet.networkAddress,
-    startAddress: subnet.firstAddress,
-    endAddress: subnet.lastAddress,
     cidr,
     comment: null,
     startAddressNumber: ip.toLong(subnet.firstAddress),
@@ -212,7 +219,7 @@ export const linkMapper: { [key in InspectionType]: string } = {
   [HttpInspectionType.HTTPRedirectsToHttps]: "",
   [TLSInspectionType.TLSv1_2]: "",
   [TLSInspectionType.TLSv1_3]: "/one-pager/TLS1_3-One-Pager.pdf",
-  [TLSInspectionType.TLSv1_1_Deactivated]:
+  [TLSInspectionType.DeprecatedTLSDeactivated]:
     "/one-pager/TLS1_1_off-One-Pager.pdf",
   [TLSInspectionType.StrongKeyExchange]: "",
   [TLSInspectionType.StrongCipherSuites]: "",

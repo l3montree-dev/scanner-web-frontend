@@ -53,7 +53,7 @@ const mapping: { [key in InspectionType]: string } = {
   [HttpInspectionType.HTTPRedirectsToHttps]: "HTTP Weiterleitung zu HTTPS",
   [TLSInspectionType.TLSv1_2]: "TLS 1.2",
   [TLSInspectionType.TLSv1_3]: "TLS 1.3",
-  [TLSInspectionType.TLSv1_1_Deactivated]:
+  [TLSInspectionType.DeprecatedTLSDeactivated]:
     "Deaktivierung von veralteten TLS/ SSL Protokollen",
   [TLSInspectionType.StrongKeyExchange]: "Strong-Key-Exchange",
   [TLSInspectionType.StrongCipherSuites]: "Strong-Cipher-Suites",
@@ -88,7 +88,7 @@ const mapping: { [key in InspectionType]: string } = {
 const displayKey: Array<InspectionType> = [
   OrganizationalInspectionType.ResponsibleDisclosure,
   TLSInspectionType.TLSv1_3,
-  TLSInspectionType.TLSv1_1_Deactivated,
+  TLSInspectionType.DeprecatedTLSDeactivated,
   HeaderInspectionType.HSTS,
   DomainInspectionType.DNSSec,
   NetworkInspectionType.RPKI,
@@ -301,14 +301,14 @@ const Dashboard: FunctionComponent<Props> = (props) => {
             <h2 className="text-2xl mt-10">Gesamtanzahl der Dienste</h2>
             <div className="flex mt-5 justify-start flex-wrap flex-wrap flex-row">
               <div>
-                <div className="bg-deepblue-600 flex-row flex mr-2 items-center p-5 border border-deepblue-50">
+                <div className="bg-deepblue-600 flex-row flex mr-2 items-center p-5 border border-deepblue-100">
                   <FontAwesomeIcon
                     className="text-slate-400 mx-2"
                     fontSize={75}
                     icon={faListCheck}
                   />
                   <div className="ml-5 text-xl">
-                    <b className="text-5xl">{dashboard.totals.uniqueDomains}</b>
+                    <b className="text-5xl">{dashboard.totals.uniqueTargets}</b>
                     <br />
                     Domains
                   </div>
@@ -322,7 +322,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
             Anfrage muss vom Server in maximal zehn Sekunden beantwortet werden,
             damit eine Domain als erreichbar gilt. Derzeit sind{" "}
             {dashboard.currentState.totalCount} von{" "}
-            {dashboard.totals.uniqueDomains} erreichbar.
+            {dashboard.totals.uniqueTargets} erreichbar.
           </p>
           <div className="flex mt-5 justify-start gap-2 flex-wrap flex-wrap flex-row">
             {displayKey.map((key) => {
@@ -340,7 +340,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
               });
               return (
                 <div
-                  className="w-56 bg-deepblue-600 border flex-col flex border-deepblue-50"
+                  className="w-56 bg-deepblue-600 border flex-col flex border-deepblue-100"
                   key={key}
                 >
                   <div className="flex-1 pt-5 relative">
@@ -485,7 +485,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
               const { data, referenceData, min, max } = dataPerDisplayKey[key];
               return (
                 <div className="xl:w-1/3 sm:w-1/2 w-full mb-5" key={key}>
-                  <div className="bg-deepblue-600 mx-2 historical-chart border flex-col flex border-deepblue-50">
+                  <div className="bg-deepblue-600 mx-2 historical-chart border flex-col flex border-deepblue-100">
                     <div className="flex-1 pt-5 relative">
                       {linkMapper[key] !== "" && (
                         <Link

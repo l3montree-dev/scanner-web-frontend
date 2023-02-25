@@ -19,7 +19,7 @@ import {
   transformIpLookupMsg2DTO,
 } from "../utils/common";
 import { eachDay } from "../utils/time";
-import { domainService } from "./domainService";
+import { targetService } from "./targetService";
 
 import { getLogger } from "./logger";
 import { rabbitMQClient, rabbitMQRPCClient } from "./rabbitmqClient";
@@ -81,10 +81,10 @@ const startLookupResponseLoop = once(() => {
     "ip-lookup-response",
     async (msg) => {
       const content = JSON.parse(msg.content.toString()).data as {
-        fqdn: string;
+        uri: string;
       };
       try {
-        await domainService.handleNewDomain(content, prisma);
+        await targetService.handleNewTarget(content, prisma);
       } catch (e: any) {
         // always ack the message - catch the error.
         logger.error({ err: e.message });
@@ -101,7 +101,7 @@ const startScanResponseLoop = once(() => {
 
     if (isScanError(content)) {
       try {
-        await domainService.handleDomainScanError(content, prisma);
+        await targetService.handleTargetScanError(content, prisma);
       } finally {
         logger.error({ target: content.target }, content.result.error.message);
         return;
@@ -188,22 +188,22 @@ const startScanLoop = once(() => {
         return;
       }
       running = true;
-      const domains = await domainService.getDomains2Scan(prisma);
+      const targets = await targetService.getTargets2Scan(prisma);
 
-      if (domains.length === 0) {
+      if (targets.length === 0) {
         running = false;
-        logger.debug({ component: "SCAN_LOOP" }, "no domains to scan");
+        logger.debug({ component: "SCAN_LOOP" }, "no targets to scan");
         return;
       }
       const requestId = randomUUID();
       logger.debug(
         { requestId, component: "SCAN_LOOP" },
-        `found ${domains.length} domains to scan - sending scan request with id: ${requestId}`
+        `found ${targets.length} targets to scan - sending scan request with id: ${requestId}`
       );
       promiseQueue.addAll(
-        domains.map((domain) => {
+        targets.map((domain) => {
           return async () => {
-            inspect(requestId, domain.fqdn);
+            inspect(requestId, domain.uri);
           };
         })
       );

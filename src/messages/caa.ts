@@ -1,13 +1,13 @@
-import { DetailedDomain } from "../types";
+import { DetailedTarget } from "../types";
 
-export const getCAAReportMessage = (report: DetailedDomain) => {
-  const inspection = report.details.CAA;
-  const fqdn = report.details.sut;
+export const getCAAReportMessage = (report: DetailedTarget) => {
+  const inspection = report.details.caa;
+  const uri = report.details.sut;
   if (inspection === null || inspection === undefined) {
-    return `Die Überprüfung nach CAA Einträgen für die Domain ${fqdn} konnte nicht durchgeführt werden.`;
+    return `Die Überprüfung nach CAA Einträgen für die Domain ${uri} konnte nicht durchgeführt werden.`;
   } else if (inspection.didPass) {
-    return `CAA Einträge sind für die Domain ${fqdn} eingerichtet.`;
+    return `CAA Einträge sind für die Domain ${uri} eingerichtet.`;
   } else {
-    return `Es wurden keine CAA Einträge für die Domain ${fqdn} gefunden.`;
+    return `Es wurden keine CAA Einträge für die Domain ${uri} gefunden.`;
   }
 };

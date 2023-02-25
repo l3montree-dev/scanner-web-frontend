@@ -32,7 +32,7 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
     window.location.href = res.path;
   };
   return (
-    <div className="bg-deepblue-700 h-14 border-b text-black border-deepblue-200">
+    <div className="bg-deepblue-700 h-14 border-b text-black border-deepblue-300">
       {session.status === "authenticated" && session.data && (
         <div className="flex flex-row items-center h-full">
           <div className="flex w-56 border-r border-deepblue-500 bg-white h-full items-center">

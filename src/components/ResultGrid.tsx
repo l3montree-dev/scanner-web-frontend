@@ -14,10 +14,10 @@ import { getHttpMessage, immediateActionHTTPErrors } from "../messages/http";
 import { getMatchesHostnameMessage } from "../messages/matchesHostname";
 import { getResponsibleDisclosureReportMessage } from "../messages/responsibleDisclosure";
 import getRPKIReportMessage from "../messages/rpki";
-import { getTLSv1_1_DeactivatedReportMessage } from "../messages/tlsv1_1_Deactivated";
+import { getDeprecatedTLSDeactivatedReportMessage } from "../messages/deprecatedTLSDeactivated";
 import { getTLSv1_3ReportMessage } from "../messages/tlsv1_3";
 import { getValidCertificateMessage } from "../messages/validCertificate";
-import { DetailedDomain } from "../types";
+import { DetailedTarget } from "../types";
 import { classNames, devOnly, linkMapper } from "../utils/common";
 import {
   CheckResult,
@@ -28,21 +28,23 @@ import {
 import ResultBox from "./ResultBox";
 
 const messages = {
-  ResponsibleDisclosure: getResponsibleDisclosureReportMessage,
-  TLSv1_3: getTLSv1_3ReportMessage,
-  TLSv1_1_Deactivated: getTLSv1_1_DeactivatedReportMessage,
-  HSTS: getHSTSReportMessage,
-  DNSSec: getDNSSecReportMessage,
-  RPKI: getRPKIReportMessage,
-  MatchesHostname: getMatchesHostnameMessage,
-  ValidCertificate: getValidCertificateMessage,
-  HTTP: getHttpMessage,
+  [OrganizationalInspectionType.ResponsibleDisclosure]:
+    getResponsibleDisclosureReportMessage,
+  [TLSInspectionType.TLSv1_3]: getTLSv1_3ReportMessage,
+  [TLSInspectionType.DeprecatedTLSDeactivated]:
+    getDeprecatedTLSDeactivatedReportMessage,
+  [HeaderInspectionType.HSTS]: getHSTSReportMessage,
+  [DomainInspectionType.DNSSec]: getDNSSecReportMessage,
+  [NetworkInspectionType.RPKI]: getRPKIReportMessage,
+  [CertificateInspectionType.MatchesHostname]: getMatchesHostnameMessage,
+  [CertificateInspectionType.ValidCertificate]: getValidCertificateMessage,
+  [HttpInspectionType.HTTP]: getHttpMessage,
 };
 
 const regularChecks = [
   OrganizationalInspectionType.ResponsibleDisclosure,
   TLSInspectionType.TLSv1_3,
-  TLSInspectionType.TLSv1_1_Deactivated,
+  TLSInspectionType.DeprecatedTLSDeactivated,
   HeaderInspectionType.HSTS,
   DomainInspectionType.DNSSec,
   NetworkInspectionType.RPKI,
@@ -55,21 +57,24 @@ const immediateActionRequired = [
 ] as const;
 
 const titleMapper = {
-  DNSSec: "DNSSEC",
-  RPKI: "RPKI",
-  TLSv1_3: "TLS 1.3",
-  HTTP: "HTTP",
-  TLSv1_1_Deactivated: "Deaktivierung von veralteten TLS/ SSL Protokollen",
-  HSTS: "HSTS",
-  ResponsibleDisclosure: "Responsible Disclosure",
-  MatchesHostname: "Übereinstimmung des Hostnamens im Zertifikat",
-  ValidCertificate: "Gültiges Zertifikat",
+  [DomainInspectionType.DNSSec]: "DNSSEC",
+  [NetworkInspectionType.RPKI]: "RPKI",
+  [TLSInspectionType.TLSv1_3]: "TLS 1.3",
+  [HttpInspectionType.HTTP]: "HTTP",
+  [TLSInspectionType.DeprecatedTLSDeactivated]:
+    "Deaktivierung von veralteten TLS/ SSL Protokollen",
+  [HeaderInspectionType.HSTS]: "HSTS",
+  [OrganizationalInspectionType.ResponsibleDisclosure]:
+    "Responsible Disclosure",
+  [CertificateInspectionType.MatchesHostname]:
+    "Übereinstimmung des Hostnamens im Zertifikat",
+  [CertificateInspectionType.ValidCertificate]: "Gültiges Zertifikat",
 };
 
 type ImmediateActions = typeof immediateActionRequired;
 
 const shouldDisplayImmediateActionRequired = (
-  report: DetailedDomain,
+  report: DetailedTarget,
   check: ImmediateActions[number]
 ): boolean => {
   if (check === HttpInspectionType.HTTP) {
@@ -84,13 +89,13 @@ const shouldDisplayImmediateActionRequired = (
 };
 
 const getDescription = (
-  report: DetailedDomain,
+  report: DetailedTarget,
   key: keyof typeof messages
 ): string => {
   return messages[key](report);
 };
 interface Props {
-  report: DetailedDomain;
+  report: DetailedTarget;
 }
 
 const ResultGrid: FunctionComponent<Props> = (props) => {

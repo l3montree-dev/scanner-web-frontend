@@ -1,13 +1,13 @@
 export enum HSTSValidationError {
-  MissingHeader = "MissingHeader",
-  MissingMaxAge = "MissingMaxAge",
+  MissingHeader = "missingHeader",
+  MissingMaxAge = "missingMaxAge",
 }
 
 export enum HSTSRecommendation {
-  MissingIncludeSubDomains = "MissingIncludeSubDomains",
+  MissingIncludeSubDomains = "missingIncludeSubDomains",
 }
 
 export enum ContentSecurityPolicyValidationError {
-  MissingHeader = "MissingHeader",
-  MissingDefaultSrc = "MissingDefaultSrc",
+  MissingHeader = "missingHeader",
+  MissingDefaultSrc = "missingDefaultSrc",
 }

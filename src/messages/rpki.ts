@@ -1,4 +1,4 @@
-import { DetailedDomain } from "../types";
+import { DetailedTarget } from "../types";
 
 const holderStr = (holder?: string) => {
   if (holder) {
@@ -8,12 +8,12 @@ const holderStr = (holder?: string) => {
   return "";
 };
 
-export default function getRPKIReportMessage(report: DetailedDomain) {
-  const inspection = report.details["RPKI"];
-  const fqdn = report.details.sut;
+export default function getRPKIReportMessage(report: DetailedTarget) {
+  const inspection = report.details["rpki"];
+  const uri = report.details.sut;
 
   if (inspection?.didPass === null || inspection?.didPass === undefined) {
-    return `Der RPKI Status der Domain ${fqdn} konnte nicht überprüft werden.`;
+    return `Der RPKI Status der Domain ${uri} konnte nicht überprüft werden.`;
   } else if (inspection.didPass) {
     let actualValue: {
       prefix: string;

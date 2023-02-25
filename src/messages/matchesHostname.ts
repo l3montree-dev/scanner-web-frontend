@@ -1,7 +1,7 @@
 import { CertificateInspectionType } from "../inspection/scans";
-import { DetailedDomain } from "../types";
+import { DetailedTarget } from "../types";
 
-export const getMatchesHostnameMessage = (report: DetailedDomain) => {
+export const getMatchesHostnameMessage = (report: DetailedTarget) => {
   if (
     report.details[CertificateInspectionType.MatchesHostname]?.didPass === false
   ) {

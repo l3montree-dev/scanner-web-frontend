@@ -19,12 +19,12 @@ export default class CircuitBreaker {
     this.failures = 0;
   }
 
-  private handleError() {
+  private handleError(err: unknown) {
     this.requestActive--;
     this.failures++;
     logger.warn(
       { failures: this.failures, maxFailures: this.maxFailures },
-      "circuit breaker failure"
+      `circuit breaker failure: ${err}`
     );
     if (this.failures >= this.maxFailures && this.state !== "open") {
       logger.warn("circuit breaker is now open");
@@ -66,7 +66,7 @@ export default class CircuitBreaker {
       this.handleSuccess();
       return result;
     } catch (e) {
-      this.handleError();
+      this.handleError(e);
       throw e;
     }
   }

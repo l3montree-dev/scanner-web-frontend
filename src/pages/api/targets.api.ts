@@ -9,13 +9,21 @@ import { withSession } from "../../decorators/withSession";
 import ForbiddenException from "../../errors/ForbiddenException";
 import MethodNotAllowed from "../../errors/MethodNotAllowed";
 import { inspectRPC } from "../../inspection/inspect";
-import { domainService } from "../../services/domainService";
+import { targetService } from "../../services/targetService";
 
 import { getLogger } from "../../services/logger";
 import { statService } from "../../services/statService";
 import { ISession } from "../../types";
-import { sanitizeFQDN, splitLineBreak } from "../../utils/common";
-import { stream2buffer } from "../../utils/server";
+import {
+  isScanError,
+  neverThrow,
+  sanitizeFQDN,
+  splitLineBreak,
+  timeout,
+} from "../../utils/common";
+import { stream2buffer, toDTO } from "../../utils/server";
+import BadRequestException from "../../errors/BadRequestException";
+import { reportService } from "../../services/reportService";
 
 const logger = getLogger(__filename);
 
@@ -26,14 +34,14 @@ export const config = {
 };
 
 const deleteDomainRelation = async (
-  domains: string[],
+  uris: string[],
   user: User,
   prisma: PrismaClient
 ) => {
-  return prisma.userDomainRelation.deleteMany({
+  return prisma.userTargetRelation.deleteMany({
     where: {
-      fqdn: {
-        in: domains,
+      uri: {
+        in: uris,
       },
       userId: user.id,
     },
@@ -42,25 +50,25 @@ const deleteDomainRelation = async (
 
 const handleDelete = async (
   req: NextApiRequest,
-  res: NextApiResponse,
   session: ISession,
   prisma: PrismaClient
 ) => {
   const requestId = req.headers["x-request-id"] as string;
-  const { domains } = JSON.parse((await stream2buffer(req)).toString());
-  await deleteDomainRelation(domains, session.user, prisma);
+  const { targets } = JSON.parse((await stream2buffer(req)).toString());
+  await deleteDomainRelation(targets, session.user, prisma);
   statService.generateStatsForUser(session.user, prisma, true).then(() => {
     logger.info(
       { userId: session.user.id, requestId },
       `regenerated stats for user: ${session.user.id}`
     );
   });
-  return res.send({ success: true });
+  return {
+    success: true,
+  };
 };
 
 const handlePost = async (
   req: NextApiRequest,
-  res: NextApiResponse,
   session: ISession,
   prisma: PrismaClient
 ) => {
@@ -69,30 +77,44 @@ const handlePost = async (
   if (req.headers["content-type"]?.includes("application/json")) {
     // the user does only send a single domain.
 
-    const { domain }: { domain: string } = JSON.parse(
+    const { target }: { target: string } = JSON.parse(
       (await stream2buffer(req)).toString()
     );
 
-    const sanitized = sanitizeFQDN(domain);
+    const sanitized = sanitizeFQDN(target);
     if (!sanitized) {
-      return res.status(400).send({ error: "invalid domain" });
+      throw new BadRequestException();
     }
 
-    const d = await domainService.handleNewDomain(
-      { fqdn: sanitized, queued: true },
+    const d = await targetService.handleNewTarget(
+      { uri: sanitized, queued: true },
       prisma,
       session.user
     );
 
-    await inspectRPC(requestId, d.fqdn);
+    const result = await inspectRPC(requestId, d.uri);
+    if (isScanError(result)) {
+      logger.error(
+        { requestId, userId: session.user.id },
+        `target import - error while scanning domain: ${d.uri}`
+      );
+      await neverThrow(
+        timeout(targetService.handleTargetScanError(result, prisma))
+      );
+
+      return toDTO(d);
+    }
+
+    const res = await reportService.handleNewScanReport(result, prisma);
+
     // force the regeneration of all stats
     statService.generateStatsForUser(session.user, prisma, true).then(() => {
       logger.info(
         { requestId, userId: session.user.id },
-        `domain import - stats regenerated.`
+        `target import - stats regenerated.`
       );
     });
-    return res.send(d);
+    return toDTO(res);
   }
 
   // the user uploads a file with domains.
@@ -158,8 +180,8 @@ const handlePost = async (
         .map((domain) => {
           return async () => {
             try {
-              await domainService.handleNewDomain(
-                { fqdn: domain, queued: true },
+              await targetService.handleNewTarget(
+                { uri: domain, queued: true },
                 prisma,
                 session.user
               );
@@ -186,7 +208,9 @@ const handlePost = async (
         );
       });
     });
-  res.status(200).end();
+  return {
+    success: true,
+  };
 };
 
 export default decorate(
@@ -196,9 +220,9 @@ export default decorate(
     }
     switch (req.method) {
       case "DELETE":
-        return handleDelete(req, res, session, prisma);
+        return handleDelete(req, session, prisma);
       case "POST":
-        return handlePost(req, res, session, prisma);
+        return handlePost(req, session, prisma);
       default:
         throw new MethodNotAllowed();
     }

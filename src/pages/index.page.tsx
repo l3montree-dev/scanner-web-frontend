@@ -25,7 +25,7 @@ import ResultEnvelope from "../components/ResultEnvelope";
 import ScanPageHero from "../components/ScanPageHero";
 import { getErrorMessage } from "../messages/http";
 import { clientHttpClient } from "../services/clientHttpClient";
-import { DetailedDomain, IScanSuccessResponse } from "../types";
+import { DetailedTarget, IScanSuccessResponse } from "../types";
 import { sanitizeFQDN, staticSecrets } from "../utils/common";
 
 const isInViewport = (element: HTMLElement) => {
@@ -47,7 +47,7 @@ const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
   const [website, setWebsite] = useState("");
   const scanRequest = useLoading();
   const refreshRequest = useLoading();
-  const [domain, setDomain] = useState<null | DetailedDomain>(null);
+  const [target, setTarget] = useState<null | DetailedTarget>(null);
   const router = useRouter();
 
   const onSubmit = useCallback(
@@ -62,7 +62,7 @@ const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
       }
       // react will batch those two calls anyways.
       scanRequest.loading();
-      setDomain(null);
+      setTarget(null);
       // do the real api call.
       // forward the secret of query param s to the backend
       try {
@@ -78,8 +78,8 @@ const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
             )}`
           );
         }
-        const obj: DetailedDomain = await response.json();
-        setDomain(obj);
+        const obj: DetailedTarget = await response.json();
+        setTarget(obj);
         scanRequest.success();
       } catch (e) {
         console.log("e", e);
@@ -92,7 +92,7 @@ const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
   );
 
   useEffect(() => {
-    if (domain) {
+    if (target) {
       const rec = document.getElementById("test-results");
       if (rec && !isInViewport(rec)) {
         window.scrollTo({
@@ -104,7 +104,7 @@ const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
         });
       }
     }
-  }, [domain]);
+  }, [target]);
 
   const scannedSite = useRef<null | string>(null);
 
@@ -122,7 +122,7 @@ const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
   }, [router, onSubmit]);
 
   const handleRefresh = async () => {
-    if (!domain) {
+    if (!target) {
       return;
     }
     refreshRequest.loading();
@@ -130,7 +130,7 @@ const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
     try {
       const response = await clientHttpClient(
         `/api/scan?site=${encodeURIComponent(
-          domain.fqdn
+          target.uri
         )}&refresh=true&s=${code}`,
         crypto.randomUUID()
       );
@@ -143,7 +143,7 @@ const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
         );
       }
       const obj = await response.json();
-      setDomain(obj);
+      setTarget(obj);
       refreshRequest.success();
     } catch (e) {
       refreshRequest.error(
@@ -153,13 +153,13 @@ const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
   };
 
   const amountPassed = useMemo(() => {
-    if (!domain) return 0;
-    return Object.keys(domain.details as Record<string, any>)
+    if (!target) return 0;
+    return Object.keys(target.details as Record<string, any>)
       .filter((key) =>
         (
           [
             TLSInspectionType.TLSv1_3,
-            TLSInspectionType.TLSv1_1_Deactivated,
+            TLSInspectionType.DeprecatedTLSDeactivated,
             NetworkInspectionType.RPKI,
             DomainInspectionType.DNSSec,
             HeaderInspectionType.HSTS,
@@ -169,15 +169,15 @@ const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
       )
       .map(
         (key) =>
-          (domain.details as IScanSuccessResponse["result"])[
+          (target.details as IScanSuccessResponse["result"])[
             key as InspectionType
           ]?.didPass
       )
       .filter((inspection) => !!inspection).length;
-  }, [domain]);
+  }, [target]);
 
-  const dateString = domain
-    ? new Date(Number(domain.lastScan)).toLocaleString()
+  const dateString = target
+    ? new Date(Number(target.lastScan)).toLocaleString()
     : "";
 
   if (displayNotAvailable) {
@@ -207,7 +207,7 @@ const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
             scanRequest={scanRequest}
           />
           <ResultEnvelope
-            domain={domain}
+            target={target}
             dateString={dateString}
             handleRefresh={handleRefresh}
             refreshRequest={refreshRequest}
@@ -235,10 +235,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const { query } = context;
   // check if the user does provide a valid query parameter
   const code = query["s"];
-  if (
-    /*context.req.headers.host === "localhost:3000"*/ false ||
-    (code && staticSecrets.includes(code as string))
-  ) {
+  if (code && staticSecrets.includes(code as string)) {
     return {
       props: {
         displayNotAvailable: false,
