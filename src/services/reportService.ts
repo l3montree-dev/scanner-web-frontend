@@ -128,8 +128,13 @@ const handleNewScanReport = async (
       lastScan: result.timestamp,
       errorCount: 0,
       lastScanDetails: {
-        update: {
-          details: scanResult2TargetDetails(result),
+        upsert: {
+          create: {
+            details: scanResult2TargetDetails(result),
+          },
+          update: {
+            details: scanResult2TargetDetails(result),
+          },
         },
       },
     },
