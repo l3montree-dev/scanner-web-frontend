@@ -301,7 +301,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
             <h2 className="text-2xl mt-10">Gesamtanzahl der Dienste</h2>
             <div className="flex mt-5 justify-start flex-wrap flex-wrap flex-row">
               <div>
-                <div className="bg-deepblue-600 flex-row flex mr-2 items-center p-5 border border-deepblue-50">
+                <div className="bg-deepblue-600 flex-row flex mr-2 items-center p-5 border border-deepblue-100">
                   <FontAwesomeIcon
                     className="text-slate-400 mx-2"
                     fontSize={75}
@@ -340,7 +340,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
               });
               return (
                 <div
-                  className="w-56 bg-deepblue-600 border flex-col flex border-deepblue-50"
+                  className="w-56 bg-deepblue-600 border flex-col flex border-deepblue-100"
                   key={key}
                 >
                   <div className="flex-1 pt-5 relative">
@@ -485,7 +485,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
               const { data, referenceData, min, max } = dataPerDisplayKey[key];
               return (
                 <div className="xl:w-1/3 sm:w-1/2 w-full mb-5" key={key}>
-                  <div className="bg-deepblue-600 mx-2 historical-chart border flex-col flex border-deepblue-50">
+                  <div className="bg-deepblue-600 mx-2 historical-chart border flex-col flex border-deepblue-100">
                     <div className="flex-1 pt-5 relative">
                       {linkMapper[key] !== "" && (
                         <Link

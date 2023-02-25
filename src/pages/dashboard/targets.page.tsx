@@ -10,7 +10,7 @@ import { useRouter } from "next/router";
 import { FunctionComponent, useEffect, useMemo, useState } from "react";
 import Checkbox from "../../components/Checkbox";
 import DashboardPage from "../../components/DashboardPage";
-import TargetOverviewForm from "../../components/DomainOverviewForm";
+import TargetOverviewForm from "../../components/TargetOverviewForm";
 import Menu from "../../components/Menu";
 import MenuItem from "../../components/MenuItem";
 import MenuList from "../../components/MenuList";
@@ -261,7 +261,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
             vergleichen, wie gut die verschiedenen Domains in Bezug auf die
             verschiedenen ausgeführten Sicherheitstest abschneiden.
           </p>
-          <div className="w-full border-deepblue-50 border bg-deepblue-500">
+          <div className="w-full border-deepblue-100 border bg-deepblue-500">
             <div className="p-5">
               <div className="text-black">
                 <TargetOverviewForm
@@ -646,7 +646,7 @@ export const getServerSideProps = decorateServerSideProps(
     const search = context.query["search"] as string | undefined;
 
     const targets =
-      await targetService.getDomainsOfNetworksWithLatestTestResult(
+      await targetService.getTargetsOfNetworksWithLatestTestResult(
         currentUser,
         {
           pageSize: 50,

@@ -113,7 +113,7 @@ export default decorate(
       await neverThrow(
         scanCB.run(
           async () =>
-            await timeout(targetService.handleDomainScanError(result, prisma))
+            await timeout(targetService.handleTargetScanError(result, prisma))
         )
       );
       logger.error(

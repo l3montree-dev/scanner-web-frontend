@@ -95,7 +95,7 @@ const translateSort = (sort?: string): `sr."${InspectionType}"` | "d.uri" => {
   return "d.uri";
 };
 
-const getDomainsOfNetworksWithLatestTestResult = async (
+const getTargetsOfNetworksWithLatestTestResult = async (
   user: User,
   paginateRequest: PaginateRequest & { search?: string } & {
     sort?: string;
@@ -182,7 +182,7 @@ const getDomainsOfNetworksWithLatestTestResult = async (
   };
 };
 
-const getDomains2Scan = async (prisma: PrismaClient) => {
+const getTargets2Scan = async (prisma: PrismaClient) => {
   // get all domains which have not been scanned in the last 24 hours
   const targets = await prisma.target.findMany({
     where: {
@@ -250,8 +250,8 @@ const getDomains2Scan = async (prisma: PrismaClient) => {
 };
 
 export const targetService = {
-  handleNewDomain: handleNewTarget,
-  handleDomainScanError: handleTargetScanError,
-  getDomainsOfNetworksWithLatestTestResult,
-  getDomains2Scan,
+  handleNewTarget,
+  handleTargetScanError,
+  getTargetsOfNetworksWithLatestTestResult,
+  getTargets2Scan: getTargets2Scan,
 };

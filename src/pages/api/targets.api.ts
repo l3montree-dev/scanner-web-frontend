@@ -14,8 +14,16 @@ import { targetService } from "../../services/targetService";
 import { getLogger } from "../../services/logger";
 import { statService } from "../../services/statService";
 import { ISession } from "../../types";
-import { sanitizeFQDN, splitLineBreak } from "../../utils/common";
-import { stream2buffer } from "../../utils/server";
+import {
+  isScanError,
+  neverThrow,
+  sanitizeFQDN,
+  splitLineBreak,
+  timeout,
+} from "../../utils/common";
+import { stream2buffer, toDTO } from "../../utils/server";
+import BadRequestException from "../../errors/BadRequestException";
+import { reportService } from "../../services/reportService";
 
 const logger = getLogger(__filename);
 
@@ -42,7 +50,6 @@ const deleteDomainRelation = async (
 
 const handleDelete = async (
   req: NextApiRequest,
-  res: NextApiResponse,
   session: ISession,
   prisma: PrismaClient
 ) => {
@@ -55,12 +62,13 @@ const handleDelete = async (
       `regenerated stats for user: ${session.user.id}`
     );
   });
-  return res.send({ success: true });
+  return {
+    success: true,
+  };
 };
 
 const handlePost = async (
   req: NextApiRequest,
-  res: NextApiResponse,
   session: ISession,
   prisma: PrismaClient
 ) => {
@@ -75,16 +83,30 @@ const handlePost = async (
 
     const sanitized = sanitizeFQDN(target);
     if (!sanitized) {
-      return res.status(400).send({ error: "invalid domain" });
+      throw new BadRequestException();
     }
 
-    const d = await targetService.handleNewDomain(
+    const d = await targetService.handleNewTarget(
       { uri: sanitized, queued: true },
       prisma,
       session.user
     );
 
-    await inspectRPC(requestId, d.uri);
+    const result = await inspectRPC(requestId, d.uri);
+    if (isScanError(result)) {
+      logger.error(
+        { requestId, userId: session.user.id },
+        `target import - error while scanning domain: ${d.uri}`
+      );
+      await neverThrow(
+        timeout(targetService.handleTargetScanError(result, prisma))
+      );
+
+      return toDTO(d);
+    }
+
+    const res = await reportService.handleNewScanReport(result, prisma);
+
     // force the regeneration of all stats
     statService.generateStatsForUser(session.user, prisma, true).then(() => {
       logger.info(
@@ -92,7 +114,7 @@ const handlePost = async (
         `target import - stats regenerated.`
       );
     });
-    return res.send(d);
+    return toDTO(res);
   }
 
   // the user uploads a file with domains.
@@ -158,7 +180,7 @@ const handlePost = async (
         .map((domain) => {
           return async () => {
             try {
-              await targetService.handleNewDomain(
+              await targetService.handleNewTarget(
                 { uri: domain, queued: true },
                 prisma,
                 session.user
@@ -186,7 +208,9 @@ const handlePost = async (
         );
       });
     });
-  res.status(200).end();
+  return {
+    success: true,
+  };
 };
 
 export default decorate(
@@ -196,9 +220,9 @@ export default decorate(
     }
     switch (req.method) {
       case "DELETE":
-        return handleDelete(req, res, session, prisma);
+        return handleDelete(req, session, prisma);
       case "POST":
-        return handlePost(req, res, session, prisma);
+        return handlePost(req, session, prisma);
       default:
         throw new MethodNotAllowed();
     }
