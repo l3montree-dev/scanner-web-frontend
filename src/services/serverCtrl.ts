@@ -170,6 +170,8 @@ const statLoop = once(() => {
 
       await promiseQueue.onIdle();
       running = false;
+    } else {
+      logger.warn("stat loop is already running");
     }
   }, 10 * 1000);
 });

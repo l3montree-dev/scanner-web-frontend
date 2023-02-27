@@ -25,7 +25,7 @@ const generateStatsForUser = async (
   prisma: PrismaClient,
   force = false
 ) => {
-  const promiseQueue = new PQueue({ concurrency: 10 });
+  const promiseQueue = new PQueue({ concurrency: 1 });
   eachDay(config.statFirstDay, new Date()).forEach((date) => {
     // check if the stat does exist.
     promiseQueue.add(async () => {
@@ -51,9 +51,8 @@ const generateStatsForUser = async (
 
       if (!exists) {
         // generate the stat.
-        const stat = await getUserFailedSuccessPercentage(user, prisma, date);
-
         const start = Date.now();
+        const stat = await getUserFailedSuccessPercentage(user, prisma, date);
         await prisma.stat.create({
           data: {
             subject: user.id,
