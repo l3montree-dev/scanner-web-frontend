@@ -126,6 +126,11 @@ const statLoop = once(() => {
   setInterval(async () => {
     if (isMaster() && !running) {
       running = true;
+      // generate the stats for each user.
+      const users = await prisma.user.findMany();
+      users.forEach((user) => {
+        promiseQueue.add(() => statService.generateStatsForUser(user, prisma));
+      });
       // check which stats need to be generated.
       config.generateStatsForGroups.forEach((group) => {
         eachDay(config.statFirstDay, new Date()).forEach((date) => {
@@ -160,12 +165,6 @@ const statLoop = once(() => {
             }
           });
         });
-      });
-
-      // generate the stats for each user.
-      const users = await prisma.user.findMany();
-      users.forEach((user) => {
-        promiseQueue.add(() => statService.generateStatsForUser(user, prisma));
       });
 
       await promiseQueue.onIdle();
