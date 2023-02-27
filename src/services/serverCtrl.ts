@@ -169,6 +169,7 @@ const statLoop = once(() => {
       });
 
       await promiseQueue.onIdle();
+
       running = false;
     } else {
       logger.warn("stat loop is already running");
@@ -178,6 +179,7 @@ const statLoop = once(() => {
 
 const startScanLoop = once(() => {
   let running = false;
+
   const promiseQueue = new PQueue({
     concurrency: 5,
     timeout: 5 * 1000,

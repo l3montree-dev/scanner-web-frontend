@@ -25,7 +25,7 @@ const generateStatsForUser = async (
   prisma: PrismaClient,
   force = false
 ) => {
-  const promiseQueue = new PQueue({ concurrency: 1 });
+  const promiseQueue = new PQueue({ concurrency: 10 });
   eachDay(config.statFirstDay, new Date()).forEach((date) => {
     // check if the stat does exist.
     promiseQueue.add(async () => {
@@ -67,6 +67,7 @@ const generateStatsForUser = async (
       }
     });
   });
+  return promiseQueue.onIdle();
 };
 
 const getTotals = async (
