@@ -34,7 +34,11 @@ import {
 import { statService } from "../../services/statService";
 import { theme } from "../../styles/victory-theme";
 import { ChartData, IDashboard } from "../../types";
-import { dateFormat, linkMapper } from "../../utils/common";
+import {
+  dateFormat,
+  linkMapper,
+  replaceNullWithZero,
+} from "../../utils/common";
 
 interface Props {
   dashboard: IDashboard;
@@ -615,8 +619,8 @@ export const getServerSideProps = decorateServerSideProps(
 
     return {
       props: {
-        dashboard,
-        referenceChartData,
+        dashboard: replaceNullWithZero(dashboard),
+        referenceChartData: replaceNullWithZero(referenceChartData),
         keycloakIssuer: process.env.KEYCLOAK_ISSUER,
       },
     };
