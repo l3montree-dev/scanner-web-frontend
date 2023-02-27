@@ -191,28 +191,32 @@ postgresql:
     postgresPassword: "-"
     password: "-"
 
-  resources:
-    limits:
-      cpu: "4"
-      memory: "20Gi"
-    requests:
-      cpu: "0.5"
-      memory: "6Gi"
   primary:
     extraEnvVarsSecret: "keycloak"
     initdb:
       scripts:
          my_init_script.sh: |
           #!/bin/bash
-          psql -U postgres -c "CREATE DATABASE keycloak;"
-          psql -U postgres -c "CREATE USER keycloak with password '$db-password';"
-          psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE keycloak TO keycloak;"
-          psql -U postgres -d keycloak -c "GRANT ALL PRIVILEGES ON SCHEMA public to keycloak;"
+          echo "Init Scirpt: Creating database and user\n"
 
+          export PGPASSWORD=$POSTGRES_POSTGRES_PASSWORD
+
+          psql -U postgres -c "CREATE DATABASE keycloak;" || { echo 'DB creation failed - skipping...'; }
+          psql -U postgres -c "CREATE USER keycloak with password '$POSTGRES_PASSWORD';" || { echo 'USER creation failed - skipping...'; }
+          psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE keycloak TO keycloak;" || { echo 'PRIVILEGES grant failed - skipping...'; }
+          psql -U postgres -d keycloak -c "GRANT ALL PRIVILEGES ON SCHEMA public to keycloak;" || { echo 'SCHEMA PRIVILEGES grant failed - skipping...'; }
+          
     persistence:
       enabled: true
       size: 10Gi
       storageClass: "ceph-filesystem"
+    resources:
+      limits:
+        cpu: "4"
+        memory: "20Gi"
+      requests:
+        cpu: "0.5"
+        memory: "6Gi"
 
 mysql:
   architecture: standalone

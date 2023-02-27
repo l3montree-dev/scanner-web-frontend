@@ -90,6 +90,19 @@ spec:
                 secretKeyRef:
                   name: postgresql-credentials
                   key: password
+            - name: MYSQL_USER
+              value: quickTest
+            - name: MYSQL_PORT
+              value: "3306"
+            - name: MYSQL_DATABASE
+              value: quickTest
+            - name: MYSQL_HOST
+              value: {{.Release.Name}}-mysql
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-quicktest
+                  key: QUICKTEST_PASSWORD
             - name: RABBITMQ_HOST
               value: {{.Release.Name}}-rabbitmq
             - name : RABBITMQ_PORT
