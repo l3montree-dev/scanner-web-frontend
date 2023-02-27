@@ -202,11 +202,12 @@ postgresql:
     extraEnvVarsSecret: "keycloak"
     initdb:
       scripts:
-        init_script.sql: |
-          CREATE DATABASE keycloak;
-          CREATE USER keycloak with password '$db-password';
-          GRANT ALL ON PRIVILEGES ON DATABASE keycloak TO keycloak;
-          GRANT ALL PRIVILEGES ON SCHEMA public to keycloak
+         my_init_script.sh: |
+          #!/bin/bash
+          psql -U postgres -c "CREATE DATABASE keycloak;"
+          psql -U postgres -c "CREATE USER keycloak with password '$db-password';"
+          psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE keycloak TO keycloak;"
+          psql -U postgres -d keycloak -c "GRANT ALL PRIVILEGES ON SCHEMA public to keycloak;"
 
     persistence:
       enabled: true
