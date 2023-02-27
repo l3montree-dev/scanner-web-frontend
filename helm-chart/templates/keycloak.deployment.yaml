@@ -43,8 +43,6 @@ spec:
               "--hostname={{ .Values.keycloak.config.hostname }}",
               "--proxy=passthrough",
               "--http-enabled=true",
-              "--https-key-store-file=/opt/keycloak/conf/keycloak.truststore.jks",
-              "--https-port=8443",
             ]
           ports:
             - name: http
@@ -77,14 +75,6 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.keycloak.config.existingSecret.name | default "keycloak" }}
                   key: {{ .Values.keycloak.config.existingSecret.adminPassKey | default "admin-pass" }}
-            - name: KC_HTTPS_KEY_STORE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.keycloak.config.existingSecret.name | default "keycloak" }}
-                  key: {{ .Values.keycloak.config.existingSecret.keystorePassKey | default "keystore-pass" }}
-          volumeMounts:
-            - mountPath: "/opt/keycloak/conf/"
-              name: keycloak-truststore
           readinessProbe:
             httpGet:
               scheme: HTTP
