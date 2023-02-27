@@ -126,11 +126,13 @@ const statLoop = once(() => {
   setInterval(async () => {
     if (isMaster() && !running) {
       running = true;
+
       // generate the stats for each user.
       const users = await prisma.user.findMany();
       users.forEach((user) => {
         promiseQueue.add(() => statService.generateStatsForUser(user, prisma));
       });
+
       // check which stats need to be generated.
       config.generateStatsForGroups.forEach((group) => {
         eachDay(config.statFirstDay, new Date()).forEach((date) => {
@@ -144,13 +146,13 @@ const statLoop = once(() => {
             });
             if (!exists) {
               // generate the stat.
+              const start = Date.now();
               const stat = await statService.getGroupFailedSuccessPercentage(
                 group,
                 prisma,
                 date
               );
 
-              const start = Date.now();
               await prisma.stat.create({
                 data: {
                   subject: group,
