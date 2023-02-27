@@ -99,6 +99,22 @@ export const getHostnameFromUri = (uri: string): string => {
   return url.hostname;
 };
 
+export const replaceNullWithZero = <T>(obj: T): T => {
+  if (obj === null) {
+    return 0 as T;
+  }
+  if (obj instanceof Array) {
+    return obj.map((el) => replaceNullWithZero(el)) as any;
+  }
+  if (typeof obj === "object") {
+    return Object.fromEntries(
+      Object.entries(obj).map(([key, value]) => {
+        return [key, replaceNullWithZero(value)];
+      })
+    ) as T;
+  }
+  return obj;
+};
 export const isAdmin = (session: ISession | null | undefined): boolean => {
   if (!session || !session.resource_access) {
     return false;

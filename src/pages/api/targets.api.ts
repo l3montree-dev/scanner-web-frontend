@@ -38,6 +38,9 @@ const deleteDomainRelation = async (
   user: User,
   prisma: PrismaClient
 ) => {
+  if (uris.length === 0) {
+    return;
+  }
   return prisma.userTargetRelation.deleteMany({
     where: {
       uri: {
@@ -153,7 +156,7 @@ const handlePost = async (
 
   logger.info(
     { requestId, userId: session.user.id },
-    `starting domain import of ${entries.length} domains.`
+    `starting import of ${entries.length} targets.`
   );
   let count = 0;
   let imported = 0;

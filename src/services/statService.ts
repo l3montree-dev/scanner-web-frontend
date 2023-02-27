@@ -117,7 +117,7 @@ SELECT AVG("subResourceIntegrity"::int) as "subResourceIntegrity",
     AVG("certificateTransparency"::int) as "certificateTransparency",
     AVG("validCertificateChain"::int) as "validCertificateChain",
 
-    COUNT(*) as totalCount
+    COUNT(*) as "totalCount"
 from targets d INNER JOIN scan_reports sr1 on d.uri = sr1.uri
 WHERE d.group = ${group} AND ((
         NOT EXISTS(
@@ -188,7 +188,7 @@ SELECT AVG("subResourceIntegrity"::int) as "subResourceIntegrity",
     AVG("certificateTransparency"::int) as "certificateTransparency",
     AVG("validCertificateChain"::int) as "validCertificateChain",
  
-    COUNT(*) as totalCount
+    COUNT(*) as "totalCount"
 from user_target_relations udr INNER JOIN scan_reports sr1 on udr.uri = sr1.uri
 WHERE  udr."userId" = ${user.id}  AND ((
     NOT EXISTS(

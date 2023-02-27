@@ -81,10 +81,10 @@ const startLookupResponseLoop = once(() => {
     "ip-lookup-response",
     async (msg) => {
       const content = JSON.parse(msg.content.toString()).data as {
-        uri: string;
+        fqdn: string;
       };
       try {
-        await targetService.handleNewTarget(content, prisma);
+        await targetService.handleNewTarget({ uri: content.fqdn }, prisma);
       } catch (e: any) {
         // always ack the message - catch the error.
         logger.error({ err: e.message });

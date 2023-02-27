@@ -34,7 +34,11 @@ import {
 import { statService } from "../../services/statService";
 import { theme } from "../../styles/victory-theme";
 import { ChartData, IDashboard } from "../../types";
-import { dateFormat, linkMapper } from "../../utils/common";
+import {
+  dateFormat,
+  linkMapper,
+  replaceNullWithZero,
+} from "../../utils/common";
 
 interface Props {
   dashboard: IDashboard;
@@ -345,13 +349,15 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                 >
                   <div className="flex-1 pt-5 relative">
                     {linkMapper[key] !== "" && (
-                      <Link
+                      <a
+                        download
                         target={"_blank"}
                         href={linkMapper[key]}
                         className="text-sm absolute w-full inline-block overflow-hidden truncate text-right whitespace-nowrap top-1 underline right-0 mt-2 px-5"
+                        rel="noreferrer"
                       >
                         &quot;{mapping[key]}&quot; jetzt umsetzen!
-                      </Link>
+                      </a>
                     )}
                     <VictoryChart
                       prependDefaultAxes={false}
@@ -615,8 +621,8 @@ export const getServerSideProps = decorateServerSideProps(
 
     return {
       props: {
-        dashboard,
-        referenceChartData,
+        dashboard: replaceNullWithZero(dashboard),
+        referenceChartData: replaceNullWithZero(referenceChartData),
         keycloakIssuer: process.env.KEYCLOAK_ISSUER,
       },
     };

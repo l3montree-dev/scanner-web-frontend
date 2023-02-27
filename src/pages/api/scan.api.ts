@@ -1,17 +1,19 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { randomUUID } from "crypto";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { Prisma, Target } from "@prisma/client";
+import { Target } from "@prisma/client";
 import { decorate } from "../../decorators/decorate";
 import { withDB } from "../../decorators/withDB";
+import { withSession } from "../../decorators/withSession";
 import { inspectRPC } from "../../inspection/inspect";
-import { targetService } from "../../services/targetService";
 import { getLogger } from "../../services/logger";
 import {
   reportService,
   scanResult2TargetDetails,
 } from "../../services/reportService";
+import { targetService } from "../../services/targetService";
+import { DetailedTarget, DetailsJSON } from "../../types";
+import CircuitBreaker from "../../utils/CircuitBreaker";
 import {
   defaultOnError,
   isScanError,
@@ -21,8 +23,6 @@ import {
   timeout,
 } from "../../utils/common";
 import { DTO, toDTO } from "../../utils/server";
-import { DetailedTarget, DetailsJSON } from "../../types";
-import CircuitBreaker from "../../utils/CircuitBreaker";
 
 const logger = getLogger(__filename);
 
@@ -31,11 +31,11 @@ export default decorate(
   async (
     req: NextApiRequest,
     res: NextApiResponse<DTO<DetailedTarget> | { error: string; uri: string }>,
-    [prisma]
+    [prisma, session]
   ) => {
     const start = Date.now();
 
-    if (!staticSecrets.includes(req.query.s as string)) {
+    if (!session && !staticSecrets.includes(req.query.s as string)) {
       logger.error(`invalid secret provided: ${req.query.s}`);
       return res.status(403).json({
         error: "Invalid secret provided",
@@ -152,5 +152,6 @@ export default decorate(
       return res.json(target);
     }
   },
-  withDB
+  withDB,
+  withSession
 );
