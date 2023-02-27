@@ -130,12 +130,12 @@ const Dashboard: FunctionComponent<Props> = (props) => {
 
   const deleteFQDN = async (uri: string) => {
     const response = await clientHttpClient(
-      `/api/domains`,
+      `/api/targets`,
       crypto.randomUUID(),
       {
         method: "DELETE",
         body: JSON.stringify({
-          domains: [uri],
+          targets: [uri],
         }),
       }
     );
@@ -154,12 +154,12 @@ const Dashboard: FunctionComponent<Props> = (props) => {
 
   const deleteSelection = async () => {
     const response = await clientHttpClient(
-      `/api/domains`,
+      `/api/targets`,
       crypto.randomUUID(),
       {
         method: "DELETE",
         body: JSON.stringify({
-          domains: selectedFQDNs,
+          targets: selectedFQDNs,
         }),
       }
     );
@@ -172,7 +172,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
     scanRequest.loading(uri);
 
     const response = await clientHttpClient(
-      `/api/scan?site=${uri}&refresh=true&s=oQ334umtB2Ve4XpTz2USFemZgC9ZLpXW`,
+      `/api/scan?site=${uri}&refresh=true`,
       crypto.randomUUID()
     );
 
@@ -232,7 +232,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
       formData.append("files", file);
     });
 
-    const res = await clientHttpClient("/api/domains", crypto.randomUUID(), {
+    const res = await clientHttpClient("/api/targets", crypto.randomUUID(), {
       method: "POST",
       body: formData,
     });
