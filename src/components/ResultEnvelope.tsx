@@ -4,6 +4,7 @@ import { FunctionComponent } from "react";
 import { legendMessages } from "../messages/legend";
 import { DetailedTarget } from "../types";
 import { classNames } from "../utils/common";
+import { DTO } from "../utils/server";
 import {
   CheckResult,
   checkResult2BorderClassName,
@@ -12,7 +13,7 @@ import {
 import ResultGrid from "./ResultGrid";
 
 interface Props {
-  target: DetailedTarget | null;
+  target: DTO<DetailedTarget> | null;
   dateString: string;
   handleRefresh: () => Promise<void>;
   refreshRequest: {

@@ -1,8 +1,9 @@
 import { ResponsibleDisclosureValidationError } from "../inspection/result-enums/organizational.typings";
 import { DetailedTarget } from "../types";
+import { DTO } from "../utils/server";
 
 export const getResponsibleDisclosureReportMessage = (
-  report: DetailedTarget
+  report: DTO<DetailedTarget>
 ) => {
   const inspection = report.details["responsibleDisclosure"];
   const uri = new URL(`http://${report.details.sut}`).hostname;

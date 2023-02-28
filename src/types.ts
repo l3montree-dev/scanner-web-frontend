@@ -138,7 +138,11 @@ export interface IKcUser {
 
 export type DetailsJSON = IScanSuccessResponse["result"] & { sut: string };
 
-export type DetailedTarget = Omit<Target, "lastScan" | "details"> & {
+export type DetailedTarget = Omit<
+  Target,
+  "lastScan" | "details" | "createdAt"
+> & {
   details: DetailsJSON;
   lastScan: number;
+  createdAt: string;
 };

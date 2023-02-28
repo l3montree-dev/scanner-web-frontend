@@ -1,7 +1,8 @@
 import { CertificateInspectionType } from "../inspection/scans";
 import { DetailedTarget } from "../types";
+import { DTO } from "../utils/server";
 
-export const getValidCertificateMessage = (report: DetailedTarget) => {
+export const getValidCertificateMessage = (report: DTO<DetailedTarget>) => {
   if (
     report.details[CertificateInspectionType.ValidCertificate]?.didPass ===
     false

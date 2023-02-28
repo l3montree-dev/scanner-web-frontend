@@ -27,6 +27,7 @@ import { getErrorMessage } from "../messages/http";
 import { clientHttpClient } from "../services/clientHttpClient";
 import { DetailedTarget, IScanSuccessResponse } from "../types";
 import { sanitizeFQDN, staticSecrets } from "../utils/common";
+import { DTO } from "../utils/server";
 
 const isInViewport = (element: HTMLElement) => {
   const rect = element.getBoundingClientRect();
@@ -47,7 +48,7 @@ const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
   const [website, setWebsite] = useState("");
   const scanRequest = useLoading();
   const refreshRequest = useLoading();
-  const [target, setTarget] = useState<null | DetailedTarget>(null);
+  const [target, setTarget] = useState<null | DTO<DetailedTarget>>(null);
   const router = useRouter();
 
   const onSubmit = useCallback(
@@ -78,7 +79,7 @@ const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
             )}`
           );
         }
-        const obj: DetailedTarget = await response.json();
+        const obj: DTO<DetailedTarget> = await response.json();
         setTarget(obj);
         scanRequest.success();
       } catch (e) {

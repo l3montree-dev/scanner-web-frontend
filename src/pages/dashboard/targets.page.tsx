@@ -1,23 +1,16 @@
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import {
-  faCaretDown,
-  faCaretUp,
-  faEllipsisVertical,
-  faQuestionCircle,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCaretDown, faCaretUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
 import { FunctionComponent, useEffect, useMemo, useState } from "react";
 import Checkbox from "../../components/Checkbox";
 import DashboardPage from "../../components/DashboardPage";
-import TargetOverviewForm from "../../components/TargetOverviewForm";
 import Menu from "../../components/Menu";
 import MenuItem from "../../components/MenuItem";
 import MenuList from "../../components/MenuList";
 import Pagination from "../../components/Pagination";
-import ResultIcon from "../../components/ResultIcon";
 import SideNavigation from "../../components/SideNavigation";
-import Tooltip from "../../components/Tooltip";
+import TargetOverviewForm from "../../components/TargetOverviewForm";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
 import { withCurrentUser } from "../../decorators/withCurrentUser";
 import { withDB } from "../../decorators/withDB";
@@ -33,15 +26,15 @@ import {
 import { clientHttpClient } from "../../services/clientHttpClient";
 import { targetService } from "../../services/targetService";
 
+import TargetTableItem from "../../components/TargetTableItem";
 import {
   DetailedTarget,
-  TargetType,
   IScanSuccessResponse,
   PaginateResult,
+  TargetType,
 } from "../../types";
-import { classNames, toGermanDate } from "../../utils/common";
+import { classNames } from "../../utils/common";
 import { DTO } from "../../utils/server";
-import { didPass2CheckResult } from "../../utils/view";
 
 interface Props {
   targets: PaginateResult<DTO<DetailedTarget>>;
@@ -128,7 +121,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
     setTargets(props.targets.data);
   }, [props.targets]);
 
-  const deleteFQDN = async (uri: string) => {
+  const deleteTarget = async (uri: string) => {
     const response = await clientHttpClient(
       `/api/targets`,
       crypto.randomUUID(),
@@ -144,7 +137,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
     }
   };
 
-  const selectedFQDNs = useMemo(
+  const selectedTargets = useMemo(
     () =>
       Object.entries(selection)
         .filter(([key, value]) => value)
@@ -159,16 +152,26 @@ const Dashboard: FunctionComponent<Props> = (props) => {
       {
         method: "DELETE",
         body: JSON.stringify({
-          targets: selectedFQDNs,
+          targets: selectedTargets,
         }),
       }
     );
     if (response.ok) {
-      setTargets((prev) => prev.filter((d) => !selectedFQDNs.includes(d.uri)));
+      setTargets((prev) =>
+        prev.filter((d) => !selectedTargets.includes(d.uri))
+      );
+      // remove them from the selection
+      setSelection((prev) => {
+        const newSelection = { ...prev };
+        selectedTargets.forEach((uri) => {
+          newSelection[uri] = false;
+        });
+        return newSelection;
+      });
     }
   };
 
-  const scanFQDN = async (uri: string) => {
+  const scanTarget = async (uri: string) => {
     scanRequest.loading(uri);
 
     const response = await clientHttpClient(
@@ -275,7 +278,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
               <div
                 className={classNames(
                   "flex flex-row justify-start",
-                  selectedFQDNs.length === 0
+                  selectedTargets.length === 0
                     ? "opacity-50 pointer-events-none"
                     : ""
                 )}
@@ -283,7 +286,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                 <Menu
                   Button={
                     <div className="p-2 bg-deepblue-100 border border-deepblue-100 m-2 flex flex-row items-center justify-center">
-                      Gruppenaktionen ({selectedFQDNs.length})
+                      Gruppenaktionen ({selectedTargets.length})
                       <FontAwesomeIcon className="ml-2" icon={faCaretDown} />
                     </div>
                   }
@@ -295,7 +298,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                           scanAllLoading.loading();
                           try {
                             await Promise.all(
-                              selectedFQDNs.map((d) => scanFQDN(d))
+                              selectedTargets.map((d) => scanTarget(d))
                             );
                           } finally {
                             scanAllLoading.success();
@@ -345,8 +348,8 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                   <th className="p-2 pr-0">
                     <Checkbox
                       checked={
-                        selectedFQDNs.length > 0 &&
-                        selectedFQDNs.length === targets.length
+                        selectedTargets.length > 0 &&
+                        selectedTargets.length === targets.length
                       }
                       onChange={() => {
                         setSelection((prev) => {
@@ -460,166 +463,37 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                 </tr>
               </thead>
               <tbody>
-                {targets.map((domain, i) => {
+                {targets.map((target, i) => {
                   return (
-                    <tr
-                      onClick={() => {
-                        setSelection((prev) => {
-                          if (prev[domain.uri] === undefined) {
-                            prev[domain.uri] = true;
-                            return { ...prev };
-                          }
-                          return {
-                            ...prev,
-                            [domain.uri]: !prev[domain.uri],
-                          };
-                        });
-                      }}
-                      className={classNames(
-                        "cursor-pointer",
+                    <TargetTableItem
+                      destroy={(uri) => deleteTarget(uri)}
+                      scanRequest={scanRequest}
+                      scan={(uri) => scanTarget(uri)}
+                      key={target.uri}
+                      target={target}
+                      selected={Boolean(selection[target.uri])}
+                      classNames={classNames(
                         i !== targets.length - 1 && "border-b",
                         "border-b-deepblue-300 transition-all",
-                        domain.errorCount !== null && domain.errorCount >= 5
-                          ? "line-through"
-                          : "",
-                        selection[domain.uri]
+                        selection[target.uri]
                           ? "bg-deepblue-200"
                           : i % 2 === 0
                           ? "bg-deepblue-400"
                           : "bg-deepblue-500"
                       )}
-                      key={domain.uri}
-                    >
-                      <td className="p-2 pr-0">
-                        <div className="flex flex-row items-center">
-                          <Checkbox
-                            onChange={() => {
-                              setSelection((prev) => {
-                                if (prev[domain.uri] === undefined) {
-                                  prev[domain.uri] = true;
-                                  return { ...prev };
-                                }
-                                return {
-                                  ...prev,
-                                  [domain.uri]: !prev[domain.uri],
-                                };
-                              });
-                            }}
-                            checked={Boolean(selection[domain.uri])}
-                          />
-                        </div>
-                      </td>
-                      <td className="p-2">
-                        <div className="flex flex-row">
-                          <span
-                            title={domain.uri}
-                            className="whitespace-nowrap overflow-hidden text-ellipsis max-w-xs block"
-                          >
-                            {domain.uri}
-                          </span>
-                          <div className="inline ml-2">
-                            <Tooltip
-                              tooltip={
-                                domain.lastScan !== null
-                                  ? `Letzter Scan: ${toGermanDate(
-                                      new Date(domain.lastScan)
-                                    )}${
-                                      domain.errorCount !== null &&
-                                      domain.errorCount > 0
-                                        ? ` (${domain.errorCount} Fehler)`
-                                        : ""
-                                    }${
-                                      domain.errorCount !== null &&
-                                      domain.errorCount >= 5
-                                        ? " Domain wird nicht mehr automatisiert gescanned, da 5 Fehler überschritten wurden"
-                                        : ""
-                                    }`
-                                  : "Noch nicht gescannt"
-                              }
-                            >
-                              <FontAwesomeIcon
-                                className="opacity-50"
-                                icon={faQuestionCircle}
-                              />
-                            </Tooltip>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="p-2">
-                        <ResultIcon
-                          checkResult={didPass2CheckResult(
-                            domain.details?.responsibleDisclosure?.didPass
-                          )}
-                        />
-                      </td>
-                      <td className="p-2">
-                        <ResultIcon
-                          checkResult={didPass2CheckResult(
-                            domain.details?.tlsv1_3?.didPass
-                          )}
-                        />
-                      </td>
-                      <td className="p-2">
-                        <ResultIcon
-                          checkResult={didPass2CheckResult(
-                            domain.details?.deprecatedTLSDeactivated?.didPass
-                          )}
-                        />
-                      </td>
-                      <td className="p-2">
-                        <ResultIcon
-                          checkResult={didPass2CheckResult(
-                            domain.details?.hsts?.didPass
-                          )}
-                        />
-                      </td>
-                      <td className="p-2">
-                        <ResultIcon
-                          checkResult={didPass2CheckResult(
-                            domain.details?.dnsSec?.didPass
-                          )}
-                        />
-                      </td>
-                      <td className="p-2">
-                        <ResultIcon
-                          checkResult={didPass2CheckResult(
-                            domain.details?.rpki?.didPass
-                          )}
-                        />
-                      </td>
-                      <td className="text-right p-2">
-                        <Menu
-                          Button={
-                            <div className="p-2 h-8 w-8 flex flex-row items-center justify-center">
-                              <FontAwesomeIcon icon={faEllipsisVertical} />
-                            </div>
+                      onSelect={(target) => {
+                        setSelection((prev) => {
+                          if (prev[target.uri] === undefined) {
+                            prev[target.uri] = true;
+                            return { ...prev };
                           }
-                          Menu={
-                            <MenuList>
-                              <MenuItem
-                                loading={
-                                  scanRequest.key === domain.uri &&
-                                  scanRequest.isLoading
-                                }
-                                onClick={() => scanFQDN(domain.uri)}
-                              >
-                                <div>
-                                  <div>Erneut scannen</div>
-                                  {scanRequest.key === domain.uri && (
-                                    <span className="block text-red-500 text-sm">
-                                      {scanRequest.errorMessage}
-                                    </span>
-                                  )}
-                                </div>
-                              </MenuItem>
-                              <MenuItem onClick={() => deleteFQDN(domain.uri)}>
-                                <div>Löschen</div>
-                              </MenuItem>
-                            </MenuList>
-                          }
-                        />
-                      </td>
-                    </tr>
+                          return {
+                            ...prev,
+                            [target.uri]: !prev[target.uri],
+                          };
+                        });
+                      }}
+                    />
                   );
                 })}
               </tbody>

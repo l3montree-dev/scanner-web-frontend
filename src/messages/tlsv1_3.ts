@@ -1,7 +1,7 @@
-import { InspectionType, CertificateInspectionType } from "../inspection/scans";
 import { DetailedTarget } from "../types";
+import { DTO } from "../utils/server";
 
-export const getTLSv1_3ReportMessage = (report: DetailedTarget) => {
+export const getTLSv1_3ReportMessage = (report: DTO<DetailedTarget>) => {
   const inspection = report.details["tlsv1_3"];
 
   if (inspection?.didPass === null || inspection?.didPass === undefined) {

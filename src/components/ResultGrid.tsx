@@ -26,20 +26,8 @@ import {
 } from "../utils/view";
 
 import ResultBox from "./ResultBox";
-
-const messages = {
-  [OrganizationalInspectionType.ResponsibleDisclosure]:
-    getResponsibleDisclosureReportMessage,
-  [TLSInspectionType.TLSv1_3]: getTLSv1_3ReportMessage,
-  [TLSInspectionType.DeprecatedTLSDeactivated]:
-    getDeprecatedTLSDeactivatedReportMessage,
-  [HeaderInspectionType.HSTS]: getHSTSReportMessage,
-  [DomainInspectionType.DNSSec]: getDNSSecReportMessage,
-  [NetworkInspectionType.RPKI]: getRPKIReportMessage,
-  [CertificateInspectionType.MatchesHostname]: getMatchesHostnameMessage,
-  [CertificateInspectionType.ValidCertificate]: getValidCertificateMessage,
-  [HttpInspectionType.HTTP]: getHttpMessage,
-};
+import { getCheckDescription, titleMapper } from "../messages";
+import { DTO } from "../utils/server";
 
 const regularChecks = [
   OrganizationalInspectionType.ResponsibleDisclosure,
@@ -56,25 +44,10 @@ const immediateActionRequired = [
   HttpInspectionType.HTTP,
 ] as const;
 
-const titleMapper = {
-  [DomainInspectionType.DNSSec]: "DNSSEC",
-  [NetworkInspectionType.RPKI]: "RPKI",
-  [TLSInspectionType.TLSv1_3]: "TLS 1.3",
-  [HttpInspectionType.HTTP]: "HTTP",
-  [TLSInspectionType.DeprecatedTLSDeactivated]:
-    "Deaktivierung von veralteten TLS/ SSL Protokollen",
-  [HeaderInspectionType.HSTS]: "HSTS",
-  [OrganizationalInspectionType.ResponsibleDisclosure]:
-    "Responsible Disclosure",
-  [CertificateInspectionType.MatchesHostname]:
-    "Übereinstimmung des Hostnamens im Zertifikat",
-  [CertificateInspectionType.ValidCertificate]: "Gültiges Zertifikat",
-};
-
 type ImmediateActions = typeof immediateActionRequired;
 
 const shouldDisplayImmediateActionRequired = (
-  report: DetailedTarget,
+  report: DTO<DetailedTarget>,
   check: ImmediateActions[number]
 ): boolean => {
   if (check === HttpInspectionType.HTTP) {
@@ -88,14 +61,8 @@ const shouldDisplayImmediateActionRequired = (
   return report.details[check]?.didPass === false;
 };
 
-const getDescription = (
-  report: DetailedTarget,
-  key: keyof typeof messages
-): string => {
-  return messages[key](report);
-};
 interface Props {
-  report: DetailedTarget;
+  report: DTO<DetailedTarget>;
 }
 
 const ResultGrid: FunctionComponent<Props> = (props) => {
@@ -123,7 +90,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
                     >
                       <ResultBox
                         title={titleMapper[key]}
-                        description={getDescription(report, key)}
+                        description={getCheckDescription(report, key)}
                         link={linkMapper[key]}
                         checkResult={CheckResult.Critical}
                       />
@@ -149,7 +116,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
               >
                 <ResultBox
                   title={titleMapper[key]}
-                  description={getDescription(report, key)}
+                  description={getCheckDescription(report, key)}
                   link={linkMapper[key]}
                   checkResult={didPass2CheckResult(
                     report.details[key]?.didPass

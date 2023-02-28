@@ -1,6 +1,7 @@
 import { DetailedTarget } from "../types";
+import { DTO } from "../utils/server";
 
-export const getCAAReportMessage = (report: DetailedTarget) => {
+export const getCAAReportMessage = (report: DTO<DetailedTarget>) => {
   const inspection = report.details.caa;
   const uri = report.details.sut;
   if (inspection === null || inspection === undefined) {

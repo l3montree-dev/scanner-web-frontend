@@ -1,7 +1,8 @@
 import { DetailedTarget } from "../types";
+import { DTO } from "../utils/server";
 
 export const getDeprecatedTLSDeactivatedReportMessage = (
-  report: DetailedTarget
+  report: DTO<DetailedTarget>
 ) => {
   const inspection = report.details["deprecatedTLSDeactivated"];
   if (inspection?.didPass === null || inspection?.didPass === undefined) {

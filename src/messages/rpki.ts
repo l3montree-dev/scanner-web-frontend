@@ -1,4 +1,5 @@
 import { DetailedTarget } from "../types";
+import { DTO } from "../utils/server";
 
 const holderStr = (holder?: string) => {
   if (holder) {
@@ -8,7 +9,7 @@ const holderStr = (holder?: string) => {
   return "";
 };
 
-export default function getRPKIReportMessage(report: DetailedTarget) {
+export default function getRPKIReportMessage(report: DTO<DetailedTarget>) {
   const inspection = report.details["rpki"];
   const uri = report.details.sut;
 
