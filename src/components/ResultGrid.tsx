@@ -50,6 +50,9 @@ const shouldDisplayImmediateActionRequired = (
   report: DTO<DetailedTarget>,
   check: ImmediateActions[number]
 ): boolean => {
+  if (report.details === null) {
+    return false;
+  }
   if (check === HttpInspectionType.HTTP) {
     return (
       report.details[check]?.didPass === null &&
@@ -110,7 +113,11 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
                 className={classNames(
                   "bg-deepblue-400 border-2 h-full p-5",
                   `border-${checkResult2BorderClassName(
-                    didPass2CheckResult(report.details[key]?.didPass)
+                    didPass2CheckResult(
+                      report.details !== null
+                        ? report.details[key]?.didPass
+                        : null
+                    )
                   )}`
                 )}
               >
@@ -119,7 +126,9 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
                   description={getCheckDescription(report, key)}
                   link={linkMapper[key]}
                   checkResult={didPass2CheckResult(
-                    report.details[key]?.didPass
+                    report.details !== null
+                      ? report.details[key]?.didPass
+                      : null
                   )}
                 />
               </div>

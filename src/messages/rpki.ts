@@ -10,6 +10,9 @@ const holderStr = (holder?: string) => {
 };
 
 export default function getRPKIReportMessage(report: DTO<DetailedTarget>) {
+  if (report.details === null) {
+    return `Der RPKI Status der Domain konnte nicht überprüft werden.`;
+  }
   const inspection = report.details["rpki"];
   const uri = report.details.sut;
 

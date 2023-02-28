@@ -142,7 +142,7 @@ export type DetailedTarget = Omit<
   Target,
   "lastScan" | "details" | "createdAt"
 > & {
-  details: DetailsJSON;
+  details: DetailsJSON | null;
   lastScan: number;
   createdAt: string;
 };

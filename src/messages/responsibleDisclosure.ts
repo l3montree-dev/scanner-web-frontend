@@ -5,6 +5,9 @@ import { DTO } from "../utils/server";
 export const getResponsibleDisclosureReportMessage = (
   report: DTO<DetailedTarget>
 ) => {
+  if (report.details === null) {
+    return `Die Datei /.well-known/security.txt konnte nicht überprüft werden.`;
+  }
   const inspection = report.details["responsibleDisclosure"];
   const uri = new URL(`http://${report.details.sut}`).hostname;
   if (inspection?.didPass === null || inspection?.didPass === undefined) {

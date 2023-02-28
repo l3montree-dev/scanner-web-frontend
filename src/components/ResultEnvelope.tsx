@@ -51,16 +51,16 @@ const ResultEnvelope: FunctionComponent<Props> = ({
               {target.uri}{" "}
             </a>
           </h2>
-          {target.uri !== target.details.sut && (
+          {target.uri !== target.details?.sut && (
             <>
               Weiterleitung auf:{" "}
               <a
                 target={"_blank"}
                 className="underline"
                 rel="noopener noreferrer"
-                href={`//${target.details.sut}`}
+                href={`//${target.details?.sut}`}
               >
-                {target.details.sut}
+                {target.details?.sut}
               </a>
             </>
           )}

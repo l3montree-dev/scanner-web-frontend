@@ -35,6 +35,9 @@ export const getErrorMessage = (code: ErrorCode) => {
 };
 
 export const getHttpMessage = (report: DTO<DetailedTarget>) => {
+  if (report.details === null) {
+    return "Die Überprüfung der HTTP Verbindung konnte nicht durchgeführt werden.";
+  }
   switch (report.details[HttpInspectionType.HTTP]?.didPass) {
     case null:
       if (

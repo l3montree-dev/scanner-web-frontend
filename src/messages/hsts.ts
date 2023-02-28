@@ -3,6 +3,9 @@ import { DetailedTarget } from "../types";
 import { DTO } from "../utils/server";
 
 export const getHSTSReportMessage = (report: DTO<DetailedTarget>) => {
+  if (report.details === null) {
+    return "Die Überprüfung des Strict-Transport-Security Headers konnte nicht durchgeführt werden.";
+  }
   const inspection = report.details["hsts"];
   if (inspection?.didPass === null || inspection?.didPass === undefined) {
     return "Die Überprüfung des Strict-Transport-Security Headers konnte nicht durchgeführt werden.";
