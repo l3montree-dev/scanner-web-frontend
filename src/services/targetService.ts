@@ -88,7 +88,7 @@ const translateSort = (sort?: string): `sr."${InspectionType}"` | "d.uri" => {
     return "d.uri";
   }
 
-  if (Object.keys(InspectionTypeEnum).includes(sort)) {
+  if (Object.values(InspectionTypeEnum).includes(sort as InspectionType)) {
     return `sr."${sort as InspectionType}"`;
   }
 

@@ -8,10 +8,8 @@ const reportDidChange = (
   lastReport: ScanReport,
   newReport: Omit<ScanReport, "createdAt" | "updatedAt" | "id">
 ) => {
-  const res = Object.keys(InspectionTypeEnum).some((key) => {
-    return (
-      lastReport[key as InspectionType] !== newReport[key as InspectionType]
-    );
+  const res = Object.values(InspectionTypeEnum).some((key) => {
+    return lastReport[key] !== newReport[key];
   });
 
   return res;
@@ -34,9 +32,9 @@ const combineReport = (
   if (lastReport === undefined) {
     return newReport;
   }
-  Object.keys(InspectionTypeEnum).forEach((key) => {
-    if (newReport[key as InspectionType] === null) {
-      newReport[key as InspectionType] = lastReport[key as InspectionType];
+  Object.values(InspectionTypeEnum).forEach((key) => {
+    if (newReport[key] === null) {
+      newReport[key] = lastReport[key];
     }
   });
   return newReport;
