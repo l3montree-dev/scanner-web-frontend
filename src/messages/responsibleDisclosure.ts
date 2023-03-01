@@ -35,7 +35,7 @@ export const getResponsibleDisclosureReportMessage = (
       ):
       default:
         const status = inspection.actualValue.statusCode;
-        if (status !== -1) {
+        if (status !== undefined && status !== -1) {
           return `Die Datei ${uri}/.well-known/security.txt ist nicht vorhanden. (Status: ${status})`;
         } else {
           return `Die Datei ${uri}/.well-known/security.txt ist nicht vorhanden.`;
