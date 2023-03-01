@@ -8,6 +8,7 @@ export const getResponsibleDisclosureReportMessage = (
   if (report.details === null) {
     return `Die Datei /.well-known/security.txt konnte nicht überprüft werden.`;
   }
+
   const inspection = report.details["responsibleDisclosure"];
   const uri = new URL(`http://${report.details.sut}`).hostname;
   if (inspection?.didPass === null || inspection?.didPass === undefined) {
@@ -33,7 +34,12 @@ export const getResponsibleDisclosureReportMessage = (
         ResponsibleDisclosureValidationError.MissingResponsibleDisclosure
       ):
       default:
-        return `Die Datei ${uri}/.well-known/security.txt ist nicht vorhanden.`;
+        const status = inspection.actualValue.statusCode;
+        if (status !== -1) {
+          return `Die Datei ${uri}/.well-known/security.txt ist nicht vorhanden. (Status: ${status})`;
+        } else {
+          return `Die Datei ${uri}/.well-known/security.txt ist nicht vorhanden.`;
+        }
     }
   }
 };

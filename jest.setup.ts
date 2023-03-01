@@ -1,6 +1,7 @@
 import "isomorphic-fetch";
 
 jest.mock("next/router", () => require("next-router-mock"));
+jest.mock("next-auth");
 
 Object.defineProperty(global.self, "crypto", {
   value: {
