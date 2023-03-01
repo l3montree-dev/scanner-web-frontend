@@ -40,7 +40,7 @@ const combineReport = (
   return newReport;
 };
 
-const scanResult2ScanReport = (
+export const scanResult2ScanReport = (
   result: IScanSuccessResponse
 ): Omit<ScanReport, "createdAt" | "updatedAt" | "id"> => {
   return {
@@ -76,6 +76,8 @@ const handleNewScanReport = async (
     lastReport.length === 1 ? lastReport[0] : undefined,
     scanResult2ScanReport(result)
   );
+  const lastScanDetails = scanResult2TargetDetails(result);
+
   if (lastReport.length !== 1 || reportDidChange(lastReport[0], newReport)) {
     // if the report changed, we need to create a new one.
     const target = await prisma.target.upsert({
@@ -83,11 +85,12 @@ const handleNewScanReport = async (
       create: {
         lastScanDetails: {
           create: {
-            details: scanResult2TargetDetails(result),
+            details: lastScanDetails,
           },
         },
         uri: newReport.uri,
         queued: false,
+        errorCount: 0,
         lastScan: result.timestamp,
         group: "unknown",
         hostname: getHostnameFromUri(result.target),
@@ -99,10 +102,10 @@ const handleNewScanReport = async (
         lastScanDetails: {
           upsert: {
             create: {
-              details: scanResult2TargetDetails(result),
+              details: lastScanDetails,
             },
             update: {
-              details: scanResult2TargetDetails(result),
+              details: lastScanDetails,
             },
           },
         },
@@ -110,12 +113,12 @@ const handleNewScanReport = async (
     });
 
     await prisma.scanReport.create({
-      data: { ...newReport },
+      data: newReport,
     });
     return toDTO({
       ...target,
       lastScan: target.lastScan || 0,
-      details: scanResult2TargetDetails(result),
+      details: lastScanDetails,
     });
   }
 
@@ -128,10 +131,10 @@ const handleNewScanReport = async (
       lastScanDetails: {
         upsert: {
           create: {
-            details: scanResult2TargetDetails(result),
+            details: lastScanDetails,
           },
           update: {
-            details: scanResult2TargetDetails(result),
+            details: lastScanDetails,
           },
         },
       },
