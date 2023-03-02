@@ -5,8 +5,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   // use the health route handler as initial setup as well.
   // otherwise we have to create a custom server for NextJS, which in turn would
   // make it much harder to use ESM only modules.
-  // @ts-expect-error
-  serverCtrl.startSocketIOServer(res.socket.server);
   serverCtrl.startScanResponseLoop();
   serverCtrl.startLookupResponseLoop();
   serverCtrl.startScanLoop();
