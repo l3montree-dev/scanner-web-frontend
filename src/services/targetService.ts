@@ -3,12 +3,12 @@ import { config } from "../config";
 import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
 import {
   DetailedTarget,
-  TargetType,
   IScanErrorResponse,
   PaginateRequest,
   PaginateResult,
+  TargetType,
 } from "../types";
-import { getHostnameFromUri, neverThrow } from "../utils/common";
+import { getHostnameFromUri } from "../utils/common";
 import { DTO, shuffle, toDTO } from "../utils/server";
 
 const handleNewTarget = async (
@@ -34,14 +34,12 @@ const handleNewTarget = async (
   });
 
   if (connectToUser) {
-    await neverThrow(
-      prisma.userTargetRelation.create({
-        data: {
-          userId: connectToUser.id,
-          uri: payload.uri,
-        },
-      })
-    );
+    await prisma.userTargetRelation.create({
+      data: {
+        userId: connectToUser.id,
+        uri: payload.uri,
+      },
+    });
   }
 
   return d;
@@ -95,7 +93,7 @@ const translateSort = (sort?: string): `sr."${InspectionType}"` | "d.uri" => {
   return "d.uri";
 };
 
-const getTargetsOfNetworksWithLatestTestResult = async (
+const getUserTargetsWithLatestTestResult = async (
   user: User,
   paginateRequest: PaginateRequest & { search?: string } & {
     sort?: string;
@@ -252,6 +250,6 @@ const getTargets2Scan = async (prisma: PrismaClient) => {
 export const targetService = {
   handleNewTarget,
   handleTargetScanError,
-  getTargetsOfNetworksWithLatestTestResult,
-  getTargets2Scan: getTargets2Scan,
+  getUserTargetsWithLatestTestResult,
+  getTargets2Scan,
 };

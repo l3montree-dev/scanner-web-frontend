@@ -519,21 +519,20 @@ export const getServerSideProps = decorateServerSideProps(
     const page = +(context.query["page"] ?? 0);
     const search = context.query["search"] as string | undefined;
 
-    const targets =
-      await targetService.getTargetsOfNetworksWithLatestTestResult(
-        currentUser,
-        {
-          pageSize: 50,
-          page,
-          search,
-          type:
-            (context.query["domainType"] as TargetType | undefined) ||
-            TargetType.all,
-          sort: context.query["sort"] as string | undefined,
-          sortDirection: context.query["sortDirection"] as string | undefined,
-        },
-        prisma
-      );
+    const targets = await targetService.getUserTargetsWithLatestTestResult(
+      currentUser,
+      {
+        pageSize: 50,
+        page,
+        search,
+        type:
+          (context.query["domainType"] as TargetType | undefined) ||
+          TargetType.all,
+        sort: context.query["sort"] as string | undefined,
+        sortDirection: context.query["sortDirection"] as string | undefined,
+      },
+      prisma
+    );
 
     return {
       props: {

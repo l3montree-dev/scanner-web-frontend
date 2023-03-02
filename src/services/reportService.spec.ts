@@ -1,4 +1,3 @@
-import { ResponsibleDisclosureRecommendation } from "../inspection/result-enums/organizational.typings";
 import { reportService } from "./reportService";
 
 jest.mock("next-auth", () => ({}));
