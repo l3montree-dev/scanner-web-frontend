@@ -2,12 +2,11 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["fullTextSearch", "fullTextIndex"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -16,87 +15,69 @@ model ScanReport {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
-  ipAddress String? @db.VarChar(255)
+  ipAddress String?
   duration  Int
 
-  fqdn   String @db.VarChar(255)
-  domain Domain @relation(fields: [fqdn], references: [fqdn], onDelete: Cascade)
+  uri    String
+  target Target @relation(fields: [uri], references: [uri], onDelete: Cascade)
 
   sut String?
 
-  SubResourceIntegrity  Boolean?
-  NoMixedContent        Boolean?
-  ResponsibleDisclosure Boolean?
-  DNSSec                Boolean?
-  CAA                   Boolean?
-  IPv6                  Boolean?
-  RPKI                  Boolean?
-  HTTP                  Boolean?
-  HTTP308               Boolean?
-  HTTPRedirectsToHttps  Boolean?
+  subResourceIntegrity  Boolean?
+  noMixedContent        Boolean?
+  responsibleDisclosure Boolean?
+  dnsSec                Boolean?
+  caa                   Boolean?
+  ipv6                  Boolean?
+  rpki                  Boolean?
+  http                  Boolean?
+  http308               Boolean?
+  httpRedirectsToHttps  Boolean?
 
-  HTTPS                 Boolean?
-  HSTS                  Boolean?
-  HSTSPreloaded         Boolean?
-  ContentSecurityPolicy Boolean?
-  XFrameOptions         Boolean?
-  XSSProtection         Boolean?
-  ContentTypeOptions    Boolean?
+  https                 Boolean?
+  hsts                  Boolean?
+  hstsPreloaded         Boolean?
+  contentSecurityPolicy Boolean?
+  xFrameOptions         Boolean?
+  xssProtection         Boolean?
+  contentTypeOptions    Boolean?
 
-  SecureSessionCookies Boolean?
-  TLSv1_2              Boolean?
-  TLSv1_3              Boolean?
+  secureSessionCookies Boolean?
+  tlsv1_2              Boolean?
+  tlsv1_3              Boolean?
 
-  TLSv1_1_Deactivated Boolean?
-  StrongKeyExchange   Boolean?
-  StrongCipherSuites  Boolean?
+  deprecatedTLSDeactivated Boolean?
+  strongKeyExchange        Boolean?
+  strongCipherSuites       Boolean?
 
-  ValidCertificate         Boolean?
-  StrongPrivateKey         Boolean?
-  StrongSignatureAlgorithm Boolean?
+  validCertificate         Boolean?
+  strongPrivateKey         Boolean?
+  strongSignatureAlgorithm Boolean?
 
-  MatchesHostname         Boolean?
-  NotRevoked              Boolean?
-  CertificateTransparency Boolean?
-  ValidCertificateChain   Boolean?
+  matchesHostname         Boolean?
+  notRevoked              Boolean?
+  certificateTransparency Boolean?
+  validCertificateChain   Boolean?
 
   @@index([createdAt])
-  @@index([fqdn])
-  @@index([SubResourceIntegrity])
-  @@index([NoMixedContent])
-  @@index([ResponsibleDisclosure])
-  @@index([DNSSec])
-  @@index([CAA])
-  @@index([IPv6])
-  @@index([RPKI])
-  @@index([HTTP])
-  @@index([HTTP308])
-  @@index([HTTPRedirectsToHttps])
-  @@index([HTTPS])
-  @@index([HSTS])
-  @@index([HSTSPreloaded])
-  @@index([ContentSecurityPolicy])
-  @@index([XFrameOptions])
-  @@index([XSSProtection])
-  @@index([ContentTypeOptions])
-  @@index([SecureSessionCookies])
-  @@index([TLSv1_2])
-  @@index([TLSv1_3])
-  @@index([TLSv1_1_Deactivated])
-  @@index([StrongKeyExchange])
-  @@index([StrongCipherSuites])
-  @@index([ValidCertificate])
-  @@index([StrongPrivateKey])
-  @@index([StrongSignatureAlgorithm])
-  @@index([MatchesHostname])
-  @@index([NotRevoked])
-  @@index([CertificateTransparency])
-  @@index([ValidCertificateChain])
+  @@index([uri])
   @@map("scan_reports")
 }
 
-model Domain {
-  fqdn String @id
+// the full scan report
+model LastScanDetails {
+  updatedAt DateTime @default(now()) @updatedAt
+  details   Json     @db.JsonB
+  uri       String   @id
+
+  target Target @relation(fields: [uri], references: [uri], onDelete: Cascade)
+
+  @@map("last_scan_details")
+}
+
+model Target {
+  uri      String @id
+  hostname String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -106,40 +87,38 @@ model Domain {
   queued     Boolean @default(false)
 
   // pretty much the reason why this domain is part of the system at all.
-  group String @db.VarChar(255)
+  group String
 
-  users UserDomainRelation[]
+  users UserTargetRelation[]
 
   scanReports ScanReport[]
 
-  // the full report
-  details Json?
+  lastScanDetails LastScanDetails?
 
-  tags Tag[] @relation("domain_tags")
+  tags Tag[] @relation("target_tags")
 
   @@index([group])
   @@index([lastScan])
-  @@fulltext([fqdn])
-  @@map("domains")
+  @@index([hostname])
+  @@map("targets")
 }
 
-model UserDomainRelation {
+model UserTargetRelation {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
-  domain Domain @relation(fields: [fqdn], references: [fqdn], onDelete: Cascade)
-  fqdn   String
+  target Target @relation(fields: [uri], references: [uri], onDelete: Cascade)
+  uri    String
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
 
-  @@id([userId, fqdn])
-  @@map("user_domain_relations")
+  @@id([userId, uri])
+  @@map("user_target_relations")
 }
 
 model User {
   id      String               @id
   role    String?
-  domains UserDomainRelation[]
+  targets UserTargetRelation[]
   tags    Tag[]
 
   @@map("users")
@@ -149,8 +128,6 @@ model Network {
   cidr               String  @id
   prefixLength       Int
   networkAddress     String
-  startAddress       String
-  endAddress         String
   startAddressNumber BigInt
   endAddressNumber   BigInt
   comment            String?
@@ -170,7 +147,7 @@ model Stat {
 model Tag {
   id      Int      @id @default(autoincrement())
   title   String
-  domains Domain[] @relation("domain_tags")
+  targets Target[] @relation("target_tags")
   user    User     @relation(fields: [userId], references: [id])
   userId  String
 
@@ -181,4 +158,10 @@ model Tag {
 
   @@unique([title, userId])
   @@map("tags")
+}
+
+model Email {
+  email String @id
+
+  @@map("emails")
 }

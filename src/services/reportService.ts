@@ -1,25 +1,23 @@
 import { PrismaClient, ScanReport } from "@prisma/client";
 import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
-import { DetailedDomain, IScanSuccessResponse } from "../types";
-import { limitStringValues } from "../utils/common";
+import { DetailedTarget, IScanSuccessResponse } from "../types";
+import { getHostnameFromUri, limitStringValues } from "../utils/common";
 import { DTO, toDTO } from "../utils/server";
 
 const reportDidChange = (
   lastReport: ScanReport,
   newReport: Omit<ScanReport, "createdAt" | "updatedAt" | "id">
 ) => {
-  const res = Object.keys(InspectionTypeEnum).some((key) => {
-    return (
-      lastReport[key as InspectionType] !== newReport[key as InspectionType]
-    );
+  const res = Object.values(InspectionTypeEnum).some((key) => {
+    return lastReport[key] !== newReport[key];
   });
 
   return res;
 };
 
-export const scanResult2DomainDetails = (
+export const scanResult2TargetDetails = (
   scanResponse: IScanSuccessResponse
-): Record<string, any> => {
+): Record<string, any> & { sut: string } => {
   return {
     ...limitStringValues(scanResponse.result),
     // save the subject under test inside the details
@@ -34,19 +32,19 @@ const combineReport = (
   if (lastReport === undefined) {
     return newReport;
   }
-  Object.keys(InspectionTypeEnum).forEach((key) => {
-    if (newReport[key as InspectionType] === null) {
-      newReport[key as InspectionType] = lastReport[key as InspectionType];
+  Object.values(InspectionTypeEnum).forEach((key) => {
+    if (newReport[key] === null) {
+      newReport[key] = lastReport[key];
     }
   });
   return newReport;
 };
 
-const scanResult2ScanReport = (
+export const scanResult2ScanReport = (
   result: IScanSuccessResponse
 ): Omit<ScanReport, "createdAt" | "updatedAt" | "id"> => {
   return {
-    fqdn: result.target,
+    uri: result.target,
     ipAddress: result.ipAddress,
     duration: result.duration,
     sut: result.sut,
@@ -62,11 +60,11 @@ const scanResult2ScanReport = (
 const handleNewScanReport = async (
   result: IScanSuccessResponse,
   prisma: PrismaClient
-): Promise<DTO<DetailedDomain>> => {
+): Promise<DTO<DetailedTarget>> => {
   // fetch the last existing report and check if we only need to update that one.
   const lastReport = await prisma.scanReport.findMany({
     where: {
-      fqdn: result.target,
+      uri: result.target,
     },
     orderBy: {
       createdAt: "desc",
@@ -78,42 +76,75 @@ const handleNewScanReport = async (
     lastReport.length === 1 ? lastReport[0] : undefined,
     scanResult2ScanReport(result)
   );
+  const lastScanDetails = scanResult2TargetDetails(result);
+
   if (lastReport.length !== 1 || reportDidChange(lastReport[0], newReport)) {
     // if the report changed, we need to create a new one.
-    const domain = await prisma.domain.upsert({
-      where: { fqdn: newReport.fqdn },
+    const target = await prisma.target.upsert({
+      where: { uri: newReport.uri },
       create: {
-        fqdn: newReport.fqdn,
+        lastScanDetails: {
+          create: {
+            details: lastScanDetails,
+          },
+        },
+        uri: newReport.uri,
         queued: false,
+        errorCount: 0,
         lastScan: result.timestamp,
-        details: scanResult2DomainDetails(result),
         group: "unknown",
+        hostname: getHostnameFromUri(result.target),
       },
       update: {
         queued: false,
         lastScan: result.timestamp,
         errorCount: 0,
-        details: scanResult2DomainDetails(result),
+        lastScanDetails: {
+          upsert: {
+            create: {
+              details: lastScanDetails,
+            },
+            update: {
+              details: lastScanDetails,
+            },
+          },
+        },
       },
     });
 
     await prisma.scanReport.create({
-      data: { ...newReport },
+      data: newReport,
     });
-    return toDTO(domain) as DTO<DetailedDomain>;
+    return toDTO({
+      ...target,
+      lastScan: target.lastScan || 0,
+      details: lastScanDetails,
+    });
   }
 
-  const domain = await prisma.domain.update({
-    where: { fqdn: newReport.fqdn },
+  const target = await prisma.target.update({
+    where: { uri: newReport.uri },
     data: {
       queued: false,
       lastScan: result.timestamp,
       errorCount: 0,
-      details: scanResult2DomainDetails(result),
+      lastScanDetails: {
+        upsert: {
+          create: {
+            details: lastScanDetails,
+          },
+          update: {
+            details: lastScanDetails,
+          },
+        },
+      },
     },
   });
 
-  return toDTO(domain) as DTO<DetailedDomain>;
+  return toDTO({
+    ...target,
+    details: scanResult2TargetDetails(result),
+  }) as DTO<DetailedTarget>;
 };
 
 export const reportService = {

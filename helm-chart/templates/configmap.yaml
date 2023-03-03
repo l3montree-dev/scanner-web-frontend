@@ -7,7 +7,7 @@ data:
     proxy:
       port: 4000
       forwardTo: http://localhost:3000
-      pathRegex: (api\/scan|\/\?s=)
+      pathRegex: (api\/scan|\/)
     influxdb:
       url: http://{{.Release.Name}}-influxdb:8086
       org: ozgsec

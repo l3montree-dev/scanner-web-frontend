@@ -24,10 +24,24 @@ import {
   TLSInspectionType,
 } from "../inspection/scans";
 import { DTO } from "./server";
-import { isValidIp, isValidMask } from "./validator";
+import {
+  isValidHostname as isValidHostname,
+  isValidIp,
+  isValidMask,
+} from "./validator";
+import { getLogger } from "../services/logger";
+
+const logger = getLogger("common");
 
 export const serverOnly = <T>(fn: () => T): T | null => {
   if (typeof window === "undefined") {
+    return fn();
+  }
+  return null;
+};
+
+export const clientOnly = <T>(fn: () => T): T | null => {
+  if (typeof window !== "undefined") {
     return fn();
   }
   return null;
@@ -79,6 +93,31 @@ export const limitStringValues = <T>(obj: T, charLimit = 255): T => {
   return obj;
 };
 
+export const getHostnameFromUri = (uri: string): string => {
+  if (uri.startsWith("http")) {
+    const url = new URL(uri);
+    return url.hostname;
+  }
+  const url = new URL(`http://${uri}`);
+  return url.hostname;
+};
+
+export const replaceNullWithZero = <T>(obj: T): T => {
+  if (obj === null) {
+    return 0 as T;
+  }
+  if (obj instanceof Array) {
+    return obj.map((el) => replaceNullWithZero(el)) as any;
+  }
+  if (typeof obj === "object") {
+    return Object.fromEntries(
+      Object.entries(obj).map(([key, value]) => {
+        return [key, replaceNullWithZero(value)];
+      })
+    ) as T;
+  }
+  return obj;
+};
 export const isAdmin = (session: ISession | null | undefined): boolean => {
   if (!session || !session.resource_access) {
     return false;
@@ -120,6 +159,9 @@ export const sanitizeFQDN = (providedValue: any): string | null => {
   if (typeof providedValue !== "string" || !providedValue.includes(".")) {
     return null;
   }
+  // remove blank characters
+  providedValue = providedValue.trim();
+
   // add a protocol to the provided value, so that the URL constructor
   // can parse it correctly
   const url = new URL(
@@ -127,6 +169,12 @@ export const sanitizeFQDN = (providedValue: any): string | null => {
       ? providedValue
       : `https://${providedValue}`
   );
+
+  url.hostname = url.hostname.toLowerCase();
+
+  if (!isValidHostname(url.hostname)) {
+    return null;
+  }
 
   if (url.pathname !== "/") {
     return url.port
@@ -150,8 +198,6 @@ export const parseNetwork = (cidr: string): WithoutId<DTO<Network>> => {
   return {
     prefixLength: subnet.subnetMaskLength,
     networkAddress: subnet.networkAddress,
-    startAddress: subnet.firstAddress,
-    endAddress: subnet.lastAddress,
     cidr,
     comment: null,
     startAddressNumber: ip.toLong(subnet.firstAddress),
@@ -192,7 +238,7 @@ export const linkMapper: { [key in InspectionType]: string } = {
   [HttpInspectionType.HTTPRedirectsToHttps]: "",
   [TLSInspectionType.TLSv1_2]: "",
   [TLSInspectionType.TLSv1_3]: "/one-pager/TLS1_3-One-Pager.pdf",
-  [TLSInspectionType.TLSv1_1_Deactivated]:
+  [TLSInspectionType.DeprecatedTLSDeactivated]:
     "/one-pager/TLS1_1_off-One-Pager.pdf",
   [TLSInspectionType.StrongKeyExchange]: "",
   [TLSInspectionType.StrongCipherSuites]: "",
@@ -225,6 +271,7 @@ export const neverThrow = async <T>(promise: Promise<T>): Promise<T | null> => {
   try {
     return await promise;
   } catch (e) {
+    logger.warn(e);
     return null;
   }
 };
@@ -246,3 +293,33 @@ export const dateFormat = {
   month: "2-digit" as const,
   year: "2-digit" as const,
 };
+
+export const emailRegex = new RegExp(
+  /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*$/
+);
+
+export const toGermanDate = (date: Date): string => {
+  return date.toLocaleDateString("de-DE", dateFormat);
+};
+
+export const devOnly = <T>(fn: () => T): T | null => {
+  if (process.env.NEXT_PUBLIC_ENVIRONMENT === "development") {
+    return fn();
+  }
+  return null;
+};
+
+export const staticSecrets = [
+  "azchwqnocl",
+  "kckujmvxw2",
+  "dd29xj8fix",
+  "hqtoxwm9ks",
+  "jo5kvuhzwx",
+  "sfmv88jyh4",
+  "wzfysg1dbs",
+  "jobdr1ruut",
+  "5dkbjcf5jc",
+  "znnlaczgcm",
+  // this one is for the dashboards
+  "oQ334umtB2Ve4XpTz2USFemZgC9ZLpXW",
+];

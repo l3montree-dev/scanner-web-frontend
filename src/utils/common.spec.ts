@@ -119,13 +119,16 @@ describe("common test suite", () => {
     it("should remove any hash if provided", () => {
       expect(sanitizeFQDN("example.com#hash")).toBe("example.com");
     });
-    it("should not remove any port if provided", () => {
-      expect(sanitizeFQDN("192.168.0.1:8080")).toBe("192.168.0.1:8080");
+    it("should remove any port if provided and reject ips", () => {
+      expect(sanitizeFQDN("192.168.0.1:8080")).toBeNull;
     });
     it("should work for subdomains", () => {
       expect(sanitizeFQDN("subdomain.example.com")).toBe(
         "subdomain.example.com"
       );
+    });
+    it("should work if blank characters are present", () => {
+      expect(sanitizeFQDN(" example.com ")).toBe("example.com");
     });
   });
 });

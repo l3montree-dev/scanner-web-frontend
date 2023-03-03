@@ -1,21 +1,34 @@
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { FunctionComponent } from "react";
 
 export interface Props {
   title?: string;
   description?: string;
   keywords?: string;
+  canonicalUrl?: string;
 }
-const Meta: FunctionComponent<Props> = ({ title, description, keywords }) => {
+const Meta: FunctionComponent<Props> = ({
+  title,
+  description,
+  keywords,
+  canonicalUrl,
+}) => {
+  const router = useRouter();
   return (
     <Head>
-      <title>{title ?? "OZG Security Challenge 2023"}</title>
+      <title>{title ?? "OZG-Security-Challenge 2023"}</title>
       <meta
         name="description"
         content={
           description ??
           "OZG Security Schnelltest einer Webseite in Bezug auf IT-Sicherheitsmaßnahmen und Best-Practices"
         }
+      />
+      <link
+        rel="canonical"
+        data-testid="canonical"
+        href={(canonicalUrl ?? "https://ozgsec.de") + router.pathname}
       />
       <meta
         name="title"
@@ -33,7 +46,7 @@ const Meta: FunctionComponent<Props> = ({ title, description, keywords }) => {
       <meta property="og:url" content="https://ozgsec.de/" />
       <meta
         property="og:title"
-        content={title ?? "OZG Security Challenge 2023"}
+        content={title ?? "OZG-Security-Challenge 2023"}
       />
       <meta
         property="og:description"
@@ -44,10 +57,13 @@ const Meta: FunctionComponent<Props> = ({ title, description, keywords }) => {
       />
 
       <meta property="twitter:card" content="summary_large_image" />
-      <meta property="twitter:url" content="https://ozgsec.de/" />
+      <meta
+        property="twitter:url"
+        content={(canonicalUrl ?? "https://ozgsec.de") + router.pathname}
+      />
       <meta
         property="twitter:title"
-        content={title ?? "OZG Security Challenge 2023"}
+        content={title ?? "OZG-Security-Challenge 2023"}
       />
       <meta
         property="twitter:description"

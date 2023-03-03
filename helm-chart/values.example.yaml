@@ -1,37 +1,58 @@
+######
+# QUICKTEST
+#
+# BFF of the ozgsec quicktest
+######
 quicktest:
   image:
     pullPolicy: IfNotPresent
-    tag: "v1.0.5"
-  imagePullSecrets: []
+    tag: "latest"
+  scanInterval: "5"
+  imagePullSecrets:
+    - name: regcred-ozgsec
   annotations: {}
-  podAnnotations: {}
+  podAnnotations:
+    co.elastic.logs/enabled: "true"
+    co.elastic.logs/json.keys_under_root: "true"
+    co.elastic.logs/json.overwrite_keys: "true"
+    co.elastic.logs/json.add_error_key: "true"
+    co.elastic.logs/json.expand_keys: "true"
+    co.elastic.logs/json.ignore_decoding_error: "true"
+    co.elastic.logs.leader-election-sidecar/enabled: "false"
+    co.elastic.logs.leader-elector-sidecar/enabled: "false"
+    co.elastic.logs.request-monitoring-sidecar/enabled: "false"
   podSecurityContext: {}
-    # fsGroup: 2000
-  securityContext: {}
-    # capabilities:
-    #   drop:
-    #   - ALL
-    # readOnlyRootFilesystem: true
-    # runAsNonRoot: true
-    # runAsUser: 1000
-  resources: {}
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+  securityContext:
+    capabilities:
+      drop:
+        - ALL
+  resources:
+    limits:
+      cpu: "1"
+      memory: 2048Mi
+    requests:
+      cpu: "0.001"
+      memory: 128Mi
   autoscaling:
     enabled: false
-    minReplicas: 1
+    minReplicas: 2
     maxReplicas: 100
     targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
   nodeSelector: {}
   tolerations: []
   affinity: {}
-  replicaCount: 1
+  replicaCount: 2
 
+quicktestIngress:
+  enabled: true
+  className: ""
+  annotations: {}
+  hosts:
+    - host: example.com
+  tls:
+    - secretName: tls-secret
+      hosts:
+        - example.com
 
 # Attached to the quicktest deployment as sidecar.
 # enables influxdb basic request monitoring.
@@ -40,45 +61,246 @@ requestMonitoringSidecar:
     pullPolicy: IfNotPresent
     tag: "v1.0.4"
 
+######
+# SECSCANNER
+#
+# Scanner component of the ozgsec quicktest
+######
 secScanner:
   image:
     pullPolicy: IfNotPresent
-    tag: "v1.0.3"
+    tag: "latest"
   # decrease this value to increase the performance of the scanner
   # but it will decrease the accuracy since some pages might need more time to load
   # defaults to 3000
-  serverTimeout: "3000"
+  serverTimeout: "10000"
   # the amount of retries if a scanning request fails.
   # if the value is 0, the request wont be retried
   # defaults to 0
   serverRetries: "0"
+  prefetchCount: 10
   autoscaling: {}
-  imagePullSecrets: []
-  replicaCount: 1
+  ripeSourceApp: ""
+  imagePullSecrets:
+    - name: regcred-ozgsec
+  replicaCount: 2
+  podAnnotations: {}
+  resources:
+    limits:
+      cpu: "1"
+      memory: 1256Mi
+    requests:
+      cpu: "0.00001"
+      memory: 128Mi
 
+######
+# NETLOOKUP
+#
+# Netlookup component of the ozgsec quicktest
+######
 netLookup:
   image:
     pullPolicy: IfNotPresent
-    tag: "v0.1.0"
+    tag: "latest"
   autoscaling: {}
-  imagePullSecrets: []
+  imagePullSecrets:
+    - name: regcred-ozgsec
+  replicaCount: 2
+  resources:
+    limits:
+      cpu: "1"
+      memory: 1024Mi
+    requests:
+      cpu: "0.00001"
+      memory: 15Mi
+
+######
+# KEYCLOAK
+#
+# Keycloak component of the ozgsec quicktest
+######
+keycloak:
   replicaCount: 1
+  podAnnotations: {}
+  podSecurityContext: {}
+  securityContext:
+    capabilities:
+      drop:
+        - NET_RAW
+  config:
+    hostname: "auth.example.com"
+    db:
+      schema: "public"
+      username: "keycloak"
 
-ingress:
+    ###
+    # Name of the secret containing all relevant credentials
+    # Every of the following keys must be present in the secret
+    existingSecret:
+      name: "keycloak"
+      dbPassKey: "db-password"
+      adminUsernameKey: "admin-username"
+      adminPassKey: "admin-pass"
+      keystorePassKey: "keystore-pass"
+  image:
+    # You can find the available tags here:
+    # https://gitlab.com/ozg-security/keycloak/container_registry/3720298
+    tag: "latest"
+    pullPolicy: IfNotPresent
+    pullSecrets:
+      - name: regcred-ozgsec
+  resources:
+    requests:
+      memory: 512Mi
+      cpu: "0.001"
+    limits:
+      memory: 2048Mi
+      cpu: "1"
+
+authIngress:
   enabled: true
-  className: ""
-  annotations: {}
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.class: "nginx"
+    ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/proxy-buffer-size: "128k"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/proxy-ssl-name: "auth.example.com"
+    nginx.ingress.kubernetes.io/proxy-ssl-verify: "on"
   hosts:
-    - host: ozgsec.example.com
+    - host: auth.example.com
   tls:
-    - secretName: ozgsec-tls
+    - secretName: auth-ozgsec-tls
       hosts:
-        - ozgsec.example.com
+        - auth.example.com
 
 
-####################
-## DO NOT MODIFY! ##
-####################
+######
+# DATABASE
+#
+# Database of the ozgsec quicktest
+######
+postgresql:
+  architecture: standalone
+  auth:
+    existingSecret: postgresql-credentials
+    username: quickTest
+    database: quickTest
+    # will be overwritten by the existingSecret anyways.
+    postgresPassword: "-"
+    password: "-"
+
+  primary:
+    extraEnvVarsSecret: "keycloak"
+    initdb:
+      scripts:
+         my_init_script.sh: |
+          #!/bin/bash
+          echo "Init Scirpt: Creating database and user\n"
+
+          export PGPASSWORD=$POSTGRES_POSTGRES_PASSWORD
+
+          psql -U postgres -c "CREATE DATABASE keycloak;" || { echo 'DB creation failed - skipping...'; }
+          psql -U postgres -c "CREATE USER keycloak with password '$POSTGRES_PASSWORD';" || { echo 'USER creation failed - skipping...'; }
+          psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE keycloak TO keycloak;" || { echo 'PRIVILEGES grant failed - skipping...'; }
+          psql -U postgres -d keycloak -c "GRANT ALL PRIVILEGES ON SCHEMA public to keycloak;" || { echo 'SCHEMA PRIVILEGES grant failed - skipping...'; }
+          
+    persistence:
+      enabled: true
+      size: 10Gi
+      storageClass: "ceph-filesystem"
+    resources:
+      limits:
+        cpu: "4"
+        memory: "20Gi"
+      requests:
+        cpu: "0.5"
+        memory: "6Gi"
+
+mysql:
+  architecture: standalone
+  auth:
+    createDatabase: true
+    database: "keycloak"
+    username: "keycloak"
+    existingSecret: "mysql-passwords"
+    usePasswordFiles: false
+    customPasswordFiles: {}
+  initdbScripts:
+    my_init_script.sh: |
+      #!/bin/bash
+      mysql -P 3306 -u root --password="$MYSQL_ROOT_PASSWORD" -e "CREATE DATABASE IF NOT EXISTS quickTest;";
+      mysql -P 3306 -u root --password="$MYSQL_ROOT_PASSWORD" -e "CREATE USER IF NOT EXISTS 'quickTest'@'%' IDENTIFIED BY '$QUICKTEST_PASSWORD';"
+      mysql -P 3306 -u root --password="$MYSQL_ROOT_PASSWORD" -e "GRANT ALL PRIVILEGES ON quickTest.* TO 'quickTest'@'%';"
+  image:
+    registry: docker.io
+    repository: bitnami/mysql
+    tag: 8.0.32-debian-11-r1@sha256:5274b91bcfb2a28002928f2b6ff090ee756f5e77fd833ec7c5ae7358a6d7dd14
+    digest: ""
+    pullPolicy: IfNotPresent
+    pullSecrets: []
+    debug: false
+  primary:
+    extraEnvVarsSecret: "mysql-quicktest"
+    configuration: |-
+      [mysqld]
+      expire_logs_days=3
+      default_authentication_plugin=mysql_native_password
+      skip-name-resolve
+      explicit_defaults_for_timestamp
+      basedir=/opt/bitnami/mysql
+      plugin_dir=/opt/bitnami/mysql/lib/plugin
+      port=3306
+      socket=/opt/bitnami/mysql/tmp/mysql.sock
+      datadir=/bitnami/mysql/data
+      tmpdir=/opt/bitnami/mysql/tmp
+      max_allowed_packet=16M
+      bind-address=*
+      pid-file=/opt/bitnami/mysql/tmp/mysqld.pid
+      log-error=/opt/bitnami/mysql/logs/mysqld.log
+      character-set-server=UTF8MB4
+      collation-server=utf8mb4_unicode_ci
+      slow_query_log=0
+      slow_query_log_file=/opt/bitnami/mysql/logs/mysqld.log
+      long_query_time=10.0
+      sort_buffer_size = 256000000
+
+      [client]
+      port=3306
+      socket=/opt/bitnami/mysql/tmp/mysql.sock
+      default-character-set=UTF8
+      plugin_dir=/opt/bitnami/mysql/lib/plugin
+
+      [manager]
+      port=3306
+      socket=/opt/bitnami/mysql/tmp/mysql.sock
+      pid-file=/opt/bitnami/mysql/tmp/mysqld.pid
+    ## MySQL primary container's resource requests and limits
+    ##
+    resources:
+      limits:
+        cpu: "4"
+        memory: "20Gi"
+      requests:
+        cpu: "0.5"
+        memory: "6Gi"
+    persistence:
+      enabled: true
+      existingClaim: ""
+      subPath: ""
+      storageClass: "ceph-filesystem"
+      annotations: {}
+      accessModes:
+        - ReadWriteOnce
+      size: 120Gi
+      selector: {}
+
+######
+# MONITORING
+#
+# Monitoring component of the ozgsec quicktest
+######
 influxdb:
   auth:
     existingSecret: influxdb-credentials
@@ -91,16 +313,40 @@ influxdb:
       org: ozgsec
       bucket: ozgsec
 
+monitoringIngress:
+  enabled: true
+  className: ""
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.class: "nginx"
+    ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/limit-rps: "5"
+    nginx.ingress.kubernetes.io/limit-burst-multiplier: "5"
+  hosts:
+    - host: monitoring.example.de
+  tls:
+    - secretName: monitoring-ozgsec-tls
+      hosts:
+        - monitoring.example.de
 
+######
+# RABBITMQ
+#
+# Message queue of the ozgsec quicktest
+######
 rabbitmq:
   auth:
     username: ozgsec
     existingPasswordSecret: rabbitmq-credentials
 
-keycloak:
+
+######
+# REDIS
+#
+# Cache for the application
+######
+redis:
+  architecture: standalone
   auth:
-    existingSecret: keycloak-credentials
-    passwordSecretKey: keycloak-password
-  postgresql:
-    auth:
-      existingSecret: postgresql-credentials
+    enabled: false

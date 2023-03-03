@@ -6,9 +6,11 @@ stages:
     - publish
   
 gitguardianscan:
-    image: gitguardian/ggshield:v1.13.5@sha256:82b46a5ebda17645a8aabd3d20cfb65cd65938db4fb6d31275bc91132ff21472
+    image: gitguardian/ggshield:v1.13.6@sha256:9dc9cf675acd2c9a59718cb65847a97b4c86e0ce07e7c178265aadd89f11cae1
     stage: test
     script: ggshield secret scan ci
+    rules:
+      - if: '$CI_COMMIT_REF_PROTECTED == "true"'
 
 jest:
     image: node:18@sha256:9d8a6466c6385e05f62f8ccf173e80209efb0ff4438f321f09ddf552b05af3ba
@@ -49,8 +51,16 @@ build-main:
     extends: .build-template
     variables:
         IMAGE_TAG: $CI_REGISTRY_IMAGE:unstable
+        
     only:
         - main
+    script:
+        - /kaniko/executor
+          --cleanup
+          --context $CI_PROJECT_DIR
+          --dockerfile $CI_PROJECT_DIR/Dockerfile
+          --destination $IMAGE_TAG
+          --build-arg NEXT_PUBLIC_ENVIRONMENT="development"
 
 
 helm:

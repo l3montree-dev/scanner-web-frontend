@@ -1,145 +1,142 @@
 import { FunctionComponent } from "react";
-import { getCAAReportMessage } from "../messages/caa";
+import {
+  CertificateInspectionType,
+  DomainInspectionType,
+  HeaderInspectionType,
+  HttpInspectionType,
+  NetworkInspectionType,
+  OrganizationalInspectionType,
+  TLSInspectionType,
+} from "../inspection/scans";
 import { getDNSSecReportMessage } from "../messages/dnsSec";
 import { getHSTSReportMessage } from "../messages/hsts";
+import { getHttpMessage, immediateActionHTTPErrors } from "../messages/http";
+import { getMatchesHostnameMessage } from "../messages/matchesHostname";
 import { getResponsibleDisclosureReportMessage } from "../messages/responsibleDisclosure";
 import getRPKIReportMessage from "../messages/rpki";
-import { getTLSv1_1_DeactivatedReportMessage } from "../messages/tlsv1_1_Deactivated";
+import { getDeprecatedTLSDeactivatedReportMessage } from "../messages/deprecatedTLSDeactivated";
 import { getTLSv1_3ReportMessage } from "../messages/tlsv1_3";
-import { DetailedDomain } from "../types";
-import { classNames, linkMapper } from "../utils/common";
+import { getValidCertificateMessage } from "../messages/validCertificate";
+import { DetailedTarget } from "../types";
+import { classNames, devOnly, linkMapper } from "../utils/common";
+import {
+  CheckResult,
+  checkResult2BorderClassName,
+  didPass2CheckResult,
+} from "../utils/view";
 
 import ResultBox from "./ResultBox";
+import { getCheckDescription, titleMapper } from "../messages";
+import { DTO } from "../utils/server";
 
-const borderClass = (didPass: boolean | null) => {
-  return didPass === null || didPass === undefined
-    ? "border-white"
-    : didPass
-    ? "border-lightning-500"
-    : "border-yellow-500";
+const regularChecks = [
+  OrganizationalInspectionType.ResponsibleDisclosure,
+  TLSInspectionType.TLSv1_3,
+  TLSInspectionType.DeprecatedTLSDeactivated,
+  HeaderInspectionType.HSTS,
+  DomainInspectionType.DNSSec,
+  NetworkInspectionType.RPKI,
+] as const;
+
+const immediateActionRequired = [
+  CertificateInspectionType.MatchesHostname,
+  CertificateInspectionType.ValidCertificate,
+  HttpInspectionType.HTTP,
+] as const;
+
+type ImmediateActions = typeof immediateActionRequired;
+
+const shouldDisplayImmediateActionRequired = (
+  report: DTO<DetailedTarget>,
+  check: ImmediateActions[number]
+): boolean => {
+  if (report.details === null) {
+    return false;
+  }
+  if (check === HttpInspectionType.HTTP) {
+    return (
+      report.details[check]?.didPass === null &&
+      immediateActionHTTPErrors.includes(
+        report.details[check]?.actualValue.error.code
+      )
+    );
+  }
+  return report.details[check]?.didPass === false;
 };
 
-const messages = {
-  DNSSec: getDNSSecReportMessage,
-  CAA: getCAAReportMessage,
-  TLSv1_3: getTLSv1_3ReportMessage,
-  TLSv1_1_Deactivated: getTLSv1_1_DeactivatedReportMessage,
-  HSTS: getHSTSReportMessage,
-  ResponsibleDisclosure: getResponsibleDisclosureReportMessage,
-  RPKI: getRPKIReportMessage,
-};
-
-const getDescription = (
-  report: DetailedDomain,
-  key:
-    | "DNSSec"
-    | "CAA"
-    | "TLSv1_3"
-    | "TLSv1_1_Deactivated"
-    | "HSTS"
-    | "ResponsibleDisclosure"
-    | "RPKI"
-): string => {
-  return messages[key](report);
-};
 interface Props {
-  report: DetailedDomain;
+  report: DTO<DetailedTarget>;
 }
+
 const ResultGrid: FunctionComponent<Props> = (props) => {
   const { report } = props;
+
+  const immediateActionRequiredChecks = immediateActionRequired.filter((key) =>
+    shouldDisplayImmediateActionRequired(report, key)
+  );
   return (
-    <div className="flex-row flex flex-wrap mt-3">
-      <div className="md:w-1/3 sm:w-1/2 w-full md:mb-4 mb-5 sm:pr-2">
-        <div
-          className={classNames(
-            "bg-deepblue-400 border-2 h-full p-5",
-            borderClass(report.details.ResponsibleDisclosure?.didPass ?? null)
+    <>
+      {devOnly(() => (
+        <>
+          {immediateActionRequiredChecks.length > 0 && (
+            <div className="mt-3 mb-4 flex flex-wrap flex-row gap-4">
+              {immediateActionRequiredChecks.map((key) => {
+                return (
+                  <div key={key} className="w-full flex-none sm:flex-1">
+                    <div
+                      className={classNames(
+                        "bg-deepblue-400 border-2 h-full p-5",
+                        `border-${checkResult2BorderClassName(
+                          CheckResult.Critical
+                        )}`
+                      )}
+                    >
+                      <ResultBox
+                        title={titleMapper[key]}
+                        description={getCheckDescription(report, key)}
+                        link={linkMapper[key]}
+                        checkResult={CheckResult.Critical}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           )}
-        >
-          <ResultBox
-            title="Responsible Disclosure"
-            description={getDescription(report, "ResponsibleDisclosure")}
-            link={linkMapper["ResponsibleDisclosure"]}
-            didPass={report.details.ResponsibleDisclosure?.didPass ?? null}
-          />
-        </div>
+        </>
+      ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 mt-3 gap-4">
+        {regularChecks.map((key) => {
+          return (
+            <div key={key} className="">
+              <div
+                className={classNames(
+                  "bg-deepblue-400 border-2 h-full p-5",
+                  `border-${checkResult2BorderClassName(
+                    didPass2CheckResult(
+                      report.details !== null
+                        ? report.details[key]?.didPass
+                        : null
+                    )
+                  )}`
+                )}
+              >
+                <ResultBox
+                  title={titleMapper[key]}
+                  description={getCheckDescription(report, key)}
+                  link={linkMapper[key]}
+                  checkResult={didPass2CheckResult(
+                    report.details !== null
+                      ? report.details[key]?.didPass
+                      : null
+                  )}
+                />
+              </div>
+            </div>
+          );
+        })}
       </div>
-      <div className="md:w-1/3 sm:w-1/2 w-full sm:pl-2 md:px-2 md:mb-4 mb-5">
-        <div
-          className={classNames(
-            "bg-deepblue-400 border-2 h-full p-4",
-            borderClass(report.details.TLSv1_3?.didPass ?? null)
-          )}
-        >
-          <ResultBox
-            title="TLS 1.3"
-            description={getDescription(report, "TLSv1_3")}
-            link={linkMapper["TLSv1_3"]}
-            didPass={report.details.TLSv1_3?.didPass ?? null}
-          />
-        </div>
-      </div>
-      <div className="md:w-1/3 sm:w-1/2 w-full sm:pr-2 md:pr-0 md:pl-2 md:mb-4 mb-5">
-        <div
-          className={classNames(
-            "bg-deepblue-400 border-2 h-full p-4",
-            borderClass(report.details.TLSv1_1_Deactivated?.didPass ?? null)
-          )}
-        >
-          <ResultBox
-            title="Deaktivierung von veralteten TLS/ SSL Protokollen"
-            description={getDescription(report, "TLSv1_1_Deactivated")}
-            link={linkMapper["TLSv1_1_Deactivated"]}
-            didPass={report.details.TLSv1_1_Deactivated?.didPass ?? null}
-          />
-        </div>
-      </div>
-      <div className="md:w-1/3 sm:w-1/2 w-full md:mb-4 mb-5 sm:pl-2 md:pl-0 md:pr-2">
-        <div
-          className={classNames(
-            "bg-deepblue-400 border-2 h-full p-4",
-            borderClass(report.details.HSTS?.didPass ?? null)
-          )}
-        >
-          <ResultBox
-            title="HSTS"
-            description={getDescription(report, "HSTS")}
-            link={linkMapper["HSTS"]}
-            didPass={report.details.HSTS?.didPass ?? null}
-          />
-        </div>
-      </div>
-      <div className="md:w-1/3 sm:w-1/2 w-full sm:pr-2 md:mb-4 mb-5 md:px-2">
-        <div
-          className={classNames(
-            "bg-deepblue-400 border-2 h-full p-4",
-            borderClass(report.details.DNSSec?.didPass ?? null)
-          )}
-        >
-          <ResultBox
-            title="DNSSEC"
-            description={getDescription(report, "DNSSec")}
-            link={linkMapper["DNSSec"]}
-            didPass={report.details.DNSSec?.didPass ?? null}
-          />
-        </div>
-      </div>
-      <div className="md:w-1/3 sm:w-1/2 w-full md:mb-4 mb-5 sm:pl-2">
-        <div
-          className={classNames(
-            "bg-deepblue-400 border-2 h-full p-4",
-            borderClass(report.details.RPKI?.didPass ?? null)
-          )}
-        >
-          <ResultBox
-            title="RPKI"
-            description={getDescription(report, "RPKI")}
-            didPass={report.details.RPKI?.didPass ?? null}
-            link={linkMapper["RPKI"]}
-          />
-        </div>
-      </div>
-    </div>
+    </>
   );
 };
 

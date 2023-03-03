@@ -1,6 +1,6 @@
 import { User } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
-import { authOptions } from "../pages/api/auth/[...nextauth]";
+import { authOptions } from "../pages/api/auth/[...nextauth].api";
 
 import { getServerSession } from "../utils/server";
 import { withDB } from "./withDB";
@@ -14,9 +14,6 @@ export const withCurrentUser = async (
   ]);
 
   if (!session) {
-    // return 500
-    ctx.res.statusCode = 500;
-    ctx.res.end();
     throw new Error("session is undefined");
   }
 

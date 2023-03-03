@@ -12,7 +12,7 @@ const logger = getLogger(__filename);
 const getTotalsOfUser = async (user: User, prisma: PrismaClient) => {
   // count the domains this user has access to
   return {
-    uniqueDomains: await prisma.userDomainRelation.count({
+    uniqueTargets: await prisma.userTargetRelation.count({
       where: {
         userId: user.id,
       },
@@ -22,10 +22,10 @@ const getTotalsOfUser = async (user: User, prisma: PrismaClient) => {
 
 const generateStatsForUser = async (
   user: User,
+  promiseQueue: PQueue,
   prisma: PrismaClient,
   force = false
 ) => {
-  const promiseQueue = new PQueue({ concurrency: 10 });
   eachDay(config.statFirstDay, new Date()).forEach((date) => {
     // check if the stat does exist.
     promiseQueue.add(async () => {
@@ -51,9 +51,8 @@ const generateStatsForUser = async (
 
       if (!exists) {
         // generate the stat.
-        const stat = await getUserFailedSuccessPercentage(user, prisma, date);
-
         const start = Date.now();
+        const stat = await getUserFailedSuccessPercentage(user, prisma, date);
         await prisma.stat.create({
           data: {
             subject: user.id,
@@ -68,13 +67,53 @@ const generateStatsForUser = async (
       }
     });
   });
+  return promiseQueue.onIdle();
+};
+
+const generateStatsForGroups = async (
+  group: string,
+  promiseQueue: PQueue,
+  prisma: PrismaClient
+) => {
+  eachDay(config.statFirstDay, new Date()).forEach((date) => {
+    // check if the stat does exist.
+    promiseQueue.add(async () => {
+      const exists = await prisma.stat.findFirst({
+        where: {
+          subject: group,
+          time: date,
+        },
+      });
+      if (!exists) {
+        // generate the stat.
+        const start = Date.now();
+        const stat = await statService.getGroupFailedSuccessPercentage(
+          group,
+          prisma,
+          date
+        );
+
+        await prisma.stat.create({
+          data: {
+            subject: group,
+            time: date,
+            value: stat,
+          },
+        });
+        logger.info(
+          { duration: Date.now() - start },
+          `generated stat for ${group} on ${new Date(date)}`
+        );
+      }
+    });
+  });
 };
 
 const getTotals = async (
   prisma: PrismaClient
-): Promise<{ uniqueDomains: number }> => {
+): Promise<{ uniqueTargets: number }> => {
   return {
-    uniqueDomains: await prisma.domain.count(),
+    uniqueTargets: await prisma.target.count(),
   };
 };
 
@@ -86,59 +125,57 @@ const getGroupFailedSuccessPercentage = async (
   let [res] = (await prisma.$queryRaw(
     // this query will pick the latest scan report for each domain and calculate the average of all the inspection types. If there was no scan report done before "until", it will pick the closest one of the future - this fakes the stats but was requested by the customer
     Prisma.sql`
-SELECT AVG(SubResourceIntegrity) as SubResourceIntegrity,
-    AVG(NoMixedContent) as NoMixedContent,
-    AVG(ResponsibleDisclosure) as ResponsibleDisclosure,
-    AVG(DNSSec) as DNSSec,
-    AVG(CAA) as CAA,
-    AVG(IPv6) as IPv6,
-    AVG(RPKI) as RPKI,
-    AVG(HTTP) as HTTP,
-    AVG(HTTPS) as HTTPS,
-    AVG(HTTP308) as HTTP308,
-    AVG(HTTPRedirectsToHttps) as HTTPRedirectsToHttps,
-    AVG(HSTS) as HSTS, 
-        AVG(HSTS) as HSTS, 
-    AVG(HSTS) as HSTS, 
-    AVG(HSTSPreloaded) as HSTSPreloaded,
-    AVG(ContentSecurityPolicy) as ContentSecurityPolicy,
-    AVG(XFrameOptions) as XFrameOptions,
-    AVG(XSSProtection) as XSSProtection,
-    AVG(ContentTypeOptions) as ContentTypeOptions,
-    AVG(SecureSessionCookies) as SecureSessionCookies,
-    AVG(TLSv1_2) as TLSv1_2,
-    AVG(TLSv1_3) as TLSv1_3, 
-        AVG(TLSv1_3) as TLSv1_3, 
-    AVG(TLSv1_3) as TLSv1_3, 
-    AVG(TLSv1_1_Deactivated) as TLSv1_1_Deactivated, 
-        AVG(TLSv1_1_Deactivated) as TLSv1_1_Deactivated, 
-    AVG(TLSv1_1_Deactivated) as TLSv1_1_Deactivated, 
-    AVG(StrongKeyExchange) as StrongKeyExchange,
-    AVG(StrongCipherSuites) as StrongCipherSuites,
-    AVG(ValidCertificate) as ValidCertificate,
-    AVG(StrongPrivateKey) as StrongPrivateKey,
-    AVG(StrongSignatureAlgorithm) as StrongSignatureAlgorithm,
-    AVG(MatchesHostname) as MatchesHostname,
-    AVG(NotRevoked) as NotRevoked,
-    AVG(CertificateTransparency) as CertificateTransparency,
-    AVG(ValidCertificateChain) as ValidCertificateChain,
-
-    COUNT(*) as totalCount
-from domains d INNER JOIN scan_reports sr1 on d.fqdn = sr1.fqdn
-WHERE d.group = ${group} AND sr1.createdAt < ${new Date(until)} AND ((
-        NOT EXISTS(
-                SELECT 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr2.createdAt < ${new Date(
-                  until
-                )} 
-                AND sr1.createdAt < sr2.createdAt
-        )
+    WITH older AS (
+        SELECT DISTINCT ON (uri)
+        *
+        FROM scan_reports
+        WHERE "createdAt" <= to_timestamp(${until / 1000})
+        ORDER BY uri,"createdAt" DESC
     )
-    OR (
-        NOT EXISTS(select 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr2.createdAt < ${new Date(
-          until
-        )})
-        AND NOT EXISTS(select 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr1.createdAt > sr2.createdAt)
-    ))`
+    ,
+    younger AS (
+        SELECT DISTINCT ON (uri)
+        *
+        FROM scan_reports
+        WHERE "createdAt" > to_timestamp(${until / 1000})
+        AND NOT EXISTS(SELECT 1 from older where older.uri = scan_reports.uri)
+        ORDER BY uri,"createdAt" ASC
+    ),
+    reports AS (
+    SELECT * FROM older /* older */
+    UNION
+    SELECT * FROM younger /* younger */
+    ) SELECT AVG("subResourceIntegrity"::int) as "subResourceIntegrity",
+        AVG("noMixedContent"::int) as "noMixedContent",
+        AVG("responsibleDisclosure"::int) as "responsibleDisclosure",
+        AVG("dnsSec"::int) as "dnsSec",
+        AVG("caa"::int) as "caa",
+        AVG("ipv6"::int) as "ipv6",
+        AVG("rpki"::int) as "rpki",
+        AVG("http"::int) as "http",
+        AVG("https"::int) as "https",
+        AVG("http308"::int) as "http308",
+        AVG("httpRedirectsToHttps"::int) as "httpRedirectsToHttps",
+        AVG("hsts"::int) as "hsts",
+        AVG("hstsPreloaded"::int) as "hstsPreloaded",
+        AVG("contentSecurityPolicy"::int) as "contentSecurityPolicy",
+        AVG("xFrameOptions"::int) as "xFrameOptions",
+        AVG("xssProtection"::int) as "xssProtection",
+        AVG("contentTypeOptions"::int) as "contentTypeOptions",
+        AVG("secureSessionCookies"::int) as "secureSessionCookies",
+        AVG("tlsv1_2"::int) as "tlsv1_2",
+        AVG("tlsv1_3"::int) as "tlsv1_3",
+        AVG("deprecatedTLSDeactivated"::int) as "deprecatedTLSDeactivated",
+        AVG("strongKeyExchange"::int) as "strongKeyExchange",
+        AVG("strongCipherSuites"::int) as "strongCipherSuites",
+        AVG("validCertificate"::int) as "validCertificate",
+        AVG("strongPrivateKey"::int) as "strongPrivateKey",
+        AVG("strongSignatureAlgorithm"::int) as "strongSignatureAlgorithm",
+        AVG("matchesHostname"::int) as "matchesHostname",
+        AVG("notRevoked"::int) as "notRevoked",
+        AVG("certificateTransparency"::int) as "certificateTransparency",
+        AVG("validCertificateChain"::int) as "validCertificateChain",
+        COUNT(*) as "totalCount" from reports inner join targets ON reports.uri = targets.uri where targets."group" = ${group}`
   )) as any;
 
   res = toDTO(res);
@@ -163,55 +200,59 @@ const getUserFailedSuccessPercentage = async (
   let [res] = (await prisma.$queryRaw(
     // this query will pick the latest scan report for each domain and calculate the average of all the inspection types. If there was no scan report done before "until", it will pick the closest one of the future - this fakes the stats but was requested by the customer
     Prisma.sql`
-SELECT AVG(SubResourceIntegrity) as SubResourceIntegrity,
-    AVG(NoMixedContent) as NoMixedContent,
-    AVG(ResponsibleDisclosure) as ResponsibleDisclosure,
-    AVG(DNSSec) as DNSSec,
-    AVG(CAA) as CAA,
-    AVG(IPv6) as IPv6,
-    AVG(RPKI) as RPKI,
-    AVG(HTTP) as HTTP,
-    AVG(HTTPS) as HTTPS,
-    AVG(HTTP308) as HTTP308,
-    AVG(HTTPRedirectsToHttps) as HTTPRedirectsToHttps,
-    AVG(HSTS) as HSTS, 
-    AVG(HSTSPreloaded) as HSTSPreloaded,
-    AVG(ContentSecurityPolicy) as ContentSecurityPolicy,
-    AVG(XFrameOptions) as XFrameOptions,
-    AVG(XSSProtection) as XSSProtection,
-    AVG(ContentTypeOptions) as ContentTypeOptions,
-    AVG(SecureSessionCookies) as SecureSessionCookies,
-    AVG(TLSv1_2) as TLSv1_2,
-    AVG(TLSv1_3) as TLSv1_3, 
-    AVG(TLSv1_1_Deactivated) as TLSv1_1_Deactivated, 
-    AVG(StrongKeyExchange) as StrongKeyExchange,
-    AVG(StrongCipherSuites) as StrongCipherSuites,
-    AVG(ValidCertificate) as ValidCertificate,
-    AVG(StrongPrivateKey) as StrongPrivateKey,
-    AVG(StrongSignatureAlgorithm) as StrongSignatureAlgorithm,
-    AVG(MatchesHostname) as MatchesHostname,
-    AVG(NotRevoked) as NotRevoked,
-    AVG(CertificateTransparency) as CertificateTransparency,
-    AVG(ValidCertificateChain) as ValidCertificateChain,
- 
-    COUNT(*) as totalCount
-from user_domain_relations udr INNER JOIN scan_reports sr1 on udr.fqdn = sr1.fqdn
-WHERE  udr.userId = ${user.id}  AND ((
-    NOT EXISTS(
-        SELECT 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr2.createdAt < ${new Date(
-          until
-        )} 
-        AND sr1.createdAt < sr2.createdAt
-    ) 
-    AND sr1.createdAt < ${new Date(until)}
-)
-OR (
-    NOT EXISTS(select 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr2.createdAt < ${new Date(
-      until
-    )})
-    AND NOT EXISTS(select 1 from scan_reports sr2 where sr1.fqdn = sr2.fqdn AND sr1.createdAt > sr2.createdAt)
-))
-`
+    WITH older AS (
+        SELECT DISTINCT ON (uri)
+        *
+        FROM scan_reports
+        WHERE "createdAt" <= to_timestamp(${until / 1000})
+        ORDER BY uri,"createdAt" DESC
+    )
+    ,
+    younger AS (
+        SELECT DISTINCT ON (uri)
+        *
+        FROM scan_reports
+        WHERE "createdAt" > to_timestamp(${until / 1000})
+        AND NOT EXISTS(SELECT 1 from older where older.uri = scan_reports.uri)
+        ORDER BY uri,"createdAt" ASC
+    ),
+    reports AS (
+    SELECT * FROM older /* older */
+    UNION
+    SELECT * FROM younger /* younger */
+    ) SELECT AVG("subResourceIntegrity"::int) as "subResourceIntegrity",
+        AVG("noMixedContent"::int) as "noMixedContent",
+        AVG("responsibleDisclosure"::int) as "responsibleDisclosure",
+        AVG("dnsSec"::int) as "dnsSec",
+        AVG("caa"::int) as "caa",
+        AVG("ipv6"::int) as "ipv6",
+        AVG("rpki"::int) as "rpki",
+        AVG("http"::int) as "http",
+        AVG("https"::int) as "https",
+        AVG("http308"::int) as "http308",
+        AVG("httpRedirectsToHttps"::int) as "httpRedirectsToHttps",
+        AVG("hsts"::int) as "hsts",
+        AVG("hstsPreloaded"::int) as "hstsPreloaded",
+        AVG("contentSecurityPolicy"::int) as "contentSecurityPolicy",
+        AVG("xFrameOptions"::int) as "xFrameOptions",
+        AVG("xssProtection"::int) as "xssProtection",
+        AVG("contentTypeOptions"::int) as "contentTypeOptions",
+        AVG("secureSessionCookies"::int) as "secureSessionCookies",
+        AVG("tlsv1_2"::int) as "tlsv1_2",
+        AVG("tlsv1_3"::int) as "tlsv1_3",
+        AVG("deprecatedTLSDeactivated"::int) as "deprecatedTLSDeactivated",
+        AVG("strongKeyExchange"::int) as "strongKeyExchange",
+        AVG("strongCipherSuites"::int) as "strongCipherSuites",
+        AVG("validCertificate"::int) as "validCertificate",
+        AVG("strongPrivateKey"::int) as "strongPrivateKey",
+        AVG("strongSignatureAlgorithm"::int) as "strongSignatureAlgorithm",
+        AVG("matchesHostname"::int) as "matchesHostname",
+        AVG("notRevoked"::int) as "notRevoked",
+        AVG("certificateTransparency"::int) as "certificateTransparency",
+        AVG("validCertificateChain"::int) as "validCertificateChain",
+        COUNT(*) as "totalCount" from reports inner join targets ON reports.uri = targets.uri inner join user_target_relations utr on targets.uri = utr.uri AND utr."userId" = ${
+          user.id
+        }`
   )) as any;
 
   res = toDTO(res);
@@ -306,4 +347,5 @@ export const statService = {
   getDashboardForUser,
   getReferenceChartData,
   generateStatsForUser,
+  generateStatsForGroups,
 };

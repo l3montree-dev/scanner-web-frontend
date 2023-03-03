@@ -1,15 +1,18 @@
 import { Prisma } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
-import { AuthOptions, unstable_getServerSession } from "next-auth";
+import {
+  AuthOptions,
+  getServerSession as nextAuthGetServerSession,
+} from "next-auth";
 import { Stream } from "stream";
 import { ISession } from "../types";
 
-export const getServerSession = (
+export const getServerSession = async (
   req: GetServerSidePropsContext["req"],
   res: GetServerSidePropsContext["res"],
   options: AuthOptions
 ): Promise<ISession | null> => {
-  return unstable_getServerSession(
+  return nextAuthGetServerSession(
     req,
     res,
     options

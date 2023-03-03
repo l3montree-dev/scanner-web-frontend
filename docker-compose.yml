@@ -35,14 +35,14 @@ services:
       - ./test-server/index.html:/html/index.html
     ports:
       - "443:443"
-  mysql:
-    image: mysql:8
+  postgresql:
+    image: docker.io/bitnami/postgresql:15
     ports:
-      - "3306:3306"
+      - "5432:5432"
     env_file:
       - .env
     volumes:
-      - mysql_data:/var/lib/mysql
+      - 'postgresql_data:/bitnami/postgresql'
 
   influxdb:
     image: influxdb:2.6
@@ -70,4 +70,4 @@ services:
  
 volumes:
   redis_data:
-  mysql_data:
+  postgresql_data:

@@ -1,27 +1,20 @@
-import {
-  faCheck,
-  faCheckCircle,
-  faQuestion,
-  faTimes,
-} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { FunctionComponent } from "react";
+import { FunctionComponent } from "react";
+import {
+  CheckResult,
+  checkResult2BorderClassName,
+  checkResult2Icon,
+} from "../utils/view";
 
 interface Props {
-  didPass?: boolean | null;
+  checkResult: CheckResult;
 }
-const ResultIcon: FunctionComponent<Props> = ({ didPass }) => {
+const ResultIcon: FunctionComponent<Props> = ({ checkResult }) => {
   return (
     <FontAwesomeIcon
-      className={
-        didPass
-          ? "text-lightning-500"
-          : didPass === false
-          ? "text-red-500"
-          : "text-gray-500"
-      }
+      className={`text-${checkResult2BorderClassName(checkResult)}`}
       fontSize={24}
-      icon={didPass ? faCheck : didPass === false ? faTimes : faQuestion}
+      icon={checkResult2Icon(checkResult)}
     />
   );
 };

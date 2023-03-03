@@ -1,11 +1,15 @@
-import React, { FunctionComponent, PropsWithChildren } from "react";
+import React, {
+  FunctionComponent,
+  MouseEventHandler,
+  PropsWithChildren,
+} from "react";
 import { classNames } from "../utils/common";
 import Spinner from "./Spinner";
 
 interface Props extends PropsWithChildren {
   loading: boolean;
   className?: string;
-  onClick?: () => void;
+  onClick?: MouseEventHandler<HTMLButtonElement>;
   type: "button" | "submit" | "reset";
   spinnerSize?: number;
   spinnerColor?: string;

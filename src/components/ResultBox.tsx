@@ -1,16 +1,15 @@
-import {
-  faCheck,
-  faQuestion,
-  faTimes,
-  faWarning,
-} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
-import { FunctionComponent, ReactNode } from "react";
+import { FunctionComponent } from "react";
 import { classNames } from "../utils/common";
+import {
+  CheckResult,
+  checkResult2Icon,
+  checkResult2TextClassName,
+} from "../utils/view";
 
 interface Props {
-  didPass: boolean | null;
+  checkResult: CheckResult;
   title: string;
   description: string;
   link?: string;
@@ -23,30 +22,16 @@ const ResultBox: FunctionComponent<Props> = (props) => {
         <FontAwesomeIcon
           className={classNames(
             "md:text-2xl text-3xl",
-            props.didPass === null
-              ? "text-white"
-              : props.didPass
-              ? "text-lightning-500"
-              : "text-yellow-500"
+            `text-${checkResult2TextClassName(props.checkResult)}`
           )}
-          icon={
-            props.didPass === null
-              ? faQuestion
-              : props.didPass
-              ? faCheck
-              : faWarning
-          }
+          icon={checkResult2Icon(props.checkResult)}
         />
         <div className={classNames("flex ml-4 md:ml-2 flex-col mt-0.5")}>
           <div>
             <h5
               className={classNames(
                 "md:text-lg md:leading-5 block text-2xl leading-6 scroll-mt-11 font-bold",
-                props.didPass === null
-                  ? "text-white"
-                  : props.didPass
-                  ? "text-lightning-500"
-                  : "text-yellow-500"
+                `text-${checkResult2TextClassName(props.checkResult)}`
               )}
             >
               {props.title}
@@ -58,15 +43,17 @@ const ResultBox: FunctionComponent<Props> = (props) => {
         </div>
       </div>
 
-      {props.link !== undefined && (
+      {Boolean(props.link) && (
         <div className="flex flex-row justify-end">
           <a
             target={"_blank"}
-            href={props.link}
-            className="text-sm w-full inline-block overflow-hidden truncate text-right whitespace-nowrap top-1 underline right-0 mt-2 px-5"
+            href={props.link as string}
+            className="text-sm w-full inline-block  text-right top-1 underline right-0 mt-2"
             rel="noreferrer"
           >
-            Was ist &quot;{props.title}&quot;?
+            {props.checkResult === CheckResult.Passed
+              ? `Was ist "${props.title}"?`
+              : `"${props.title}" jetzt umsetzen!`}
           </a>
         </div>
       )}

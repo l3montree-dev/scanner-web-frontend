@@ -3,6 +3,7 @@ import tailwindConfig from "../../tailwind.config";
 
 // Colors
 const fullConfig = resolveConfig(tailwindConfig);
+const tailwindColors = (fullConfig.theme as any).colors;
 const assign = Object.assign;
 
 const yellow200 = "#FFF59D";
@@ -43,7 +44,7 @@ const baseLabelStyles = {
   fontSize,
   letterSpacing,
   padding,
-  fill: (fullConfig.theme?.colors as any).deepblue["50"],
+  fill: tailwindColors.deepblue["50"],
   stroke: "transparent",
   strokeWidth: 0,
 };
@@ -73,7 +74,7 @@ export const theme = {
       style: {
         axis: {
           fill: "transparent",
-          stroke: (fullConfig.theme?.colors as any).deepblue["50"],
+          stroke: tailwindColors.deepblue["50"],
           strokeWidth: 2,
           strokeLinecap,
           strokeLinejoin,
@@ -93,13 +94,13 @@ export const theme = {
         ticks: {
           fill: "transparent",
           size: 5,
-          stroke: (fullConfig.theme?.colors as any).slate["300"],
+          stroke: tailwindColors.slate["300"],
           strokeWidth: 1,
           strokeLinecap,
           strokeLinejoin,
         },
         tickLabels: assign({}, baseLabelStyles, {
-          fill: (fullConfig.theme?.colors as any).slate["300"],
+          fill: tailwindColors.slate["300"],
         }),
       },
     },
@@ -214,7 +215,7 @@ export const theme = {
         data: {
           fill: "transparent",
           opacity: 1,
-          stroke: (fullConfig.theme?.colors as any).lightning["500"],
+          stroke: tailwindColors.lightning["500"],
           strokeWidth: 2,
         },
         labels: baseLabelStyles,

@@ -1,79 +1,21 @@
 import { randomUUID } from "crypto";
-import { Server as HttpServer } from "http";
 import PQueue from "p-queue";
-import { Server } from "socket.io";
 import { config } from "../config";
 import { prisma } from "../db/connection";
 
 import { once } from "../decorators/once";
 import { inspect } from "../inspection/inspect";
 import { isMaster } from "../leaderelection/leaderelection";
-import {
-  IIpLookupProgressUpdateMsg,
-  IIpLookupReportMsg,
-  IScanResponse,
-} from "../types";
-import {
-  isProgressMessage,
-  isScanError,
-  transformIpLookupMsg2DTO,
-} from "../utils/common";
-import { eachDay } from "../utils/time";
-import { domainService } from "./domainService";
+import { IScanResponse } from "../types";
+import { isScanError } from "../utils/common";
+import { targetService } from "./targetService";
 
 import { getLogger } from "./logger";
-import { rabbitMQClient, rabbitMQRPCClient } from "./rabbitmqClient";
+import { rabbitMQClient } from "./rabbitmqClient";
 import { reportService } from "./reportService";
 import { statService } from "./statService";
 
 const logger = getLogger(__filename);
-
-const startSocketIOServer = once((server: HttpServer) => {
-  // build the server
-  const io = new Server(server);
-  logger.info("socket.io server started");
-  io.on("connection", (socket) => {
-    socket.on("ip-lookup", (msg) => {
-      const { cidr, requestId } = msg;
-      if (!cidr || !requestId) {
-        socket.emit("ip-lookup", {
-          error: "CIDR and requestId is required",
-          requestId,
-          cidr,
-        });
-        return;
-      }
-      logger.info({ requestId, cidr }, `received request for ${cidr}`);
-      rabbitMQRPCClient.stream(
-        "ip-lookup",
-        {
-          cidr,
-          sendProgress: true,
-        },
-        {
-          messageId: requestId,
-        },
-        (cancelFn, msg: IIpLookupProgressUpdateMsg | IIpLookupReportMsg) => {
-          // order the result list by IP address
-          const results = transformIpLookupMsg2DTO(msg);
-          results.results.sort((a, b) => a.domain.localeCompare(b.domain));
-
-          logger.info(
-            { requestId, cidr },
-            `sending progress update for ${cidr}, queued: ${
-              "queued" in msg ? msg.queued : 0
-            }, ${"processed" in msg ? msg.processed : 0} processed"}`
-          );
-          socket.emit("ip-lookup", { ...results, requestId, cidr });
-          if (!isProgressMessage(msg)) {
-            // the last message was received - stop the stream
-            cancelFn();
-          }
-        }
-      );
-    });
-  });
-});
 
 const startLookupResponseLoop = once(() => {
   logger.info("connected to database - starting lookup response loop");
@@ -84,7 +26,7 @@ const startLookupResponseLoop = once(() => {
         fqdn: string;
       };
       try {
-        await domainService.handleNewDomain(content, prisma);
+        await targetService.handleNewTarget({ uri: content.fqdn }, prisma);
       } catch (e: any) {
         // always ack the message - catch the error.
         logger.error({ err: e.message });
@@ -99,17 +41,11 @@ const startScanResponseLoop = once(() => {
   rabbitMQClient.subscribe("scan-response", async (msg) => {
     const content = JSON.parse(msg.content.toString()).data as IScanResponse;
 
-    let address = content.ipAddress;
-    if (!address) {
-      logger.error({ target: content.target }, "no ip found");
-      // we cannot do anything...
-      return;
-    }
     if (isScanError(content)) {
       try {
-        await domainService.handleDomainScanError(content, prisma);
+        await targetService.handleTargetScanError(content, prisma);
       } finally {
-        logger.error({ target: content.target }, content.result.error);
+        logger.error({ target: content.target }, content.result.error.message);
         return;
       }
     }
@@ -126,62 +62,36 @@ const startScanResponseLoop = once(() => {
 const statLoop = once(() => {
   let running = false;
   const promiseQueue = new PQueue({
-    concurrency: 2,
+    concurrency: 10,
   });
   logger.info("starting stat loop");
   setInterval(async () => {
     if (isMaster() && !running) {
       running = true;
-      // check which stats need to be generated.
-      config.generateStatsForGroups.forEach((group) => {
-        eachDay(config.statFirstDay, new Date()).forEach((date) => {
-          // check if the stat does exist.
-          promiseQueue.add(async () => {
-            const exists = await prisma.stat.findFirst({
-              where: {
-                subject: group,
-                time: date,
-              },
-            });
-            if (!exists) {
-              // generate the stat.
-              const stat = await statService.getGroupFailedSuccessPercentage(
-                group,
-                prisma,
-                date
-              );
-
-              const start = Date.now();
-              await prisma.stat.create({
-                data: {
-                  subject: group,
-                  time: date,
-                  value: stat,
-                },
-              });
-              logger.info(
-                { duration: Date.now() - start },
-                `generated stat for ${group} on ${new Date(date)}`
-              );
-            }
-          });
-        });
-      });
 
       // generate the stats for each user.
       const users = await prisma.user.findMany();
       users.forEach((user) => {
-        promiseQueue.add(() => statService.generateStatsForUser(user, prisma));
+        statService.generateStatsForUser(user, promiseQueue, prisma);
+      });
+
+      // check which stats need to be generated.
+      config.generateStatsForGroups.forEach((group) => {
+        statService.generateStatsForGroups(group, promiseQueue, prisma);
       });
 
       await promiseQueue.onIdle();
+
       running = false;
+    } else {
+      logger.warn("stat loop is already running");
     }
   }, 10 * 1000);
 });
 
 const startScanLoop = once(() => {
   let running = false;
+
   const promiseQueue = new PQueue({
     concurrency: 5,
     timeout: 5 * 1000,
@@ -194,22 +104,22 @@ const startScanLoop = once(() => {
         return;
       }
       running = true;
-      const domains = await domainService.getDomains2Scan(prisma);
+      const targets = await targetService.getTargets2Scan(prisma);
 
-      if (domains.length === 0) {
+      if (targets.length === 0) {
         running = false;
-        logger.debug({ component: "SCAN_LOOP" }, "no domains to scan");
+        logger.debug({ component: "SCAN_LOOP" }, "no targets to scan");
         return;
       }
       const requestId = randomUUID();
       logger.debug(
         { requestId, component: "SCAN_LOOP" },
-        `found ${domains.length} domains to scan - sending scan request with id: ${requestId}`
+        `found ${targets.length} targets to scan - sending scan request with id: ${requestId}`
       );
       promiseQueue.addAll(
-        domains.map((domain) => {
+        targets.map((domain) => {
           return async () => {
-            inspect(requestId, domain.fqdn);
+            inspect(requestId, domain.uri);
           };
         })
       );
@@ -223,7 +133,6 @@ const startScanLoop = once(() => {
 });
 
 export const serverCtrl = {
-  startSocketIOServer,
   startLookupResponseLoop,
   startScanResponseLoop,
   startScanLoop,

@@ -1,15 +1,28 @@
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import Imprint from "./Imprint";
+import Privacy from "./Privacy";
 import Modal from "./Modal";
+import { useRouter } from "next/router";
 
 interface Props {
   hideLogin?: boolean;
 }
 const Footer: FunctionComponent<Props> = ({ hideLogin }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isPrivacyOpen, setPrivacyIsOpen] = useState(false);
   const session = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (router.query["action"] === "openImprintModal") {
+      setIsOpen(true);
+    }
+    if (router.query["action"] === "openPrivacyModal") {
+      setPrivacyIsOpen(true);
+    }
+  }, []);
 
   return (
     <>
@@ -46,14 +59,14 @@ const Footer: FunctionComponent<Props> = ({ hideLogin }) => {
               </button>
             </span>
             <span className="mr-4">
-              <a
-                href="https://www.bmi.bund.de/DE/service/datenschutz/datenschutz_node.html"
-                target="_blank"
-                className="p-2 block"
-                rel="noopener noreferrer"
+              <button
+                aria-label="Datenschutzerklärung öffnen"
+                onClick={() => setPrivacyIsOpen(true)}
+                className="cursor-pointer hover:underline p-2"
+                type="button"
               >
                 Datenschutz
-              </a>
+              </button>
             </span>
             <span>
               <a
@@ -105,6 +118,13 @@ const Footer: FunctionComponent<Props> = ({ hideLogin }) => {
       </footer>
       <Modal title="Impressum" onClose={() => setIsOpen(false)} isOpen={isOpen}>
         <Imprint />
+      </Modal>
+      <Modal
+        title="Datenschutzerklaerung"
+        onClose={() => setPrivacyIsOpen(false)}
+        isOpen={isPrivacyOpen}
+      >
+        <Privacy />
       </Modal>
     </>
   );
