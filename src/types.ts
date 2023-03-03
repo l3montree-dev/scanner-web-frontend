@@ -64,8 +64,6 @@ export interface ISession {
     email: string;
     image: string;
     id: string;
-    role: string;
-    defaultCollectionId: number;
   };
   resource_access: {
     [clientId: string]: {

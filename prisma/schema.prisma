@@ -89,7 +89,7 @@ model Target {
   // pretty much the reason why this domain is part of the system at all.
   group String
 
-  users UserTargetRelation[]
+
 
   scanReports ScanReport[]
 
@@ -103,22 +103,11 @@ model Target {
   @@map("targets")
 }
 
-model UserTargetRelation {
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String
-  target Target @relation(fields: [uri], references: [uri], onDelete: Cascade)
-  uri    String
-
-  createdAt DateTime @default(now())
-
-  @@id([userId, uri])
-  @@map("user_target_relations")
-}
 
 model User {
   id                  String               @id
   role                String?
-  targets             UserTargetRelation[]
+
   collections         Collection[]         @relation("user_collections")
   collectionCreations Collection[]
 
@@ -167,8 +156,8 @@ model Collection {
   targets TargetCollectionRelation[]
   user    User[]                     @relation("user_collections")
 
-  owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  ownerId String
+  owner   User?   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId String?
   color   String
 
   defaultOf User? @relation("default_collection")

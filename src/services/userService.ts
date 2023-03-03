@@ -24,11 +24,6 @@ const createUser = async (
         create: {
           title: "Default",
           color: "#000000",
-          owner: {
-            connect: {
-              id: user._id,
-            },
-          },
         },
       },
     },

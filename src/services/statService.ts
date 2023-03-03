@@ -12,9 +12,9 @@ const logger = getLogger(__filename);
 const getTotalsOfUser = async (user: User, prisma: PrismaClient) => {
   // count the domains this user has access to
   return {
-    uniqueTargets: await prisma.userTargetRelation.count({
+    uniqueTargets: await prisma.targetCollectionRelation.count({
       where: {
-        userId: user.id,
+        collectionId: user.defaultCollectionId,
       },
     }),
   };

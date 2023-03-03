@@ -33,7 +33,7 @@ describe("Target Service Test Suite", () => {
       target: {
         upsert: jest.fn(),
       },
-      userTargetRelation: {
+      targetCollectionRelation: {
         create: jest.fn(),
       },
     } as any;
@@ -42,11 +42,11 @@ describe("Target Service Test Suite", () => {
         uri: "example.com/test",
       },
       prismaMock,
-      { id: "1234" } as any
+      { id: "1234", defaultCollectionId: 4711 } as any
     );
-    expect(prismaMock.userTargetRelation.create).toHaveBeenCalledWith({
+    expect(prismaMock.targetCollectionRelation.create).toHaveBeenCalledWith({
       data: {
-        userId: "1234",
+        collectionId: 4711,
         uri: "example.com/test",
       },
     });
@@ -91,11 +91,11 @@ describe("Target Service Test Suite", () => {
     })),
     {
       sort: Math.random().toString().substring(2), // any other value should default to uri.
-      expected: "d.uri",
+      expected: "t.uri",
     },
     {
       sort: undefined,
-      expected: "d.uri",
+      expected: "t.uri",
     },
   ])(
     "should not be possible to inject arbitrary data to the sql statement when fetching the targets with their latest network results: %s",
@@ -121,14 +121,14 @@ describe("Target Service Test Suite", () => {
 
       const query = prismaMock.$queryRawUnsafe.mock.calls[0][0];
       const expectedQuery = `
-      SELECT d.*, lsd.details as details from user_target_relations udr
-      INNER JOIN targets d on udr.uri = d.uri 
-      LEFT JOIN scan_reports sr on d.uri = sr.uri
-      LEFT JOIN last_scan_details lsd on d.uri = lsd.uri
+      SELECT t.*, lsd.details as details from target_collections tc
+      INNER JOIN targets t on tc.uri = t.uri 
+      LEFT JOIN scan_reports sr on t.uri = sr.uri
+      LEFT JOIN last_scan_details lsd on t.uri = lsd.uri
       WHERE NOT EXISTS(
           SELECT 1 from scan_reports sr2 where sr.uri = sr2.uri AND sr."createdAt" < sr2."createdAt"
         )
-        AND udr."userId" = $1
+        AND tc."collectionId" = $1
         ORDER BY ${expected} ASC
         LIMIT $2
         OFFSET $3;

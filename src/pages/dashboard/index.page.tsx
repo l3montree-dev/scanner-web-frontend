@@ -17,7 +17,10 @@ import tailwindConfig from "../../../tailwind.config.js";
 import DashboardPage from "../../components/DashboardPage";
 import SideNavigation from "../../components/SideNavigation";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
-import { withCurrentUser } from "../../decorators/withCurrentUser";
+import {
+  withCurrentUser,
+  withCurrentUserServerSideProps,
+} from "../../decorators/withCurrentUser";
 import { withDB } from "../../decorators/withDB";
 import {
   CertificateInspectionType,
@@ -627,7 +630,7 @@ export const getServerSideProps = decorateServerSideProps(
       },
     };
   },
-  withCurrentUser,
+  withCurrentUserServerSideProps,
   withDB
 );
 

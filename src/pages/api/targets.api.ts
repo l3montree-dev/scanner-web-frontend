@@ -5,13 +5,14 @@ import { NextApiRequest, NextApiResponse } from "next";
 import PQueue from "p-queue";
 import { decorate, DecoratedHandler } from "../../decorators/decorate";
 import { withDB } from "../../decorators/withDB";
-import { withSession } from "../../decorators/withSession";
-import ForbiddenException from "../../errors/ForbiddenException";
 import MethodNotAllowed from "../../errors/MethodNotAllowed";
 import { inspectRPC } from "../../inspection/inspect";
 import { targetService } from "../../services/targetService";
 
+import { withCurrentUser } from "../../decorators/withCurrentUser";
+import BadRequestException from "../../errors/BadRequestException";
 import { getLogger } from "../../services/logger";
+import { reportService } from "../../services/reportService";
 import { statService } from "../../services/statService";
 import { ISession } from "../../types";
 import {
@@ -22,8 +23,6 @@ import {
   timeout,
 } from "../../utils/common";
 import { stream2buffer, toDTO } from "../../utils/server";
-import BadRequestException from "../../errors/BadRequestException";
-import { reportService } from "../../services/reportService";
 
 const logger = getLogger(__filename);
 
@@ -41,35 +40,36 @@ const deleteTargetRelation = async (
   if (uris.length === 0) {
     return;
   }
-  return prisma.userTargetRelation.deleteMany({
+
+  return prisma.targetCollectionRelation.deleteMany({
     where: {
       uri: {
         in: uris,
       },
-      userId: user.id,
+      collectionId: user.defaultCollectionId,
     },
   });
 };
 
 const handleDelete = async (
   req: NextApiRequest,
-  session: ISession,
+  currentUser: User,
   prisma: PrismaClient
 ) => {
   const requestId = req.headers["x-request-id"] as string;
   const { targets } = JSON.parse((await stream2buffer(req)).toString());
-  await deleteTargetRelation(targets, session.user, prisma);
+  await deleteTargetRelation(targets, currentUser, prisma);
   statService
     .generateStatsForUser(
-      session.user,
+      currentUser,
       new PQueue({ concurrency: 10 }),
       prisma,
       true
     )
     .then(() => {
       logger.info(
-        { userId: session.user.id, requestId },
-        `regenerated stats for user: ${session.user.id}`
+        { userId: currentUser.id, requestId },
+        `regenerated stats for user: ${currentUser.id}`
       );
     });
   return {
@@ -79,7 +79,7 @@ const handleDelete = async (
 
 const handlePost = async (
   req: NextApiRequest,
-  session: ISession,
+  currentUser: User,
   prisma: PrismaClient
 ) => {
   const requestId = req.headers["x-request-id"] as string;
@@ -99,13 +99,13 @@ const handlePost = async (
     const d = await targetService.handleNewTarget(
       { uri: sanitized, queued: true },
       prisma,
-      session.user
+      currentUser
     );
 
     const result = await inspectRPC(requestId, d.uri);
     if (isScanError(result)) {
       logger.error(
-        { requestId, userId: session.user.id },
+        { requestId, userId: currentUser.id },
         `target import - error while scanning domain: ${d.uri}`
       );
       await neverThrow(
@@ -120,14 +120,14 @@ const handlePost = async (
     // force the regeneration of all stats
     statService
       .generateStatsForUser(
-        session.user,
+        currentUser,
         new PQueue({ concurrency: 10 }),
         prisma,
         true
       )
       .then(() => {
         logger.info(
-          { requestId, userId: session.user.id },
+          { requestId, userId: currentUser.id },
           `target import - stats regenerated.`
         );
       });
@@ -169,7 +169,7 @@ const handlePost = async (
   const promiseQueue = new PQueue({ concurrency: 5, timeout: 5_000 });
 
   logger.info(
-    { requestId, userId: session.user.id },
+    { requestId, userId: currentUser.id },
     `starting import of ${entries.length} targets.`
   );
   let count = 0;
@@ -180,7 +180,7 @@ const handlePost = async (
       logger.info(
         {
           requestId,
-          userId: session.user.id,
+          userId: currentUser.id,
         },
         `Working on item #${count}.  Size: ${promiseQueue.size} Imported: ${imported}  Pending: ${promiseQueue.pending}`
       );
@@ -200,7 +200,7 @@ const handlePost = async (
               await targetService.handleNewTarget(
                 { uri: domain, queued: true },
                 prisma,
-                session.user
+                currentUser
               );
               await inspectRPC(requestId, domain);
               imported++;
@@ -214,20 +214,20 @@ const handlePost = async (
       logger.info(
         {
           requestId,
-          userId: session.user.id,
+          userId: currentUser.id,
         },
         `Finished importing domains from file. (${imported}/${entries.length})`
       );
       statService
         .generateStatsForUser(
-          session.user,
+          currentUser,
           new PQueue({ concurrency: 10 }),
           prisma,
           true
         )
         .then(() => {
           logger.info(
-            { requestId, userId: session.user.id },
+            { requestId, userId: currentUser.id },
             `domain import - stats regenerated.`
           );
         });
@@ -238,20 +238,19 @@ const handlePost = async (
 };
 
 // exporting just for testing purposes.
-export const handler: DecoratedHandler<
-  [PrismaClient, ISession | null]
-> = async (req: NextApiRequest, res: NextApiResponse, [prisma, session]) => {
-  if (!session) {
-    throw new ForbiddenException();
-  }
+export const handler: DecoratedHandler<[PrismaClient, User]> = async (
+  req: NextApiRequest,
+  res: NextApiResponse,
+  [prisma, currentUser]
+) => {
   switch (req.method) {
     case "DELETE":
-      return handleDelete(req, session, prisma);
+      return handleDelete(req, currentUser, prisma);
     case "POST":
-      return handlePost(req, session, prisma);
+      return handlePost(req, currentUser, prisma);
     default:
       throw new MethodNotAllowed();
   }
 };
 
-export default decorate(handler, withDB, withSession);
+export default decorate(handler, withDB, withCurrentUser);

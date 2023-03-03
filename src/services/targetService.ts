@@ -34,9 +34,9 @@ const handleNewTarget = async (
   });
 
   if (connectToUser) {
-    await prisma.userTargetRelation.create({
+    await prisma.targetCollectionRelation.create({
       data: {
-        userId: connectToUser.id,
+        collectionId: connectToUser.defaultCollectionId,
         uri: payload.uri,
       },
     });
@@ -81,16 +81,16 @@ const translateSortDirection = (
   return "ASC";
 };
 
-const translateSort = (sort?: string): `sr."${InspectionType}"` | "d.uri" => {
+const translateSort = (sort?: string): `sr."${InspectionType}"` | "t.uri" => {
   if (!sort) {
-    return "d.uri";
+    return "t.uri";
   }
 
   if (Object.values(InspectionTypeEnum).includes(sort as InspectionType)) {
     return `sr."${sort as InspectionType}"`;
   }
 
-  return "d.uri";
+  return "t.uri";
 };
 
 const getUserTargetsWithLatestTestResult = async (
@@ -102,8 +102,8 @@ const getUserTargetsWithLatestTestResult = async (
   },
   prisma: PrismaClient
 ): Promise<PaginateResult<DTO<DetailedTarget>>> => {
-  const sqlValues = [
-    user.id,
+  const sqlValues: Array<string | number> = [
+    user.defaultCollectionId,
     paginateRequest.pageSize,
     paginateRequest.page * paginateRequest.pageSize,
   ];
@@ -115,9 +115,9 @@ const getUserTargetsWithLatestTestResult = async (
   const [total, targets] = await Promise.all([
     prisma.target.count({
       where: {
-        users: {
+        collections: {
           some: {
-            userId: user.id,
+            collectionId: user.defaultCollectionId,
           },
         },
         ...(paginateRequest.search !== undefined &&
@@ -142,19 +142,19 @@ const getUserTargetsWithLatestTestResult = async (
     // subject to sql injection!!!
     prisma.$queryRawUnsafe(
       `
-      SELECT d.*, lsd.details as details from user_target_relations udr
-      INNER JOIN targets d on udr.uri = d.uri 
-      LEFT JOIN scan_reports sr on d.uri = sr.uri
-      LEFT JOIN last_scan_details lsd on d.uri = lsd.uri
+      SELECT t.*, lsd.details as details from target_collections tc
+      INNER JOIN targets t on tc.uri = t.uri 
+      LEFT JOIN scan_reports sr on t.uri = sr.uri
+      LEFT JOIN last_scan_details lsd on t.uri = lsd.uri
       WHERE NOT EXISTS(
           SELECT 1 from scan_reports sr2 where sr.uri = sr2.uri AND sr."createdAt" < sr2."createdAt"
         )
         ${
           paginateRequest.search !== undefined && paginateRequest.search !== ""
-            ? "AND d.uri LIKE CONCAT('%', $4, '%')"
+            ? "AND t.uri LIKE CONCAT('%', $4, '%')"
             : ""
         }
-        AND udr."userId" = $1
+        AND tc."collectionId" = $1
         ${
           paginateRequest.type === TargetType.unreachable
             ? 'AND "errorCount" >= 5'
@@ -212,7 +212,7 @@ const getTargets2Scan = async (prisma: PrismaClient) => {
               },
             },
             {
-              users: {
+              collections: {
                 some: {},
               },
             },

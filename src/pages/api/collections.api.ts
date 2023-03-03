@@ -1,6 +1,7 @@
 import { PrismaClient, User } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 import { decorate } from "../../decorators/decorate";
+import { withCurrentUser } from "../../decorators/withCurrentUser";
 import { withDB } from "../../decorators/withDB";
 import { withSession } from "../../decorators/withSession";
 import ForbiddenException from "../../errors/ForbiddenException";
@@ -39,18 +40,18 @@ const deleteCollection = async (
 const handleDelete = async (
   req: NextApiRequest,
   res: NextApiResponse,
-  session: ISession,
+  currentUser: User,
   prisma: PrismaClient
 ) => {
   const { collectionId } = req.body;
-  await deleteCollection(collectionId, session.user, prisma);
+  await deleteCollection(collectionId, currentUser, prisma);
   return res.send({ success: true });
 };
 
 const handlePost = async (
   req: NextApiRequest,
   res: NextApiResponse,
-  session: ISession,
+  currentUser: User,
   prisma: PrismaClient
 ) => {
   const collection: { title: string; color: string } = req.body;
@@ -61,7 +62,7 @@ const handlePost = async (
       color: collection.color,
       owner: {
         connect: {
-          id: session.user.id,
+          id: currentUser.id,
         },
       },
     },
@@ -85,5 +86,5 @@ export default decorate(
     }
   },
   withDB,
-  withSession
+  withCurrentUser
 );

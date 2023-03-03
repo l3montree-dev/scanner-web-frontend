@@ -12,7 +12,7 @@ import Pagination from "../../components/Pagination";
 import SideNavigation from "../../components/SideNavigation";
 import TargetOverviewForm from "../../components/TargetOverviewForm";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
-import { withCurrentUser } from "../../decorators/withCurrentUser";
+import { withCurrentUserServerSideProps } from "../../decorators/withCurrentUser";
 import { withDB } from "../../decorators/withDB";
 import useLoading from "../../hooks/useLoading";
 import {
@@ -543,7 +543,7 @@ export const getServerSideProps = decorateServerSideProps(
       },
     };
   },
-  withCurrentUser,
+  withCurrentUserServerSideProps,
   withDB
 );
 
