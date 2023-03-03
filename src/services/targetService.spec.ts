@@ -109,7 +109,7 @@ describe("Target Service Test Suite", () => {
       } as any;
 
       await targetService.getUserTargetsWithLatestTestResult(
-        { id: "abc", role: null },
+        { id: "abc", role: null, defaultCollectionId: 0 },
         {
           sort: sort,
           sortDirection: "1",

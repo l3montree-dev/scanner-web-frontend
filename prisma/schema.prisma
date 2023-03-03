@@ -95,7 +95,7 @@ model Target {
 
   lastScanDetails LastScanDetails?
 
-  tags Tag[] @relation("target_tags")
+  collections TargetCollectionRelation[]
 
   @@index([group])
   @@index([lastScan])
@@ -116,11 +116,16 @@ model UserTargetRelation {
 }
 
 model User {
-  id      String               @id
-  role    String?
-  targets UserTargetRelation[]
-  tags    Tag[]
+  id                  String               @id
+  role                String?
+  targets             UserTargetRelation[]
+  collections         Collection[]         @relation("user_collections")
+  collectionCreations Collection[]
 
+  defaultCollection   Collection @relation("default_collection", fields: [defaultCollectionId], references: [id], onDelete: Cascade)
+  defaultCollectionId Int
+
+  @@unique([defaultCollectionId])
   @@map("users")
 }
 
@@ -144,20 +149,34 @@ model Stat {
   @@map("stats")
 }
 
-model Tag {
-  id      Int      @id @default(autoincrement())
-  title   String
-  targets Target[] @relation("target_tags")
-  user    User     @relation(fields: [userId], references: [id])
-  userId  String
+model TargetCollectionRelation {
+  target       Target     @relation(fields: [uri], references: [uri], onDelete: Cascade)
+  uri          String
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  collectionId Int
 
-  color String
+  createdAt DateTime @default(now())
+
+  @@id([uri, collectionId])
+  @@map("target_collections")
+}
+
+model Collection {
+  id      Int                        @id @default(autoincrement())
+  title   String
+  targets TargetCollectionRelation[]
+  user    User[]                     @relation("user_collections")
+
+  owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId String
+  color   String
+
+  defaultOf User? @relation("default_collection")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
-  @@unique([title, userId])
-  @@map("tags")
+  @@map("collections")
 }
 
 model Email {

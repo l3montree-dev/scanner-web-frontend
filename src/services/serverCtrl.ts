@@ -75,11 +75,6 @@ const statLoop = once(() => {
         statService.generateStatsForUser(user, promiseQueue, prisma);
       });
 
-      // check which stats need to be generated.
-      config.generateStatsForGroups.forEach((group) => {
-        statService.generateStatsForGroups(group, promiseQueue, prisma);
-      });
-
       await promiseQueue.onIdle();
 
       running = false;

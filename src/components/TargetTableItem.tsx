@@ -154,6 +154,7 @@ const TargetTableItem: FunctionComponent<Props> = ({
       </td>
       <td className="text-right p-2">
         <Menu
+          menuCloseIndex={0}
           Button={
             <div className="p-2 h-8 w-8 flex flex-row items-center justify-center">
               <FontAwesomeIcon icon={faEllipsisVertical} />

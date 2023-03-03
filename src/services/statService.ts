@@ -20,6 +20,49 @@ const getTotalsOfUser = async (user: User, prisma: PrismaClient) => {
   };
 };
 
+const generateStatsForCollection = async (
+  collectionId: number,
+  promiseQueue: PQueue,
+  prisma: PrismaClient
+) => {
+  eachDay(config.statFirstDay, new Date()).forEach((date) => {
+    // check if the stat does exist.
+    promiseQueue.add(async () => {
+      let exists = false;
+      exists = Boolean(
+        await prisma.stat.findFirst({
+          where: {
+            subject: collectionId.toString(),
+            time: date,
+          },
+        })
+      );
+
+      if (!exists) {
+        // generate the stat.
+        const start = Date.now();
+        const stat = await getCollectionFailedSuccessPercentage(
+          collectionId,
+          prisma,
+          date
+        );
+        await prisma.stat.create({
+          data: {
+            subject: collectionId.toString(),
+            time: date,
+            value: stat,
+          },
+        });
+        logger.info(
+          { duration: Date.now() - start },
+          `generated stat for Collection: ${collectionId} on ${new Date(date)}`
+        );
+      }
+    });
+  });
+  return promiseQueue.onIdle();
+};
+
 const generateStatsForUser = async (
   user: User,
   promiseQueue: PQueue,
@@ -70,45 +113,6 @@ const generateStatsForUser = async (
   return promiseQueue.onIdle();
 };
 
-const generateStatsForGroups = async (
-  group: string,
-  promiseQueue: PQueue,
-  prisma: PrismaClient
-) => {
-  eachDay(config.statFirstDay, new Date()).forEach((date) => {
-    // check if the stat does exist.
-    promiseQueue.add(async () => {
-      const exists = await prisma.stat.findFirst({
-        where: {
-          subject: group,
-          time: date,
-        },
-      });
-      if (!exists) {
-        // generate the stat.
-        const start = Date.now();
-        const stat = await statService.getGroupFailedSuccessPercentage(
-          group,
-          prisma,
-          date
-        );
-
-        await prisma.stat.create({
-          data: {
-            subject: group,
-            time: date,
-            value: stat,
-          },
-        });
-        logger.info(
-          { duration: Date.now() - start },
-          `generated stat for ${group} on ${new Date(date)}`
-        );
-      }
-    });
-  });
-};
-
 const getTotals = async (
   prisma: PrismaClient
 ): Promise<{ uniqueTargets: number }> => {
@@ -117,8 +121,8 @@ const getTotals = async (
   };
 };
 
-const getGroupFailedSuccessPercentage = async (
-  group: string,
+const getCollectionFailedSuccessPercentage = async (
+  tagId: number,
   prisma: PrismaClient,
   until: number
 ) => {
@@ -175,7 +179,7 @@ const getGroupFailedSuccessPercentage = async (
         AVG("notRevoked"::int) as "notRevoked",
         AVG("certificateTransparency"::int) as "certificateTransparency",
         AVG("validCertificateChain"::int) as "validCertificateChain",
-        COUNT(*) as "totalCount" from reports inner join targets ON reports.uri = targets.uri where targets."group" = ${group}`
+        COUNT(*) as "totalCount" from reports inner join targets ON reports.uri = targets.uri inner join target_collections tcr ON targets.uri = tcr.uri where trc."collectionId" = ${tagId}`
   )) as any;
 
   res = toDTO(res);
@@ -343,9 +347,8 @@ export const getDashboardForUser = async (
 export const statService = {
   getTotals,
   getTotalsOfUser,
-  getGroupFailedSuccessPercentage,
   getDashboardForUser,
   getReferenceChartData,
   generateStatsForUser,
-  generateStatsForGroups,
+  generateStatsForCollection,
 };

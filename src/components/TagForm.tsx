@@ -1,7 +1,5 @@
-import { Tag } from "@prisma/client";
-import React, { FunctionComponent, useState } from "react";
+import { FunctionComponent, useState } from "react";
 import useLoading from "../hooks/useLoading";
-import { DTO } from "../utils/server";
 import Button from "./Button";
 import Menu from "./Menu";
 
@@ -29,11 +27,11 @@ const colors = [
   "#f43f5e",
 ];
 
-const TagForm: FunctionComponent<Props> = ({ onCreate }) => {
+const CollectionForm: FunctionComponent<Props> = ({ onCreate }) => {
   const createRequest = useLoading();
 
-  const [tagTitle, setTagTitle] = useState("");
-  const [tagColor, setTagColor] = useState(colors[0]);
+  const [title, setTitle] = useState("");
+  const [color, setColor] = useState(colors[0]);
 
   return (
     <form
@@ -41,7 +39,7 @@ const TagForm: FunctionComponent<Props> = ({ onCreate }) => {
         e.preventDefault();
         createRequest.loading();
         try {
-          await onCreate({ title: tagTitle, color: tagColor });
+          await onCreate({ title: title, color: color });
         } finally {
           createRequest.success();
         }
@@ -53,14 +51,14 @@ const TagForm: FunctionComponent<Props> = ({ onCreate }) => {
           Button={
             <div
               className="w-9 mr-1 h-9 rounded-sm"
-              style={{ backgroundColor: tagColor }}
+              style={{ backgroundColor: color }}
             />
           }
           Menu={
             <div className="flex mb-2 bg-deepblue-50 p-2 flex-wrap gap-1 justify-between items-center">
               {colors.map((color) => (
                 <div
-                  onClick={() => setTagColor(color)}
+                  onClick={() => setColor(color)}
                   key={color}
                   className="w-9 h-9 cursor-pointer hover:opacity-50 transition-all rounded-sm"
                   style={{ backgroundColor: color }}
@@ -70,8 +68,8 @@ const TagForm: FunctionComponent<Props> = ({ onCreate }) => {
           }
         />
         <input
-          value={tagTitle}
-          onChange={(e) => setTagTitle(e.target.value)}
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
           placeholder="Neues Tag erstellen"
           className="px-3 py-2 text-sm outline-lightning-500 text-deepblue-500 w-56"
         />
@@ -89,4 +87,4 @@ const TagForm: FunctionComponent<Props> = ({ onCreate }) => {
   );
 };
 
-export default TagForm;
+export default CollectionForm;

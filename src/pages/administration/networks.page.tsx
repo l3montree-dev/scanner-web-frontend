@@ -138,6 +138,7 @@ const Network: FunctionComponent<Props> = (props) => {
                   <td className="p-2">{network.comment}</td>
                   <td className="p-2 w-20 text-right">
                     <Menu
+                      menuCloseIndex={0}
                       Button={
                         <div className="p-2 h-8 w-8 flex flex-row items-center justify-center">
                           <FontAwesomeIcon icon={faEllipsisVertical} />
