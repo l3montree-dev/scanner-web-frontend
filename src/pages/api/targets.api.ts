@@ -3,7 +3,7 @@ import formidable from "formidable";
 import fs from "fs/promises";
 import { NextApiRequest, NextApiResponse } from "next";
 import PQueue from "p-queue";
-import { decorate } from "../../decorators/decorate";
+import { decorate, DecoratedHandler } from "../../decorators/decorate";
 import { withDB } from "../../decorators/withDB";
 import { withSession } from "../../decorators/withSession";
 import ForbiddenException from "../../errors/ForbiddenException";
@@ -33,7 +33,7 @@ export const config = {
   },
 };
 
-const deleteDomainRelation = async (
+const deleteTargetRelation = async (
   uris: string[],
   user: User,
   prisma: PrismaClient
@@ -58,13 +58,20 @@ const handleDelete = async (
 ) => {
   const requestId = req.headers["x-request-id"] as string;
   const { targets } = JSON.parse((await stream2buffer(req)).toString());
-  await deleteDomainRelation(targets, session.user, prisma);
-  statService.generateStatsForUser(session.user, prisma, true).then(() => {
-    logger.info(
-      { userId: session.user.id, requestId },
-      `regenerated stats for user: ${session.user.id}`
-    );
-  });
+  await deleteTargetRelation(targets, session.user, prisma);
+  statService
+    .generateStatsForUser(
+      session.user,
+      new PQueue({ concurrency: 10 }),
+      prisma,
+      true
+    )
+    .then(() => {
+      logger.info(
+        { userId: session.user.id, requestId },
+        `regenerated stats for user: ${session.user.id}`
+      );
+    });
   return {
     success: true,
   };
@@ -111,12 +118,19 @@ const handlePost = async (
     const res = await reportService.handleNewScanReport(result, prisma);
 
     // force the regeneration of all stats
-    statService.generateStatsForUser(session.user, prisma, true).then(() => {
-      logger.info(
-        { requestId, userId: session.user.id },
-        `target import - stats regenerated.`
-      );
-    });
+    statService
+      .generateStatsForUser(
+        session.user,
+        new PQueue({ concurrency: 10 }),
+        prisma,
+        true
+      )
+      .then(() => {
+        logger.info(
+          { requestId, userId: session.user.id },
+          `target import - stats regenerated.`
+        );
+      });
     return toDTO(res);
   }
 
@@ -204,32 +218,40 @@ const handlePost = async (
         },
         `Finished importing domains from file. (${imported}/${entries.length})`
       );
-      statService.generateStatsForUser(session.user, prisma, true).then(() => {
-        logger.info(
-          { requestId, userId: session.user.id },
-          `domain import - stats regenerated.`
-        );
-      });
+      statService
+        .generateStatsForUser(
+          session.user,
+          new PQueue({ concurrency: 10 }),
+          prisma,
+          true
+        )
+        .then(() => {
+          logger.info(
+            { requestId, userId: session.user.id },
+            `domain import - stats regenerated.`
+          );
+        });
     });
   return {
     success: true,
   };
 };
 
-export default decorate(
-  async (req: NextApiRequest, res: NextApiResponse, [prisma, session]) => {
-    if (!session) {
-      throw new ForbiddenException();
-    }
-    switch (req.method) {
-      case "DELETE":
-        return handleDelete(req, session, prisma);
-      case "POST":
-        return handlePost(req, session, prisma);
-      default:
-        throw new MethodNotAllowed();
-    }
-  },
-  withDB,
-  withSession
-);
+// exporting just for testing purposes.
+export const handler: DecoratedHandler<
+  [PrismaClient, ISession | null]
+> = async (req: NextApiRequest, res: NextApiResponse, [prisma, session]) => {
+  if (!session) {
+    throw new ForbiddenException();
+  }
+  switch (req.method) {
+    case "DELETE":
+      return handleDelete(req, session, prisma);
+    case "POST":
+      return handlePost(req, session, prisma);
+    default:
+      throw new MethodNotAllowed();
+  }
+};
+
+export default decorate(handler, withDB, withSession);

@@ -2,8 +2,9 @@ import { act, fireEvent, render, screen } from "@testing-library/react";
 import Home from "./index.page";
 import "@testing-library/jest-dom";
 import mockRouter from "next-router-mock";
-import { buildJSONResponse, mockFetch } from "../test-utils/fetchUtils";
+
 import * as Head from "next/head";
+import { mockFetch, buildJSONResponse } from "../test-utils/factories";
 
 jest.mock("next-auth/react", () => ({
   useSession: () => [null, false],

@@ -2,6 +2,11 @@ import "isomorphic-fetch";
 
 jest.mock("next/router", () => require("next-router-mock"));
 jest.mock("next-auth");
+jest.mock("./src/services/rabbitmqClient", () => ({
+  rabbitMQRPCClient: {
+    call: jest.fn(),
+  },
+}));
 
 Object.defineProperty(global.self, "crypto", {
   value: {

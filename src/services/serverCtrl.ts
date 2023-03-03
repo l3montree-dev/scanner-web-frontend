@@ -8,7 +8,6 @@ import { inspect } from "../inspection/inspect";
 import { isMaster } from "../leaderelection/leaderelection";
 import { IScanResponse } from "../types";
 import { isScanError } from "../utils/common";
-import { eachDay } from "../utils/time";
 import { targetService } from "./targetService";
 
 import { getLogger } from "./logger";
@@ -63,7 +62,7 @@ const startScanResponseLoop = once(() => {
 const statLoop = once(() => {
   let running = false;
   const promiseQueue = new PQueue({
-    concurrency: 2,
+    concurrency: 10,
   });
   logger.info("starting stat loop");
   setInterval(async () => {
@@ -73,43 +72,12 @@ const statLoop = once(() => {
       // generate the stats for each user.
       const users = await prisma.user.findMany();
       users.forEach((user) => {
-        promiseQueue.add(() => statService.generateStatsForUser(user, prisma));
+        statService.generateStatsForUser(user, promiseQueue, prisma);
       });
 
       // check which stats need to be generated.
       config.generateStatsForGroups.forEach((group) => {
-        eachDay(config.statFirstDay, new Date()).forEach((date) => {
-          // check if the stat does exist.
-          promiseQueue.add(async () => {
-            const exists = await prisma.stat.findFirst({
-              where: {
-                subject: group,
-                time: date,
-              },
-            });
-            if (!exists) {
-              // generate the stat.
-              const start = Date.now();
-              const stat = await statService.getGroupFailedSuccessPercentage(
-                group,
-                prisma,
-                date
-              );
-
-              await prisma.stat.create({
-                data: {
-                  subject: group,
-                  time: date,
-                  value: stat,
-                },
-              });
-              logger.info(
-                { duration: Date.now() - start },
-                `generated stat for ${group} on ${new Date(date)}`
-              );
-            }
-          });
-        });
+        statService.generateStatsForGroups(group, promiseQueue, prisma);
       });
 
       await promiseQueue.onIdle();

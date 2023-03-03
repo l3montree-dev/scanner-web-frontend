@@ -1,3 +1,9 @@
+export const buildResponseMock = () => {
+  return {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn(),
+  };
+};
 export const buildJSONResponse = (
   data: any,
   headers = {

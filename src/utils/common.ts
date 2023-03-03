@@ -29,6 +29,9 @@ import {
   isValidIp,
   isValidMask,
 } from "./validator";
+import { getLogger } from "../services/logger";
+
+const logger = getLogger("common");
 
 export const serverOnly = <T>(fn: () => T): T | null => {
   if (typeof window === "undefined") {
@@ -268,6 +271,7 @@ export const neverThrow = async <T>(promise: Promise<T>): Promise<T | null> => {
   try {
     return await promise;
   } catch (e) {
+    logger.warn(e);
     return null;
   }
 };

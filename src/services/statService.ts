@@ -22,10 +22,10 @@ const getTotalsOfUser = async (user: User, prisma: PrismaClient) => {
 
 const generateStatsForUser = async (
   user: User,
+  promiseQueue: PQueue,
   prisma: PrismaClient,
   force = false
 ) => {
-  const promiseQueue = new PQueue({ concurrency: 10 });
   eachDay(config.statFirstDay, new Date()).forEach((date) => {
     // check if the stat does exist.
     promiseQueue.add(async () => {
@@ -68,6 +68,45 @@ const generateStatsForUser = async (
     });
   });
   return promiseQueue.onIdle();
+};
+
+const generateStatsForGroups = async (
+  group: string,
+  promiseQueue: PQueue,
+  prisma: PrismaClient
+) => {
+  eachDay(config.statFirstDay, new Date()).forEach((date) => {
+    // check if the stat does exist.
+    promiseQueue.add(async () => {
+      const exists = await prisma.stat.findFirst({
+        where: {
+          subject: group,
+          time: date,
+        },
+      });
+      if (!exists) {
+        // generate the stat.
+        const start = Date.now();
+        const stat = await statService.getGroupFailedSuccessPercentage(
+          group,
+          prisma,
+          date
+        );
+
+        await prisma.stat.create({
+          data: {
+            subject: group,
+            time: date,
+            value: stat,
+          },
+        });
+        logger.info(
+          { duration: Date.now() - start },
+          `generated stat for ${group} on ${new Date(date)}`
+        );
+      }
+    });
+  });
 };
 
 const getTotals = async (
@@ -308,4 +347,5 @@ export const statService = {
   getDashboardForUser,
   getReferenceChartData,
   generateStatsForUser,
+  generateStatsForGroups,
 };
