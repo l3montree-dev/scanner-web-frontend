@@ -123,7 +123,7 @@ const getUserTargetsWithLatestTestResult = async (
         ...(paginateRequest.search !== undefined &&
           paginateRequest.search !== "" && {
             uri: {
-              contains: sqlValues[0] as string,
+              contains: sqlValues[3] as string,
             },
           }),
         ...(paginateRequest.type !== undefined &&
