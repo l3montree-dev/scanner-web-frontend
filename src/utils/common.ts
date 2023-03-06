@@ -24,14 +24,7 @@ import {
   TLSInspectionType,
 } from "../inspection/scans";
 import { DTO } from "./server";
-import {
-  isValidHostname as isValidHostname,
-  isValidIp,
-  isValidMask,
-} from "./validator";
-import { getLogger } from "../services/logger";
-
-const logger = getLogger("common");
+import { isValidHostname, isValidIp, isValidMask } from "./validator";
 
 export const serverOnly = <T>(fn: () => T): T | null => {
   if (typeof window === "undefined") {
@@ -271,7 +264,7 @@ export const neverThrow = async <T>(promise: Promise<T>): Promise<T | null> => {
   try {
     return await promise;
   } catch (e) {
-    logger.warn(e);
+    console.warn(e);
     return null;
   }
 };
