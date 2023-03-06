@@ -13,8 +13,6 @@ import { withCurrentUser } from "../../decorators/withCurrentUser";
 import BadRequestException from "../../errors/BadRequestException";
 import { getLogger } from "../../services/logger";
 import { reportService } from "../../services/reportService";
-import { statService } from "../../services/statService";
-import { ISession } from "../../types";
 import {
   isScanError,
   neverThrow,
@@ -40,13 +38,21 @@ const deleteTargetRelation = async (
   if (uris.length === 0) {
     return;
   }
-
+  // delete it from all collection where this user is owner of or its his default collection.
   return prisma.targetCollectionRelation.deleteMany({
     where: {
       uri: {
         in: uris,
       },
-      collectionId: user.defaultCollectionId,
+      collection: {
+        ownerId: user.id,
+      },
+      OR: {
+        uri: {
+          in: uris,
+        },
+        collectionId: user.defaultCollectionId,
+      },
     },
   });
 };
@@ -56,22 +62,8 @@ const handleDelete = async (
   currentUser: User,
   prisma: PrismaClient
 ) => {
-  const requestId = req.headers["x-request-id"] as string;
   const { targets } = JSON.parse((await stream2buffer(req)).toString());
   await deleteTargetRelation(targets, currentUser, prisma);
-  statService
-    .generateStatsForUser(
-      currentUser,
-      new PQueue({ concurrency: 10 }),
-      prisma,
-      true
-    )
-    .then(() => {
-      logger.info(
-        { userId: currentUser.id, requestId },
-        `regenerated stats for user: ${currentUser.id}`
-      );
-    });
   return {
     success: true,
   };
@@ -117,20 +109,6 @@ const handlePost = async (
 
     const res = await reportService.handleNewScanReport(result, prisma);
 
-    // force the regeneration of all stats
-    statService
-      .generateStatsForUser(
-        currentUser,
-        new PQueue({ concurrency: 10 }),
-        prisma,
-        true
-      )
-      .then(() => {
-        logger.info(
-          { requestId, userId: currentUser.id },
-          `target import - stats regenerated.`
-        );
-      });
     return toDTO(res);
   }
 
@@ -187,51 +165,29 @@ const handlePost = async (
     }
   });
 
-  promiseQueue
-    .addAll(
-      entries
-        .map((domain) => sanitizeFQDN(domain))
-        .filter(
-          (domain): domain is string => domain !== null && domain.length > 0
-        )
-        .map((domain) => {
-          return async () => {
-            try {
-              await targetService.handleNewTarget(
-                { uri: domain, queued: true },
-                prisma,
-                currentUser
-              );
-              await inspectRPC(requestId, domain);
-              imported++;
-            } catch (err: any) {
-              return;
-            }
-          };
-        })
-    )
-    .then(() => {
-      logger.info(
-        {
-          requestId,
-          userId: currentUser.id,
-        },
-        `Finished importing domains from file. (${imported}/${entries.length})`
-      );
-      statService
-        .generateStatsForUser(
-          currentUser,
-          new PQueue({ concurrency: 10 }),
-          prisma,
-          true
-        )
-        .then(() => {
-          logger.info(
-            { requestId, userId: currentUser.id },
-            `domain import - stats regenerated.`
-          );
-        });
-    });
+  promiseQueue.addAll(
+    entries
+      .map((domain) => sanitizeFQDN(domain))
+      .filter(
+        (domain): domain is string => domain !== null && domain.length > 0
+      )
+      .map((domain) => {
+        return async () => {
+          try {
+            await targetService.handleNewTarget(
+              { uri: domain, queued: true },
+              prisma,
+              currentUser
+            );
+            await inspectRPC(requestId, domain);
+            imported++;
+          } catch (err: any) {
+            return;
+          }
+        };
+      })
+  );
+
   return {
     success: true,
   };

@@ -1,9 +1,4 @@
-import React, {
-  FunctionComponent,
-  MouseEventHandler,
-  useEffect,
-  useState,
-} from "react";
+import React, { FunctionComponent, MouseEventHandler, useState } from "react";
 import { classNames } from "../utils/common";
 
 interface Props {
@@ -11,6 +6,7 @@ interface Props {
   Menu: React.ReactNode;
   // clicking on a menu will always close all menus, which have a greater index than the clicked menu
   menuCloseIndex: number;
+  buttonClassNames?: string;
 }
 
 const selfDestroyingListener = (
@@ -27,7 +23,12 @@ const selfDestroyingListener = (
   element.addEventListener(eventType, handler);
 };
 
-const Menu: FunctionComponent<Props> = ({ Button, Menu, menuCloseIndex }) => {
+const Menu: FunctionComponent<Props> = ({
+  Button,
+  Menu,
+  menuCloseIndex,
+  buttonClassNames,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleMenuClick: MouseEventHandler = (e) => {
@@ -70,14 +71,15 @@ const Menu: FunctionComponent<Props> = ({ Button, Menu, menuCloseIndex }) => {
     }
   };
 
-  useEffect(() => {}, []);
   return (
     <div className="relative">
-      <button onClick={openMenu}>{Button}</button>
+      <button className={buttonClassNames} onClick={openMenu}>
+        {Button}
+      </button>
       <div
         onClick={handleMenuClick}
         className={classNames(
-          "absolute menu left-0 origin-top-right -translate-x-3/4 transition-all z-20 menu-list",
+          "absolute menu left-0 origin-top-right translate-y-1 -translate-x-3/4 transition-all z-20 menu-list",
           isOpen
             ? "opacity-1 scale-100"
             : "opacity-0 scale-75 pointer-events-none"

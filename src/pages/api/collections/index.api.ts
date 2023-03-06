@@ -1,16 +1,12 @@
 import { PrismaClient, User } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
-import { decorate } from "../../decorators/decorate";
-import { withCurrentUser } from "../../decorators/withCurrentUser";
-import { withDB } from "../../decorators/withDB";
-import { withSession } from "../../decorators/withSession";
-import ForbiddenException from "../../errors/ForbiddenException";
-import MethodNotAllowed from "../../errors/MethodNotAllowed";
+import { decorate } from "../../../decorators/decorate";
+import { withCurrentUser } from "../../../decorators/withCurrentUser";
+import { withDB } from "../../../decorators/withDB";
+import ForbiddenException from "../../../errors/ForbiddenException";
+import MethodNotAllowed from "../../../errors/MethodNotAllowed";
 
-import { getLogger } from "../../services/logger";
-import { statService } from "../../services/statService";
-import { ISession } from "../../types";
-import { stream2buffer } from "../../utils/server";
+import { getLogger } from "../../../services/logger";
 
 const logger = getLogger(__filename);
 

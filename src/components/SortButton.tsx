@@ -5,8 +5,8 @@ import { IScanSuccessResponse } from "../types";
 import { classNames } from "../utils/common";
 
 export const SortButton: FunctionComponent<{
-  sortKey: "fqdn" | keyof IScanSuccessResponse["result"];
-  onSort: (key: "fqdn" | keyof IScanSuccessResponse["result"]) => void;
+  sortKey: "uri" | keyof IScanSuccessResponse["result"];
+  onSort: (key: "uri" | keyof IScanSuccessResponse["result"]) => void;
   active: boolean;
   getIcon: () => IconProp;
 }> = ({ sortKey: key, onSort, active, getIcon }) => {

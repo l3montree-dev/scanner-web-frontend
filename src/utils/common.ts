@@ -31,8 +31,6 @@ import {
 } from "./validator";
 import { getLogger } from "../services/logger";
 
-const logger = getLogger("common");
-
 export const serverOnly = <T>(fn: () => T): T | null => {
   if (typeof window === "undefined") {
     return fn();
@@ -267,11 +265,23 @@ export const linkMapper: { [key in InspectionType]: string } = {
   [HeaderInspectionType.ContentTypeOptions]: "",
 };
 
+export const normalizeToMap = <T extends object, Key extends keyof T>(
+  arr: T[],
+  identifier: Key
+) => {
+  return arr.reduce((acc, cur) => {
+    return {
+      ...acc,
+      [cur[identifier] as string]: cur,
+    };
+  }, {} as { [key: string]: T });
+};
+
 export const neverThrow = async <T>(promise: Promise<T>): Promise<T | null> => {
   try {
     return await promise;
   } catch (e) {
-    logger.warn(e);
+    console.warn(e);
     return null;
   }
 };

@@ -69,12 +69,6 @@ const statLoop = once(() => {
     if (isMaster() && !running) {
       running = true;
 
-      // generate the stats for each user.
-      const users = await prisma.user.findMany();
-      users.forEach((user) => {
-        statService.generateStatsForUser(user, promiseQueue, prisma);
-      });
-
       await promiseQueue.onIdle();
 
       running = false;
