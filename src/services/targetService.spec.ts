@@ -121,14 +121,13 @@ describe("Target Service Test Suite", () => {
 
       const query = prismaMock.$queryRawUnsafe.mock.calls[0][0];
       const expectedQuery = `
-      SELECT t.*, lsd.details as details from target_collections tc
-      INNER JOIN targets t on tc.uri = t.uri 
+      SELECT count(*) OVER() AS "totalCount", t.*, lsd.details as details from targets t
       LEFT JOIN scan_reports sr on t.uri = sr.uri
       LEFT JOIN last_scan_details lsd on t.uri = lsd.uri
       WHERE NOT EXISTS(
           SELECT 1 from scan_reports sr2 where sr.uri = sr2.uri AND sr."createdAt" < sr2."createdAt"
         )
-        AND tc."collectionId" = $1
+        AND EXISTS( SELECT 1 from target_collections tc where tc.uri = t.uri AND tc."collectionId" = $1 )
         ORDER BY ${expected} ASC
         LIMIT $2
         OFFSET $3;
@@ -139,14 +138,14 @@ describe("Target Service Test Suite", () => {
           .filter((s: string) => s.length > 0)
           .map((s: string) => s.trim())
           .join(" ")
-          .replaceAll("  ", " ")
+          .replace(/\s+/g, " ")
       ).toEqual(
         expectedQuery
           .split("\n")
           .filter((s: string) => s.length > 0)
           .map((s) => s.trim())
           .join(" ")
-          .replaceAll("  ", " ")
+          .replace(/\s+/g, " ")
       );
     }
   );
