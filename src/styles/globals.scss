@@ -115,3 +115,31 @@ th > div {
         min-width: 100vw;
     }
 }
+
+
+article  {
+    @apply text-sm;
+    h1 {
+        @apply font-medium font-serif text-2xl sm:text-3xl mb-4
+    }
+    h2 {
+        @apply font-medium font-serif text-xl sm:text-2xl mb-5 mt-10
+    }
+    p {
+        @apply mb-5 text-white/90
+    }
+    ul {
+        @apply mb-5 pl-5;
+        li {
+            @apply mb-2;
+            list-style-type: square;
+        }
+    }
+    a {
+        @apply text-lightning-500 underline;
+    }
+    b {
+        @apply font-medium;
+    }
+
+}
