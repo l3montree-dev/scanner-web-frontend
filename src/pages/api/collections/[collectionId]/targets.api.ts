@@ -5,6 +5,7 @@ import { withCurrentUser } from "../../../../decorators/withCurrentUser";
 import { withDB } from "../../../../decorators/withDB";
 import ForbiddenException from "../../../../errors/ForbiddenException";
 import MethodNotAllowed from "../../../../errors/MethodNotAllowed";
+import { toDTO } from "../../../../utils/server";
 
 const handlePost = async (
   collection: Collection,
@@ -73,9 +74,11 @@ export default decorate(
     // the user is allowed to add a target to this collection.
     switch (req.method) {
       case "POST":
-        return handlePost(collection, targets, currentUser, prisma);
+        return toDTO(
+          await handlePost(collection, targets, currentUser, prisma)
+        );
       case "DELETE":
-        return handleDelete(collection, targets, prisma);
+        return toDTO(await handleDelete(collection, targets, prisma));
       default:
         throw new MethodNotAllowed();
     }

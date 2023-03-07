@@ -45,9 +45,10 @@ import { classNames, normalizeToMap } from "../../utils/common";
 import { DTO, ServerSideProps, toDTO } from "../../utils/server";
 import { optimisticUpdate } from "../../utils/view";
 import CollectionPill from "../../components/CollectionPill";
+import CollectionMenu from "../../components/CollectionMenu";
 
 interface Props {
-  targets: PaginateResult<DTO<DetailedTarget> & { collections: number[] }>; // should include array of collection ids the target is in
+  targets: PaginateResult<DTO<DetailedTarget> & { collections?: number[] }>; // should include array of collection ids the target is in
   // normalized collections map for fast access
   collections: { [collectionId: string]: DTO<Collection> };
   keycloakIssuer: string;
@@ -66,7 +67,7 @@ const translateDomainType = (type: TargetType) => {
 
 const Targets: FunctionComponent<Props> = (props) => {
   const [targets, setTargets] = useState<
-    Array<DTO<DetailedTarget> & { collections: number[] }>
+    Array<DTO<DetailedTarget> & { collections?: number[] }>
   >(props.targets.data);
 
   const [selection, setSelection] = useState<{ [uri: string]: boolean }>({});
@@ -228,21 +229,21 @@ const Targets: FunctionComponent<Props> = (props) => {
   };
 
   const handleAddToCollection = async (
-    target: DTO<Target>,
+    target: DTO<{ uri: string }[]>,
     collectionId: number
   ) => {
+    const uris = target.map((d) => d.uri);
     // do an optimistic update.
     const revert = optimisticUpdate(targets, setTargets, (prev) => {
-      const index = prev.findIndex((d) => d.uri === target.uri);
-      if (index === -1) {
-        return prev;
-      }
-      const newDomains = [...prev];
-      newDomains[index] = {
-        ...newDomains[index],
-        collections: newDomains[index].collections.concat(collectionId),
-      };
-      return newDomains;
+      return prev.map((d) => {
+        if (uris.includes(d.uri)) {
+          return {
+            ...d,
+            collections: (d.collections ?? []).concat(collectionId),
+          };
+        }
+        return d;
+      });
     });
 
     const res = await clientHttpClient(
@@ -253,7 +254,7 @@ const Targets: FunctionComponent<Props> = (props) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify([target]),
+        body: JSON.stringify(target),
       }
     );
 
@@ -265,24 +266,25 @@ const Targets: FunctionComponent<Props> = (props) => {
   };
 
   const handleRemoveFromCollection = async (
-    target: DTO<Target>,
+    target: DTO<Target[]>,
     collectionId: number
   ) => {
+    const uris = target.map((d) => d.uri);
     // do an optimistic update
     const revert = optimisticUpdate(targets, setTargets, (prev) => {
-      const index = prev.findIndex((d) => d.uri === target.uri);
-      if (index === -1) {
-        return prev;
-      }
-      const newDomains = [...prev];
-      newDomains[index] = {
-        ...newDomains[index],
-        collections: newDomains[index].collections.filter(
-          (c) => c !== collectionId
-        ),
-      };
-      return newDomains;
+      return prev.map((d) => {
+        if (uris.includes(d.uri)) {
+          return {
+            ...d,
+            collections: (d.collections ?? []).filter(
+              (c) => c !== collectionId
+            ),
+          };
+        }
+        return d;
+      });
     });
+
     const res = await clientHttpClient(
       `/api/collections/${collectionId}/targets`,
       crypto.randomUUID(),
@@ -291,7 +293,7 @@ const Targets: FunctionComponent<Props> = (props) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify([target]),
+        body: JSON.stringify(target),
       }
     );
 
@@ -411,6 +413,21 @@ const Targets: FunctionComponent<Props> = (props) => {
                       <MenuItem onClick={deleteSelection}>
                         <div>Löschen</div>
                       </MenuItem>
+                      <CollectionMenu
+                        collections={props.collections}
+                        selectedCollections={collectionIds}
+                        onCollectionClick={(c) =>
+                          handleAddToCollection(
+                            selectedTargets.map((s) => ({ uri: s })),
+                            c.id
+                          )
+                        }
+                        Button={
+                          <div className="p-2 px-4 text-left">
+                            Zu Sammlung hinzufügen
+                          </div>
+                        }
+                      />
                     </MenuList>
                   }
                 />
@@ -441,43 +458,18 @@ const Targets: FunctionComponent<Props> = (props) => {
                   </MenuList>
                 }
               />
-              <Menu
-                menuCloseIndex={0}
+              <CollectionMenu
+                collections={props.collections}
+                selectedCollections={collectionIds}
+                onCollectionClick={(c) => handleCollectionFilterToggle(c.id)}
                 Button={
                   <div className="p-2 bg-deepblue-100 border border-deepblue-100 my-2 flex flex-row items-center justify-center">
                     Filter nach Sammlungen
                     <FontAwesomeIcon className="ml-2" icon={faCaretDown} />
                   </div>
                 }
-                Menu={
-                  <MenuList>
-                    {Object.values(props.collections ?? {}).map(
-                      (collection) => (
-                        <button
-                          className={classNames(
-                            "flex w-full transition-all  items-center px-2 py-2",
-                            collectionIds.includes(+collection.id)
-                              ? "bg-deepblue-100"
-                              : "bg-deepblue-300"
-                          )}
-                          key={collection.id}
-                          onClick={() =>
-                            handleCollectionFilterToggle(collection.id)
-                          }
-                        >
-                          <div
-                            className="w-4 h-4 rounded-full inline-block mr-2"
-                            style={{
-                              backgroundColor: collection.color,
-                            }}
-                          />
-                          {collection.title}
-                        </button>
-                      )
-                    )}
-                  </MenuList>
-                }
               />
+
               <div className="flex flex-wrap flex-row gap-2 px-5 items-center pl-4 justify-start">
                 {collectionIds.map((c) => {
                   const col = props.collections[c.toString()];
@@ -619,13 +611,16 @@ const Targets: FunctionComponent<Props> = (props) => {
                     <TargetTableItem
                       collections={props.collections}
                       onToggleCollection={(collection) => {
-                        if (target.collections.includes(+collection.id)) {
+                        if (
+                          target.collections &&
+                          target.collections.includes(+collection.id)
+                        ) {
                           return handleRemoveFromCollection(
-                            target,
+                            [target],
                             collection.id
                           );
                         }
-                        return handleAddToCollection(target, collection.id);
+                        return handleAddToCollection([target], collection.id);
                       }}
                       destroy={(uri) => deleteTarget(uri)}
                       scanRequest={scanRequest}

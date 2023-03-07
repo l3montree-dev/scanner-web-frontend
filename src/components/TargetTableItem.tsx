@@ -19,6 +19,7 @@ import { classNames, toGermanDate } from "../utils/common";
 import { DTO } from "../utils/server";
 import { didPass2CheckResult } from "../utils/view";
 import Checkbox from "./Checkbox";
+import CollectionMenu from "./CollectionMenu";
 import CollectionPill from "./CollectionPill";
 import Menu from "./Menu";
 import MenuItem from "./MenuItem";
@@ -28,7 +29,7 @@ import Tooltip from "./Tooltip";
 
 interface Props {
   onSelect: (target: DTO<DetailedTarget>) => void;
-  target: DTO<DetailedTarget> & { collections: number[] };
+  target: DTO<DetailedTarget> & { collections?: number[] };
   classNames?: string;
   selected: boolean;
   scanRequest: ReturnType<typeof useLoading>;
@@ -72,7 +73,9 @@ const TargetTableItem: FunctionComponent<Props> = ({
             ? "line-through"
             : "",
           clNames,
-          target.collections.length > 0 && "border-none" // the second row will be displayed, which does include the border
+          target.collections !== undefined &&
+            target.collections.length > 0 &&
+            "border-none" // the second row will be displayed, which does include the border
         )}
       >
         <td className="p-2 pr-0">
@@ -190,44 +193,23 @@ const TargetTableItem: FunctionComponent<Props> = ({
                   </div>
                 </MenuItem>
 
-                <Menu
-                  menuCloseIndex={0}
-                  buttonClassNames="w-full"
+                <CollectionMenu
+                  collections={collections}
                   Button={
                     <div
                       className={classNames(
-                        "p-2 flex-row flex items-center px-4 hover:bg-deepblue-50 cursor-pointer w-full text-left",
-                        selected && "bg-deepblue-50"
+                        "p-2 flex-row flex items-center px-4 hover:bg-deepblue-50 cursor-pointer w-full text-left"
                       )}
                     >
                       Zu Sammlung hinzufügen
                     </div>
                   }
-                  Menu={
-                    <MenuList>
-                      {Object.values(collections ?? {}).map((collection) => (
-                        <button
-                          className={classNames(
-                            "flex w-full transition-all  items-center px-2 py-2",
-                            target.collections.includes(+collection.id)
-                              ? "bg-deepblue-100 hover:bg-deepblue-200"
-                              : "bg-deepblue-300 hover:bg-deepblue-200"
-                          )}
-                          key={collection.id}
-                          onClick={() => onToggleCollection(collection)}
-                        >
-                          <div
-                            className="w-4 h-4 rounded-full inline-block mr-2"
-                            style={{
-                              backgroundColor: collection.color,
-                            }}
-                          />
-                          {collection.title}
-                        </button>
-                      ))}
-                    </MenuList>
+                  selectedCollections={target.collections ?? []}
+                  onCollectionClick={(collection) =>
+                    onToggleCollection(collection)
                   }
                 />
+
                 <MenuItem onClick={() => destroy(target.uri)}>
                   <div>Löschen</div>
                 </MenuItem>
@@ -236,7 +218,7 @@ const TargetTableItem: FunctionComponent<Props> = ({
           />
         </td>
       </tr>
-      {target.collections.length > 0 && (
+      {target.collections !== undefined && target.collections.length > 0 && (
         <tr
           onClick={() => onSelect(target)}
           className={classNames(clNames, "cursor-pointer")}
