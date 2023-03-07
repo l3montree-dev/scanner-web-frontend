@@ -24,12 +24,7 @@ import {
   TLSInspectionType,
 } from "../inspection/scans";
 import { DTO } from "./server";
-import {
-  isValidHostname as isValidHostname,
-  isValidIp,
-  isValidMask,
-} from "./validator";
-import { getLogger } from "../services/logger";
+import { isValidHostname, isValidIp, isValidMask } from "./validator";
 
 export const serverOnly = <T>(fn: () => T): T | null => {
   if (typeof window === "undefined") {
