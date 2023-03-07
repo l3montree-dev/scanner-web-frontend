@@ -36,7 +36,7 @@ const Modal: FunctionComponent<Props> = (props) => {
     ? createPortal(
         <div
           className={classNames(
-            "fixed top-0 bottom-0 left-0 transition-all right-0",
+            "fixed z-50 top-0 bottom-0 left-0 transition-all right-0",
             !props.isOpen && "opacity-0 pointer-events-none"
           )}
         >

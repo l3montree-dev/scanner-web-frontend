@@ -1,4 +1,12 @@
-import { PrismaClient, User } from "@prisma/client";
+import { Collection, PrismaClient, User } from "@prisma/client";
+
+const isUserAllowedToModifyCollection = async (
+  collection: Collection,
+  user: User
+) => {
+  // check if the user is the owner of the collection
+  return collection.ownerId !== user.id;
+};
 
 const getAllCollectionsOfUser = async (user: User, prisma: PrismaClient) => {
   const collections = await prisma.collection.findMany({
@@ -13,9 +21,6 @@ const getAllCollectionsOfUser = async (user: User, prisma: PrismaClient) => {
               id: user.id,
             },
           },
-        },
-        {
-          id: user.defaultCollectionId,
         },
       ],
     },
@@ -61,4 +66,5 @@ const getCollectionsOfTargets = async (
 export const collectionService = {
   getAllCollectionsOfUser,
   getCollectionsOfTargets,
+  isUserAllowedToModifyCollection,
 };

@@ -1,5 +1,6 @@
 import { FunctionComponent, useEffect, useState } from "react";
 import useLoading from "../hooks/useLoading";
+import { colors } from "../utils/common";
 import Button from "./Button";
 import FormInput from "./FormInput";
 import Menu from "./Menu";
@@ -7,24 +8,6 @@ import Menu from "./Menu";
 interface Props {
   onCreate: (tag: { title: string; color: string }) => Promise<void>;
 }
-
-const colors = [
-  "#ef4444",
-  "#f97316",
-  "#f59e0b",
-  "#eab308",
-  "#84cc16",
-  "#22c55e",
-  "#10b981",
-  "#14b8a6",
-  "#06b6d4",
-  "#0ea5e9",
-  "#3b82f6",
-  "#6366f1",
-  "#8b5cf6",
-  "#a855f7",
-  "#d946ef",
-];
 
 const CollectionForm: FunctionComponent<Props> = ({ onCreate }) => {
   const createRequest = useLoading();

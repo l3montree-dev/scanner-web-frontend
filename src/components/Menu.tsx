@@ -73,7 +73,7 @@ const Menu: FunctionComponent<Props> = ({
 
   return (
     <div className="relative">
-      <button className={buttonClassNames} onClick={openMenu}>
+      <button type="button" className={buttonClassNames} onClick={openMenu}>
         {Button}
       </button>
       <div
