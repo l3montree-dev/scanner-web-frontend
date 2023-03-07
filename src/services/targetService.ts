@@ -99,6 +99,7 @@ const getUserTargetsWithLatestTestResult = async (
     sort?: string;
     sortDirection?: string;
     type?: TargetType;
+    collectionIds?: Array<number>;
   },
   prisma: PrismaClient
 ): Promise<PaginateResult<DTO<DetailedTarget>>> => {
@@ -112,38 +113,10 @@ const getUserTargetsWithLatestTestResult = async (
     sqlValues.push(paginateRequest.search);
   }
 
-  const [total, targets] = await Promise.all([
-    prisma.target.count({
-      where: {
-        collections: {
-          some: {
-            collectionId: user.defaultCollectionId,
-          },
-        },
-        ...(paginateRequest.search !== undefined &&
-          paginateRequest.search !== "" && {
-            uri: {
-              contains: sqlValues[3] as string,
-            },
-          }),
-        ...(paginateRequest.type !== undefined &&
-          paginateRequest.type !== TargetType.all && {
-            errorCount: {
-              ...(paginateRequest.type === TargetType.unreachable
-                ? {
-                    gte: 5,
-                  }
-                : { lt: 5 }),
-            },
-          }),
-      },
-    }),
-
-    // subject to sql injection!!!
-    prisma.$queryRawUnsafe(
-      `
-      SELECT t.*, lsd.details as details from target_collections tc
-      INNER JOIN targets t on tc.uri = t.uri 
+  // subject to sql injection!!!
+  const targets = (await prisma.$queryRawUnsafe(
+    `
+      SELECT count(*) OVER() AS "totalCount", t.*, lsd.details as details from targets t 
       LEFT JOIN scan_reports sr on t.uri = sr.uri
       LEFT JOIN last_scan_details lsd on t.uri = lsd.uri
       WHERE NOT EXISTS(
@@ -154,7 +127,19 @@ const getUserTargetsWithLatestTestResult = async (
             ? "AND t.uri LIKE CONCAT('%', $4, '%')"
             : ""
         }
-        AND tc."collectionId" = $1
+        AND EXISTS(
+            SELECT 1 from target_collections tc where tc.uri = t.uri AND tc."collectionId" = $1
+        )
+        ${
+          paginateRequest.collectionIds !== undefined &&
+          paginateRequest.collectionIds.length > 0
+            ? `AND EXISTS(
+                SELECT 1 from target_collections tc where tc.uri = t.uri AND tc."collectionId" IN (${paginateRequest.collectionIds
+                  .filter((id) => !isNaN(id))
+                  .join(",")})
+            )`
+            : ""
+        }
         ${
           paginateRequest.type === TargetType.unreachable
             ? 'AND "errorCount" >= 5'
@@ -168,12 +153,11 @@ const getUserTargetsWithLatestTestResult = async (
         LIMIT $2
         OFFSET $3;
 `,
-      ...sqlValues
-    ) as Promise<any[]>,
-  ]);
+    ...sqlValues
+  )) as Array<any>;
 
   return {
-    total,
+    total: targets.length > 0 ? Number(targets[0].totalCount) : 0,
     page: paginateRequest.page,
     pageSize: paginateRequest.pageSize,
     data: targets.map(toDTO),

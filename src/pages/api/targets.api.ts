@@ -21,6 +21,7 @@ import {
   timeout,
 } from "../../utils/common";
 import { stream2buffer, toDTO } from "../../utils/server";
+import { Collection } from "victory";
 
 const logger = getLogger(__filename);
 
@@ -41,18 +42,22 @@ const deleteTargetRelation = async (
   // delete it from all collection where this user is owner of or its his default collection.
   return prisma.targetCollectionRelation.deleteMany({
     where: {
-      uri: {
-        in: uris,
-      },
-      collection: {
-        ownerId: user.id,
-      },
-      OR: {
-        uri: {
-          in: uris,
+      OR: [
+        {
+          uri: {
+            in: uris,
+          },
+          collection: {
+            ownerId: user.id,
+          },
         },
-        collectionId: user.defaultCollectionId,
-      },
+        {
+          uri: {
+            in: uris,
+          },
+          collectionId: user.defaultCollectionId,
+        },
+      ],
     },
   });
 };

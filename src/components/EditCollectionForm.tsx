@@ -65,6 +65,7 @@ const EditCollectionForm: FunctionComponent<Props> = (props) => {
             <div className="grid grid-cols-3 bg-deepblue-50 flex-wrap gap-1 p-2 justify-around items-center">
               {colors.map((color) => (
                 <div
+                  data-closemenu
                   onClick={() => setColor(color)}
                   key={color}
                   className="w-11 h-11 cursor-pointer hover:opacity-50 transition-all "

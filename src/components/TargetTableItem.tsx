@@ -19,6 +19,7 @@ import { classNames, toGermanDate } from "../utils/common";
 import { DTO } from "../utils/server";
 import { didPass2CheckResult } from "../utils/view";
 import Checkbox from "./Checkbox";
+import CollectionPill from "./CollectionPill";
 import Menu from "./Menu";
 import MenuItem from "./MenuItem";
 import MenuList from "./MenuList";
@@ -244,20 +245,7 @@ const TargetTableItem: FunctionComponent<Props> = ({
             <div className="flex flex-row gap-2 px-5 -mt-2 pl-10 justify-start">
               {target.collections.map((c) => {
                 const col = collections[c.toString()];
-                return (
-                  <div
-                    key={col.id}
-                    className="flex bg-deepblue-300 border-deepblue-50 flex-row items-center border rounded-full text-xs px-2 py-1"
-                  >
-                    <div
-                      className="w-3 h-3 border-deepblue-50 rounded-full inline-block mr-2"
-                      style={{
-                        backgroundColor: col.color,
-                      }}
-                    />
-                    {col.title}
-                  </div>
-                );
+                return <CollectionPill key={col.id} {...col} />;
               })}
             </div>
           </td>

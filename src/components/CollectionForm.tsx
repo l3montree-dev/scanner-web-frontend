@@ -1,4 +1,9 @@
-import { FunctionComponent, useEffect, useState } from "react";
+import {
+  FormEventHandler,
+  FunctionComponent,
+  useEffect,
+  useState,
+} from "react";
 import useLoading from "../hooks/useLoading";
 import { colors } from "../utils/common";
 import Button from "./Button";
@@ -19,20 +24,22 @@ const CollectionForm: FunctionComponent<Props> = ({ onCreate }) => {
     setColor(colors[Math.floor(Math.random() * colors.length)]);
   }, []);
 
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
+    e.preventDefault();
+    if (title.length === 0) return;
+    createRequest.loading();
+    try {
+      await onCreate({ title: title, color: color });
+      setTitle("");
+    } finally {
+      createRequest.success();
+    }
+  };
+
   return (
     <form
       className="justify-between flex gap-2 flex-row items-end"
-      onSubmit={async (e) => {
-        e.preventDefault();
-        if (title.length === 0) return;
-        createRequest.loading();
-        try {
-          await onCreate({ title: title, color: color });
-          setTitle("");
-        } finally {
-          createRequest.success();
-        }
-      }}
+      onSubmit={handleSubmit}
     >
       <div className="flex items-end gap-2 flex-1 flex-row">
         <div className="flex-1">
@@ -53,6 +60,7 @@ const CollectionForm: FunctionComponent<Props> = ({ onCreate }) => {
             <div className="flex bg-deepblue-50 flex-wrap gap-1 p-2 justify-around items-center">
               {colors.map((color) => (
                 <div
+                  data-closemenu
                   onClick={() => setColor(color)}
                   key={color}
                   className="w-11 h-11 cursor-pointer hover:opacity-50 transition-all "

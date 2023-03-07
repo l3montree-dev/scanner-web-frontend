@@ -1,4 +1,9 @@
-import React, { FunctionComponent, MouseEventHandler, useState } from "react";
+import React, {
+  FunctionComponent,
+  MouseEventHandler,
+  useCallback,
+  useState,
+} from "react";
 import { classNames } from "../utils/common";
 
 interface Props {
@@ -31,7 +36,29 @@ const Menu: FunctionComponent<Props> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
+  const closeListener = useCallback(() => {
+    setIsOpen(false);
+  }, []);
+
   const handleMenuClick: MouseEventHandler = (e) => {
+    // check if the click was on a menu item which SHOULD close the menu
+    // if so, don't stop propagation
+    if (
+      e.target instanceof HTMLElement &&
+      e.target.hasAttribute("data-closemenu")
+    ) {
+      e.stopPropagation();
+      document.removeEventListener("click", closeListener);
+      document.dispatchEvent(
+        new CustomEvent("menu-click", {
+          bubbles: true,
+          detail: menuCloseIndex - 1,
+        })
+      );
+
+      return;
+    }
+
     e.stopPropagation();
 
     document.dispatchEvent(
@@ -39,18 +66,22 @@ const Menu: FunctionComponent<Props> = ({
     );
   };
 
-  const maybeCloseMenuAndUnregisterListener = (e: CustomEvent) => {
-    let event = e as CustomEvent;
-    if (event.detail !== undefined && event.detail >= menuCloseIndex) {
-      return false;
-    }
+  const maybeCloseMenuAndUnregisterListener = useCallback(
+    (e: CustomEvent) => {
+      let event = e as CustomEvent;
+      if (event.detail !== undefined && event.detail >= menuCloseIndex) {
+        return false;
+      }
 
-    setIsOpen(false);
-    return true;
-  };
+      setIsOpen(false);
+      return true;
+    },
+    [menuCloseIndex]
+  );
 
   const openMenu: MouseEventHandler = (e) => {
     const current = isOpen;
+
     setIsOpen((prev) => !prev);
     if (!current) {
       setTimeout(() => {
@@ -60,13 +91,7 @@ const Menu: FunctionComponent<Props> = ({
           maybeCloseMenuAndUnregisterListener
         );
 
-        document.addEventListener(
-          "click",
-          () => {
-            setIsOpen(false);
-          },
-          { once: true }
-        );
+        document.addEventListener("click", closeListener, { once: true });
       }, 100);
     }
   };

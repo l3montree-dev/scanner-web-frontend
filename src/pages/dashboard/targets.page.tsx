@@ -1,7 +1,13 @@
 import { faCaretDown, faCaretUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
-import { FunctionComponent, useEffect, useMemo, useState } from "react";
+import {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import Checkbox from "../../components/Checkbox";
 import DashboardPage from "../../components/DashboardPage";
 import Menu from "../../components/Menu";
@@ -37,6 +43,8 @@ import {
 } from "../../types";
 import { classNames, normalizeToMap } from "../../utils/common";
 import { DTO, ServerSideProps, toDTO } from "../../utils/server";
+import { optimisticUpdate } from "../../utils/view";
+import CollectionPill from "../../components/CollectionPill";
 
 interface Props {
   targets: PaginateResult<DTO<DetailedTarget> & { collections: number[] }>; // should include array of collection ids the target is in
@@ -88,22 +96,29 @@ const Targets: FunctionComponent<Props> = (props) => {
     return faCaretUp;
   };
 
-  const patchQuery = (query: Record<string, string>) => {
-    router.push({
-      pathname: router.pathname,
-      query: {
-        ...router.query,
-        ...query,
-      },
-    });
-    setSelection({});
-  };
+  const patchQuery = useCallback(
+    (query: Record<string, string | string[]>) => {
+      router.push({
+        pathname: router.pathname,
+        query: {
+          ...router.query,
+          ...query,
+        },
+      });
+      setSelection({});
+    },
+    [router]
+  );
 
   useEffect(() => {
     setTargets(props.targets.data);
   }, [props.targets]);
 
   const deleteTarget = async (uri: string) => {
+    // do an optimistic update
+    const revert = optimisticUpdate(targets, setTargets, (prev) =>
+      prev.filter((d) => d.uri !== uri)
+    );
     const response = await clientHttpClient(
       `/api/targets`,
       crypto.randomUUID(),
@@ -114,8 +129,8 @@ const Targets: FunctionComponent<Props> = (props) => {
         }),
       }
     );
-    if (response.ok) {
-      setTargets((prev) => prev.filter((d) => d.uri !== uri));
+    if (!response.ok) {
+      revert();
     }
   };
 
@@ -216,6 +231,20 @@ const Targets: FunctionComponent<Props> = (props) => {
     target: DTO<Target>,
     collectionId: number
   ) => {
+    // do an optimistic update.
+    const revert = optimisticUpdate(targets, setTargets, (prev) => {
+      const index = prev.findIndex((d) => d.uri === target.uri);
+      if (index === -1) {
+        return prev;
+      }
+      const newDomains = [...prev];
+      newDomains[index] = {
+        ...newDomains[index],
+        collections: newDomains[index].collections.concat(collectionId),
+      };
+      return newDomains;
+    });
+
     const res = await clientHttpClient(
       `/api/collections/${collectionId}/targets`,
       crypto.randomUUID(),
@@ -229,46 +258,18 @@ const Targets: FunctionComponent<Props> = (props) => {
     );
 
     if (!res.ok) {
+      // revert the optimistic update
+      revert();
       throw res;
     }
-
-    // add the collection to the target
-    setTargets((prev) => {
-      const index = prev.findIndex((d) => d.uri === target.uri);
-      if (index === -1) {
-        return prev;
-      }
-      const newDomains = [...prev];
-      newDomains[index] = {
-        ...newDomains[index],
-        collections: newDomains[index].collections.concat(collectionId),
-      };
-      return newDomains;
-    });
   };
 
   const handleRemoveFromCollection = async (
     target: DTO<Target>,
     collectionId: number
   ) => {
-    const res = await clientHttpClient(
-      `/api/collections/${collectionId}/targets`,
-      crypto.randomUUID(),
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify([target]),
-      }
-    );
-
-    if (!res.ok) {
-      throw res;
-    }
-
-    // remove the collection from the target
-    setTargets((prev) => {
+    // do an optimistic update
+    const revert = optimisticUpdate(targets, setTargets, (prev) => {
       const index = prev.findIndex((d) => d.uri === target.uri);
       if (index === -1) {
         return prev;
@@ -282,6 +283,22 @@ const Targets: FunctionComponent<Props> = (props) => {
       };
       return newDomains;
     });
+    const res = await clientHttpClient(
+      `/api/collections/${collectionId}/targets`,
+      crypto.randomUUID(),
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify([target]),
+      }
+    );
+
+    if (!res.ok) {
+      revert();
+      throw res;
+    }
   };
 
   const handleFileFormSubmit = async (files: File[]) => {
@@ -298,6 +315,32 @@ const Targets: FunctionComponent<Props> = (props) => {
       throw res;
     }
   };
+
+  const collectionIds = useMemo(() => {
+    const collections = (router.query.collectionIds as string | string[]) ?? [];
+    return (Array.isArray(collections) ? collections : [collections]).map(
+      (c) => +c
+    );
+  }, [router.query.collectionIds]);
+
+  const handleCollectionFilterToggle = useCallback(
+    (collectionId: number) => {
+      if (collectionIds.includes(collectionId)) {
+        patchQuery({
+          collectionIds: collectionIds
+            .filter((c) => c !== collectionId)
+            .map((c) => c.toString()),
+        });
+      } else {
+        patchQuery({
+          collectionIds: collectionIds
+            .concat(collectionId)
+            .map((c) => c.toString()),
+        });
+      }
+    },
+    [collectionIds, patchQuery]
+  );
 
   const sort = {
     key: router.query.sort as "uri" | keyof IScanSuccessResponse["result"],
@@ -375,7 +418,7 @@ const Targets: FunctionComponent<Props> = (props) => {
               <Menu
                 menuCloseIndex={0}
                 Button={
-                  <div className="p-2 bg-deepblue-100 border border-deepblue-100 my-2 flex flex-row items-center justify-center">
+                  <div className="p-2 mr-2 bg-deepblue-100 border border-deepblue-100 my-2 flex flex-row items-center justify-center">
                     Zeige: {translateDomainType(viewedDomainType)} (
                     {props.targets.total})
                     <FontAwesomeIcon className="ml-2" icon={faCaretDown} />
@@ -398,6 +441,57 @@ const Targets: FunctionComponent<Props> = (props) => {
                   </MenuList>
                 }
               />
+              <Menu
+                menuCloseIndex={0}
+                Button={
+                  <div className="p-2 bg-deepblue-100 border border-deepblue-100 my-2 flex flex-row items-center justify-center">
+                    Filter nach Sammlungen
+                    <FontAwesomeIcon className="ml-2" icon={faCaretDown} />
+                  </div>
+                }
+                Menu={
+                  <MenuList>
+                    {Object.values(props.collections ?? {}).map(
+                      (collection) => (
+                        <button
+                          className={classNames(
+                            "flex w-full transition-all  items-center px-2 py-2",
+                            collectionIds.includes(+collection.id)
+                              ? "bg-deepblue-100"
+                              : "bg-deepblue-300"
+                          )}
+                          key={collection.id}
+                          onClick={() =>
+                            handleCollectionFilterToggle(collection.id)
+                          }
+                        >
+                          <div
+                            className="w-4 h-4 rounded-full inline-block mr-2"
+                            style={{
+                              backgroundColor: collection.color,
+                            }}
+                          />
+                          {collection.title}
+                        </button>
+                      )
+                    )}
+                  </MenuList>
+                }
+              />
+              <div className="flex flex-wrap flex-row gap-2 px-5 items-center pl-4 justify-start">
+                {collectionIds.map((c) => {
+                  const col = props.collections[c.toString()];
+                  return (
+                    <CollectionPill
+                      onRemove={() => {
+                        handleCollectionFilterToggle(c);
+                      }}
+                      key={col.id}
+                      {...col}
+                    />
+                  );
+                })}
+              </div>
             </div>
             <table className="w-full">
               <thead className="">
@@ -585,6 +679,14 @@ export const getServerSideProps = decorateServerSideProps(
     // get the query params.
     const page = +(context.query["page"] ?? 0);
     const search = context.query["search"] as string | undefined;
+    const collectionIdsStr =
+      (context.query["collectionIds"] as string | string[] | undefined) ?? "";
+
+    const collectionIds = (
+      Array.isArray(collectionIdsStr) ? collectionIdsStr : [collectionIdsStr]
+    )
+      .map((id) => +id)
+      .filter((id) => id > 0);
 
     const [targets, collections] = await Promise.all([
       targetService.getUserTargetsWithLatestTestResult(
@@ -593,6 +695,7 @@ export const getServerSideProps = decorateServerSideProps(
           pageSize: 50,
           page,
           search,
+          collectionIds,
           type:
             (context.query["domainType"] as TargetType | undefined) ||
             TargetType.all,

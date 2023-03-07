@@ -14,7 +14,6 @@ import SideNavigation from "../../components/SideNavigation";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
 import { withCurrentUserServerSideProps } from "../../decorators/withCurrentUser";
 import { withDB } from "../../decorators/withDB";
-import useLoading from "../../hooks/useLoading";
 import { clientHttpClient } from "../../services/clientHttpClient";
 import { collectionService } from "../../services/collectionService";
 import { classNames } from "../../utils/common";
@@ -27,9 +26,6 @@ interface Props {
 const LabelsPage: FunctionComponent<Props> = (props) => {
   const [collections, setCollections] = useState(props.collections);
 
-  const updateRequest = useLoading();
-  const [title, setTitle] = useState("");
-  const [color, setColor] = useState("#000000");
   const [selectedCollection, selectCollection] =
     useState<DTO<Collection> | null>(null);
 
@@ -158,9 +154,9 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
 
                       <td className="p-2 underline">
                         <Link
-                          href={`/dashboard/targets?collectionId=${collection.id}`}
+                          href={`/dashboard/targets?collectionIds=${collection.id}`}
                         >
-                          Zu den Domains der Sammlung
+                          Zu Domains der Sammlung
                         </Link>
                       </td>
                       <td
@@ -178,11 +174,10 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
                             Menu={
                               <MenuList>
                                 <MenuItem
+                                  closeMenu
                                   onClick={() => selectCollection(collection)}
                                 >
-                                  <div>
-                                    <div>Bearbeiten</div>
-                                  </div>
+                                  Bearbeiten
                                 </MenuItem>
 
                                 <MenuItem

@@ -61,3 +61,15 @@ export const checkResult2Icon = (checkResult: CheckResult) => {
       return faQuestion;
   }
 };
+
+export const optimisticUpdate = <T>(
+  currentState: T,
+  setStateFn: (fn: (prev: T) => T) => void,
+  transformer: (currentState: T) => T
+) => {
+  const oldState = currentState;
+  const newState = transformer(oldState);
+  setStateFn(transformer);
+  // return the reverting function
+  return () => setStateFn(() => oldState);
+};
