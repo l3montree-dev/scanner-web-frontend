@@ -28,17 +28,10 @@ const getCollectionsOfTargets = async (
   user: User,
   prisma: PrismaClient
 ) => {
+  // does not return the users default collection
   const collections = await prisma.targetCollectionRelation.findMany({
     where: {
       OR: [
-        {
-          uri: {
-            in: targetUris,
-          },
-          collection: {
-            id: user.defaultCollectionId, // user has access to the collection if its his default collection
-          },
-        },
         {
           uri: {
             in: targetUris,

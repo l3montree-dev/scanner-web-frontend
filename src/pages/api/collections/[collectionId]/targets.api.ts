@@ -5,9 +5,6 @@ import { withCurrentUser } from "../../../../decorators/withCurrentUser";
 import { withDB } from "../../../../decorators/withDB";
 import ForbiddenException from "../../../../errors/ForbiddenException";
 import MethodNotAllowed from "../../../../errors/MethodNotAllowed";
-import { getLogger } from "../../../../services/logger";
-
-const logger = getLogger(__filename);
 
 const handlePost = async (
   collection: Collection,
@@ -16,7 +13,7 @@ const handlePost = async (
   prisma: PrismaClient
 ) => {
   // add the targets to the collection AND the default collection.
-  const d = await prisma.targetCollectionRelation.createMany({
+  return prisma.targetCollectionRelation.createMany({
     data: targets
       .map((t) => ({
         uri: t.uri,
@@ -32,8 +29,22 @@ const handlePost = async (
       ),
     skipDuplicates: true,
   });
+};
 
-  return d;
+const handleDelete = async (
+  collection: Collection,
+  targets: Target[],
+  prisma: PrismaClient
+) => {
+  // delete the targets from the collection
+  return prisma.targetCollectionRelation.deleteMany({
+    where: {
+      uri: {
+        in: targets.map((t) => t.uri),
+      },
+      collectionId: collection.id,
+    },
+  });
 };
 
 export default decorate(
@@ -58,11 +69,13 @@ export default decorate(
       throw new ForbiddenException();
     }
 
-    const targetsToAdd = req.body as Target[];
+    const targets = req.body as Target[];
     // the user is allowed to add a target to this collection.
     switch (req.method) {
       case "POST":
-        return handlePost(collection, targetsToAdd, currentUser, prisma);
+        return handlePost(collection, targets, currentUser, prisma);
+      case "DELETE":
+        return handleDelete(collection, targets, prisma);
       default:
         throw new MethodNotAllowed();
     }

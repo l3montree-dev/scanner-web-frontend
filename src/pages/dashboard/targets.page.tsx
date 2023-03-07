@@ -25,7 +25,7 @@ import {
 import { clientHttpClient } from "../../services/clientHttpClient";
 import { targetService } from "../../services/targetService";
 
-import { Collection, Target } from "@prisma/client";
+import { Collection, Target, User } from "@prisma/client";
 import { SortButton } from "../../components/SortButton";
 import TargetTableItem from "../../components/TargetTableItem";
 import { collectionService } from "../../services/collectionService";
@@ -224,13 +224,64 @@ const Targets: FunctionComponent<Props> = (props) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ target }),
+        body: JSON.stringify([target]),
       }
     );
 
     if (!res.ok) {
       throw res;
     }
+
+    // add the collection to the target
+    setTargets((prev) => {
+      const index = prev.findIndex((d) => d.uri === target.uri);
+      if (index === -1) {
+        return prev;
+      }
+      const newDomains = [...prev];
+      newDomains[index] = {
+        ...newDomains[index],
+        collections: newDomains[index].collections.concat(collectionId),
+      };
+      return newDomains;
+    });
+  };
+
+  const handleRemoveFromCollection = async (
+    target: DTO<Target>,
+    collectionId: number
+  ) => {
+    const res = await clientHttpClient(
+      `/api/collections/${collectionId}/targets`,
+      crypto.randomUUID(),
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify([target]),
+      }
+    );
+
+    if (!res.ok) {
+      throw res;
+    }
+
+    // remove the collection from the target
+    setTargets((prev) => {
+      const index = prev.findIndex((d) => d.uri === target.uri);
+      if (index === -1) {
+        return prev;
+      }
+      const newDomains = [...prev];
+      newDomains[index] = {
+        ...newDomains[index],
+        collections: newDomains[index].collections.filter(
+          (c) => c !== collectionId
+        ),
+      };
+      return newDomains;
+    });
   };
 
   const handleFileFormSubmit = async (files: File[]) => {
@@ -473,9 +524,15 @@ const Targets: FunctionComponent<Props> = (props) => {
                   return (
                     <TargetTableItem
                       collections={props.collections}
-                      onAddToCollection={(collection) =>
-                        handleAddToCollection(target, collection.id)
-                      }
+                      onToggleCollection={(collection) => {
+                        if (target.collections.includes(+collection.id)) {
+                          return handleRemoveFromCollection(
+                            target,
+                            collection.id
+                          );
+                        }
+                        return handleAddToCollection(target, collection.id);
+                      }}
                       destroy={(uri) => deleteTarget(uri)}
                       scanRequest={scanRequest}
                       scan={(uri) => scanTarget(uri)}
@@ -565,7 +622,12 @@ export const getServerSideProps = decorateServerSideProps(
               .map((c) => c.collectionId),
           })),
         },
-        collections: normalizeToMap(toDTO(collections), "id"),
+        collections: normalizeToMap(
+          toDTO(
+            collections.filter((c) => c.id !== currentUser.defaultCollectionId)
+          ),
+          "id"
+        ),
       },
     };
   },

@@ -33,7 +33,7 @@ interface Props {
   scanRequest: ReturnType<typeof useLoading>;
   scan: (uri: string) => void;
   destroy: (uri: string) => void;
-  onAddToCollection: (collection: DTO<Collection>) => void;
+  onToggleCollection: (collection: DTO<Collection>) => void;
   collections: { [collectionId: string]: DTO<Collection> };
 }
 
@@ -58,7 +58,7 @@ const TargetTableItem: FunctionComponent<Props> = ({
   scanRequest,
   scan,
   destroy,
-  onAddToCollection,
+  onToggleCollection,
   collections,
 }) => {
   return (
@@ -70,7 +70,8 @@ const TargetTableItem: FunctionComponent<Props> = ({
           target.errorCount !== null && target.errorCount >= 5
             ? "line-through"
             : "",
-          clNames
+          clNames,
+          target.collections.length > 0 && "border-none" // the second row will be displayed, which does include the border
         )}
       >
         <td className="p-2 pr-0">
@@ -205,9 +206,14 @@ const TargetTableItem: FunctionComponent<Props> = ({
                     <MenuList>
                       {Object.values(collections ?? {}).map((collection) => (
                         <button
-                          className="flex w-full bg-deepblue-200 items-center px-2 py-2"
+                          className={classNames(
+                            "flex w-full transition-all  items-center px-2 py-2",
+                            target.collections.includes(+collection.id)
+                              ? "bg-deepblue-100 hover:bg-deepblue-200"
+                              : "bg-deepblue-300 hover:bg-deepblue-200"
+                          )}
                           key={collection.id}
-                          onClick={() => onAddToCollection(collection)}
+                          onClick={() => onToggleCollection(collection)}
                         >
                           <div
                             className="w-4 h-4 rounded-full inline-block mr-2"
@@ -229,32 +235,34 @@ const TargetTableItem: FunctionComponent<Props> = ({
           />
         </td>
       </tr>
-      <tr
-        onClick={() => onSelect(target)}
-        className={classNames(clNames, "cursor-pointer")}
-      >
-        <td colSpan={9} className="p-0 pb-2">
-          <div className="flex flex-row px-5 -mt-2 pl-10 justify-start">
-            {target.collections.map((c) => {
-              const col = collections[c.toString()];
-              return (
-                <div
-                  key={col.id}
-                  className="flex bg-deepblue-300 border-deepblue-50 flex-row items-center border rounded-full text-xs px-2 py-1"
-                >
+      {target.collections.length > 0 && (
+        <tr
+          onClick={() => onSelect(target)}
+          className={classNames(clNames, "cursor-pointer")}
+        >
+          <td colSpan={9} className="p-0 pb-2">
+            <div className="flex flex-row gap-2 px-5 -mt-2 pl-10 justify-start">
+              {target.collections.map((c) => {
+                const col = collections[c.toString()];
+                return (
                   <div
-                    className="w-3 h-3 border-deepblue-50 rounded-full inline-block mr-2"
-                    style={{
-                      backgroundColor: col.color,
-                    }}
-                  />
-                  {col.title}
-                </div>
-              );
-            })}
-          </div>
-        </td>
-      </tr>
+                    key={col.id}
+                    className="flex bg-deepblue-300 border-deepblue-50 flex-row items-center border rounded-full text-xs px-2 py-1"
+                  >
+                    <div
+                      className="w-3 h-3 border-deepblue-50 rounded-full inline-block mr-2"
+                      style={{
+                        backgroundColor: col.color,
+                      }}
+                    />
+                    {col.title}
+                  </div>
+                );
+              })}
+            </div>
+          </td>
+        </tr>
+      )}
     </>
   );
 };
