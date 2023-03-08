@@ -1,4 +1,5 @@
 import { Collection, PrismaClient, User } from "@prisma/client";
+import { config } from "../config";
 
 const isUserAllowedToModifyCollection = async (
   collection: Collection,
@@ -8,21 +9,36 @@ const isUserAllowedToModifyCollection = async (
   return collection.ownerId !== user.id;
 };
 
-const getAllCollectionsOfUser = async (user: User, prisma: PrismaClient) => {
+const getAllCollectionsOfUser = async (
+  user: User,
+  prisma: PrismaClient,
+  includeRefCollections = false
+) => {
+  const queries = [
+    {
+      ownerId: user.id,
+    },
+    {
+      user: {
+        some: {
+          id: user.id,
+        },
+      },
+    },
+    {
+      id: user.defaultCollectionId,
+    },
+  ] as any[];
+  if (includeRefCollections && config.generateStatsForCollections.length > 0) {
+    queries.push({
+      id: {
+        in: config.generateStatsForCollections,
+      },
+    });
+  }
   const collections = await prisma.collection.findMany({
     where: {
-      OR: [
-        {
-          ownerId: user.id,
-        },
-        {
-          user: {
-            some: {
-              id: user.id,
-            },
-          },
-        },
-      ],
+      OR: queries,
     },
   });
   return collections;

@@ -260,6 +260,10 @@ export const linkMapper: { [key in InspectionType]: string } = {
   [HeaderInspectionType.ContentTypeOptions]: "",
 };
 
+export type Normalized<T> = {
+  [key: string]: T;
+};
+
 export const normalizeToMap = <T extends object, Key extends keyof T>(
   arr: T[],
   identifier: Key
@@ -269,7 +273,7 @@ export const normalizeToMap = <T extends object, Key extends keyof T>(
       ...acc,
       [cur[identifier] as string]: cur,
     };
-  }, {} as { [key: string]: T });
+  }, {} as Normalized<T>);
 };
 
 export const neverThrow = async <T>(promise: Promise<T>): Promise<T | null> => {

@@ -1,5 +1,10 @@
-import { faListCheck } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCaretDown,
+  faChevronDown,
+  faListCheck,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Collection } from "@prisma/client";
 import Link from "next/link.js";
 import { FunctionComponent, useEffect, useMemo, useState } from "react";
 import resolveConfig from "tailwindcss/resolveConfig";
@@ -13,14 +18,14 @@ import {
   VictoryTooltip,
   VictoryVoronoiContainer,
 } from "victory";
-import tailwindConfig from "../../../tailwind.config.js";
+import tailwindConfig from "../../../tailwind.config";
+import CollectionMenu from "../../components/CollectionMenu";
+import CollectionPill from "../../components/CollectionPill";
 import DashboardPage from "../../components/DashboardPage";
 import SideNavigation from "../../components/SideNavigation";
+import { config } from "../../config";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
-import {
-  withCurrentUser,
-  withCurrentUserServerSideProps,
-} from "../../decorators/withCurrentUser";
+import { withCurrentUserServerSideProps } from "../../decorators/withCurrentUser";
 import { withDB } from "../../decorators/withDB";
 import {
   CertificateInspectionType,
@@ -34,21 +39,25 @@ import {
   OrganizationalInspectionType,
   TLSInspectionType,
 } from "../../inspection/scans";
+import { collectionService } from "../../services/collectionService";
 import { statService } from "../../services/statService";
 import { theme } from "../../styles/victory-theme";
 import { ChartData, IDashboard } from "../../types";
 import {
   dateFormat,
   linkMapper,
+  Normalized,
+  normalizeToMap,
   replaceNullWithZero,
 } from "../../utils/common";
+import { DTO, ServerSideProps, toDTO } from "../../utils/server";
 
 interface Props {
   dashboard: IDashboard;
   keycloakIssuer: string;
-  referenceChartData: {
-    [referenceName: string]: Array<ChartData & { date: number }>;
-  };
+  defaultCollectionId: number;
+  collections: Normalized<DTO<Collection>>;
+  refCollections: number[]; // the collections which were defined using environment variables
 }
 
 const fullConfig = resolveConfig(tailwindConfig);
@@ -101,23 +110,7 @@ const displayKey: Array<InspectionType> = [
   NetworkInspectionType.RPKI,
 ];
 
-const referenceNameMapping: {
-  [key: string]: {
-    name: string;
-    color: string;
-  };
-} = {
-  de_top_100000: {
-    name: ".de",
-    color: tailwindColors.slate["400"],
-  },
-  top_100000: {
-    name: "global",
-    color: tailwindColors.slate["400"],
-  },
-};
-
-const LabelComponent: FunctionComponent<any> = (props) => {
+const LabelComponent: FunctionComponent<any & { fill: string }> = (props) => {
   if (props.data?.length - 1 === +(props.index ?? 0)) {
     return (
       <VictoryLabel
@@ -132,7 +125,7 @@ const LabelComponent: FunctionComponent<any> = (props) => {
         }}
         style={{
           fontSize: 10,
-          fill: tailwindColors.lightning["200"],
+          fill: props.fill,
         }}
       />
     );
@@ -142,7 +135,7 @@ const LabelComponent: FunctionComponent<any> = (props) => {
       {...props}
       constrainToVisibleArea
       style={{
-        fill: tailwindColors.lightning["200"],
+        fill: props.fill,
         fontSize: 10,
       }}
       flyoutPadding={2.5}
@@ -227,55 +220,70 @@ const percentageToYInPieChart = (percentage: number, r = 100) => {
 
 const Dashboard: FunctionComponent<Props> = (props) => {
   const dashboard = props.dashboard;
+  const currentStat = useMemo(
+    () =>
+      props.defaultCollectionId in dashboard.historicalData
+        ? dashboard.historicalData[props.defaultCollectionId].series[
+            dashboard.historicalData[props.defaultCollectionId].series.length -
+              1
+          ]
+        : ({
+            totalCount: 0,
+            data: {},
+          } as ChartData),
+    [dashboard.historicalData, props.defaultCollectionId]
+  );
+  const [displayCollections, setDisplayCollections] = useState<number[]>(
+    props.refCollections.concat(props.defaultCollectionId)
+  );
+
   const [data, setData] = useState({
-    totalCount: dashboard.currentState.totalCount,
+    totalCount: currentStat.totalCount,
     data: Object.fromEntries(
-      Object.keys(dashboard.currentState.data).map((key) => [key, 0])
+      Object.keys(currentStat.data).map((key) => [key, 0])
     ),
   });
 
   useEffect(() => {
-    setData(dashboard.currentState);
-  }, [dashboard.currentState]);
+    setData(currentStat);
+  }, [currentStat]);
 
   const dataPerDisplayKey = useMemo(
     () =>
       Object.fromEntries(
         displayKey.map((key) => {
-          const data = dashboard.historicalData.map((item) => {
-            return {
-              y: item.data[key] * 100,
-              x: new Date(item.date).toLocaleDateString("de-DE", dateFormat),
-            };
-          });
-          const referenceData = Object.fromEntries(
-            Object.entries(props.referenceChartData).map(
-              ([groupName, item]) => {
+          const data = Object.fromEntries(
+            Object.entries(dashboard.historicalData).map(
+              ([collectionId, stat]) => {
                 return [
-                  groupName,
-                  item.map((item) => {
-                    return {
-                      y: item.data[key] * 100,
-                      x: new Date(item.date).toLocaleDateString(
-                        "de-DE",
-                        dateFormat
-                      ),
-                    };
-                  }),
+                  collectionId,
+                  {
+                    title: stat.title,
+                    color: stat.color,
+                    series: stat.series.map((item) => {
+                      return {
+                        y: item.data[key] * 100,
+                        x: new Date(item.date).toLocaleDateString(
+                          "de-DE",
+                          dateFormat
+                        ),
+                      };
+                    }),
+                  },
                 ];
               }
             )
           );
 
           const min = Math.min(
-            ...data.map((item) => item.y),
-            ...Object.values(referenceData)
+            ...Object.values(data)
+              .map((item) => item.series)
               .flat()
               .map((item) => item.y)
           );
           const max = Math.max(
-            ...data.map((item) => item.y),
-            ...Object.values(referenceData)
+            ...Object.values(data)
+              .map((item) => item.series)
               .flat()
               .map((item) => item.y)
           );
@@ -284,15 +292,26 @@ const Dashboard: FunctionComponent<Props> = (props) => {
             key,
             {
               data,
-              referenceData,
               min,
               max,
             },
           ];
         })
       ),
-    [props.referenceChartData, dashboard.historicalData]
+    [dashboard.historicalData]
   );
+
+  const handleDisplayCollectionToggle = (collectionId: number) => {
+    if (displayCollections.includes(collectionId)) {
+      // check if there is at least one collection left
+      if (displayCollections.length === 1) {
+        setDisplayCollections([props.defaultCollectionId]);
+      }
+      setDisplayCollections((prev) => prev.filter((id) => id !== collectionId));
+    } else {
+      setDisplayCollections((prev) => prev.concat(collectionId));
+    }
+  };
 
   return (
     <>
@@ -323,28 +342,78 @@ const Dashboard: FunctionComponent<Props> = (props) => {
               </div>
             </div>
           </div>
-          <h2 className="text-2xl mt-10 mb-5">Testergebnisse</h2>
-          <p className="w-2/3 text-slate-300">
-            Ausschlie&szlig;lich erreichbare Domains können getestet werden. Die
-            Anfrage muss vom Server in maximal zehn Sekunden beantwortet werden,
-            damit eine Domain als erreichbar gilt. Derzeit sind{" "}
-            {dashboard.currentState.totalCount} von{" "}
-            {dashboard.totals.uniqueTargets} erreichbar.
-          </p>
-          <div className="flex mt-5 justify-start gap-2 flex-wrap flex-wrap flex-row">
+          <div className="flex flex-row mt-10  items-center justify-between">
+            <div>
+              <h2 className="text-2xl mb-5">Testergebnisse</h2>
+              <p className="w-2/3 text-slate-300">
+                Ausschlie&szlig;lich erreichbare Domains können getestet werden.
+                Die Anfrage muss vom Server in maximal zehn Sekunden beantwortet
+                werden, damit eine Domain als erreichbar gilt. Derzeit sind{" "}
+                {currentStat.totalCount} von {dashboard.totals.uniqueTargets}{" "}
+                erreichbar.
+              </p>
+            </div>
+          </div>
+          <div className="mt-5">
+            <div className="flex flex-row mb-4">
+              <CollectionMenu
+                selectedCollections={displayCollections}
+                onCollectionClick={({ id }) => {
+                  handleDisplayCollectionToggle(id);
+                }}
+                collections={props.collections}
+                Button={
+                  <div className="bg-deepblue-200 p-2 whitespace-nowrap">
+                    Sammlungen anzeigen{" "}
+                    <FontAwesomeIcon className="ml-2" icon={faCaretDown} />
+                  </div>
+                }
+              />
+            </div>
+            <div className="flex flex-wrap flex-row gap-2 items-center justify-start">
+              {displayCollections.map((id) => {
+                const col = props.collections[id];
+                return (
+                  <CollectionPill
+                    onRemove={() => {
+                      handleDisplayCollectionToggle(id);
+                    }}
+                    key={col.id}
+                    {...col}
+                    title={
+                      id === props.defaultCollectionId ? "Alle" : col.title
+                    }
+                    color={
+                      id === props.defaultCollectionId
+                        ? tailwindColors.lightning["500"]
+                        : col.color
+                    }
+                  />
+                );
+              })}
+            </div>
+          </div>
+          <div className="flex mt-5 justify-start gap-2 flex-wrap flex-row">
             {displayKey.map((key) => {
-              const percentage = dashboard.currentState.data[key] * 100;
+              const percentage = currentStat.data[key] * 100;
               let padAngle = 3;
               // If the percentage is too small, don't show the padAngle
               if (100 - percentage < 1.5 || percentage < 1.5) {
                 padAngle = 0;
               }
 
-              const refData = Object.entries(
-                dataPerDisplayKey[key].referenceData
-              ).map(([groupName, data]) => {
-                return [groupName, data[data.length - 1].y];
-              });
+              const refData = displayCollections
+                .filter((c) => c !== props.defaultCollectionId)
+                .map((collection) => {
+                  const ref = dashboard.historicalData[collection];
+
+                  return {
+                    title: ref.title,
+                    color: ref.color,
+                    percentage:
+                      ref.series[ref.series.length - 1].data[key] * 100,
+                  };
+                });
               return (
                 <div
                   className="w-56 bg-deepblue-600 border flex-col flex border-deepblue-100"
@@ -430,38 +499,38 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                         style={{ fontSize: 30, fill: "white" }}
                         x={150}
                         y={150}
-                        text={`${(
-                          dashboard.currentState.data[key] * 100
-                        ).toFixed(1)}%`}
+                        text={`${(currentStat.data[key] * 100).toFixed(1)}%`}
                       />
-                      {refData.map(([groupName, value], i) => {
+                      {refData.map(({ title, percentage, color }, i) => {
                         return (
-                          <g key={groupName}>
+                          <g key={title}>
                             <line
-                              x1={percentageToXInPieChart(+value, 110)}
-                              y1={percentageToYInPieChart(+value, 110)}
-                              x2={percentageToXInPieChart(+value, 80)}
-                              y2={percentageToYInPieChart(+value, 80)}
+                              x1={percentageToXInPieChart(+percentage, 110)}
+                              y1={percentageToYInPieChart(+percentage, 110)}
+                              x2={percentageToXInPieChart(+percentage, 80)}
+                              y2={percentageToYInPieChart(+percentage, 80)}
+                              width={10}
                               style={{
-                                stroke: referenceNameMapping[groupName].color,
+                                stroke: color,
                                 strokeWidth: 2,
                               }}
                             />
+
                             <VictoryLabel
                               textAnchor="middle"
                               x={percentageToXInPieChart(
-                                +value,
+                                +percentage,
                                 i % 2 == 0 ? 70 : 130
                               )}
                               y={percentageToYInPieChart(
-                                +value,
+                                +percentage,
                                 i % 2 == 0 ? 70 : 130
                               )}
                               style={{
                                 fontSize: 16,
-                                fill: referenceNameMapping[groupName].color,
+                                fill: color,
                               }}
-                              text={`${referenceNameMapping[groupName].name}`}
+                              text={title}
                             />
                           </g>
                         );
@@ -491,7 +560,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
           </div>
           <div className="flex mt-5 justify-start -mx-2 flex-wrap flex-row">
             {displayKey.map((key) => {
-              const { data, referenceData, min, max } = dataPerDisplayKey[key];
+              const { data, min, max } = dataPerDisplayKey[key];
               return (
                 <div className="xl:w-1/3 sm:w-1/2 w-full mb-5" key={key}>
                   <div className="bg-deepblue-600 mx-2 historical-chart border flex-col flex border-deepblue-100">
@@ -539,63 +608,29 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                           dependentAxis
                           fixLabelOverlap
                         />
-                        <VictoryLine
-                          animate
-                          style={{
-                            data: { strokeLinecap: "round" },
-                          }}
-                          interpolation={"basis"}
-                          labels={({ datum }) => `${datum.y.toFixed(1)}%`}
-                          labelComponent={<LabelComponent />}
-                          colorScale={[
-                            tailwindColors.lightning["500"],
-                            tailwindColors.slate["600"],
-                          ]}
-                          data={data}
-                        />
-                        {Object.entries(referenceData).map(
-                          ([referenceName, value], i, arr) => (
+                        {displayCollections.map((collectionId) => {
+                          const d = data[collectionId];
+                          const color =
+                            +collectionId === props.defaultCollectionId
+                              ? tailwindColors.lightning["500"]
+                              : d.color;
+                          return (
                             <VictoryLine
-                              interpolation={"basis"}
+                              key={collectionId}
+                              animate
                               style={{
                                 data: {
-                                  stroke:
-                                    referenceNameMapping[referenceName].color,
-                                  strokeWidth: 1.5,
                                   strokeLinecap: "round",
+                                  stroke: color,
                                 },
-                                parent: { border: "1px solid #ccc" },
                               }}
-                              key={referenceName}
-                              data={value}
-                              labels={(d) => {
-                                if (+d.index === value.length - 1) {
-                                  return `${d.datum.y.toFixed(1)}%`;
-                                }
-                                return referenceNameMapping[referenceName].name;
-                              }}
-                              labelComponent={
-                                <RefLabelComponent
-                                  nRefComponents={arr.length}
-                                  i={i}
-                                />
-                              }
+                              interpolation={"basis"}
+                              labels={({ datum }) => `${datum.y.toFixed(1)}%`}
+                              labelComponent={<LabelComponent fill={color} />}
+                              data={d.series}
                             />
-                          )
-                        )}
-
-                        <VictoryArea
-                          style={{
-                            data: { fill: "url(#serviceGradient)" },
-                          }}
-                          animate
-                          interpolation={"basis"}
-                          colorScale={[
-                            tailwindColors.lightning["500"],
-                            tailwindColors.slate["600"],
-                          ]}
-                          data={data}
-                        />
+                          );
+                        })}
                       </VictoryChart>
                     </div>
                     <h2
@@ -616,17 +651,26 @@ const Dashboard: FunctionComponent<Props> = (props) => {
 };
 
 export const getServerSideProps = decorateServerSideProps(
-  async (_context, [currentUser, prisma]) => {
-    const [dashboard, referenceChartData] = await Promise.all([
+  async (_context, [currentUser, prisma]): Promise<ServerSideProps<Props>> => {
+    const [dashboard, referenceChartData, collections] = await Promise.all([
       statService.getDashboardForUser(currentUser, prisma),
       statService.getReferenceChartData(prisma),
+      collectionService.getAllCollectionsOfUser(currentUser, prisma, true),
     ]);
 
     return {
       props: {
-        dashboard: replaceNullWithZero(dashboard),
-        referenceChartData: replaceNullWithZero(referenceChartData),
-        keycloakIssuer: process.env.KEYCLOAK_ISSUER,
+        dashboard: replaceNullWithZero({
+          ...dashboard,
+          historicalData: {
+            ...dashboard.historicalData,
+            ...referenceChartData,
+          },
+        }),
+        keycloakIssuer: process.env.KEYCLOAK_ISSUER as string,
+        defaultCollectionId: currentUser.defaultCollectionId,
+        refCollections: config.generateStatsForCollections,
+        collections: normalizeToMap(toDTO(collections), "id"),
       },
     };
   },

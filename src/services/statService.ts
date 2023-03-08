@@ -2,7 +2,12 @@ import { Prisma, PrismaClient, User } from "@prisma/client";
 import PQueue from "p-queue";
 import { config } from "../config";
 import { InspectionType } from "../inspection/scans";
-import { IDashboard, ChartData } from "../types";
+import {
+  IDashboard,
+  ChartData,
+  CollectionStatMap,
+  SingleCollectionStatMap,
+} from "../types";
 import { toDTO } from "../utils/server";
 import { eachDay } from "../utils/time";
 import { getLogger } from "./logger";
@@ -32,7 +37,7 @@ const generateStatsForCollection = async (
       exists = Boolean(
         await prisma.stat.findFirst({
           where: {
-            subject: collectionId.toString(),
+            collectionId: collectionId,
             time: date,
           },
         })
@@ -48,7 +53,7 @@ const generateStatsForCollection = async (
         );
         await prisma.stat.create({
           data: {
-            subject: collectionId.toString(),
+            collectionId: collectionId,
             time: date,
             value: stat,
           },
@@ -72,7 +77,7 @@ const getTotals = async (
 };
 
 const getCollectionFailedSuccessPercentage = async (
-  tagId: number,
+  collectionId: number,
   prisma: PrismaClient,
   until: number
 ) => {
@@ -129,7 +134,7 @@ const getCollectionFailedSuccessPercentage = async (
         AVG("notRevoked"::int) as "notRevoked",
         AVG("certificateTransparency"::int) as "certificateTransparency",
         AVG("validCertificateChain"::int) as "validCertificateChain",
-        COUNT(*) as "totalCount" from reports inner join targets ON reports.uri = targets.uri inner join target_collections tcr ON targets.uri = tcr.uri where trc."collectionId" = ${tagId}`
+        COUNT(*) as "totalCount" from reports inner join targets ON reports.uri = targets.uri inner join target_collections tc ON targets.uri = tc.uri where tc."collectionId" = ${collectionId}`
   )) as any;
 
   res = toDTO(res);
@@ -143,32 +148,41 @@ const getCollectionFailedSuccessPercentage = async (
 
 export const getReferenceChartData = async (
   prisma: PrismaClient
-): Promise<{
-  [referenceName: string]: Array<ChartData & { date: number }>;
-}> => {
+): Promise<CollectionStatMap> => {
   const stats = await prisma.stat.findMany({
     where: {
-      subject: {
-        in: config.generateStatsForGroups,
+      collectionId: {
+        in: config.generateStatsForCollections,
       },
       time: {
         gte: config.statFirstDay.getTime(),
       },
+    },
+    include: {
+      collection: true,
     },
     orderBy: {
       time: "asc",
     },
   });
   const res: {
-    [referenceName: string]: Array<ChartData & { date: number }>;
+    [collectionId: number]: {
+      title: string;
+      color: string;
+      series: Array<ChartData & { date: number }>;
+    };
   } = {};
   stats.sort((a, b) => Number(a.time) - Number(b.time));
   stats.forEach((s) => {
-    const { subject, time, value } = s;
-    if (!res[subject]) {
-      res[subject] = [];
+    const { collectionId, time, value } = s;
+    if (!res[collectionId]) {
+      res[s.collectionId] = {
+        title: s.collection.title,
+        color: s.collection.color,
+        series: [],
+      };
     }
-    res[subject].push({
+    res[collectionId].series.push({
       date: Number(time),
       ...(value as {
         data: { [key in InspectionType]: number };
@@ -187,7 +201,20 @@ export const getDashboardForUser = async (
     getTotalsOfUser(user, prisma),
     prisma.stat.findMany({
       where: {
-        subject: user.id,
+        collection: {
+          OR: [
+            { owner: { id: user.id } },
+            {
+              id: {
+                in: config.generateStatsForCollections,
+              },
+            },
+            {
+              id: user.defaultCollectionId,
+            },
+          ],
+        },
+
         time: {
           gte: config.statFirstDay.getTime(),
         },
@@ -195,25 +222,34 @@ export const getDashboardForUser = async (
       orderBy: {
         time: "asc",
       },
+      include: {
+        collection: true,
+      },
     }),
   ]);
 
-  const values = toDTO(
-    stats.map((s) => ({
-      ...(s.value as {
+  // group the stats by collection.
+  const groupedStats = stats.reduce((acc, curr) => {
+    if (!acc[curr.collectionId]) {
+      acc[curr.collectionId] = {
+        title: curr.collection.title,
+        color: curr.collection.color,
+        series: [],
+      };
+    }
+    acc[curr.collectionId].series.push({
+      date: Number(curr.time),
+      ...(curr.value as {
         data: { [key in InspectionType]: number };
         totalCount: number;
       }),
-      date: s.time,
-    }))
-  );
+    });
+    return acc;
+  }, {} as CollectionStatMap);
 
   return {
     totals,
-    currentState: values[stats.length - 1] || {
-      data: {},
-    },
-    historicalData: values || [],
+    historicalData: groupedStats,
   };
 };
 

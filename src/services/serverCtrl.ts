@@ -69,6 +69,16 @@ const statLoop = once(() => {
     if (isMaster() && !running) {
       running = true;
 
+      const collections = await prisma.collection.findMany();
+
+      collections.forEach((collection) => {
+        statService.generateStatsForCollection(
+          collection.id,
+          promiseQueue,
+          prisma
+        );
+      });
+
       await promiseQueue.onIdle();
 
       running = false;

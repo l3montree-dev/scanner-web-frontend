@@ -2,8 +2,7 @@ import { Target } from "@prisma/client";
 import { InspectionType, InspectResultDTO } from "./inspection/scans";
 
 export interface IDashboard {
-  historicalData: Array<ChartData & { date: number }>;
-  currentState: ChartData;
+  historicalData: CollectionStatMap;
   totals: {
     uniqueTargets: number;
   };
@@ -14,6 +13,23 @@ export interface ChartData {
     [key in InspectionType]: number;
   };
   totalCount: number;
+}
+
+export type CollectionStatMap = { [collectionId: number]: CollectionStat };
+export type SingleCollectionStatMap = {
+  [collectionId: number]: SingleCollectionStat;
+};
+
+export interface CollectionStat {
+  series: Array<ChartData & { date: number }>;
+  title: string;
+  color: string;
+}
+
+export interface SingleCollectionStat {
+  singleStat: ChartData & { date: number };
+  title: string;
+  color: string;
 }
 
 export interface INetworkPatchDTO {

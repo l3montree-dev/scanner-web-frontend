@@ -1,5 +1,3 @@
-import { faCheck } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { classNames } from "../utils/common";
 import Menu from "./Menu";
 import MenuList from "./MenuList";
@@ -40,15 +38,7 @@ function CollectionMenu<T extends { id: number; title: string; color: string }>(
                   style={{
                     backgroundColor: collection.color,
                   }}
-                >
-                  {selected && (
-                    <FontAwesomeIcon
-                      icon={faCheck}
-                      fontSize={16}
-                      className="text-white"
-                    />
-                  )}
-                </div>
+                ></div>
                 {collection.title}
               </button>
             );

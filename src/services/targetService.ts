@@ -189,18 +189,9 @@ const getTargets2Scan = async (prisma: PrismaClient) => {
         },
         // it either belongs to a group which is configured to be scanned or it is monitored by a user
         {
-          OR: [
-            {
-              group: {
-                in: config.generateStatsForGroups,
-              },
-            },
-            {
-              collections: {
-                some: {},
-              },
-            },
-          ],
+          collections: {
+            some: {},
+          },
         },
         {
           queued: false,

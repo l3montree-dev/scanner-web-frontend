@@ -89,8 +89,6 @@ model Target {
   // pretty much the reason why this domain is part of the system at all.
   group String
 
-
-
   scanReports ScanReport[]
 
   lastScanDetails LastScanDetails?
@@ -103,12 +101,11 @@ model Target {
   @@map("targets")
 }
 
-
 model User {
-  id                  String               @id
-  role                String?
+  id   String  @id
+  role String?
 
-  collections         Collection[]         @relation("user_collections")
+  collections         Collection[] @relation("user_collections")
   collectionCreations Collection[]
 
   defaultCollection   Collection @relation("default_collection", fields: [defaultCollectionId], references: [id], onDelete: Cascade)
@@ -130,11 +127,13 @@ model Network {
 }
 
 model Stat {
-  subject String
-  time    BigInt
-  value   Json
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  collectionId Int
 
-  @@id([subject, time])
+  time  BigInt
+  value Json
+
+  @@id([collectionId, time])
   @@map("stats")
 }
 
@@ -164,6 +163,8 @@ model Collection {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+
+  stats      Stat[]
 
   @@map("collections")
 }
