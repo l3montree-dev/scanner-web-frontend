@@ -40,6 +40,11 @@ const percentageToYInPieChart = (percentage: number, r = 100) => {
   );
 };
 
+type RefData = {
+  title: string;
+  color: string;
+  percentage: number;
+};
 const PieCharts: FunctionComponent<Props> = ({
   displayCollections,
   currentStat,
@@ -60,13 +65,15 @@ const PieCharts: FunctionComponent<Props> = ({
           .filter((c) => c !== defaultCollectionId)
           .map((collection) => {
             const ref = historicalData[collection];
+            if (!ref) return null;
 
             return {
               title: ref.title,
               color: ref.color,
               percentage: ref.series[ref.series.length - 1].data[key] * 100,
             };
-          });
+          })
+          .filter((r): r is RefData => r !== null);
         return (
           <div
             className="w-56 bg-deepblue-600 border flex-col flex border-deepblue-100"

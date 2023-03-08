@@ -10,6 +10,7 @@ import {
 } from "../types";
 import { getHostnameFromUri } from "../utils/common";
 import { DTO, shuffle, toDTO } from "../utils/server";
+import { targetCollectionService } from "./targetCollectionService";
 
 const handleNewTarget = async (
   target: { uri: string; group?: string; queued?: boolean },
@@ -34,12 +35,11 @@ const handleNewTarget = async (
   });
 
   if (connectToUser) {
-    await prisma.targetCollectionRelation.create({
-      data: {
-        collectionId: connectToUser.defaultCollectionId,
-        uri: payload.uri,
-      },
-    });
+    await targetCollectionService.createConnection(
+      [payload.uri],
+      connectToUser.defaultCollectionId,
+      prisma
+    );
   }
 
   return d;

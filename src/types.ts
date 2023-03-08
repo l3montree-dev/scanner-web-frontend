@@ -15,9 +15,11 @@ export interface ChartData {
   totalCount: number;
 }
 
-export type CollectionStatMap = { [collectionId: number]: CollectionStat };
+export type CollectionStatMap = {
+  [collectionId: number]: CollectionStat | undefined;
+};
 export type SingleCollectionStatMap = {
-  [collectionId: number]: SingleCollectionStat;
+  [collectionId: number]: SingleCollectionStat | undefined;
 };
 
 export interface CollectionStat {

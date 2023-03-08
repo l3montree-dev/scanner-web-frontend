@@ -34,7 +34,7 @@ function CollectionMenu<T extends { id: number; title: string; color: string }>(
                 onClick={() => props.onCollectionClick(collection)}
               >
                 <div
-                  className="w-4 h-4 flex flex-row items-center justify-center rounded-full mr-2"
+                  className="w-3 h-3 flex flex-row items-center justify-center rounded-full mr-2"
                   style={{
                     backgroundColor: collection.color,
                   }}

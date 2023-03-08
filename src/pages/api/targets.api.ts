@@ -22,6 +22,7 @@ import {
 } from "../../utils/common";
 import { stream2buffer, toDTO } from "../../utils/server";
 import { Collection } from "victory";
+import { targetCollectionService } from "../../services/targetCollectionService";
 
 const logger = getLogger(__filename);
 
@@ -40,7 +41,7 @@ const deleteTargetRelation = async (
     return;
   }
   // delete it from all collection where this user is owner of or its his default collection.
-  return prisma.targetCollectionRelation.deleteMany({
+  const relations = await prisma.targetCollectionRelation.findMany({
     where: {
       OR: [
         {
@@ -60,6 +61,11 @@ const deleteTargetRelation = async (
       ],
     },
   });
+  return Promise.all(
+    relations.map((r) =>
+      targetCollectionService.deleteConnection(uris, r.collectionId, prisma)
+    )
+  );
 };
 
 const handleDelete = async (

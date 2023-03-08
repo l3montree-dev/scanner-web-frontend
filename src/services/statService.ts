@@ -2,12 +2,7 @@ import { Prisma, PrismaClient, User } from "@prisma/client";
 import PQueue from "p-queue";
 import { config } from "../config";
 import { InspectionType } from "../inspection/scans";
-import {
-  IDashboard,
-  ChartData,
-  CollectionStatMap,
-  SingleCollectionStatMap,
-} from "../types";
+import { ChartData, CollectionStatMap, IDashboard } from "../types";
 import { toDTO } from "../utils/server";
 import { eachDay } from "../utils/time";
 import { getLogger } from "./logger";
@@ -23,6 +18,17 @@ const getTotalsOfUser = async (user: User, prisma: PrismaClient) => {
       },
     }),
   };
+};
+
+const deleteStatsOfCollection = async (
+  collectionId: number,
+  prisma: PrismaClient
+) => {
+  await prisma.stat.deleteMany({
+    where: {
+      collectionId: collectionId,
+    },
+  });
 };
 
 const generateStatsForCollection = async (
@@ -237,7 +243,7 @@ export const getDashboardForUser = async (
         series: [],
       };
     }
-    acc[curr.collectionId].series.push({
+    acc[curr.collectionId]!.series.push({
       date: Number(curr.time),
       ...(curr.value as {
         data: { [key in InspectionType]: number };
@@ -259,4 +265,5 @@ export const statService = {
   getDashboardForUser,
   getReferenceChartData,
   generateStatsForCollection,
+  deleteStatsOfCollection,
 };

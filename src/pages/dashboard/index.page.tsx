@@ -19,6 +19,7 @@ import { config } from "../../config";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
 import { withCurrentUserServerSideProps } from "../../decorators/withCurrentUser";
 import { withDB } from "../../decorators/withDB";
+import { InspectionType } from "../../inspection/scans";
 import { collectionService } from "../../services/collectionService";
 import { statService } from "../../services/statService";
 import { ChartData, IDashboard } from "../../types";
@@ -44,8 +45,8 @@ const Dashboard: FunctionComponent<Props> = (props) => {
   const currentStat = useMemo(
     () =>
       props.defaultCollectionId in dashboard.historicalData
-        ? dashboard.historicalData[props.defaultCollectionId].series[
-            dashboard.historicalData[props.defaultCollectionId].series.length -
+        ? dashboard.historicalData[props.defaultCollectionId]!.series[
+            dashboard.historicalData[props.defaultCollectionId]!.series.length -
               1
           ]
         : ({
@@ -58,7 +59,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
     props.refCollections.concat(props.defaultCollectionId)
   );
 
-  const [isPending, startTransition] = useTransition();
+  const [_, startTransition] = useTransition();
   const [_displayCollections, _setDisplayCollections] = useState(
     props.refCollections.concat(props.defaultCollectionId)
   );
@@ -84,9 +85,9 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                 return [
                   collectionId,
                   {
-                    title: stat.title,
-                    color: stat.color,
-                    series: stat.series.map((item) => {
+                    title: stat!.title,
+                    color: stat!.color,
+                    series: stat!.series.map((item) => {
                       return {
                         y: item.data[key] * 100,
                         x: new Date(item.date).toLocaleDateString(

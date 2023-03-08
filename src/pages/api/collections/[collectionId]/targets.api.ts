@@ -5,31 +5,20 @@ import { withCurrentUser } from "../../../../decorators/withCurrentUser";
 import { withDB } from "../../../../decorators/withDB";
 import ForbiddenException from "../../../../errors/ForbiddenException";
 import MethodNotAllowed from "../../../../errors/MethodNotAllowed";
+import { targetCollectionService } from "../../../../services/targetCollectionService";
 import { toDTO } from "../../../../utils/server";
 
 const handlePost = async (
   collection: Collection,
   targets: Target[],
-  currentUser: User,
   prisma: PrismaClient
 ) => {
   // add the targets to the collection AND the default collection.
-  return prisma.targetCollectionRelation.createMany({
-    data: targets
-      .map((t) => ({
-        uri: t.uri,
-        collectionId: collection.id,
-      }))
-      // this is a logical constraint, which needs to be enforced by the application.
-      // all targets need to be part of the default collection.
-      .concat(
-        targets.map((t) => ({
-          uri: t.uri,
-          collectionId: currentUser.defaultCollectionId,
-        }))
-      ),
-    skipDuplicates: true,
-  });
+  return targetCollectionService.createConnection(
+    targets.map((t) => t.uri),
+    collection.id,
+    prisma
+  );
 };
 
 const handleDelete = async (
@@ -37,15 +26,11 @@ const handleDelete = async (
   targets: Target[],
   prisma: PrismaClient
 ) => {
-  // delete the targets from the collection
-  return prisma.targetCollectionRelation.deleteMany({
-    where: {
-      uri: {
-        in: targets.map((t) => t.uri),
-      },
-      collectionId: collection.id,
-    },
-  });
+  return targetCollectionService.deleteConnection(
+    targets.map((t) => t.uri),
+    collection.id,
+    prisma
+  );
 };
 
 export default decorate(
@@ -74,9 +59,7 @@ export default decorate(
     // the user is allowed to add a target to this collection.
     switch (req.method) {
       case "POST":
-        return toDTO(
-          await handlePost(collection, targets, currentUser, prisma)
-        );
+        return toDTO(await handlePost(collection, targets, prisma));
       case "DELETE":
         return toDTO(await handleDelete(collection, targets, prisma));
       default:

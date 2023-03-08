@@ -21,11 +21,13 @@ interface Props {
   dataPerInspection: {
     [key: string]: {
       data: {
-        [collectionId: number]: {
-          series: { x: string; y: number }[];
-          title: string;
-          color: string;
-        };
+        [collectionId: number]:
+          | {
+              series: { x: string; y: number }[];
+              title: string;
+              color: string;
+            }
+          | undefined;
       };
       min: number;
       max: number;
@@ -83,6 +85,7 @@ const LineCharts: FunctionComponent<Props> = ({
                   />
                   {displayCollections.map((collectionId, i) => {
                     const d = data[collectionId];
+                    if (!d) return null;
                     const color =
                       +collectionId === defaultCollectionId
                         ? tailwindColors.lightning["500"]
@@ -104,16 +107,17 @@ const LineCharts: FunctionComponent<Props> = ({
                       />
                     );
                   })}
-                  {displayCollections.includes(defaultCollectionId) && (
-                    <VictoryArea
-                      style={{
-                        data: {
-                          fill: "url(#serviceGradient)",
-                        },
-                      }}
-                      data={data[defaultCollectionId].series}
-                    />
-                  )}
+                  {displayCollections.includes(defaultCollectionId) &&
+                    defaultCollectionId in data && (
+                      <VictoryArea
+                        style={{
+                          data: {
+                            fill: "url(#serviceGradient)",
+                          },
+                        }}
+                        data={data[defaultCollectionId]!.series}
+                      />
+                    )}
                 </VictoryChart>
               </div>
               <h2
