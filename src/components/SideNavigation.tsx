@@ -2,6 +2,7 @@ import {
   faChartLine,
   faListCheck,
   faNetworkWired,
+  faTag,
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -20,6 +21,11 @@ const defaultLinks = [
     icon: faListCheck,
     name: "Domainübersicht",
     path: "/dashboard/targets",
+  },
+  {
+    icon: faTag,
+    name: "Sammlungen",
+    path: "/dashboard/collections",
   },
 ];
 const getLinks = (isAdmin: boolean) => {

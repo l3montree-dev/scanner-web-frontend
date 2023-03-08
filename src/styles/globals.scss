@@ -104,10 +104,15 @@ th > div {
 
 .tooltip {
     min-width: 300px;
+    pointer-events: none;
 }
 
 .modal {
     min-width: 600px;
+}
+
+.line-height-0 {
+    line-height: 0;
 }
 
 @media screen and (max-width: 768px) {

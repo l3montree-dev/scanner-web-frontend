@@ -51,6 +51,7 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
           <div className="flex flex-1 px-2 flex-row justify-end items-center">
             <div className="ml-2 text-sm text-white">
               <Menu
+                menuCloseIndex={0}
                 Button={
                   <div className="bg-deepblue-100 rounded-full text-white h-9 w-9 flex items-center justify-center text-sm mr-1">
                     {getInitials(session.data.user.name)}

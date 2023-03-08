@@ -260,6 +260,22 @@ export const linkMapper: { [key in InspectionType]: string } = {
   [HeaderInspectionType.ContentTypeOptions]: "",
 };
 
+export type Normalized<T> = {
+  [key: string]: T;
+};
+
+export const normalizeToMap = <T extends object, Key extends keyof T>(
+  arr: T[],
+  identifier: Key
+) => {
+  return arr.reduce((acc, cur) => {
+    return {
+      ...acc,
+      [cur[identifier] as string]: cur,
+    };
+  }, {} as Normalized<T>);
+};
+
 export const neverThrow = async <T>(promise: Promise<T>): Promise<T | null> => {
   try {
     return await promise;
@@ -315,4 +331,22 @@ export const staticSecrets = [
   "znnlaczgcm",
   // this one is for the dashboards
   "oQ334umtB2Ve4XpTz2USFemZgC9ZLpXW",
+];
+
+export const colors = [
+  "#ef4444",
+  "#f97316",
+  "#f59e0b",
+  "#eab308",
+  "#84cc16",
+  "#22c55e",
+  "#10b981",
+  "#14b8a6",
+  "#06b6d4",
+  "#0ea5e9",
+  "#3b82f6",
+  "#6366f1",
+  "#8b5cf6",
+  "#a855f7",
+  "#d946ef",
 ];

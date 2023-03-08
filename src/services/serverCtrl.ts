@@ -69,15 +69,14 @@ const statLoop = once(() => {
     if (isMaster() && !running) {
       running = true;
 
-      // generate the stats for each user.
-      const users = await prisma.user.findMany();
-      users.forEach((user) => {
-        statService.generateStatsForUser(user, promiseQueue, prisma);
-      });
+      const collections = await prisma.collection.findMany();
 
-      // check which stats need to be generated.
-      config.generateStatsForGroups.forEach((group) => {
-        statService.generateStatsForGroups(group, promiseQueue, prisma);
+      collections.forEach((collection) => {
+        statService.generateStatsForCollection(
+          collection.id,
+          promiseQueue,
+          prisma
+        );
       });
 
       await promiseQueue.onIdle();

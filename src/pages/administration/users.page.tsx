@@ -100,7 +100,7 @@ const Users: FunctionComponent<Props> = (props) => {
     setEdit(null);
   };
 
-  const handleUpdateUser = async (user: User) => {
+  const handleUpdateUser = async (user: Omit<User, "defaultCollectionId">) => {
     const res = await clientHttpClient(
       `/api/users/${user.id}`,
       crypto.randomUUID(),
@@ -176,6 +176,7 @@ const Users: FunctionComponent<Props> = (props) => {
                   <td className="p-2">{user.role ? user.role : ""}</td>
                   <td className="p-2 w-20 text-right">
                     <Menu
+                      menuCloseIndex={0}
                       Button={
                         <div className="p-2 h-8 w-8 flex flex-row items-center justify-center">
                           <FontAwesomeIcon icon={faEllipsisVertical} />

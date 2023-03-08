@@ -47,8 +47,8 @@ model ScanReport {
   tlsv1_3              Boolean?
 
   deprecatedTLSDeactivated Boolean?
-  strongKeyExchange   Boolean?
-  strongCipherSuites  Boolean?
+  strongKeyExchange        Boolean?
+  strongCipherSuites       Boolean?
 
   validCertificate         Boolean?
   strongPrivateKey         Boolean?
@@ -67,8 +67,8 @@ model ScanReport {
 // the full scan report
 model LastScanDetails {
   updatedAt DateTime @default(now()) @updatedAt
-  details Json   @db.JsonB
-  uri     String @id
+  details   Json     @db.JsonB
+  uri       String   @id
 
   target Target @relation(fields: [uri], references: [uri], onDelete: Cascade)
 
@@ -89,11 +89,11 @@ model Target {
   // pretty much the reason why this domain is part of the system at all.
   group String
 
-  users UserTargetRelation[]
-
   scanReports ScanReport[]
 
   lastScanDetails LastScanDetails?
+
+  collections TargetCollectionRelation[]
 
   @@index([group])
   @@index([lastScan])
@@ -101,23 +101,17 @@ model Target {
   @@map("targets")
 }
 
-model UserTargetRelation {
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String
-  target Target @relation(fields: [uri], references: [uri], onDelete: Cascade)
-  uri    String
-
-  createdAt DateTime @default(now())
-
-  @@id([userId, uri])
-  @@map("user_target_relations")
-}
-
 model User {
-  id      String               @id
-  role    String?
-  targets UserTargetRelation[]
+  id   String  @id
+  role String?
 
+  collections         Collection[] @relation("user_collections")
+  collectionCreations Collection[]
+
+  defaultCollection   Collection @relation("default_collection", fields: [defaultCollectionId], references: [id], onDelete: Cascade)
+  defaultCollectionId Int
+
+  @@unique([defaultCollectionId])
   @@map("users")
 }
 
@@ -133,12 +127,46 @@ model Network {
 }
 
 model Stat {
-  subject String
-  time    BigInt
-  value   Json
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  collectionId Int
 
-  @@id([subject, time])
+  time  BigInt
+  value Json
+
+  @@id([collectionId, time])
   @@map("stats")
+}
+
+model TargetCollectionRelation {
+  target       Target     @relation(fields: [uri], references: [uri], onDelete: Cascade)
+  uri          String
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  collectionId Int
+
+  createdAt DateTime @default(now())
+
+  @@id([uri, collectionId])
+  @@map("target_collections")
+}
+
+model Collection {
+  id      Int                        @id @default(autoincrement())
+  title   String
+  targets TargetCollectionRelation[]
+  user    User[]                     @relation("user_collections")
+
+  owner   User?   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId String?
+  color   String
+
+  defaultOf User? @relation("default_collection")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  stats      Stat[]
+
+  @@map("collections")
 }
 
 model Email {

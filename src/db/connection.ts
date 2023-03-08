@@ -18,13 +18,15 @@ BigInt.prototype.toJSON = function (): string {
 
 const prismaRef = new GlobalRef<PrismaClient>("prisma");
 if (!prismaRef.value) {
-  prismaRef.value = new PrismaClient({
+  const prisma = new PrismaClient({
     datasources: {
       db: {
         url: `postgres://${databaseConnection.user}:${databaseConnection.password}@${databaseConnection.host}:${databaseConnection.port}/${databaseConnection.database}`,
       },
     },
   });
+
+  prismaRef.value = prisma;
 }
 
 export const prisma = prismaRef.value;

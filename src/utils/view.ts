@@ -4,6 +4,16 @@ import {
   faTimes,
   faWarning,
 } from "@fortawesome/free-solid-svg-icons";
+import resolveConfig from "tailwindcss/resolveConfig";
+import tailwindConfig from "../../tailwind.config";
+import {
+  DomainInspectionType,
+  HeaderInspectionType,
+  InspectionType,
+  NetworkInspectionType,
+  OrganizationalInspectionType,
+  TLSInspectionType,
+} from "../inspection/scans";
 
 export enum CheckResult {
   Passed = "passed",
@@ -61,3 +71,26 @@ export const checkResult2Icon = (checkResult: CheckResult) => {
       return faQuestion;
   }
 };
+
+export const optimisticUpdate = <T>(
+  currentState: T,
+  setStateFn: (fn: (prev: T) => T) => void,
+  transformer: (currentState: T) => T
+) => {
+  const oldState = currentState;
+  setStateFn(transformer);
+  // return the reverting function
+  return () => setStateFn(() => oldState);
+};
+
+export const displayInspections: Array<InspectionType> = [
+  OrganizationalInspectionType.ResponsibleDisclosure,
+  TLSInspectionType.TLSv1_3,
+  TLSInspectionType.DeprecatedTLSDeactivated,
+  HeaderInspectionType.HSTS,
+  DomainInspectionType.DNSSec,
+  NetworkInspectionType.RPKI,
+];
+
+const fullConfig = resolveConfig(tailwindConfig);
+export const tailwindColors = (fullConfig.theme as any).colors;
