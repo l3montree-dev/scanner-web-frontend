@@ -1,5 +1,7 @@
 import {
   CertificateInspectionType,
+  ContentInspectionType,
+  CookieInspectionType,
   DomainInspectionType,
   HeaderInspectionType,
   HttpInspectionType,
@@ -34,18 +36,41 @@ export const messages = {
 };
 
 export const titleMapper = {
-  [DomainInspectionType.DNSSec]: "DNSSEC",
-  [NetworkInspectionType.RPKI]: "RPKI",
-  [TLSInspectionType.TLSv1_3]: "TLS 1.3",
   [HttpInspectionType.HTTP]: "HTTP",
+  [HttpInspectionType.HTTP308]: "HTTP moved permanently",
+  [HttpInspectionType.HTTPRedirectsToHttps]: "HTTP Weiterleitung zu HTTPS",
+  [TLSInspectionType.TLSv1_2]: "TLS 1.2",
+  [TLSInspectionType.TLSv1_3]: "TLS 1.3",
   [TLSInspectionType.DeprecatedTLSDeactivated]:
     "Deaktivierung von veralteten TLS/ SSL Protokollen",
-  [HeaderInspectionType.HSTS]: "HSTS",
+  [TLSInspectionType.StrongKeyExchange]: "Strong-Key-Exchange",
+  [TLSInspectionType.StrongCipherSuites]: "Strong-Cipher-Suites",
+  [CertificateInspectionType.ValidCertificate]: "Gültiges Zertifikat",
+  [CertificateInspectionType.StrongPrivateKey]: "Starker-Private-Key",
+  [CertificateInspectionType.StrongSignatureAlgorithm]:
+    "Starker Signatur Algorithmus",
+  [CertificateInspectionType.MatchesHostname]:
+    "Hostname Übereinstimmung im Zertifikat",
+  [CertificateInspectionType.NotRevoked]:
+    "Zertifikat wurde nicht zurückgerufen",
+  [CertificateInspectionType.CertificateTransparency]: "Zertifikattransparenz",
+  [CertificateInspectionType.ValidCertificateChain]: "Gültige Zertifikatskette",
+  [CookieInspectionType.SecureSessionCookies]: "Sichere Session Cookies",
+  [NetworkInspectionType.IPv6]: "IPv6",
+  [NetworkInspectionType.RPKI]: "RPKI",
+  [DomainInspectionType.DNSSec]: "DNSSEC",
+  [DomainInspectionType.CAA]: "CAA",
   [OrganizationalInspectionType.ResponsibleDisclosure]:
     "Responsible Disclosure",
-  [CertificateInspectionType.MatchesHostname]:
-    "Übereinstimmung des Hostnamens im Zertifikat",
-  [CertificateInspectionType.ValidCertificate]: "Gültiges Zertifikat",
+  [ContentInspectionType.SubResourceIntegrity]: "Sub Resource Integrity",
+  [ContentInspectionType.NoMixedContent]: "Kein Mixed Content",
+  [HeaderInspectionType.HTTPS]: "HTTPS",
+  [HeaderInspectionType.HSTS]: "HSTS",
+  [HeaderInspectionType.HSTSPreloaded]: "HSTS Preloaded",
+  [HeaderInspectionType.ContentSecurityPolicy]: "Content Security Policy",
+  [HeaderInspectionType.XFrameOptions]: "X-Frame-Options",
+  [HeaderInspectionType.XSSProtection]: "X-XSS-Protection",
+  [HeaderInspectionType.ContentTypeOptions]: "Content-Type-Options",
 };
 
 export const getCheckDescription = (
