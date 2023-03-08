@@ -144,6 +144,8 @@ spec:
                   fieldPath: metadata.namespace
             - name: SCAN_INTERVAL_DAYS
               value: {{.Values.quicktest.scanInterval | default "7" | quote}}
+            - name: NEXT_PUBLIC_REFERENCE_COLLECTIONS
+              value: {{.Values.quicktest.referenceCollections | default "" | quote}}
           livenessProbe:
             initialDelaySeconds: 10
             periodSeconds: 10

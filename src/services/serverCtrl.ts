@@ -82,8 +82,10 @@ const statLoop = once(() => {
       await promiseQueue.onIdle();
 
       running = false;
-    } else {
+    } else if (running) {
       logger.warn("stat loop is already running");
+    } else {
+      logger.warn("not master - not running stat loop");
     }
   }, 10 * 1000);
 });
