@@ -34,7 +34,7 @@ describe("Target Service Test Suite", () => {
         upsert: jest.fn(),
       },
       targetCollectionRelation: {
-        create: jest.fn(),
+        createMany: jest.fn(),
       },
     } as any;
     await targetService.handleNewTarget(
@@ -44,13 +44,41 @@ describe("Target Service Test Suite", () => {
       prismaMock,
       { id: "1234", defaultCollectionId: 4711 } as any
     );
-    expect(prismaMock.targetCollectionRelation.create).toHaveBeenCalledWith({
-      data: {
-        collectionId: 4711,
+    expect(prismaMock.targetCollectionRelation.createMany).toHaveBeenCalledWith(
+      {
+        data: [
+          {
+            collectionId: 4711,
+            uri: "example.com/test",
+          },
+        ],
+      }
+    );
+  });
+  it("should delete the statistics of a collection if a target is added", async () => {
+    const prismaMock = {
+      target: {
+        upsert: jest.fn(),
+      },
+      targetCollectionRelation: {
+        createMany: jest.fn(),
+      },
+      stat: {
+        deleteMany: jest.fn(),
+      },
+    } as any;
+    await targetService.handleNewTarget(
+      {
         uri: "example.com/test",
       },
-    });
+      prismaMock,
+      { id: "1234", defaultCollectionId: 4711 } as any
+    );
+    // wait for the next tick
+    await new Promise(process.nextTick);
+    expect(prismaMock.stat.deleteMany).toHaveBeenCalled();
   });
+
   it("should create a target even if the scan failed", async () => {
     const prismaMock = {
       target: {

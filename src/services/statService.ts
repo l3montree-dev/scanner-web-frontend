@@ -24,6 +24,7 @@ const deleteStatsOfCollection = async (
   collectionId: number,
   prisma: PrismaClient
 ) => {
+  console.log("CALLED");
   await prisma.stat.deleteMany({
     where: {
       collectionId: collectionId,
