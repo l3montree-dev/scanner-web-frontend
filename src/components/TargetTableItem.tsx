@@ -196,6 +196,7 @@ const TargetTableItem: FunctionComponent<Props> = ({
 
                 {Object.keys(collections).length > 0 ? (
                   <CollectionMenu
+                    nestedMenu
                     collections={collections}
                     Button={
                       <div

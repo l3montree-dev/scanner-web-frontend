@@ -13,6 +13,7 @@ interface Props {
   // clicking on a menu will always close all menus, which have a greater index than the clicked menu
   menuCloseIndex: number;
   buttonClassNames?: string;
+  nestedMenu?: boolean;
 }
 
 const selfDestroyingListener = (
@@ -34,6 +35,7 @@ const Menu: FunctionComponent<Props> = ({
   Menu,
   menuCloseIndex,
   buttonClassNames,
+  nestedMenu,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -113,6 +115,9 @@ const Menu: FunctionComponent<Props> = ({
         style={{ minWidth: Math.max(buttonRef.current?.clientWidth ?? 0, 200) }}
         className={classNames(
           "absolute menu right-0 origin-top translate-y-1 transition-all z-20 menu-list",
+          nestedMenu === true
+            ? "-translate-x-full -translate-y-1/2 mr-0.5"
+            : "",
           isOpen
             ? "opacity-1 scale-100"
             : "opacity-0 scale-75 pointer-events-none"

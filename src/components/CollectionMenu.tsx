@@ -9,6 +9,7 @@ interface Props<T extends { id: number; title: string; color: string }> {
   selectedCollections: number[];
   onCollectionClick: (collection: T) => void;
   Button: JSX.Element;
+  nestedMenu?: boolean;
 }
 function CollectionMenu<T extends { id: number; title: string; color: string }>(
   props: Props<T>
@@ -18,6 +19,7 @@ function CollectionMenu<T extends { id: number; title: string; color: string }>(
       menuCloseIndex={0}
       buttonClassNames="w-full"
       Button={props.Button}
+      nestedMenu={props.nestedMenu}
       Menu={
         <MenuList>
           {Object.values(props.collections ?? {}).map((collection) => {
