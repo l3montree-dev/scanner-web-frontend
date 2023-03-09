@@ -1,5 +1,6 @@
 import { faRefresh } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { toUnicode } from "punycode";
 import { FunctionComponent } from "react";
 import { legendMessages } from "../messages/legend";
 import { DetailedTarget } from "../types";
@@ -46,9 +47,9 @@ const ResultEnvelope: FunctionComponent<Props> = ({
               target={"_blank"}
               className="underline"
               rel="noopener noreferrer"
-              href={`//${target.uri}`}
+              href={`//${toUnicode(target.uri)}`}
             >
-              {target.uri}{" "}
+              {toUnicode(target.uri)}{" "}
             </a>
           </h2>
           {target.uri !== target.details?.sut && (
@@ -58,9 +59,9 @@ const ResultEnvelope: FunctionComponent<Props> = ({
                 target={"_blank"}
                 className="underline"
                 rel="noopener noreferrer"
-                href={`//${target.details?.sut}`}
+                href={`//${toUnicode(target.details?.sut ?? "")}`}
               >
-                {target.details?.sut}
+                {toUnicode(target.details?.sut ?? "")}
               </a>
             </>
           )}

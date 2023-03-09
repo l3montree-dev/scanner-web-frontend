@@ -5,6 +5,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Collection, Target } from "@prisma/client";
 import Link from "next/link";
+import { toUnicode } from "punycode";
 import { FunctionComponent } from "react";
 import useLoading from "../hooks/useLoading";
 import {
@@ -90,7 +91,7 @@ const TargetTableItem: FunctionComponent<Props> = ({
               title={target.uri}
               className="whitespace-nowrap overflow-hidden text-ellipsis max-w-xs block"
             >
-              {target.uri}
+              {toUnicode(target.uri)}
             </span>
             <div className="inline ml-2">
               <Tooltip tooltip={infoMessage(target)}>

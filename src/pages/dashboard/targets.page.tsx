@@ -462,19 +462,23 @@ const Targets: FunctionComponent<Props> = (props) => {
                   }
                 />
               </div>
-              <div className="my-2">
-                <CollectionMenu
-                  collections={props.collections}
-                  selectedCollections={collectionIds}
-                  onCollectionClick={(c) => handleCollectionFilterToggle(c.id)}
-                  Button={
-                    <div className="p-2 bg-deepblue-100 border border-deepblue-100 flex flex-row items-center justify-center">
-                      Filter nach Sammlungen
-                      <FontAwesomeIcon className="ml-2" icon={faCaretDown} />
-                    </div>
-                  }
-                />
-              </div>
+              {Object.keys(props.collections).length > 0 && (
+                <div className="my-2">
+                  <CollectionMenu
+                    collections={props.collections}
+                    selectedCollections={collectionIds}
+                    onCollectionClick={(c) =>
+                      handleCollectionFilterToggle(c.id)
+                    }
+                    Button={
+                      <div className="p-2 bg-deepblue-100 border border-deepblue-100 flex flex-row items-center justify-center">
+                        Filter nach Sammlungen
+                        <FontAwesomeIcon className="ml-2" icon={faCaretDown} />
+                      </div>
+                    }
+                  />
+                </div>
+              )}
 
               <div className="flex flex-wrap flex-row gap-2 px-5 items-center pl-4 justify-start">
                 {collectionIds.map((c) => {

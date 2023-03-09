@@ -1,5 +1,6 @@
+import { toUnicode } from "punycode";
 import { DetailedTarget } from "../types";
-import { getHostnameFromUri } from "../utils/common";
+import { getHostnameFromUri, getUnicodeHostnameFromUri } from "../utils/common";
 import { DTO } from "../utils/server";
 
 export const getDNSSecReportMessage = (report: DTO<DetailedTarget>) => {
@@ -7,7 +8,7 @@ export const getDNSSecReportMessage = (report: DTO<DetailedTarget>) => {
     return "DNSSEC konnte nicht überpüft werden.";
   }
   const inspection = report.details.dnsSec;
-  const hostname = getHostnameFromUri(report.details.sut);
+  const hostname = getUnicodeHostnameFromUri(report.details.sut);
   if (inspection === null || inspection === undefined) {
     return `DNSSEC konnte für die Domain ${hostname} nicht überprüft werden.`;
   } else if (inspection.didPass) {

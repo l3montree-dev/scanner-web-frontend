@@ -1,5 +1,6 @@
 import { ResponsibleDisclosureValidationError } from "../inspection/result-enums/organizational.typings";
 import { DetailedTarget } from "../types";
+import { getUnicodeHostnameFromUri } from "../utils/common";
 import { DTO } from "../utils/server";
 
 export const getResponsibleDisclosureReportMessage = (
@@ -10,7 +11,7 @@ export const getResponsibleDisclosureReportMessage = (
   }
 
   const inspection = report.details["responsibleDisclosure"];
-  const uri = new URL(`http://${report.details.sut}`).hostname;
+  const uri = getUnicodeHostnameFromUri(`http://${report.details.sut}`);
   if (inspection?.didPass === null || inspection?.didPass === undefined) {
     return `Die Datei ${uri}/.well-known/security.txt konnte nicht überprüft werden.`;
   } else if (inspection.didPass) {

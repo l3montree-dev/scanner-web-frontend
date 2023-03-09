@@ -1,4 +1,5 @@
 import { PrismaClient, Target, User } from "@prisma/client";
+import { encode, toASCII } from "punycode";
 import { config } from "../config";
 import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
 import {
@@ -110,7 +111,7 @@ const getUserTargetsWithLatestTestResult = async (
   ];
 
   if (paginateRequest.search !== undefined && paginateRequest.search !== "") {
-    sqlValues.push(paginateRequest.search);
+    sqlValues.push(toASCII(paginateRequest.search));
   }
 
   // subject to sql injection!!!

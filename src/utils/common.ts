@@ -11,6 +11,7 @@ import {
 import { Network } from "@prisma/client";
 
 import ip from "ip";
+import { toUnicode } from "punycode/";
 import {
   CertificateInspectionType,
   ContentInspectionType,
@@ -38,6 +39,11 @@ export const clientOnly = <T>(fn: () => T): T | null => {
     return fn();
   }
   return null;
+};
+
+export const getUnicodeHostnameFromUri = (hostname: string) => {
+  const unicodeHostname = toUnicode(getHostnameFromUri(hostname));
+  return unicodeHostname;
 };
 
 export const isProgressMessage = (
@@ -170,9 +176,11 @@ export const sanitizeFQDN = (providedValue: any): string | null => {
   }
 
   if (url.pathname !== "/") {
-    return url.port
-      ? `${url.hostname}:${url.port}${url.pathname}`
-      : url.hostname + url.pathname;
+    return toUnicode(
+      url.port
+        ? `${url.hostname}:${url.port}${url.pathname}`
+        : url.hostname + url.pathname
+    );
   }
 
   // make sure to keep the port if provided

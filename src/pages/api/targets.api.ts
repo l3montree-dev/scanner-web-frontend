@@ -13,6 +13,7 @@ import { withCurrentUser } from "../../decorators/withCurrentUser";
 import BadRequestException from "../../errors/BadRequestException";
 import { getLogger } from "../../services/logger";
 import { reportService } from "../../services/reportService";
+import { targetCollectionService } from "../../services/targetCollectionService";
 import {
   isScanError,
   neverThrow,
@@ -21,8 +22,6 @@ import {
   timeout,
 } from "../../utils/common";
 import { stream2buffer, toDTO } from "../../utils/server";
-import { Collection } from "victory";
-import { targetCollectionService } from "../../services/targetCollectionService";
 
 const logger = getLogger(__filename);
 

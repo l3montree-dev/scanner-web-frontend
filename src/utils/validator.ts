@@ -27,7 +27,7 @@ export const isValidMask = (mask: string): boolean => {
 
 // 7 characters as TLD is valid as well: https://en.wikipedia.org/wiki/Top-level_domain#Internationalized_top-level_domains
 const hostnameRegex = new RegExp(
-  /^(?!-)[A-Za-z0-9-]+([\-\.]{1}[a-z0-9]+)*\.[A-Za-z]{2,7}$/
+  /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/
 );
 
 export const isValidHostname = (uri: string): boolean => {
