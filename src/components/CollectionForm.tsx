@@ -73,6 +73,7 @@ const CollectionForm: FunctionComponent<Props> = ({ onCreate }) => {
       </div>
       <Button
         className="bg-deepblue-100 font-medium text-white hover:bg-deepblue-200 transition-all px-3 py-2 text-center"
+        spinnerColor="white"
         loading={createRequest.isLoading}
         type="submit"
       >

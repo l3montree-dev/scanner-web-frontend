@@ -40,10 +40,12 @@ interface Props {
   refCollections: number[]; // the collections which were defined using environment variables
 }
 
-const localizeDefaultCollection = (
-  collection: DTO<Collection>,
+const localizeDefaultCollection = <
+  T extends { id: number; title: string; color: string }
+>(
+  collection: T,
   defaultCollectionId: number
-): DTO<Collection> => {
+): T => {
   if (collection.id === defaultCollectionId) {
     return {
       ...collection,
@@ -99,19 +101,23 @@ const Dashboard: FunctionComponent<Props> = (props) => {
               ([collectionId, stat]) => {
                 return [
                   collectionId,
-                  {
-                    title: stat!.title,
-                    color: stat!.color,
-                    series: stat!.series.map((item) => {
-                      return {
-                        y: item.data[key] * 100,
-                        x: new Date(item.date).toLocaleDateString(
-                          "de-DE",
-                          dateFormat
-                        ),
-                      };
-                    }),
-                  },
+                  localizeDefaultCollection(
+                    {
+                      id: parseInt(collectionId),
+                      title: stat!.title,
+                      color: stat!.color,
+                      series: stat!.series.map((item) => {
+                        return {
+                          y: item.data[key] * 100,
+                          x: new Date(item.date).toLocaleDateString(
+                            "de-DE",
+                            dateFormat
+                          ),
+                        };
+                      }),
+                    },
+                    props.defaultCollectionId
+                  ),
                 ];
               }
             )

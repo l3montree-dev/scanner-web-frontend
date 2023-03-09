@@ -14,6 +14,7 @@ import { theme } from "../../styles/victory-theme";
 import { linkMapper } from "../../utils/common";
 import { tailwindColors } from "../../utils/view";
 import { LabelComponent } from "./LabelComponent";
+import { RefLabelComponent } from "./RefLabelComponent";
 
 interface Props {
   displayCollections: number[];
@@ -43,12 +44,12 @@ const LineCharts: FunctionComponent<Props> = ({
   defaultCollectionId,
 }) => {
   return (
-    <div className="flex mt-5 justify-start -mx-2 flex-wrap flex-row">
+    <div className="mt-5 grid grid-cols-3 gap-2 justify-start">
       {displayInspections.map((key) => {
         const { data, min, max } = dataPerInspection[key];
         return (
-          <div className="xl:w-1/3 sm:w-1/2 w-full mb-5" key={key}>
-            <div className="bg-deepblue-600 mx-2 historical-chart border flex-col flex border-deepblue-100">
+          <div className="w-full" key={key}>
+            <div className="bg-deepblue-600 historical-chart border flex-col flex border-deepblue-100">
               <div className="flex-1 pt-5 relative">
                 {linkMapper[key] !== "" && (
                   <Link
@@ -83,7 +84,7 @@ const LineCharts: FunctionComponent<Props> = ({
                     dependentAxis
                     fixLabelOverlap
                   />
-                  {displayCollections.map((collectionId, i) => {
+                  {displayCollections.map((collectionId, i, arr) => {
                     const d = data[collectionId];
                     if (!d) return null;
                     const color =
@@ -101,8 +102,19 @@ const LineCharts: FunctionComponent<Props> = ({
                           },
                         }}
                         interpolation={"basis"}
-                        labels={({ datum }) => `${datum.y.toFixed(1)}%`}
-                        labelComponent={<LabelComponent fill={color} />}
+                        labels={(label) => {
+                          if (+label.index === d.series.length - 1) {
+                            return `${label.datum.y.toFixed(1)}%`;
+                          }
+                          return d.title;
+                        }}
+                        labelComponent={
+                          <RefLabelComponent
+                            fill={color}
+                            nRefComponents={arr.length}
+                            i={i}
+                          />
+                        }
                         data={d.series}
                       />
                     );

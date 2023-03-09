@@ -2,7 +2,9 @@ import { FunctionComponent } from "react";
 import { VictoryLabel } from "victory";
 import { tailwindColors } from "../../utils/view";
 
-export const RefLabelComponent: FunctionComponent<any> = (props) => {
+export const RefLabelComponent: FunctionComponent<any & { fill: string }> = (
+  props
+) => {
   const totalElements = props.data?.length - 1;
   const totalRefComponents = props.nRefComponents;
   // evenly space the labels
@@ -24,7 +26,7 @@ export const RefLabelComponent: FunctionComponent<any> = (props) => {
         }}
         style={{
           fontSize: 10,
-          fill: tailwindColors.slate["400"],
+          fill: props.fill,
         }}
       />
     );
@@ -40,7 +42,7 @@ export const RefLabelComponent: FunctionComponent<any> = (props) => {
         dy={0}
         style={{
           fontSize: 10,
-          fill: tailwindColors.slate["400"],
+          fill: props.fill,
         }}
       />
     );

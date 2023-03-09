@@ -52,7 +52,7 @@ const PieCharts: FunctionComponent<Props> = ({
   historicalData,
 }) => {
   return (
-    <div className="flex mt-5 justify-start gap-2 flex-wrap flex-row">
+    <div className="mt-5 justify-start gap-2 flex-wrap grid grid-cols-4">
       {displayInspections.map((key) => {
         const percentage = currentStat.data[key] * 100;
         let padAngle = 3;
@@ -76,7 +76,7 @@ const PieCharts: FunctionComponent<Props> = ({
           .filter((r): r is RefData => r !== null);
         return (
           <div
-            className="w-56 bg-deepblue-600 border flex-col flex border-deepblue-100"
+            className="bg-deepblue-600 border flex-col flex border-deepblue-100"
             key={key}
           >
             <div className="flex-1 pt-5 relative">

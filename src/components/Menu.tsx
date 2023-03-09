@@ -104,7 +104,7 @@ const Menu: FunctionComponent<Props> = ({
       <div
         onClick={handleMenuClick}
         className={classNames(
-          "absolute menu left-0 origin-top-right translate-y-1 -translate-x-3/4 transition-all z-20 menu-list",
+          "absolute menu left-0 text-sm origin-top-right translate-y-1 -translate-x-3/4 transition-all z-20 menu-list",
           isOpen
             ? "opacity-1 scale-100"
             : "opacity-0 scale-75 pointer-events-none"
