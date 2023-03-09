@@ -383,92 +383,98 @@ const Targets: FunctionComponent<Props> = (props) => {
                     : ""
                 )}
               >
+                <div className="m-2">
+                  <Menu
+                    menuCloseIndex={0}
+                    Button={
+                      <div className="p-2 bg-deepblue-100 border border-deepblue-100 flex flex-row items-center justify-center">
+                        Gruppenaktionen ({selectedTargets.length})
+                        <FontAwesomeIcon className="ml-2" icon={faCaretDown} />
+                      </div>
+                    }
+                    Menu={
+                      <MenuList>
+                        <MenuItem
+                          loading={scanAllLoading.isLoading}
+                          onClick={async () => {
+                            scanAllLoading.loading();
+                            try {
+                              await Promise.all(
+                                selectedTargets.map((d) => scanTarget(d))
+                              );
+                            } finally {
+                              scanAllLoading.success();
+                            }
+                          }}
+                        >
+                          <div>
+                            <div>Erneut scannen</div>
+                          </div>
+                        </MenuItem>
+                        <MenuItem onClick={deleteSelection}>
+                          <div>Löschen</div>
+                        </MenuItem>
+                        <CollectionMenu
+                          collections={props.collections}
+                          selectedCollections={collectionIds}
+                          onCollectionClick={(c) =>
+                            handleAddToCollection(
+                              selectedTargets.map((s) => ({ uri: s })),
+                              c.id
+                            )
+                          }
+                          Button={
+                            <div className="p-2 px-4 text-left">
+                              Zu Sammlung hinzufügen
+                            </div>
+                          }
+                        />
+                      </MenuList>
+                    }
+                  />
+                </div>
+              </div>
+              <div className="mr-2 my-2">
                 <Menu
                   menuCloseIndex={0}
                   Button={
-                    <div className="p-2 bg-deepblue-100 border border-deepblue-100 m-2 flex flex-row items-center justify-center">
-                      Gruppenaktionen ({selectedTargets.length})
+                    <div className="p-2  bg-deepblue-100 border border-deepblue-100 flex flex-row items-center justify-center">
+                      Zeige: {translateDomainType(viewedDomainType)} (
+                      {props.targets.total})
                       <FontAwesomeIcon className="ml-2" icon={faCaretDown} />
                     </div>
                   }
                   Menu={
                     <MenuList>
-                      <MenuItem
-                        loading={scanAllLoading.isLoading}
-                        onClick={async () => {
-                          scanAllLoading.loading();
-                          try {
-                            await Promise.all(
-                              selectedTargets.map((d) => scanTarget(d))
-                            );
-                          } finally {
-                            scanAllLoading.success();
-                          }
-                        }}
-                      >
-                        <div>
-                          <div>Erneut scannen</div>
-                        </div>
-                      </MenuItem>
-                      <MenuItem onClick={deleteSelection}>
-                        <div>Löschen</div>
-                      </MenuItem>
-                      <CollectionMenu
-                        collections={props.collections}
-                        selectedCollections={collectionIds}
-                        onCollectionClick={(c) =>
-                          handleAddToCollection(
-                            selectedTargets.map((s) => ({ uri: s })),
-                            c.id
-                          )
-                        }
-                        Button={
-                          <div className="p-2 px-4 text-left">
-                            Zu Sammlung hinzufügen
-                          </div>
-                        }
-                      />
+                      {Object.values(TargetType).map((type) => (
+                        <MenuItem
+                          key={type}
+                          selected={type === viewedDomainType}
+                          loading={scanAllLoading.isLoading}
+                          onClick={async () => {
+                            patchQuery({ domainType: type, page: "0" });
+                          }}
+                        >
+                          <div>{translateDomainType(type)}</div>
+                        </MenuItem>
+                      ))}
                     </MenuList>
                   }
                 />
               </div>
-              <Menu
-                menuCloseIndex={0}
-                Button={
-                  <div className="p-2 mr-2 bg-deepblue-100 border border-deepblue-100 my-2 flex flex-row items-center justify-center">
-                    Zeige: {translateDomainType(viewedDomainType)} (
-                    {props.targets.total})
-                    <FontAwesomeIcon className="ml-2" icon={faCaretDown} />
-                  </div>
-                }
-                Menu={
-                  <MenuList>
-                    {Object.values(TargetType).map((type) => (
-                      <MenuItem
-                        key={type}
-                        selected={type === viewedDomainType}
-                        loading={scanAllLoading.isLoading}
-                        onClick={async () => {
-                          patchQuery({ domainType: type, page: "0" });
-                        }}
-                      >
-                        <div>{translateDomainType(type)}</div>
-                      </MenuItem>
-                    ))}
-                  </MenuList>
-                }
-              />
-              <CollectionMenu
-                collections={props.collections}
-                selectedCollections={collectionIds}
-                onCollectionClick={(c) => handleCollectionFilterToggle(c.id)}
-                Button={
-                  <div className="p-2 bg-deepblue-100 border border-deepblue-100 my-2 flex flex-row items-center justify-center">
-                    Filter nach Sammlungen
-                    <FontAwesomeIcon className="ml-2" icon={faCaretDown} />
-                  </div>
-                }
-              />
+              <div className="my-2">
+                <CollectionMenu
+                  collections={props.collections}
+                  selectedCollections={collectionIds}
+                  onCollectionClick={(c) => handleCollectionFilterToggle(c.id)}
+                  Button={
+                    <div className="p-2 bg-deepblue-100 border border-deepblue-100 flex flex-row items-center justify-center">
+                      Filter nach Sammlungen
+                      <FontAwesomeIcon className="ml-2" icon={faCaretDown} />
+                    </div>
+                  }
+                />
+              </div>
 
               <div className="flex flex-wrap flex-row gap-2 px-5 items-center pl-4 justify-start">
                 {collectionIds.map((c) => {

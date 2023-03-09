@@ -16,7 +16,7 @@ export default function useDelayChange<T>(
       setOutputStateVar(inputStateVar);
     }, delay);
     return () => clearTimeout(timer);
-  }, [inputStateVar, delay]);
+  }, [inputStateVar, delay, shouldDelayTransition, outputStateVar]);
 
   return outputStateVar;
 }
