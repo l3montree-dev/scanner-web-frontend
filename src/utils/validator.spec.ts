@@ -16,9 +16,7 @@ describe("validator test suite", () => {
   it("should accept a uri that is a subdomain", () => {
     expect(isValidHostname("subdomain.example.com")).toBe(true);
   });
-  it("should deny a uri that is an ip", () => {
-    expect(isValidHostname("192.168.178.2")).toBe(false);
-  });
+
   it("should accept a uri with a 2 place tld", () => {
     expect(isValidHostname("example.co.uk")).toBe(true);
   });

@@ -32,6 +32,7 @@ describe("Quicktest Test", () => {
     });
     const [fetchMock, resp] = mockFetch(
       buildJSONResponse({
+        uri: "example.com",
         details: {
           sut: "example.com",
         },
@@ -50,6 +51,7 @@ describe("Quicktest Test", () => {
   it("should update the site query parameter after scanning", async () => {
     const [_, resp] = mockFetch(
       buildJSONResponse({
+        uri: "example.com",
         details: {
           sut: "example.com",
         },
