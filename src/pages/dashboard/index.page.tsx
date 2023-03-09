@@ -40,6 +40,21 @@ interface Props {
   refCollections: number[]; // the collections which were defined using environment variables
 }
 
+const localizeDefaultCollection = (
+  collection: DTO<Collection>,
+  defaultCollectionId: number
+): DTO<Collection> => {
+  if (collection.id === defaultCollectionId) {
+    return {
+      ...collection,
+      color: tailwindColors.lightning["500"],
+      title: "Alle",
+    };
+  }
+
+  return collection;
+};
+
 const Dashboard: FunctionComponent<Props> = (props) => {
   const dashboard = props.dashboard;
   const currentStat = useMemo(
@@ -200,7 +215,12 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                 onCollectionClick={({ id }) => {
                   handleDisplayCollectionToggle(id);
                 }}
-                collections={props.collections}
+                collections={Object.fromEntries(
+                  Object.entries(props.collections).map(([collectionId, c]) => [
+                    collectionId,
+                    localizeDefaultCollection(c, props.defaultCollectionId),
+                  ])
+                )}
                 Button={
                   <div className="flex flex-row items-center">
                     <div className="bg-deepblue-200 flex flex-row items-center p-2 whitespace-nowrap">

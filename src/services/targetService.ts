@@ -173,9 +173,7 @@ const getTargets2Scan = async (prisma: PrismaClient) => {
         {
           OR: [
             {
-              lastScan: {
-                equals: null,
-              },
+              lastScan: null,
             },
             {
               lastScan: {

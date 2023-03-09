@@ -223,7 +223,9 @@ export const getServerSideProps = decorateServerSideProps(
     return {
       props: {
         keycloakIssuer: process.env.KEYCLOAK_ISSUER as string,
-        collections: toDTO(collections),
+        collections: toDTO(
+          collections.filter((c) => c.id !== currentUser.defaultCollectionId)
+        ),
       },
     };
   },

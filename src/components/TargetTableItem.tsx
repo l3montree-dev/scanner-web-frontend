@@ -4,6 +4,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Collection, Target } from "@prisma/client";
+import Link from "next/link";
 import { FunctionComponent } from "react";
 import useLoading from "../hooks/useLoading";
 import {
@@ -193,22 +194,33 @@ const TargetTableItem: FunctionComponent<Props> = ({
                   </div>
                 </MenuItem>
 
-                <CollectionMenu
-                  collections={collections}
-                  Button={
-                    <div
-                      className={classNames(
-                        "p-2 flex-row flex items-center px-4 hover:bg-deepblue-50 cursor-pointer w-full text-left"
-                      )}
-                    >
-                      Zu Sammlung hinzufügen
+                {Object.keys(collections).length > 0 ? (
+                  <CollectionMenu
+                    collections={collections}
+                    Button={
+                      <div
+                        className={classNames(
+                          "p-2 flex-row flex items-center px-4 hover:bg-deepblue-50 cursor-pointer w-full text-left"
+                        )}
+                      >
+                        Zu Sammlung hinzufügen
+                      </div>
+                    }
+                    selectedCollections={target.collections ?? []}
+                    onCollectionClick={(collection) =>
+                      onToggleCollection(collection)
+                    }
+                  />
+                ) : (
+                  <Link
+                    className="hover:no-underline block hover:bg-deepblue-50"
+                    href={"/dashboard/collections"}
+                  >
+                    <div className="text-left px-4 py-2">
+                      Sammlung erstellen
                     </div>
-                  }
-                  selectedCollections={target.collections ?? []}
-                  onCollectionClick={(collection) =>
-                    onToggleCollection(collection)
-                  }
-                />
+                  </Link>
+                )}
 
                 <MenuItem onClick={() => destroy(target.uri)}>
                   <div>Löschen</div>

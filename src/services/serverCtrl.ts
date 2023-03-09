@@ -100,8 +100,12 @@ const startScanLoop = once(() => {
 
   setInterval(async () => {
     try {
-      if (running || !isMaster()) {
-        logger.warn("scan loop is already running or not master");
+      if (running) {
+        logger.warn({ component: "SCAN_LOOP" }, "scan loop is already running");
+        return;
+      }
+      if (!isMaster()) {
+        logger.warn({ component: "SCAN_LOOP" }, "scan loop - not master");
         return;
       }
       running = true;
@@ -109,11 +113,11 @@ const startScanLoop = once(() => {
 
       if (targets.length === 0) {
         running = false;
-        logger.debug({ component: "SCAN_LOOP" }, "no targets to scan");
+        logger.info({ component: "SCAN_LOOP" }, "no targets to scan");
         return;
       }
       const requestId = randomUUID();
-      logger.debug(
+      logger.info(
         { requestId, component: "SCAN_LOOP" },
         `found ${targets.length} targets to scan - sending scan request with id: ${requestId}`
       );
