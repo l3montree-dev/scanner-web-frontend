@@ -81,7 +81,7 @@ docker:build:main:
   stage: scan
   image: aquasec/trivy
   script:
-  - trivy image --exit-code 1 --severity CRITICAL --no-progress $IMAGE_TAG
+  - trivy image --exit-code 1 --severity CRITICAL --no-progress --input image.tar
 
 trivy:scan:main:
     extends: .trivy:scan
