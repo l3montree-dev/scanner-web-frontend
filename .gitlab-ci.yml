@@ -67,7 +67,17 @@ docker:build:main:
     only:
         - main
 
+.use-docker-in-docker:
+  services:
+    - docker:dind
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+
+
 .trivy:scan:
+  extends: .use-docker-in-docker
   stage: scan
   image: aquasec/trivy
   script:
