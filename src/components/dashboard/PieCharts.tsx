@@ -165,7 +165,7 @@ const PieCharts: FunctionComponent<Props> = ({
                         y2={percentageToYInPieChart(+percentage, 80)}
                         width={10}
                         style={{
-                          stroke: tailwindColors.slate["400"],
+                          stroke: color,
                           strokeWidth: 2,
                         }}
                       />
