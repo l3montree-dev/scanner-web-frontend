@@ -114,7 +114,7 @@ const Menu: FunctionComponent<Props> = ({
         onClick={handleMenuClick}
         style={{ minWidth: Math.max(buttonRef.current?.clientWidth ?? 0, 200) }}
         className={classNames(
-          "absolute menu right-0 origin-top translate-y-1 transition-all z-20 menu-list",
+          "absolute menu right-0 origin-top-right translate-y-1 transition-all z-20 menu-list",
           nestedMenu === true
             ? "-translate-x-full -translate-y-1/2 mr-0.5"
             : "",

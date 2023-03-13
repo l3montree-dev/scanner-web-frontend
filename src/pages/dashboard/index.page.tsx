@@ -240,6 +240,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
             <div className="flex flex-wrap flex-row gap-2 items-center justify-start">
               {displayCollections.map((id) => {
                 const col = props.collections[id];
+                if (!col) return null;
                 return (
                   <CollectionPill
                     onRemove={() => {

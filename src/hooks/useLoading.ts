@@ -20,5 +20,16 @@ export default function useLoading(isLoading = false, err = "") {
     errored: !!loading.err,
     key: loading.key,
     successed: loading.success,
+    run: async <T>(fn: Promise<T>, key: string = ""): Promise<T | null> => {
+      setLoading({ isLoading: true, err: "", key, success: false });
+      try {
+        const result = await fn;
+        setLoading({ isLoading: false, err: "", key, success: true });
+        return result;
+      } catch (err: any) {
+        setLoading({ isLoading: false, err: err.message, key, success: false });
+        return null;
+      }
+    },
   };
 }

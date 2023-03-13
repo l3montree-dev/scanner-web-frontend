@@ -41,7 +41,7 @@ const FormInput: FunctionComponent<Props> = ({
         type={type ?? "text"}
         onBlur={validate}
         placeholder={placeholder}
-        className="sm:p-2 p-1 text-sm sm:text-base flex-1 outline-lightning-900 transition-all"
+        className="sm:p-2 p-1 text-sm sm:text-base flex-1 outline-lightning-900 transition-all bg-deepblue-100 text-white border border-deepblue-100 focus:border-lightning-900"
       />
       {err !== null && <span className="text-red-500 text-sm mt-1">{err}</span>}
     </div>

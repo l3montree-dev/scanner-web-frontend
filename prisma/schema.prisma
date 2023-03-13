@@ -155,6 +155,8 @@ model Collection {
   targets TargetCollectionRelation[]
   user    User[]                     @relation("user_collections")
 
+  shareLinks ShareLink[]
+
   owner   User?   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId String?
   color   String
@@ -167,6 +169,16 @@ model Collection {
   stats      Stat[]
 
   @@map("collections")
+}
+
+model ShareLink {
+    collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+    collectionId Int
+
+    secret String @unique
+
+    @@id([collectionId, secret])
+    @@map("share_links")
 }
 
 model Email {
