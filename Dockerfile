@@ -20,7 +20,7 @@ RUN npm run build
 
 RUN npm prune --production
 
-FROM gcr.io/distroless/nodejs18-debian11:debug
+FROM gcr.io/distroless/nodejs18-debian11
 
 WORKDIR /usr/app/
 ENV PORT 3000
