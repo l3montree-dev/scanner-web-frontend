@@ -1,5 +1,6 @@
 import NextAuth, { AuthOptions } from "next-auth";
 import KeycloakProvider from "next-auth/providers/keycloak";
+import CredentialsProvider from "next-auth/providers/credentials";
 
 import { IToken } from "../../../types";
 
@@ -54,6 +55,19 @@ export const authOptions: AuthOptions = {
     maxAge: 30 * 60 * 60, // 1 day
   },
   providers: [
+    CredentialsProvider({
+      name: "ShareLink Login",
+      credentials: {
+        secret: {
+          label: "Secret",
+          type: "password",
+        },
+      },
+      async authorize(credentials: any) {
+        console.log("CALLED", credentials);
+        return null;
+      },
+    }),
     KeycloakProvider({
       clientId: process.env.KEYCLOAK_ID as string,
       clientSecret: process.env.KEYCLOAK_SECRET as string,

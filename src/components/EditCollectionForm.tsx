@@ -92,7 +92,7 @@ const EditCollectionForm: FunctionComponent<Props> = (props) => {
             Speichern
           </Button>
         </div>
-        <div className="my-5 text-white">
+        <div className="mt-5 text-white">
           <div className="text-white">Geteilte Links</div>
           <p className="opacity-75 text-sm">
             Geteilte Links machen einen lesenden Zugriff auf die Sammlung
