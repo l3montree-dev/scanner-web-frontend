@@ -78,7 +78,7 @@ const handleNewScanReport = async (
   );
   const lastScanDetails = scanResult2TargetDetails(result);
 
-  if (lastReport.length !== 1 || reportDidChange(lastReport[0], newReport)) {
+  if (lastReport.length === 0 || reportDidChange(lastReport[0], newReport)) {
     // if the report changed, we need to create a new one.
     const target = await prisma.target.upsert({
       where: { uri: newReport.uri },
