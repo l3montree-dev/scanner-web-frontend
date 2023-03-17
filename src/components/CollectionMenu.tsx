@@ -1,5 +1,7 @@
+import Link from "next/link";
 import { classNames } from "../utils/common";
 import Menu from "./Menu";
+import MenuItem from "./MenuItem";
 import MenuList from "./MenuList";
 
 interface Props<T extends { id: number; title: string; color: string }> {
@@ -45,6 +47,9 @@ function CollectionMenu<T extends { id: number; title: string; color: string }>(
               </button>
             );
           })}
+          <Link href={"/dashboard/collections"}>
+            <MenuItem>Sammlung erstellen</MenuItem>
+          </Link>
         </MenuList>
       }
     />
