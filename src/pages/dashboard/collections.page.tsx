@@ -10,6 +10,7 @@ import Menu from "../../components/Menu";
 import MenuItem from "../../components/MenuItem";
 import MenuList from "../../components/MenuList";
 import Modal from "../../components/Modal";
+import PageTitle from "../../components/PageTitle";
 import SideNavigation from "../../components/SideNavigation";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
 import { withCurrentUserServerSideProps } from "../../decorators/withCurrentUser";
@@ -108,7 +109,7 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
       <DashboardPage title="Sammlungen" keycloakIssuer={props.keycloakIssuer}>
         <SideNavigation />
         <div className="flex-1">
-          <h1 className="text-4xl mb-5 font-bold text-white ">Sammlungen</h1>
+          <PageTitle stringRep="Sammlungen">Sammlungen</PageTitle>
           <div className="flex flex-row mb-10">
             <p className="text-slate-300">
               Sammlungen dienen der Sortierung einzelner Domains. Es ist möglich
