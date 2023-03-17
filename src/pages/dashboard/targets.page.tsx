@@ -46,6 +46,7 @@ import { DTO, ServerSideProps, toDTO } from "../../utils/server";
 import { optimisticUpdate } from "../../utils/view";
 import CollectionPill from "../../components/CollectionPill";
 import CollectionMenu from "../../components/CollectionMenu";
+import PageTitle from "../../components/PageTitle";
 
 interface Props {
   targets: PaginateResult<DTO<DetailedTarget> & { collections?: number[] }>; // should include array of collection ids the target is in
@@ -357,7 +358,7 @@ const Targets: FunctionComponent<Props> = (props) => {
       <SideNavigation />
       <div className="flex-1">
         <div className="text-white">
-          <h1 className="text-4xl mb-5 font-bold">Domainübersicht</h1>
+          <PageTitle stringRep="Domainübersicht">Domainübersicht</PageTitle>
           <p className="mb-10 w-2/3 text-slate-300">
             Auf der Domainübersicht finden Sie alle Testergebnisse für Ihre
             Domains auf einen Blick. Hier können Sie schnell und einfach
@@ -496,7 +497,7 @@ const Targets: FunctionComponent<Props> = (props) => {
               </div>
             </div>
             <table className="w-full">
-              <thead className="">
+              <thead className="sticky top-14 z-100">
                 <tr className="bg-deepblue-200 text-sm border-b border-b-deepblue-50 text-left">
                   <th className="p-2 pr-0">
                     <Checkbox
