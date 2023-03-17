@@ -179,7 +179,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
       <Meta title="Dashboard" />
       <Header keycloakIssuer={props.keycloakIssuer} />
       <div className="flex-row min-h-screen flex w-full flex-1">
-        <div className="w-56">
+        <div>
           <SideNavigation />
         </div>
         <div className="flex-1 flex flex-col">

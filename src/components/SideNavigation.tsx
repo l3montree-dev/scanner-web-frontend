@@ -1,18 +1,20 @@
 import {
-  faArrowLeft,
   faArrowLeftLong,
   faChartLine,
-  faLeftLong,
   faListCheck,
   faNetworkWired,
   faTag,
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import EventEmitter from "events";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { useSession } from "../hooks/useSession";
 import { classNames, isAdmin } from "../utils/common";
+import { useGlobalStore } from "../zustand/global";
 
 const defaultLinks = [
   {
@@ -48,20 +50,47 @@ const getLinks = (isAdmin: boolean) => {
     },
   ]);
 };
+
 const SideNavigation = () => {
   const session = useSession();
 
+  const store = useGlobalStore();
+
+  const handleCollapseToggle = () => {
+    // save it inside local storage
+    localStorage.setItem(
+      "collapsed",
+      !store.sideMenuCollapsed ? "true" : "false"
+    );
+    store.setSideMenuCollapsed(!store.sideMenuCollapsed);
+  };
+
+  useEffect(() => {
+    if (localStorage.getItem("collapsed") === "true") {
+      store.setSideMenuCollapsed(true);
+    }
+  }, []);
+
   const { pathname } = useRouter();
 
+  if (store.sideMenuCollapsed === null) {
+    return null;
+  }
+
   return (
-    <div className="bg-deepblue-700 border-r border-deepblue-300 h-full">
+    <div
+      className={classNames(
+        "bg-deepblue-700 border-r border-deepblue-300 transition-all relative h-full",
+        store.sideMenuCollapsed ? "w-16" : "w-56"
+      )}
+    >
       <div className="sticky top-14 pt-10">
         <div>
           {getLinks(isAdmin(session.data)).map(({ path, name, icon }) => (
             <Link key={name} href={path}>
               <div
                 className={classNames(
-                  "py-2 px-4 m-2 flex flex-row border hover:bg-deepblue-300 transition-all hover:text-white cursor-pointer",
+                  "py-2 px-3 m-2 flex flex-row border hover:bg-deepblue-300 transition-all hover:text-white cursor-pointer",
                   pathname === path
                     ? "bg-deepblue-300 border border-deepblue-300 text-white"
                     : "text-slate-400 border-transparent"
@@ -85,6 +114,16 @@ const SideNavigation = () => {
           ))}
         </div>
       </div>
+
+      <button
+        onClick={handleCollapseToggle}
+        className={classNames(
+          "fixed right-0 bg-deepblue-100 left-4 bottom-5 p-2 rounded-full w-8 h-8 flex flex-row items-center justify-center text-white transition-all hover:bg-deepblue-50",
+          store.sideMenuCollapsed ? "rotate-180" : ""
+        )}
+      >
+        <FontAwesomeIcon icon={faArrowLeftLong} />
+      </button>
     </div>
   );
 };

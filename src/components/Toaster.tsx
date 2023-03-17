@@ -79,7 +79,7 @@ const Toaster = () => {
     <div id="toast-container" className="relative">
       <div
         className={classNames(
-          "fixed top-5 right-5 flex gap-2 items-center flex-row z-20 shadow-lg px-4 py-2 transition-all",
+          "fixed top-16 right-5 flex gap-2 items-center flex-row z-20 shadow-lg px-4 py-2 transition-all",
           "toast",
           Boolean(toast) ? "opacity-100" : "opacity-0",
           bgColor(toast?.type ?? delayedToast?.type ?? "info"),

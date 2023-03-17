@@ -26,7 +26,7 @@ const Footer: FunctionComponent<Props> = ({ hideLogin }) => {
 
   return (
     <>
-      <footer className="bg-white md:text-md text-sm px-2 md:px-10 pb-10">
+      <footer className="bg-white relative md:text-md text-sm px-2 md:px-10 pb-10">
         <div className="sm:flex flex-wrap justify-between flex-row p-0 pt-5 sm:pb-5">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <div className="flex px-1 flex-row">
