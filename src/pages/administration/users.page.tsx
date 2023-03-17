@@ -1,4 +1,7 @@
-import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEllipsisVertical,
+  faQuestionCircle,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import UserRepresentation from "@keycloak/keycloak-admin-client/lib/defs/userRepresentation";
 import { User } from "@prisma/client";
@@ -14,6 +17,7 @@ import MenuList from "../../components/MenuList";
 import Modal from "../../components/Modal";
 import PageTitle from "../../components/PageTitle";
 import SideNavigation from "../../components/SideNavigation";
+import Tooltip from "../../components/Tooltip";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
 import { withDB } from "../../decorators/withDB";
 import { withTokenServerSideProps } from "../../decorators/withToken";
@@ -133,13 +137,23 @@ const Users: FunctionComponent<Props> = (props) => {
         <div className="flex-1">
           <div className="flex flex-row w-full items-start justfy-between">
             <div className="flex-1">
-              <PageTitle stringRep="Nutzerverwaltung">
-                Nutzerverwaltung
-              </PageTitle>
-              <p className="text-white w-1/2">
-                In der Nutzerverwaltung lassen sich die Nutzer des Systems
-                einsehen, verwalten und löschen.
-              </p>
+              <div className="text-white mb-10 gap-2 flex flex-row items-center">
+                <PageTitle
+                  className="text-4xl text-white mb-0 font-bold"
+                  stringRep="Nutzerverwaltung"
+                >
+                  Nutzerverwaltung
+                </PageTitle>
+                <Tooltip
+                  tooltip={`         
+            In der Nutzerverwaltung lassen sich die Nutzer des Systems
+            einsehen, verwalten und löschen.`}
+                >
+                  <div className="text-slate-400">
+                    <FontAwesomeIcon icon={faQuestionCircle} />
+                  </div>
+                </Tooltip>
+              </div>
             </div>
             <Button
               className="bg-lightning-500 hover:bg-lightning-900 font-bold transition-all py-3 px-5 text-black"
@@ -151,7 +165,7 @@ const Users: FunctionComponent<Props> = (props) => {
             </Button>
           </div>
 
-          <table className="w-full text-left text-white border-deepblue-50 border mt-10 bg-deepblue-500">
+          <table className="w-full text-left text-white border-deepblue-50 border bg-deepblue-500">
             <thead>
               <tr className="bg-deepblue-200  text-sm border-b border-b-deepblue-50 text-left">
                 <th className="p-2 py-4">Nutzername</th>

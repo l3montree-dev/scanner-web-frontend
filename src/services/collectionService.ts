@@ -40,6 +40,13 @@ const getAllCollectionsOfUser = async (
     where: {
       OR: queries,
     },
+    include: {
+      _count: {
+        select: {
+          targets: true,
+        },
+      },
+    },
   });
   return collections;
 };

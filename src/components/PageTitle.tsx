@@ -38,7 +38,7 @@ const PageTitle: FunctionComponent<Props> = ({
   return (
     <h1
       ref={ref}
-      className={classNames("text-4xl mb-5 text-white font-bold", className)}
+      className={classNames(className ?? "text-4xl mb-5 text-white font-bold")}
       id="page-title"
     >
       {children}

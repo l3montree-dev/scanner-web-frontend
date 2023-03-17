@@ -1,4 +1,8 @@
-import { faCaretDown, faCaretUp } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCaretDown,
+  faCaretUp,
+  faQuestionCircle,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
 import {
@@ -47,6 +51,7 @@ import { optimisticUpdate } from "../../utils/view";
 import CollectionPill from "../../components/CollectionPill";
 import CollectionMenu from "../../components/CollectionMenu";
 import PageTitle from "../../components/PageTitle";
+import Tooltip from "../../components/Tooltip";
 
 interface Props {
   targets: PaginateResult<DTO<DetailedTarget> & { collections?: number[] }>; // should include array of collection ids the target is in
@@ -357,14 +362,26 @@ const Targets: FunctionComponent<Props> = (props) => {
     >
       <SideNavigation />
       <div className="flex-1">
+        <div className="text-white mb-10 gap-2 flex flex-row items-center">
+          <PageTitle
+            className="text-4xl text-white mb-0 font-bold"
+            stringRep="Domainübersicht"
+          >
+            Domainübersicht
+          </PageTitle>
+          <Tooltip
+            tooltip={`         
+                  Auf der Domainübersicht finden Sie alle Testergebnisse für Ihre
+                  Domains auf einen Blick. Hier können Sie schnell und einfach
+                  vergleichen, wie gut die verschiedenen Domains in Bezug auf die
+                  verschiedenen ausgeführten Sicherheitstest abschneiden.`}
+          >
+            <div className="text-slate-400">
+              <FontAwesomeIcon icon={faQuestionCircle} />
+            </div>
+          </Tooltip>
+        </div>
         <div className="text-white">
-          <PageTitle stringRep="Domainübersicht">Domainübersicht</PageTitle>
-          <p className="mb-10 w-2/3 text-slate-300">
-            Auf der Domainübersicht finden Sie alle Testergebnisse für Ihre
-            Domains auf einen Blick. Hier können Sie schnell und einfach
-            vergleichen, wie gut die verschiedenen Domains in Bezug auf die
-            verschiedenen ausgeführten Sicherheitstest abschneiden.
-          </p>
           <div className="w-full border-deepblue-100 border bg-deepblue-500">
             <div className="p-5">
               <div className="text-black">
