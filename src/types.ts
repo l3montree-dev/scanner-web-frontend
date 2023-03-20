@@ -1,5 +1,6 @@
-import { Target } from "@prisma/client";
+import { Collection, Target } from "@prisma/client";
 import { InspectionType, InspectResultDTO } from "./inspection/scans";
+import { DTO } from "./utils/server";
 
 export interface IDashboard {
   historicalData: CollectionStatMap;
@@ -82,6 +83,8 @@ export interface ISession {
     email: string;
     image: string;
     id: string;
+    // identifies a guest
+    collectionId?: number;
   };
   resource_access: {
     [clientId: string]: {
@@ -163,3 +166,9 @@ export type DetailedTarget = Omit<
   lastScan: number;
   createdAt: string;
 };
+
+export interface Guest {
+  // same as share link secret
+  id: string;
+  collectionId: number;
+}

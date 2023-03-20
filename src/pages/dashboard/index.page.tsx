@@ -24,12 +24,17 @@ import SideNavigation from "../../components/SideNavigation";
 import Tooltip from "../../components/Tooltip";
 import { config } from "../../config";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
-import { withCurrentUserServerSideProps } from "../../decorators/withCurrentUser";
+import {
+  withCurrentUserOrGuestServerSideProps,
+  withCurrentUserServerSideProps,
+} from "../../decorators/withCurrentUser";
 import { withDB } from "../../decorators/withDB";
+import { useIsGuest } from "../../hooks/useIsGuest";
 import { collectionService } from "../../services/collectionService";
 import { statService } from "../../services/statService";
 import { ChartData, IDashboard } from "../../types";
 import {
+  collectionId,
   dateFormat,
   Normalized,
   normalizeToMap,
@@ -178,6 +183,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
       });
     }
   };
+  const isGuest = useIsGuest();
 
   return (
     <>
@@ -189,7 +195,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
         </div>
         <div className="flex-1 flex flex-col">
           <main className="bg-deepblue-500 flex-col flex flex-1">
-            <div className="max-w-screen-xl w-full pt-10 mx-auto">
+            <div className="max-w-screen-xl w-full mb-5 pt-10 mx-auto">
               <div className="text-white mb-0 gap-2 flex flex-row items-center">
                 <PageTitle
                   className="text-4xl text-white font-bold"
@@ -212,67 +218,69 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                 </Tooltip>
               </div>
             </div>
-            <div className="text-white sticky z-100 mt-5 top-14 p-2 bg-deepblue-300 flex flex-row mb-4 items-center">
-              <div className="max-w-screen-xl gap-2 flex flex-row flex-1 mx-auto">
-                <div className="flex flex-row">
-                  <CollectionMenu
-                    selectedCollections={displayCollections}
-                    onCollectionClick={({ id }) => {
-                      handleDisplayCollectionToggle(id);
-                    }}
-                    collections={Object.fromEntries(
-                      Object.entries(props.collections).map(
-                        ([collectionId, c]) => [
-                          collectionId,
-                          localizeDefaultCollection(
-                            c,
-                            props.defaultCollectionId
-                          ),
-                        ]
-                      )
-                    )}
-                    Button={
-                      <div className="flex flex-row items-center">
-                        <div className="bg-deepblue-200 flex flex-row items-center p-2 whitespace-nowrap">
-                          Sammlungen anzeigen{" "}
-                          <FontAwesomeIcon
-                            className="ml-2"
-                            icon={faCaretDown}
-                          />
+            {!isGuest && (
+              <div className="text-white sticky z-100 top-14 p-2 bg-deepblue-300 flex flex-row mb-4 items-center">
+                <div className="max-w-screen-xl gap-2 flex flex-row flex-1 mx-auto">
+                  <div className="flex flex-row">
+                    <CollectionMenu
+                      selectedCollections={displayCollections}
+                      onCollectionClick={({ id }) => {
+                        handleDisplayCollectionToggle(id);
+                      }}
+                      collections={Object.fromEntries(
+                        Object.entries(props.collections).map(
+                          ([collectionId, c]) => [
+                            collectionId,
+                            localizeDefaultCollection(
+                              c,
+                              props.defaultCollectionId
+                            ),
+                          ]
+                        )
+                      )}
+                      Button={
+                        <div className="flex flex-row items-center">
+                          <div className="bg-deepblue-200 flex flex-row items-center p-2 whitespace-nowrap">
+                            Sammlungen anzeigen{" "}
+                            <FontAwesomeIcon
+                              className="ml-2"
+                              icon={faCaretDown}
+                            />
+                          </div>
                         </div>
-                      </div>
-                    }
-                  />
-                </div>
-                <div className="flex flex-wrap flex-row gap-2 items-center justify-start">
-                  {displayCollections.map((id) => {
-                    const col = props.collections[id];
-                    if (!col) {
-                      return null;
-                    }
-                    return (
-                      <CollectionPill
-                        onRemove={() => {
-                          handleDisplayCollectionToggle(id);
-                        }}
-                        key={col.id}
-                        {...col}
-                        title={
-                          id === props.defaultCollectionId
-                            ? `Alle` + ` (${col.size})`
-                            : `${col.title} (${col.size})`
-                        }
-                        color={
-                          id === props.defaultCollectionId
-                            ? tailwindColors.lightning["500"]
-                            : col.color
-                        }
-                      />
-                    );
-                  })}
+                      }
+                    />
+                  </div>
+                  <div className="flex flex-wrap flex-row gap-2 items-center justify-start">
+                    {displayCollections.map((id) => {
+                      const col = props.collections[id];
+                      if (!col) {
+                        return null;
+                      }
+                      return (
+                        <CollectionPill
+                          onRemove={() => {
+                            handleDisplayCollectionToggle(id);
+                          }}
+                          key={col.id}
+                          {...col}
+                          title={
+                            id === props.defaultCollectionId
+                              ? `Alle` + ` (${col.size})`
+                              : `${col.title} (${col.size})`
+                          }
+                          color={
+                            id === props.defaultCollectionId
+                              ? tailwindColors.lightning["500"]
+                              : col.color
+                          }
+                        />
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
             <div className="max-w-screen-xl pb-10 mx-auto flex-1 text-white">
               <div>
                 <PieCharts
@@ -327,7 +335,7 @@ export const getServerSideProps = decorateServerSideProps(
           },
         }),
         keycloakIssuer: process.env.KEYCLOAK_ISSUER as string,
-        defaultCollectionId: currentUser.defaultCollectionId,
+        defaultCollectionId: collectionId(currentUser),
         refCollections: config.generateStatsForCollections,
         collections: normalizeToMap(
           toDTO(collections).map((c) => ({ ...c, size: c._count.targets })),
@@ -336,7 +344,7 @@ export const getServerSideProps = decorateServerSideProps(
       },
     };
   },
-  withCurrentUserServerSideProps,
+  withCurrentUserOrGuestServerSideProps,
   withDB
 );
 

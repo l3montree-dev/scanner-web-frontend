@@ -1,4 +1,5 @@
 import {
+  Guest,
   IIpLookupProgressUpdateMsg,
   IIpLookupReportDTO,
   IIpLookupReportMsg,
@@ -8,7 +9,7 @@ import {
   WithoutId,
 } from "../types";
 
-import { Network } from "@prisma/client";
+import { Network, User } from "@prisma/client";
 
 import ip from "ip";
 import { toUnicode } from "punycode/";
@@ -358,3 +359,17 @@ export const colors = [
   "#a855f7",
   "#d946ef",
 ];
+
+export const isGuestUser = (user: any): user is Guest => {
+  if (!user) {
+    return false;
+  }
+  return "collectionId" in user && user.collectionId !== undefined;
+};
+
+export const collectionId = (user: User | Guest): number => {
+  if (isGuestUser(user)) {
+    return user.collectionId;
+  }
+  return user.defaultCollectionId;
+};

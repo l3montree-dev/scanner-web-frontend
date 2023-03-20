@@ -1,5 +1,7 @@
 import { Collection, PrismaClient, User } from "@prisma/client";
 import { config } from "../config";
+import { Guest } from "../types";
+import { isGuestUser } from "../utils/common";
 
 const isUserAllowedToModifyCollection = async (
   collection: Collection,
@@ -10,25 +12,31 @@ const isUserAllowedToModifyCollection = async (
 };
 
 const getAllCollectionsOfUser = async (
-  user: User,
+  user: User | Guest,
   prisma: PrismaClient,
   includeRefCollections = false
 ) => {
-  const queries = [
-    {
-      ownerId: user.id,
-    },
-    {
-      user: {
-        some: {
-          id: user.id,
+  const queries = isGuestUser(user)
+    ? [
+        {
+          id: user.collectionId,
         },
-      },
-    },
-    {
-      id: user.defaultCollectionId,
-    },
-  ] as any[];
+      ]
+    : ([
+        {
+          ownerId: user.id,
+        },
+        {
+          user: {
+            some: {
+              id: user.id,
+            },
+          },
+        },
+        {
+          id: user.defaultCollectionId,
+        },
+      ] as any[]);
   if (includeRefCollections && config.generateStatsForCollections.length > 0) {
     queries.push({
       id: {

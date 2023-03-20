@@ -97,7 +97,7 @@ const fullConfig = resolveConfig(tailwindConfig);
 export const tailwindColors = (fullConfig.theme as any).colors;
 
 export const secretToShareLink = (secret: string) => {
-  return `/api/share/${secret}`;
+  return `/auth/sign-in?secret=${secret}`;
 };
 
 export const w = () => {

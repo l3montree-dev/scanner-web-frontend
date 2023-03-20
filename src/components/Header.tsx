@@ -5,7 +5,7 @@ import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { FunctionComponent, useEffect, useState } from "react";
 import { useSession } from "../hooks/useSession";
-import { classNames, clientOnly } from "../utils/common";
+import { classNames, clientOnly, isGuestUser } from "../utils/common";
 import { useGlobalStore } from "../zustand/global";
 import Menu from "./Menu";
 import MenuItem from "./MenuItem";
@@ -40,7 +40,6 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
 
   useEffect(() => {
     pageTitleNotVisibleEmitter.on("set-content", (args) => {
-      console.log("setting", args);
       setTitle(args);
     });
 
@@ -107,21 +106,22 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
                       />
                       Ausloggen
                     </MenuItem>
-                    {clientOnly(() => (
-                      <a
-                        href={`${keycloakIssuer}/protocol/openid-connect/auth?client_id=quicktest&redirect_uri=${encodeURIComponent(
-                          `${window.location.protocol}//${window.location.host}`
-                        )}&response_type=code&scope=openid&kc_action=UPDATE_PASSWORD`}
-                      >
-                        <MenuItem>
-                          <FontAwesomeIcon
-                            className="mr-2 text-white"
-                            icon={faArrowRightFromBracket}
-                          />
-                          Passwort ändern
-                        </MenuItem>
-                      </a>
-                    ))}
+                    {!isGuestUser(session.data.user) &&
+                      clientOnly(() => (
+                        <a
+                          href={`${keycloakIssuer}/protocol/openid-connect/auth?client_id=quicktest&redirect_uri=${encodeURIComponent(
+                            `${window.location.protocol}//${window.location.host}`
+                          )}&response_type=code&scope=openid&kc_action=UPDATE_PASSWORD`}
+                        >
+                          <MenuItem>
+                            <FontAwesomeIcon
+                              className="mr-2 text-white"
+                              icon={faArrowRightFromBracket}
+                            />
+                            Passwort ändern
+                          </MenuItem>
+                        </a>
+                      ))}
                     <div className="p-2 text-white text-sm border-t border-t-deepblue-200 bg-deepblue-300">
                       Eingeloggt als: {session.data.user.name}
                     </div>

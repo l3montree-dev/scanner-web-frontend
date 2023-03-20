@@ -4,12 +4,13 @@ import { config } from "../config";
 import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
 import {
   DetailedTarget,
+  Guest,
   IScanErrorResponse,
   PaginateRequest,
   PaginateResult,
   TargetType,
 } from "../types";
-import { getHostnameFromUri } from "../utils/common";
+import { collectionId, getHostnameFromUri } from "../utils/common";
 import { DTO, shuffle, toDTO } from "../utils/server";
 import { targetCollectionService } from "./targetCollectionService";
 
@@ -95,7 +96,7 @@ const translateSort = (sort?: string): `sr."${InspectionType}"` | "t.uri" => {
 };
 
 const getUserTargetsWithLatestTestResult = async (
-  user: User,
+  user: User | Guest,
   paginateRequest: PaginateRequest & { search?: string } & {
     sort?: string;
     sortDirection?: string;
@@ -105,7 +106,7 @@ const getUserTargetsWithLatestTestResult = async (
   prisma: PrismaClient
 ): Promise<PaginateResult<DTO<DetailedTarget>>> => {
   const sqlValues: Array<string | number> = [
-    user.defaultCollectionId,
+    collectionId(user),
     paginateRequest.pageSize,
     paginateRequest.page * paginateRequest.pageSize,
   ];

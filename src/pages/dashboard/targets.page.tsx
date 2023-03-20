@@ -21,7 +21,7 @@ import Pagination from "../../components/Pagination";
 import SideNavigation from "../../components/SideNavigation";
 import TargetOverviewForm from "../../components/TargetOverviewForm";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
-import { withCurrentUserServerSideProps } from "../../decorators/withCurrentUser";
+import { withCurrentUserOrGuestServerSideProps } from "../../decorators/withCurrentUser";
 import { withDB } from "../../decorators/withDB";
 import useLoading from "../../hooks/useLoading";
 import {
@@ -35,9 +35,13 @@ import {
 import { clientHttpClient } from "../../services/clientHttpClient";
 import { targetService } from "../../services/targetService";
 
-import { Collection, Target, User } from "@prisma/client";
+import { Collection, Target } from "@prisma/client";
+import CollectionMenu from "../../components/CollectionMenu";
+import CollectionPill from "../../components/CollectionPill";
+import PageTitle from "../../components/PageTitle";
 import { SortButton } from "../../components/SortButton";
 import TargetTableItem from "../../components/TargetTableItem";
+import Tooltip from "../../components/Tooltip";
 import { collectionService } from "../../services/collectionService";
 import {
   DetailedTarget,
@@ -45,13 +49,15 @@ import {
   PaginateResult,
   TargetType,
 } from "../../types";
-import { classNames, normalizeToMap } from "../../utils/common";
+import {
+  classNames,
+  collectionId,
+  isGuestUser,
+  normalizeToMap,
+} from "../../utils/common";
 import { DTO, ServerSideProps, toDTO } from "../../utils/server";
 import { optimisticUpdate } from "../../utils/view";
-import CollectionPill from "../../components/CollectionPill";
-import CollectionMenu from "../../components/CollectionMenu";
-import PageTitle from "../../components/PageTitle";
-import Tooltip from "../../components/Tooltip";
+import { useIsGuest } from "../../hooks/useIsGuest";
 
 interface Props {
   targets: PaginateResult<DTO<DetailedTarget> & { collections?: number[] }>; // should include array of collection ids the target is in
@@ -79,6 +85,7 @@ const Targets: FunctionComponent<Props> = (props) => {
   const [selection, setSelection] = useState<{ [uri: string]: boolean }>({});
   const scanAllLoading = useLoading();
 
+  const isGuest = useIsGuest();
   const scanRequest = useLoading();
   const router = useRouter();
 
@@ -393,66 +400,71 @@ const Targets: FunctionComponent<Props> = (props) => {
               </div>
             </div>
             <div className="border-t flex flex-row border-deepblue-50 border-b">
-              <div
-                className={classNames(
-                  "flex flex-row justify-start",
-                  selectedTargets.length === 0
-                    ? "opacity-50 pointer-events-none"
-                    : ""
-                )}
-              >
-                <div className="m-2">
-                  <Menu
-                    menuCloseIndex={0}
-                    Button={
-                      <div className="p-2 bg-deepblue-100 border border-deepblue-100 flex flex-row items-center justify-center">
-                        Gruppenaktionen ({selectedTargets.length})
-                        <FontAwesomeIcon className="ml-2" icon={faCaretDown} />
-                      </div>
-                    }
-                    Menu={
-                      <MenuList>
-                        <MenuItem
-                          loading={scanAllLoading.isLoading}
-                          onClick={async () => {
-                            scanAllLoading.loading();
-                            try {
-                              await Promise.all(
-                                selectedTargets.map((d) => scanTarget(d))
-                              );
-                            } finally {
-                              scanAllLoading.success();
-                            }
-                          }}
-                        >
-                          <div>
-                            <div>Erneut scannen</div>
-                          </div>
-                        </MenuItem>
-                        <MenuItem onClick={deleteSelection}>
-                          <div>Löschen</div>
-                        </MenuItem>
-                        <CollectionMenu
-                          collections={props.collections}
-                          selectedCollections={collectionIds}
-                          onCollectionClick={(c) =>
-                            handleAddToCollection(
-                              selectedTargets.map((s) => ({ uri: s })),
-                              c.id
-                            )
-                          }
-                          Button={
-                            <div className="p-2 px-4 text-left">
-                              Zu Sammlung hinzufügen
+              {!isGuest && (
+                <div
+                  className={classNames(
+                    "flex flex-row justify-start",
+                    selectedTargets.length === 0
+                      ? "opacity-50 pointer-events-none"
+                      : ""
+                  )}
+                >
+                  <div className="my-2 ml-2">
+                    <Menu
+                      menuCloseIndex={0}
+                      Button={
+                        <div className="p-2 bg-deepblue-100 border border-deepblue-100 flex flex-row items-center justify-center">
+                          Gruppenaktionen ({selectedTargets.length})
+                          <FontAwesomeIcon
+                            className="ml-2"
+                            icon={faCaretDown}
+                          />
+                        </div>
+                      }
+                      Menu={
+                        <MenuList>
+                          <MenuItem
+                            loading={scanAllLoading.isLoading}
+                            onClick={async () => {
+                              scanAllLoading.loading();
+                              try {
+                                await Promise.all(
+                                  selectedTargets.map((d) => scanTarget(d))
+                                );
+                              } finally {
+                                scanAllLoading.success();
+                              }
+                            }}
+                          >
+                            <div>
+                              <div>Erneut scannen</div>
                             </div>
-                          }
-                        />
-                      </MenuList>
-                    }
-                  />
+                          </MenuItem>
+                          <MenuItem onClick={deleteSelection}>
+                            <div>Löschen</div>
+                          </MenuItem>
+                          <CollectionMenu
+                            collections={props.collections}
+                            selectedCollections={collectionIds}
+                            onCollectionClick={(c) =>
+                              handleAddToCollection(
+                                selectedTargets.map((s) => ({ uri: s })),
+                                c.id
+                              )
+                            }
+                            Button={
+                              <div className="p-2 px-4 text-left">
+                                Zu Sammlung hinzufügen
+                              </div>
+                            }
+                          />
+                        </MenuList>
+                      }
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="mr-2 my-2">
+              )}
+              <div className="ml-2 my-2">
                 <Menu
                   menuCloseIndex={0}
                   Button={
@@ -481,7 +493,7 @@ const Targets: FunctionComponent<Props> = (props) => {
                 />
               </div>
               {Object.keys(props.collections).length > 0 && (
-                <div className="my-2">
+                <div className="my-2 ml-2">
                   <CollectionMenu
                     collections={props.collections}
                     selectedCollections={collectionIds}
@@ -517,20 +529,22 @@ const Targets: FunctionComponent<Props> = (props) => {
               <thead className="sticky top-14 z-100">
                 <tr className="bg-deepblue-200 text-sm border-b border-b-deepblue-50 text-left">
                   <th className="p-2 pr-0">
-                    <Checkbox
-                      checked={
-                        selectedTargets.length > 0 &&
-                        selectedTargets.length === targets.length
-                      }
-                      onChange={() => {
-                        setSelection((prev) => {
-                          return targets.reduce((acc, domain) => {
-                            acc[domain.uri] = !Boolean(prev[domain.uri]);
-                            return acc;
-                          }, {} as Record<string, boolean>);
-                        });
-                      }}
-                    />
+                    {!isGuest && (
+                      <Checkbox
+                        checked={
+                          selectedTargets.length > 0 &&
+                          selectedTargets.length === targets.length
+                        }
+                        onChange={() => {
+                          setSelection((prev) => {
+                            return targets.reduce((acc, domain) => {
+                              acc[domain.uri] = !Boolean(prev[domain.uri]);
+                              return acc;
+                            }, {} as Record<string, boolean>);
+                          });
+                        }}
+                      />
+                    )}
                   </th>
                   <th className="p-2">
                     <div>
@@ -730,11 +744,13 @@ export const getServerSideProps = decorateServerSideProps(
       collectionService.getAllCollectionsOfUser(currentUser, prisma),
     ]);
 
-    const targetCollections = await collectionService.getCollectionsOfTargets(
-      targets.data.map((t) => t.uri),
-      currentUser,
-      prisma
-    );
+    const targetCollections = isGuestUser(currentUser)
+      ? []
+      : await collectionService.getCollectionsOfTargets(
+          targets.data.map((t) => t.uri),
+          currentUser,
+          prisma
+        );
 
     return {
       props: {
@@ -749,15 +765,13 @@ export const getServerSideProps = decorateServerSideProps(
           })),
         },
         collections: normalizeToMap(
-          toDTO(
-            collections.filter((c) => c.id !== currentUser.defaultCollectionId)
-          ),
+          toDTO(collections.filter((c) => c.id !== collectionId(currentUser))),
           "id"
         ),
       },
     };
   },
-  withCurrentUserServerSideProps,
+  withCurrentUserOrGuestServerSideProps,
   withDB
 );
 

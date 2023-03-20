@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { classNames } from "../utils/common";
+import { useSession } from "../hooks/useSession";
+import { classNames, isGuestUser } from "../utils/common";
 import Menu from "./Menu";
 import MenuItem from "./MenuItem";
 import MenuList from "./MenuList";
@@ -16,6 +17,7 @@ interface Props<T extends { id: number; title: string; color: string }> {
 function CollectionMenu<T extends { id: number; title: string; color: string }>(
   props: Props<T>
 ) {
+  const user = useSession();
   return (
     <Menu
       menuCloseIndex={0}
@@ -47,9 +49,11 @@ function CollectionMenu<T extends { id: number; title: string; color: string }>(
               </button>
             );
           })}
-          <Link href={"/dashboard/collections"}>
-            <MenuItem>Sammlung erstellen</MenuItem>
-          </Link>
+          {!isGuestUser(user.data?.user) && (
+            <Link href={"/dashboard/collections"}>
+              <MenuItem>Sammlung erstellen</MenuItem>
+            </Link>
+          )}
         </MenuList>
       }
     />

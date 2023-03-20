@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import { FormEvent, FunctionComponent, useState } from "react";
+import { useIsGuest } from "../hooks/useIsGuest";
 import useLoading from "../hooks/useLoading";
 import { classNames } from "../utils/common";
 import Button from "./Button";
@@ -64,6 +65,8 @@ const TargetOverviewForm: FunctionComponent<{
     setFiles((prev) => prev?.concat(Array.from(files)));
   };
 
+  const isGuest = useIsGuest();
+
   return (
     <div>
       <div className="flex flex-row items-end">
@@ -91,21 +94,23 @@ const TargetOverviewForm: FunctionComponent<{
             </Button>
           </div>
         </form>
-        <div>
-          <Button
-            className={classNames(
-              "border border-deepblue-100 ml-2 transition-all text-white p-2",
-              addDomainIsOpen
-                ? "bg-deepblue-100 hover:bg-deepblue-300"
-                : "hover:bg-deepblue-200"
-            )}
-            type="submit"
-            loading={false}
-            onClick={() => setAddDomainIsOpen((prev) => !prev)}
-          >
-            Eintrag hinzufügen
-          </Button>
-        </div>
+        {!isGuest && (
+          <div>
+            <Button
+              className={classNames(
+                "border border-deepblue-100 ml-2 transition-all text-white p-2",
+                addDomainIsOpen
+                  ? "bg-deepblue-100 hover:bg-deepblue-300"
+                  : "hover:bg-deepblue-200"
+              )}
+              type="submit"
+              loading={false}
+              onClick={() => setAddDomainIsOpen((prev) => !prev)}
+            >
+              Eintrag hinzufügen
+            </Button>
+          </div>
+        )}
       </div>
       {!searchRequest.errored && (
         <span className="text-red-500 mt-2">{searchRequest.errorMessage}</span>
