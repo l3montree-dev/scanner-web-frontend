@@ -93,10 +93,9 @@ const EditCollectionForm: FunctionComponent<Props> = (props) => {
           </Button>
         </div>
         <div className="mt-5 text-white">
-          <div className="text-white">Geteilte Links</div>
-          <p className="opacity-75 text-sm">
-            Geteilte Links machen einen lesenden Zugriff auf die Sammlung
-            möglich.
+          <div className="text-white">Links</div>
+          <p className="text-sm">
+            Mit diesen Links ist ein lesender Zugriff auf die Sammlung möglich.
           </p>
           <div className="flex flex-col flex-wrap mt-1 mb-3 gap-2">
             {props.collection.shareLinks.length === 0 && (

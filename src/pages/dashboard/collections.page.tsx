@@ -1,4 +1,4 @@
-import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsisVertical, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Collection, ShareLink } from "@prisma/client";
 import Link from "next/link";
@@ -202,7 +202,7 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
                 <tr className="bg-deepblue-200 text-sm border-b border-t border-deepblue-50 text-left">
                   <th className="p-2">Titel</th>
                   <th className="p-2">Domains</th>
-                  <th className="p-2">Geteilte Links</th>
+                  <th className="p-2">Links</th>
                   <th className="p-2 text-right">Aktionen</th>
                 </tr>
               </thead>
@@ -232,7 +232,7 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
                         </Link>
                       </td>
                       <td>
-                        <div className="py-2 flex flex-col gap-1">
+                        <div className="py-2 flex flex-col gap-2">
                           {collection.shareLinks.map((shareLink) => {
                             return (
                               <ShareLinkItem
@@ -244,6 +244,15 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
                               />
                             );
                           })}
+
+                          <div className="flex flex-row justify-end">
+                            <button
+                              onClick={() => handleGenerateLink(collection.id)}
+                              className="text-sm bg-deepblue-200 px-2 py-1"
+                            >
+                              <FontAwesomeIcon icon={faPlus} />
+                            </button>
+                          </div>
                         </div>
                       </td>
                       <td
@@ -264,7 +273,7 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
                                   closeMenu
                                   onClick={() => selectCollection(collection)}
                                 >
-                                  Bearbeiten
+                                  Bearbeiten / Teilen
                                 </MenuItem>
 
                                 <MenuItem
