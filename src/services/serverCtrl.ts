@@ -62,7 +62,7 @@ const startScanResponseLoop = once(() => {
 const statLoop = once(() => {
   let running = false;
   const promiseQueue = new PQueue({
-    concurrency: 10,
+    concurrency: 2,
   });
   logger.info("starting stat loop");
   setInterval(async () => {
@@ -82,10 +82,20 @@ const statLoop = once(() => {
       await promiseQueue.onIdle();
 
       running = false;
-    } else if (running) {
-      logger.warn("stat loop is already running");
     } else {
-      logger.warn("not master - not running stat loop");
+      if (!isMaster() && running) {
+        logger.warn(
+          "not master and already running - this instance is not running stat loop"
+        );
+      } else if (!isMaster() && !running) {
+        logger.warn(
+          "not master and not running - this instance is not running stat loop"
+        );
+      } else if (isMaster() && running) {
+        logger.warn("master and not running - stat loop is already running");
+      } else {
+        logger.warn("stat loop is already running");
+      }
     }
   }, 10 * 1000);
 });
