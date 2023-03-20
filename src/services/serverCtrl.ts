@@ -84,7 +84,19 @@ const statLoop = once(() => {
 
       running = false;
     } else {
-      logger.warn("stat loop is already running");
+      if (!isMaster() && running) {
+        logger.warn(
+          "not master and already running - this instance is not running stat loop"
+        );
+      } else if (!isMaster() && !running) {
+        logger.warn(
+          "not master and not running - this instance is not running stat loop"
+        );
+      } else if (isMaster() && running) {
+        logger.warn("master and not running - stat loop is already running");
+      } else {
+        logger.warn("stat loop is already running");
+      }
     }
   }, 10 * 1000);
 });
