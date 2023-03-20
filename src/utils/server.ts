@@ -29,6 +29,10 @@ export async function stream2buffer(stream: Stream): Promise<Buffer> {
   });
 }
 
+export type ServerSideProps<T> = {
+  props: T;
+};
+
 export type DTO<T> = T extends bigint
   ? number
   : T extends Prisma.Decimal

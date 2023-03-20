@@ -83,7 +83,6 @@ const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
         setTarget(obj);
         scanRequest.success();
       } catch (e) {
-        console.log("e", e);
         scanRequest.error(
           "Es ist ein Fehler aufgetreten. Bitte versuche es später erneut."
         );

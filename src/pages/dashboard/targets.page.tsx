@@ -1,8 +1,13 @@
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { faCaretDown, faCaretUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
-import { FunctionComponent, useEffect, useMemo, useState } from "react";
+import {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import Checkbox from "../../components/Checkbox";
 import DashboardPage from "../../components/DashboardPage";
 import Menu from "../../components/Menu";
@@ -12,7 +17,7 @@ import Pagination from "../../components/Pagination";
 import SideNavigation from "../../components/SideNavigation";
 import TargetOverviewForm from "../../components/TargetOverviewForm";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
-import { withCurrentUser } from "../../decorators/withCurrentUser";
+import { withCurrentUserServerSideProps } from "../../decorators/withCurrentUser";
 import { withDB } from "../../decorators/withDB";
 import useLoading from "../../hooks/useLoading";
 import {
@@ -26,42 +31,29 @@ import {
 import { clientHttpClient } from "../../services/clientHttpClient";
 import { targetService } from "../../services/targetService";
 
+import { Collection, Target, User } from "@prisma/client";
+import { SortButton } from "../../components/SortButton";
 import TargetTableItem from "../../components/TargetTableItem";
+import { collectionService } from "../../services/collectionService";
 import {
   DetailedTarget,
   IScanSuccessResponse,
   PaginateResult,
   TargetType,
 } from "../../types";
-import { classNames } from "../../utils/common";
-import { DTO } from "../../utils/server";
+import { classNames, normalizeToMap } from "../../utils/common";
+import { DTO, ServerSideProps, toDTO } from "../../utils/server";
+import { optimisticUpdate } from "../../utils/view";
+import CollectionPill from "../../components/CollectionPill";
+import CollectionMenu from "../../components/CollectionMenu";
+import PageTitle from "../../components/PageTitle";
 
 interface Props {
-  targets: PaginateResult<DTO<DetailedTarget>>;
+  targets: PaginateResult<DTO<DetailedTarget> & { collections?: number[] }>; // should include array of collection ids the target is in
+  // normalized collections map for fast access
+  collections: { [collectionId: string]: DTO<Collection> };
   keycloakIssuer: string;
 }
-
-const SortButton: FunctionComponent<{
-  sortKey: "uri" | keyof IScanSuccessResponse["result"];
-  onSort: (key: "uri" | keyof IScanSuccessResponse["result"]) => void;
-  active: boolean;
-  getIcon: () => IconProp;
-}> = ({ sortKey: key, onSort, active, getIcon }) => {
-  return (
-    <button
-      onClick={() => {
-        onSort(key);
-      }}
-      className={classNames(
-        "hover:bg-deepblue-200 ml-2 transition-all w-8 h-8 hover:text-white",
-        !active && "text-gray-500",
-        active && "text-white"
-      )}
-    >
-      <FontAwesomeIcon icon={getIcon()} />
-    </button>
-  );
-};
 
 const translateDomainType = (type: TargetType) => {
   switch (type) {
@@ -74,10 +66,10 @@ const translateDomainType = (type: TargetType) => {
   }
 };
 
-const Dashboard: FunctionComponent<Props> = (props) => {
-  const [targets, setTargets] = useState<Array<DTO<DetailedTarget>>>(
-    props.targets.data
-  );
+const Targets: FunctionComponent<Props> = (props) => {
+  const [targets, setTargets] = useState<
+    Array<DTO<DetailedTarget> & { collections?: number[] }>
+  >(props.targets.data);
 
   const [selection, setSelection] = useState<{ [uri: string]: boolean }>({});
   const scanAllLoading = useLoading();
@@ -106,22 +98,29 @@ const Dashboard: FunctionComponent<Props> = (props) => {
     return faCaretUp;
   };
 
-  const patchQuery = (query: Record<string, string>) => {
-    router.push({
-      pathname: router.pathname,
-      query: {
-        ...router.query,
-        ...query,
-      },
-    });
-    setSelection({});
-  };
+  const patchQuery = useCallback(
+    (query: Record<string, string | string[]>) => {
+      router.push({
+        pathname: router.pathname,
+        query: {
+          ...router.query,
+          ...query,
+        },
+      });
+      setSelection({});
+    },
+    [router]
+  );
 
   useEffect(() => {
     setTargets(props.targets.data);
   }, [props.targets]);
 
   const deleteTarget = async (uri: string) => {
+    // do an optimistic update
+    const revert = optimisticUpdate(targets, setTargets, (prev) =>
+      prev.filter((d) => d.uri !== uri)
+    );
     const response = await clientHttpClient(
       `/api/targets`,
       crypto.randomUUID(),
@@ -132,8 +131,8 @@ const Dashboard: FunctionComponent<Props> = (props) => {
         }),
       }
     );
-    if (response.ok) {
-      setTargets((prev) => prev.filter((d) => d.uri !== uri));
+    if (!response.ok) {
+      revert();
     }
   };
 
@@ -180,7 +179,8 @@ const Dashboard: FunctionComponent<Props> = (props) => {
     );
 
     if (response.ok) {
-      const data: DTO<DetailedTarget> = await response.json();
+      const data: DTO<DetailedTarget & { collections: number[] }> =
+        await response.json();
       // inject it into the domains
       setTargets((prev) => {
         return prev.map((d) => {
@@ -229,6 +229,81 @@ const Dashboard: FunctionComponent<Props> = (props) => {
     setTargets((prev) => [...prev, detailedDomain]);
   };
 
+  const handleAddToCollection = async (
+    target: DTO<{ uri: string }[]>,
+    collectionId: number
+  ) => {
+    const uris = target.map((d) => d.uri);
+    // do an optimistic update.
+    const revert = optimisticUpdate(targets, setTargets, (prev) => {
+      return prev.map((d) => {
+        if (uris.includes(d.uri)) {
+          return {
+            ...d,
+            collections: (d.collections ?? []).concat(collectionId),
+          };
+        }
+        return d;
+      });
+    });
+
+    const res = await clientHttpClient(
+      `/api/collections/${collectionId}/targets`,
+      crypto.randomUUID(),
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(target),
+      }
+    );
+
+    if (!res.ok) {
+      // revert the optimistic update
+      revert();
+      throw res;
+    }
+  };
+
+  const handleRemoveFromCollection = async (
+    target: DTO<Target[]>,
+    collectionId: number
+  ) => {
+    const uris = target.map((d) => d.uri);
+    // do an optimistic update
+    const revert = optimisticUpdate(targets, setTargets, (prev) => {
+      return prev.map((d) => {
+        if (uris.includes(d.uri)) {
+          return {
+            ...d,
+            collections: (d.collections ?? []).filter(
+              (c) => c !== collectionId
+            ),
+          };
+        }
+        return d;
+      });
+    });
+
+    const res = await clientHttpClient(
+      `/api/collections/${collectionId}/targets`,
+      crypto.randomUUID(),
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(target),
+      }
+    );
+
+    if (!res.ok) {
+      revert();
+      throw res;
+    }
+  };
+
   const handleFileFormSubmit = async (files: File[]) => {
     const formData = new FormData();
     files.forEach((file) => {
@@ -244,6 +319,32 @@ const Dashboard: FunctionComponent<Props> = (props) => {
     }
   };
 
+  const collectionIds = useMemo(() => {
+    const collections = (router.query.collectionIds as string | string[]) ?? [];
+    return (Array.isArray(collections) ? collections : [collections]).map(
+      (c) => +c
+    );
+  }, [router.query.collectionIds]);
+
+  const handleCollectionFilterToggle = useCallback(
+    (collectionId: number) => {
+      if (collectionIds.includes(collectionId)) {
+        patchQuery({
+          collectionIds: collectionIds
+            .filter((c) => c !== collectionId)
+            .map((c) => c.toString()),
+        });
+      } else {
+        patchQuery({
+          collectionIds: collectionIds
+            .concat(collectionId)
+            .map((c) => c.toString()),
+        });
+      }
+    },
+    [collectionIds, patchQuery]
+  );
+
   const sort = {
     key: router.query.sort as "uri" | keyof IScanSuccessResponse["result"],
     direction: parseInt(router.query.sortDirection as string) as 1 | -1,
@@ -257,8 +358,8 @@ const Dashboard: FunctionComponent<Props> = (props) => {
       <SideNavigation />
       <div className="flex-1">
         <div className="text-white">
-          <h1 className="text-4xl mb-5 font-bold">Domainübersicht</h1>
-          <p className="mb-10 w-1/2 text-slate-300">
+          <PageTitle stringRep="Domainübersicht">Domainübersicht</PageTitle>
+          <p className="mb-10 w-2/3 text-slate-300">
             Auf der Domainübersicht finden Sie alle Testergebnisse für Ihre
             Domains auf einen Blick. Hier können Sie schnell und einfach
             vergleichen, wie gut die verschiedenen Domains in Bezug auf die
@@ -283,67 +384,120 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                     : ""
                 )}
               >
+                <div className="m-2">
+                  <Menu
+                    menuCloseIndex={0}
+                    Button={
+                      <div className="p-2 bg-deepblue-100 border border-deepblue-100 flex flex-row items-center justify-center">
+                        Gruppenaktionen ({selectedTargets.length})
+                        <FontAwesomeIcon className="ml-2" icon={faCaretDown} />
+                      </div>
+                    }
+                    Menu={
+                      <MenuList>
+                        <MenuItem
+                          loading={scanAllLoading.isLoading}
+                          onClick={async () => {
+                            scanAllLoading.loading();
+                            try {
+                              await Promise.all(
+                                selectedTargets.map((d) => scanTarget(d))
+                              );
+                            } finally {
+                              scanAllLoading.success();
+                            }
+                          }}
+                        >
+                          <div>
+                            <div>Erneut scannen</div>
+                          </div>
+                        </MenuItem>
+                        <MenuItem onClick={deleteSelection}>
+                          <div>Löschen</div>
+                        </MenuItem>
+                        <CollectionMenu
+                          collections={props.collections}
+                          selectedCollections={collectionIds}
+                          onCollectionClick={(c) =>
+                            handleAddToCollection(
+                              selectedTargets.map((s) => ({ uri: s })),
+                              c.id
+                            )
+                          }
+                          Button={
+                            <div className="p-2 px-4 text-left">
+                              Zu Sammlung hinzufügen
+                            </div>
+                          }
+                        />
+                      </MenuList>
+                    }
+                  />
+                </div>
+              </div>
+              <div className="mr-2 my-2">
                 <Menu
+                  menuCloseIndex={0}
                   Button={
-                    <div className="p-2 bg-deepblue-100 border border-deepblue-100 m-2 flex flex-row items-center justify-center">
-                      Gruppenaktionen ({selectedTargets.length})
+                    <div className="p-2  bg-deepblue-100 border border-deepblue-100 flex flex-row items-center justify-center">
+                      Zeige: {translateDomainType(viewedDomainType)} (
+                      {props.targets.total})
                       <FontAwesomeIcon className="ml-2" icon={faCaretDown} />
                     </div>
                   }
                   Menu={
                     <MenuList>
-                      <MenuItem
-                        loading={scanAllLoading.isLoading}
-                        onClick={async () => {
-                          scanAllLoading.loading();
-                          try {
-                            await Promise.all(
-                              selectedTargets.map((d) => scanTarget(d))
-                            );
-                          } finally {
-                            scanAllLoading.success();
-                          }
-                        }}
-                      >
-                        <div>
-                          <div>Erneut scannen</div>
-                        </div>
-                      </MenuItem>
-                      <MenuItem onClick={deleteSelection}>
-                        <div>Löschen</div>
-                      </MenuItem>
+                      {Object.values(TargetType).map((type) => (
+                        <MenuItem
+                          key={type}
+                          selected={type === viewedDomainType}
+                          loading={scanAllLoading.isLoading}
+                          onClick={async () => {
+                            patchQuery({ domainType: type, page: "0" });
+                          }}
+                        >
+                          <div>{translateDomainType(type)}</div>
+                        </MenuItem>
+                      ))}
                     </MenuList>
                   }
                 />
               </div>
-              <Menu
-                Button={
-                  <div className="p-2 bg-deepblue-100 border border-deepblue-100 my-2 flex flex-row items-center justify-center">
-                    Zeige: {translateDomainType(viewedDomainType)} (
-                    {props.targets.total})
-                    <FontAwesomeIcon className="ml-2" icon={faCaretDown} />
-                  </div>
-                }
-                Menu={
-                  <MenuList>
-                    {Object.values(TargetType).map((type) => (
-                      <MenuItem
-                        key={type}
-                        selected={type === viewedDomainType}
-                        loading={scanAllLoading.isLoading}
-                        onClick={async () => {
-                          patchQuery({ domainType: type, page: "0" });
-                        }}
-                      >
-                        <div>{translateDomainType(type)}</div>
-                      </MenuItem>
-                    ))}
-                  </MenuList>
-                }
-              />
+              {Object.keys(props.collections).length > 0 && (
+                <div className="my-2">
+                  <CollectionMenu
+                    collections={props.collections}
+                    selectedCollections={collectionIds}
+                    onCollectionClick={(c) =>
+                      handleCollectionFilterToggle(c.id)
+                    }
+                    Button={
+                      <div className="p-2 bg-deepblue-100 border border-deepblue-100 flex flex-row items-center justify-center">
+                        Filter nach Sammlungen
+                        <FontAwesomeIcon className="ml-2" icon={faCaretDown} />
+                      </div>
+                    }
+                  />
+                </div>
+              )}
+
+              <div className="flex flex-wrap flex-row gap-2 px-5 items-center pl-4 justify-start">
+                {collectionIds.map((c) => {
+                  const col = props.collections[c.toString()];
+                  return (
+                    <CollectionPill
+                      onRemove={() => {
+                        handleCollectionFilterToggle(c);
+                      }}
+                      key={col.id}
+                      {...col}
+                    />
+                  );
+                })}
+              </div>
             </div>
             <table className="w-full">
-              <thead className="">
+              <thead className="sticky top-14 z-100">
                 <tr className="bg-deepblue-200 text-sm border-b border-b-deepblue-50 text-left">
                   <th className="p-2 pr-0">
                     <Checkbox
@@ -466,6 +620,19 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                 {targets.map((target, i) => {
                   return (
                     <TargetTableItem
+                      collections={props.collections}
+                      onToggleCollection={(collection) => {
+                        if (
+                          target.collections &&
+                          target.collections.includes(+collection.id)
+                        ) {
+                          return handleRemoveFromCollection(
+                            [target],
+                            collection.id
+                          );
+                        }
+                        return handleAddToCollection([target], collection.id);
+                      }}
                       destroy={(uri) => deleteTarget(uri)}
                       scanRequest={scanRequest}
                       scan={(uri) => scanTarget(uri)}
@@ -514,35 +681,67 @@ const Dashboard: FunctionComponent<Props> = (props) => {
 };
 
 export const getServerSideProps = decorateServerSideProps(
-  async (context, [currentUser, prisma]) => {
+  async (context, [currentUser, prisma]): Promise<ServerSideProps<Props>> => {
     // get the query params.
     const page = +(context.query["page"] ?? 0);
     const search = context.query["search"] as string | undefined;
+    const collectionIdsStr =
+      (context.query["collectionIds"] as string | string[] | undefined) ?? "";
 
-    const targets = await targetService.getUserTargetsWithLatestTestResult(
+    const collectionIds = (
+      Array.isArray(collectionIdsStr) ? collectionIdsStr : [collectionIdsStr]
+    )
+      .map((id) => +id)
+      .filter((id) => id > 0);
+
+    const [targets, collections] = await Promise.all([
+      targetService.getUserTargetsWithLatestTestResult(
+        currentUser,
+        {
+          pageSize: 50,
+          page,
+          search,
+          collectionIds,
+          type:
+            (context.query["domainType"] as TargetType | undefined) ||
+            TargetType.all,
+          sort: context.query["sort"] as string | undefined,
+          sortDirection: context.query["sortDirection"] as string | undefined,
+        },
+        prisma
+      ),
+      collectionService.getAllCollectionsOfUser(currentUser, prisma),
+    ]);
+
+    const targetCollections = await collectionService.getCollectionsOfTargets(
+      targets.data.map((t) => t.uri),
       currentUser,
-      {
-        pageSize: 50,
-        page,
-        search,
-        type:
-          (context.query["domainType"] as TargetType | undefined) ||
-          TargetType.all,
-        sort: context.query["sort"] as string | undefined,
-        sortDirection: context.query["sortDirection"] as string | undefined,
-      },
       prisma
     );
 
     return {
       props: {
-        keycloakIssuer: process.env.KEYCLOAK_ISSUER,
-        targets,
+        keycloakIssuer: process.env.KEYCLOAK_ISSUER as string,
+        targets: {
+          ...targets,
+          data: targets.data.map((t) => ({
+            ...t,
+            collections: targetCollections
+              .filter((c) => c.uri === t.uri)
+              .map((c) => c.collectionId),
+          })),
+        },
+        collections: normalizeToMap(
+          toDTO(
+            collections.filter((c) => c.id !== currentUser.defaultCollectionId)
+          ),
+          "id"
+        ),
       },
     };
   },
-  withCurrentUser,
+  withCurrentUserServerSideProps,
   withDB
 );
 
-export default Dashboard;
+export default Targets;

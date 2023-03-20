@@ -69,15 +69,14 @@ const statLoop = once(() => {
     if (isMaster() && !running) {
       running = true;
 
-      // generate the stats for each user.
-      const users = await prisma.user.findMany();
-      users.forEach((user) => {
-        statService.generateStatsForUser(user, promiseQueue, prisma);
-      });
+      const collections = await prisma.collection.findMany();
 
-      // check which stats need to be generated.
-      config.generateStatsForGroups.forEach((group) => {
-        statService.generateStatsForGroups(group, promiseQueue, prisma);
+      collections.forEach((collection) => {
+        statService.generateStatsForCollection(
+          collection.id,
+          promiseQueue,
+          prisma
+        );
       });
 
       await promiseQueue.onIdle();
@@ -111,8 +110,12 @@ const startScanLoop = once(() => {
 
   setInterval(async () => {
     try {
-      if (running || !isMaster()) {
-        logger.warn("scan loop is already running or not master");
+      if (running) {
+        logger.warn({ component: "SCAN_LOOP" }, "scan loop is already running");
+        return;
+      }
+      if (!isMaster()) {
+        logger.warn({ component: "SCAN_LOOP" }, "scan loop - not master");
         return;
       }
       running = true;
@@ -120,11 +123,11 @@ const startScanLoop = once(() => {
 
       if (targets.length === 0) {
         running = false;
-        logger.debug({ component: "SCAN_LOOP" }, "no targets to scan");
+        logger.info({ component: "SCAN_LOOP" }, "no targets to scan");
         return;
       }
       const requestId = randomUUID();
-      logger.debug(
+      logger.info(
         { requestId, component: "SCAN_LOOP" },
         `found ${targets.length} targets to scan - sending scan request with id: ${requestId}`
       );

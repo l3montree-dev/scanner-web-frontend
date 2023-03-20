@@ -11,6 +11,7 @@ import {
 import { Network } from "@prisma/client";
 
 import ip from "ip";
+import { toUnicode } from "punycode/";
 import {
   CertificateInspectionType,
   ContentInspectionType,
@@ -24,14 +25,7 @@ import {
   TLSInspectionType,
 } from "../inspection/scans";
 import { DTO } from "./server";
-import {
-  isValidHostname as isValidHostname,
-  isValidIp,
-  isValidMask,
-} from "./validator";
-import { getLogger } from "../services/logger";
-
-const logger = getLogger("common");
+import { isValidHostname, isValidIp, isValidMask } from "./validator";
 
 export const serverOnly = <T>(fn: () => T): T | null => {
   if (typeof window === "undefined") {
@@ -45,6 +39,11 @@ export const clientOnly = <T>(fn: () => T): T | null => {
     return fn();
   }
   return null;
+};
+
+export const getUnicodeHostnameFromUri = (hostname: string) => {
+  const unicodeHostname = toUnicode(getHostnameFromUri(hostname));
+  return unicodeHostname;
 };
 
 export const isProgressMessage = (
@@ -177,9 +176,11 @@ export const sanitizeFQDN = (providedValue: any): string | null => {
   }
 
   if (url.pathname !== "/") {
-    return url.port
-      ? `${url.hostname}:${url.port}${url.pathname}`
-      : url.hostname + url.pathname;
+    return toUnicode(
+      url.port
+        ? `${url.hostname}:${url.port}${url.pathname}`
+        : url.hostname + url.pathname
+    );
   }
 
   // make sure to keep the port if provided
@@ -267,11 +268,27 @@ export const linkMapper: { [key in InspectionType]: string } = {
   [HeaderInspectionType.ContentTypeOptions]: "",
 };
 
+export type Normalized<T> = {
+  [key: string]: T;
+};
+
+export const normalizeToMap = <T extends object, Key extends keyof T>(
+  arr: T[],
+  identifier: Key
+) => {
+  return arr.reduce((acc, cur) => {
+    return {
+      ...acc,
+      [cur[identifier] as string]: cur,
+    };
+  }, {} as Normalized<T>);
+};
+
 export const neverThrow = async <T>(promise: Promise<T>): Promise<T | null> => {
   try {
     return await promise;
   } catch (e) {
-    logger.warn(e);
+    console.warn(e);
     return null;
   }
 };
@@ -322,4 +339,22 @@ export const staticSecrets = [
   "znnlaczgcm",
   // this one is for the dashboards
   "oQ334umtB2Ve4XpTz2USFemZgC9ZLpXW",
+];
+
+export const colors = [
+  "#ef4444",
+  "#f97316",
+  "#f59e0b",
+  "#eab308",
+  "#84cc16",
+  "#22c55e",
+  "#10b981",
+  "#14b8a6",
+  "#06b6d4",
+  "#0ea5e9",
+  "#3b82f6",
+  "#6366f1",
+  "#8b5cf6",
+  "#a855f7",
+  "#d946ef",
 ];

@@ -20,6 +20,12 @@ const createUser = async (
     data: {
       id: user._id,
       role: user.role,
+      defaultCollection: {
+        create: {
+          title: "Default",
+          color: "#000000",
+        },
+      },
     },
   });
   return createdUser;

@@ -1,4 +1,4 @@
-FROM node:18
+FROM node:18 as builder
 LABEL maintainer="bastin.tim@gmail.com"
 
 WORKDIR /usr/app/
@@ -20,4 +20,11 @@ RUN npm run build
 
 RUN npm prune --production
 
-CMD [ "npm", "start" ]
+FROM gcr.io/distroless/nodejs18-debian11
+
+WORKDIR /usr/app/
+ENV PORT 3000
+
+COPY --from=builder /usr/app .
+
+CMD [ "/usr/app/node_modules/.bin/next", "start" ]

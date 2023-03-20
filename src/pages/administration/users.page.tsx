@@ -12,6 +12,7 @@ import Menu from "../../components/Menu";
 import MenuItem from "../../components/MenuItem";
 import MenuList from "../../components/MenuList";
 import Modal from "../../components/Modal";
+import PageTitle from "../../components/PageTitle";
 import SideNavigation from "../../components/SideNavigation";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
 import { withDB } from "../../decorators/withDB";
@@ -100,7 +101,7 @@ const Users: FunctionComponent<Props> = (props) => {
     setEdit(null);
   };
 
-  const handleUpdateUser = async (user: User) => {
+  const handleUpdateUser = async (user: Omit<User, "defaultCollectionId">) => {
     const res = await clientHttpClient(
       `/api/users/${user.id}`,
       crypto.randomUUID(),
@@ -132,9 +133,9 @@ const Users: FunctionComponent<Props> = (props) => {
         <div className="flex-1">
           <div className="flex flex-row w-full items-start justfy-between">
             <div className="flex-1">
-              <h1 className="text-4xl mb-5 text-white font-bold">
+              <PageTitle stringRep="Nutzerverwaltung">
                 Nutzerverwaltung
-              </h1>
+              </PageTitle>
               <p className="text-white w-1/2">
                 In der Nutzerverwaltung lassen sich die Nutzer des Systems
                 einsehen, verwalten und löschen.
@@ -176,6 +177,7 @@ const Users: FunctionComponent<Props> = (props) => {
                   <td className="p-2">{user.role ? user.role : ""}</td>
                   <td className="p-2 w-20 text-right">
                     <Menu
+                      menuCloseIndex={0}
                       Button={
                         <div className="p-2 h-8 w-8 flex flex-row items-center justify-center">
                           <FontAwesomeIcon icon={faEllipsisVertical} />

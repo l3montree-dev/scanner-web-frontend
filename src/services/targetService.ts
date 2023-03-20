@@ -1,4 +1,5 @@
 import { PrismaClient, Target, User } from "@prisma/client";
+import { encode, toASCII } from "punycode";
 import { config } from "../config";
 import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
 import {
@@ -10,6 +11,7 @@ import {
 } from "../types";
 import { getHostnameFromUri } from "../utils/common";
 import { DTO, shuffle, toDTO } from "../utils/server";
+import { targetCollectionService } from "./targetCollectionService";
 
 const handleNewTarget = async (
   target: { uri: string; group?: string; queued?: boolean },
@@ -34,12 +36,11 @@ const handleNewTarget = async (
   });
 
   if (connectToUser) {
-    await prisma.userTargetRelation.create({
-      data: {
-        userId: connectToUser.id,
-        uri: payload.uri,
-      },
-    });
+    await targetCollectionService.createConnection(
+      [payload.uri],
+      connectToUser.defaultCollectionId,
+      prisma
+    );
   }
 
   return d;
@@ -81,16 +82,16 @@ const translateSortDirection = (
   return "ASC";
 };
 
-const translateSort = (sort?: string): `sr."${InspectionType}"` | "d.uri" => {
+const translateSort = (sort?: string): `sr."${InspectionType}"` | "t.uri" => {
   if (!sort) {
-    return "d.uri";
+    return "t.uri";
   }
 
   if (Object.values(InspectionTypeEnum).includes(sort as InspectionType)) {
     return `sr."${sort as InspectionType}"`;
   }
 
-  return "d.uri";
+  return "t.uri";
 };
 
 const getUserTargetsWithLatestTestResult = async (
@@ -99,62 +100,47 @@ const getUserTargetsWithLatestTestResult = async (
     sort?: string;
     sortDirection?: string;
     type?: TargetType;
+    collectionIds?: Array<number>;
   },
   prisma: PrismaClient
 ): Promise<PaginateResult<DTO<DetailedTarget>>> => {
-  const sqlValues = [
-    user.id,
+  const sqlValues: Array<string | number> = [
+    user.defaultCollectionId,
     paginateRequest.pageSize,
     paginateRequest.page * paginateRequest.pageSize,
   ];
 
   if (paginateRequest.search !== undefined && paginateRequest.search !== "") {
-    sqlValues.push(paginateRequest.search);
+    sqlValues.push(toASCII(paginateRequest.search));
   }
 
-  const [total, targets] = await Promise.all([
-    prisma.target.count({
-      where: {
-        users: {
-          some: {
-            userId: user.id,
-          },
-        },
-        ...(paginateRequest.search !== undefined &&
-          paginateRequest.search !== "" && {
-            uri: {
-              contains: sqlValues[3] as string,
-            },
-          }),
-        ...(paginateRequest.type !== undefined &&
-          paginateRequest.type !== TargetType.all && {
-            errorCount: {
-              ...(paginateRequest.type === TargetType.unreachable
-                ? {
-                    gte: 5,
-                  }
-                : { lt: 5 }),
-            },
-          }),
-      },
-    }),
-
-    // subject to sql injection!!!
-    prisma.$queryRawUnsafe(
-      `
-      SELECT d.*, lsd.details as details from user_target_relations udr
-      INNER JOIN targets d on udr.uri = d.uri 
-      LEFT JOIN scan_reports sr on d.uri = sr.uri
-      LEFT JOIN last_scan_details lsd on d.uri = lsd.uri
+  // subject to sql injection!!!
+  const targets = (await prisma.$queryRawUnsafe(
+    `
+      SELECT count(*) OVER() AS "totalCount", t.*, lsd.details as details from targets t 
+      LEFT JOIN scan_reports sr on t.uri = sr.uri
+      LEFT JOIN last_scan_details lsd on t.uri = lsd.uri
       WHERE NOT EXISTS(
           SELECT 1 from scan_reports sr2 where sr.uri = sr2.uri AND sr."createdAt" < sr2."createdAt"
         )
         ${
           paginateRequest.search !== undefined && paginateRequest.search !== ""
-            ? "AND d.uri LIKE CONCAT('%', $4, '%')"
+            ? "AND t.uri LIKE CONCAT('%', $4, '%')"
             : ""
         }
-        AND udr."userId" = $1
+        AND EXISTS(
+            SELECT 1 from target_collections tc where tc.uri = t.uri AND tc."collectionId" = $1
+        )
+        ${
+          paginateRequest.collectionIds !== undefined &&
+          paginateRequest.collectionIds.length > 0
+            ? `AND EXISTS(
+                SELECT 1 from target_collections tc where tc.uri = t.uri AND tc."collectionId" IN (${paginateRequest.collectionIds
+                  .filter((id) => !isNaN(id))
+                  .join(",")})
+            )`
+            : ""
+        }
         ${
           paginateRequest.type === TargetType.unreachable
             ? 'AND "errorCount" >= 5'
@@ -168,12 +154,11 @@ const getUserTargetsWithLatestTestResult = async (
         LIMIT $2
         OFFSET $3;
 `,
-      ...sqlValues
-    ) as Promise<any[]>,
-  ]);
+    ...sqlValues
+  )) as Array<any>;
 
   return {
-    total,
+    total: targets.length > 0 ? Number(targets[0].totalCount) : 0,
     page: paginateRequest.page,
     pageSize: paginateRequest.pageSize,
     data: targets.map(toDTO),
@@ -189,9 +174,7 @@ const getTargets2Scan = async (prisma: PrismaClient) => {
         {
           OR: [
             {
-              lastScan: {
-                equals: null,
-              },
+              lastScan: null,
             },
             {
               lastScan: {
@@ -205,18 +188,9 @@ const getTargets2Scan = async (prisma: PrismaClient) => {
         },
         // it either belongs to a group which is configured to be scanned or it is monitored by a user
         {
-          OR: [
-            {
-              group: {
-                in: config.generateStatsForGroups,
-              },
-            },
-            {
-              users: {
-                some: {},
-              },
-            },
-          ],
+          collections: {
+            some: {},
+          },
         },
         {
           queued: false,

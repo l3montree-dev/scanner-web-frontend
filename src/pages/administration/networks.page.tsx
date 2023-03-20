@@ -11,6 +11,7 @@ import Menu from "../../components/Menu";
 import MenuItem from "../../components/MenuItem";
 import MenuList from "../../components/MenuList";
 import Modal from "../../components/Modal";
+import PageTitle from "../../components/PageTitle";
 import SideNavigation from "../../components/SideNavigation";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
 import { withDB } from "../../decorators/withDB";
@@ -97,10 +98,10 @@ const Network: FunctionComponent<Props> = (props) => {
         <div>
           <div className="flex items-start flex-row">
             <div>
-              <h1 className="text-4xl mb-5 text-white font-bold">
+              <PageTitle stringRep="Netzwerkverwaltung">
                 Netzwerkverwaltung
-              </h1>
-              <p className="text-white w-1/2">
+              </PageTitle>
+              <p className="text-white w-2/3 opacity-75">
                 Füge neue Netzwerke dem System hinzu. Diese müssen nicht
                 zwingend von einem CISO verwaltet werden. Alle nicht verwalteten
                 Netzwerke werden verwendet um einen Vergleich mit den Netzwerken
@@ -138,6 +139,7 @@ const Network: FunctionComponent<Props> = (props) => {
                   <td className="p-2">{network.comment}</td>
                   <td className="p-2 w-20 text-right">
                     <Menu
+                      menuCloseIndex={0}
                       Button={
                         <div className="p-2 h-8 w-8 flex flex-row items-center justify-center">
                           <FontAwesomeIcon icon={faEllipsisVertical} />

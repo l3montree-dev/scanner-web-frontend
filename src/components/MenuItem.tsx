@@ -6,12 +6,14 @@ interface Props {
   loading?: boolean;
   onClick?: () => void;
   selected?: boolean;
+  closeMenu?: boolean;
 }
 const MenuItem: FunctionComponent<Props> = ({
   children,
   onClick,
   loading,
   selected,
+  closeMenu,
 }) => {
   return (
     <button
@@ -20,6 +22,7 @@ const MenuItem: FunctionComponent<Props> = ({
         "p-2 flex-row flex items-center px-4 hover:bg-deepblue-50 cursor-pointer w-full text-left",
         selected && "bg-deepblue-50"
       )}
+      {...(closeMenu ? { "data-closemenu": true } : {})}
     >
       {loading && (
         <div className="mr-2">

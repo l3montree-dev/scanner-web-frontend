@@ -90,19 +90,6 @@ spec:
                 secretKeyRef:
                   name: postgresql-credentials
                   key: password
-            - name: MYSQL_USER
-              value: quickTest
-            - name: MYSQL_PORT
-              value: "3306"
-            - name: MYSQL_DATABASE
-              value: quickTest
-            - name: MYSQL_HOST
-              value: {{.Release.Name}}-mysql
-            - name: MYSQL_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: mysql-quicktest
-                  key: QUICKTEST_PASSWORD
             - name: RABBITMQ_HOST
               value: {{.Release.Name}}-rabbitmq
             - name : RABBITMQ_PORT
@@ -144,6 +131,8 @@ spec:
                   fieldPath: metadata.namespace
             - name: SCAN_INTERVAL_DAYS
               value: {{.Values.quicktest.scanInterval | default "7" | quote}}
+            - name: NEXT_PUBLIC_REFERENCE_COLLECTIONS
+              value: {{.Values.quicktest.referenceCollections | default "" | quote}}
           livenessProbe:
             initialDelaySeconds: 10
             periodSeconds: 10

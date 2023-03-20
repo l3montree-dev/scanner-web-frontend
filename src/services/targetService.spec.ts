@@ -33,8 +33,8 @@ describe("Target Service Test Suite", () => {
       target: {
         upsert: jest.fn(),
       },
-      userTargetRelation: {
-        create: jest.fn(),
+      targetCollectionRelation: {
+        createMany: jest.fn(),
       },
     } as any;
     await targetService.handleNewTarget(
@@ -42,15 +42,43 @@ describe("Target Service Test Suite", () => {
         uri: "example.com/test",
       },
       prismaMock,
-      { id: "1234" } as any
+      { id: "1234", defaultCollectionId: 4711 } as any
     );
-    expect(prismaMock.userTargetRelation.create).toHaveBeenCalledWith({
-      data: {
-        userId: "1234",
+    expect(prismaMock.targetCollectionRelation.createMany).toHaveBeenCalledWith(
+      {
+        data: [
+          {
+            collectionId: 4711,
+            uri: "example.com/test",
+          },
+        ],
+      }
+    );
+  });
+  it("should delete the statistics of a collection if a target is added", async () => {
+    const prismaMock = {
+      target: {
+        upsert: jest.fn(),
+      },
+      targetCollectionRelation: {
+        createMany: jest.fn(),
+      },
+      stat: {
+        deleteMany: jest.fn(),
+      },
+    } as any;
+    await targetService.handleNewTarget(
+      {
         uri: "example.com/test",
       },
-    });
+      prismaMock,
+      { id: "1234", defaultCollectionId: 4711 } as any
+    );
+    // wait for the next tick
+    await new Promise(process.nextTick);
+    expect(prismaMock.stat.deleteMany).toHaveBeenCalled();
   });
+
   it("should create a target even if the scan failed", async () => {
     const prismaMock = {
       target: {
@@ -91,11 +119,11 @@ describe("Target Service Test Suite", () => {
     })),
     {
       sort: Math.random().toString().substring(2), // any other value should default to uri.
-      expected: "d.uri",
+      expected: "t.uri",
     },
     {
       sort: undefined,
-      expected: "d.uri",
+      expected: "t.uri",
     },
   ])(
     "should not be possible to inject arbitrary data to the sql statement when fetching the targets with their latest network results: %s",
@@ -109,7 +137,7 @@ describe("Target Service Test Suite", () => {
       } as any;
 
       await targetService.getUserTargetsWithLatestTestResult(
-        { id: "abc", role: null },
+        { id: "abc", role: null, defaultCollectionId: 0 },
         {
           sort: sort,
           sortDirection: "1",
@@ -121,14 +149,13 @@ describe("Target Service Test Suite", () => {
 
       const query = prismaMock.$queryRawUnsafe.mock.calls[0][0];
       const expectedQuery = `
-      SELECT d.*, lsd.details as details from user_target_relations udr
-      INNER JOIN targets d on udr.uri = d.uri 
-      LEFT JOIN scan_reports sr on d.uri = sr.uri
-      LEFT JOIN last_scan_details lsd on d.uri = lsd.uri
+      SELECT count(*) OVER() AS "totalCount", t.*, lsd.details as details from targets t
+      LEFT JOIN scan_reports sr on t.uri = sr.uri
+      LEFT JOIN last_scan_details lsd on t.uri = lsd.uri
       WHERE NOT EXISTS(
           SELECT 1 from scan_reports sr2 where sr.uri = sr2.uri AND sr."createdAt" < sr2."createdAt"
         )
-        AND udr."userId" = $1
+        AND EXISTS( SELECT 1 from target_collections tc where tc.uri = t.uri AND tc."collectionId" = $1 )
         ORDER BY ${expected} ASC
         LIMIT $2
         OFFSET $3;
@@ -139,14 +166,14 @@ describe("Target Service Test Suite", () => {
           .filter((s: string) => s.length > 0)
           .map((s: string) => s.trim())
           .join(" ")
-          .replaceAll("  ", " ")
+          .replace(/\s+/g, " ")
       ).toEqual(
         expectedQuery
           .split("\n")
           .filter((s: string) => s.length > 0)
           .map((s) => s.trim())
           .join(" ")
-          .replaceAll("  ", " ")
+          .replace(/\s+/g, " ")
       );
     }
   );

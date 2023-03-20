@@ -45,15 +45,16 @@ const ResultBox: FunctionComponent<Props> = (props) => {
 
       {Boolean(props.link) && (
         <div className="flex flex-row justify-end">
-          <Link
+          <a
             target={"_blank"}
             href={props.link as string}
             className="text-sm w-full inline-block  text-right top-1 underline right-0 mt-2"
+            rel="noreferrer"
           >
             {props.checkResult === CheckResult.Passed
               ? `Was ist "${props.title}"?`
               : `"${props.title}" jetzt umsetzen!`}
-          </Link>
+          </a>
         </div>
       )}
     </div>
