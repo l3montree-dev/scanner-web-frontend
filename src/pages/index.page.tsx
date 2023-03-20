@@ -181,7 +181,6 @@ const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
     : "";
 
   if (displayNotAvailable) {
-    throw new Error("not implemented");
     return (
       <Page hideLogin>
         <Meta />
