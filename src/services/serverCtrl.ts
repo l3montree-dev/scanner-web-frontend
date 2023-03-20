@@ -62,7 +62,7 @@ const startScanResponseLoop = once(() => {
 const statLoop = once(() => {
   let running = false;
   const promiseQueue = new PQueue({
-    concurrency: 10,
+    concurrency: 2,
   });
   logger.info("starting stat loop");
   setInterval(async () => {
