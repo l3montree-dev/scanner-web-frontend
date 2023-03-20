@@ -2,19 +2,20 @@ import { Prisma, PrismaClient, User } from "@prisma/client";
 import PQueue from "p-queue";
 import { config } from "../config";
 import { InspectionType } from "../inspection/scans";
-import { ChartData, CollectionStatMap, IDashboard } from "../types";
+import { ChartData, CollectionStatMap, Guest, IDashboard } from "../types";
+import { collectionId, isGuestUser } from "../utils/common";
 import { toDTO } from "../utils/server";
 import { eachDay } from "../utils/time";
 import { getLogger } from "./logger";
 
 const logger = getLogger(__filename);
 
-const getTotalsOfUser = async (user: User, prisma: PrismaClient) => {
+const getTotalsOfUser = async (user: User | Guest, prisma: PrismaClient) => {
   // count the domains this user has access to
   return {
     uniqueTargets: await prisma.targetCollectionRelation.count({
       where: {
-        collectionId: user.defaultCollectionId,
+        collectionId: collectionId(user),
       },
     }),
   };
@@ -200,7 +201,7 @@ export const getReferenceChartData = async (
 };
 
 export const getDashboardForUser = async (
-  user: User,
+  user: User | Guest,
   prisma: PrismaClient
 ): Promise<IDashboard> => {
   const [totals, stats] = await Promise.all([
@@ -208,17 +209,28 @@ export const getDashboardForUser = async (
     prisma.stat.findMany({
       where: {
         collection: {
-          OR: [
-            { owner: { id: user.id } },
-            {
-              id: {
-                in: config.generateStatsForCollections,
-              },
-            },
-            {
-              id: user.defaultCollectionId,
-            },
-          ],
+          OR: isGuestUser(user)
+            ? [
+                {
+                  id: user.collectionId,
+                },
+                {
+                  id: {
+                    in: config.generateStatsForCollections,
+                  },
+                },
+              ]
+            : [
+                { owner: { id: user.id } },
+                {
+                  id: {
+                    in: config.generateStatsForCollections,
+                  },
+                },
+                {
+                  id: user.defaultCollectionId,
+                },
+              ],
         },
 
         time: {

@@ -7,6 +7,7 @@ import { Collection, Target } from "@prisma/client";
 import Link from "next/link";
 import { toUnicode } from "punycode";
 import { FunctionComponent } from "react";
+import { useIsGuest } from "../hooks/useIsGuest";
 import useLoading from "../hooks/useLoading";
 import {
   DomainInspectionType,
@@ -65,6 +66,7 @@ const TargetTableItem: FunctionComponent<Props> = ({
   onToggleCollection,
   collections,
 }) => {
+  const isGuest = useIsGuest();
   return (
     <>
       <tr
@@ -81,9 +83,11 @@ const TargetTableItem: FunctionComponent<Props> = ({
         )}
       >
         <td className="p-2 pr-0">
-          <div className="flex flex-row items-center">
-            <Checkbox onChange={() => onSelect(target)} checked={selected} />
-          </div>
+          {!isGuest && (
+            <div className="flex flex-row items-center">
+              <Checkbox onChange={() => onSelect(target)} checked={selected} />
+            </div>
+          )}
         </td>
         <td className="p-2">
           <div className="flex flex-row">
@@ -194,39 +198,42 @@ const TargetTableItem: FunctionComponent<Props> = ({
                     )}
                   </div>
                 </MenuItem>
-
-                {Object.keys(collections).length > 0 ? (
-                  <CollectionMenu
-                    nestedMenu
-                    collections={collections}
-                    Button={
-                      <div
-                        className={classNames(
-                          "p-2 flex-row flex items-center px-4 hover:bg-deepblue-50 cursor-pointer w-full text-left"
-                        )}
+                {!isGuest && (
+                  <>
+                    {Object.keys(collections).length > 0 ? (
+                      <CollectionMenu
+                        nestedMenu
+                        collections={collections}
+                        Button={
+                          <div
+                            className={classNames(
+                              "p-2 flex-row flex items-center px-4 hover:bg-deepblue-50 cursor-pointer w-full text-left"
+                            )}
+                          >
+                            Zu Sammlung hinzufügen
+                          </div>
+                        }
+                        selectedCollections={target.collections ?? []}
+                        onCollectionClick={(collection) =>
+                          onToggleCollection(collection)
+                        }
+                      />
+                    ) : (
+                      <Link
+                        className="hover:no-underline block hover:bg-deepblue-50"
+                        href={"/dashboard/collections"}
                       >
-                        Zu Sammlung hinzufügen
-                      </div>
-                    }
-                    selectedCollections={target.collections ?? []}
-                    onCollectionClick={(collection) =>
-                      onToggleCollection(collection)
-                    }
-                  />
-                ) : (
-                  <Link
-                    className="hover:no-underline block hover:bg-deepblue-50"
-                    href={"/dashboard/collections"}
-                  >
-                    <div className="text-left px-4 py-2">
-                      Sammlung erstellen
-                    </div>
-                  </Link>
-                )}
+                        <div className="text-left px-4 py-2">
+                          Sammlung erstellen
+                        </div>
+                      </Link>
+                    )}
 
-                <MenuItem onClick={() => destroy(target.uri)}>
-                  <div>Löschen</div>
-                </MenuItem>
+                    <MenuItem onClick={() => destroy(target.uri)}>
+                      <div>Löschen</div>
+                    </MenuItem>
+                  </>
+                )}
               </MenuList>
             }
           />

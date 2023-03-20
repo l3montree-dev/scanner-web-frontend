@@ -95,3 +95,14 @@ export const displayInspections: Array<InspectionType> = [
 
 const fullConfig = resolveConfig(tailwindConfig);
 export const tailwindColors = (fullConfig.theme as any).colors;
+
+export const secretToShareLink = (secret: string) => {
+  return `/auth/sign-in?secret=${secret}`;
+};
+
+export const w = () => {
+  if (typeof window !== "undefined") {
+    return window;
+  }
+  return null;
+};

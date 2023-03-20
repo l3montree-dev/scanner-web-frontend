@@ -1,4 +1,7 @@
-import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEllipsisVertical,
+  faQuestionCircle,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Network } from "@prisma/client";
 import { GetServerSideProps } from "next";
@@ -13,6 +16,7 @@ import MenuList from "../../components/MenuList";
 import Modal from "../../components/Modal";
 import PageTitle from "../../components/PageTitle";
 import SideNavigation from "../../components/SideNavigation";
+import Tooltip from "../../components/Tooltip";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
 import { withDB } from "../../decorators/withDB";
 import { withTokenServerSideProps } from "../../decorators/withToken";
@@ -96,18 +100,27 @@ const Network: FunctionComponent<Props> = (props) => {
       >
         <SideNavigation />
         <div>
-          <div className="flex items-start flex-row">
+          <div className="flex items-start justify-between flex-row">
             <div>
-              <PageTitle stringRep="Netzwerkverwaltung">
-                Netzwerkverwaltung
-              </PageTitle>
-              <p className="text-white w-2/3 opacity-75">
-                Füge neue Netzwerke dem System hinzu. Diese müssen nicht
-                zwingend von einem CISO verwaltet werden. Alle nicht verwalteten
-                Netzwerke werden verwendet um einen Vergleich mit den Netzwerken
-                der CISOs zu ermöglichen.
-              </p>
+              <div className="text-white mb-10 gap-2 flex flex-row items-center">
+                <PageTitle
+                  className="text-4xl text-white mb-0 font-bold"
+                  stringRep="Netzwerkverwaltung"
+                >
+                  Netzwerkverwaltung
+                </PageTitle>
+                <Tooltip
+                  tooltip={`         
+                Hinzugefügte Netzwerke werden automatisch
+                gescanned. So lassen sich Scans von Rechenzentren erstellen.`}
+                >
+                  <div className="text-slate-400">
+                    <FontAwesomeIcon icon={faQuestionCircle} />
+                  </div>
+                </Tooltip>
+              </div>
             </div>
+
             <Button
               className="bg-lightning-500 hover:bg-lightning-900 font-bold transition-all py-3 px-5 text-black"
               type="button"

@@ -1,7 +1,10 @@
 import NextAuth, { AuthOptions } from "next-auth";
 import KeycloakProvider from "next-auth/providers/keycloak";
+import CredentialsProvider from "next-auth/providers/credentials";
 
 import { IToken } from "../../../types";
+import { prisma } from "../../../db/connection";
+import { toDTO } from "../../../utils/server";
 
 /**
  * Takes a token, and returns a new token with updated
@@ -54,6 +57,34 @@ export const authOptions: AuthOptions = {
     maxAge: 30 * 60 * 60, // 1 day
   },
   providers: [
+    CredentialsProvider({
+      credentials: {},
+      authorize: async (credentials: any) => {
+        const shareLinkSecret = credentials?.shareLinkSecret;
+
+        if (!shareLinkSecret) {
+          return null;
+        }
+        // fetch the share link
+        const link = await prisma.shareLink.findFirst({
+          where: {
+            secret: shareLinkSecret,
+          },
+          include: {
+            collection: true,
+          },
+        });
+        if (!link) {
+          return null;
+        }
+
+        return {
+          id: shareLinkSecret,
+          collectionId: link.collection.id,
+          name: link.collection.title,
+        };
+      },
+    }),
     KeycloakProvider({
       clientId: process.env.KEYCLOAK_ID as string,
       clientSecret: process.env.KEYCLOAK_SECRET as string,
@@ -64,12 +95,26 @@ export const authOptions: AuthOptions = {
     async session(params: any) {
       return {
         ...params.session,
-        user: { ...params.session.user, id: params.token.sub },
+        user: {
+          ...params.session.user,
+          id: params.token.sub ?? params.token.id,
+          collectionId: params.token.collectionId,
+        },
         resource_access: params.token.resource_access,
         error: params.token.error,
       };
     },
     jwt(params: any) {
+      if ("user" in params) {
+        // check if guest user.
+        // if so, the collectionId is defined on the user.
+        if (params.user.collectionId) {
+          ("RETURNING USER ");
+          return {
+            ...params.user,
+          };
+        }
+      }
       if (params.profile) {
         params.token.resource_access = params.profile.resource_access;
       }

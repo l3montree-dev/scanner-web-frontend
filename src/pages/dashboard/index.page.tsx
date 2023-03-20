@@ -1,4 +1,8 @@
-import { faCaretDown, faListCheck } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCaretDown,
+  faListCheck,
+  faQuestionCircle,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Collection } from "@prisma/client";
 import {
@@ -17,14 +21,20 @@ import Header from "../../components/Header";
 import Meta from "../../components/Meta";
 import PageTitle from "../../components/PageTitle";
 import SideNavigation from "../../components/SideNavigation";
+import Tooltip from "../../components/Tooltip";
 import { config } from "../../config";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
-import { withCurrentUserServerSideProps } from "../../decorators/withCurrentUser";
+import {
+  withCurrentUserOrGuestServerSideProps,
+  withCurrentUserServerSideProps,
+} from "../../decorators/withCurrentUser";
 import { withDB } from "../../decorators/withDB";
+import { useIsGuest } from "../../hooks/useIsGuest";
 import { collectionService } from "../../services/collectionService";
 import { statService } from "../../services/statService";
 import { ChartData, IDashboard } from "../../types";
 import {
+  collectionId,
   dateFormat,
   Normalized,
   normalizeToMap,
@@ -37,7 +47,7 @@ interface Props {
   dashboard: IDashboard;
   keycloakIssuer: string;
   defaultCollectionId: number;
-  collections: Normalized<DTO<Collection>>;
+  collections: Normalized<DTO<Collection & { size: number }>>;
   refCollections: number[]; // the collections which were defined using environment variables
 }
 
@@ -173,118 +183,104 @@ const Dashboard: FunctionComponent<Props> = (props) => {
       });
     }
   };
+  const isGuest = useIsGuest();
 
   return (
     <>
       <Meta title="Dashboard" />
       <Header keycloakIssuer={props.keycloakIssuer} />
       <div className="flex-row min-h-screen flex w-full flex-1">
-        <div className="w-56">
+        <div>
           <SideNavigation />
         </div>
         <div className="flex-1 flex flex-col">
           <main className="bg-deepblue-500 flex-col flex flex-1">
-            <div className="max-w-screen-xl pt-10 flex-1 mx-auto">
-              <div className="flex-1 text-white">
-                <PageTitle stringRep="Dashboard">Dashboard</PageTitle>
-                <p className="w-2/3 text-slate-300">
-                  Das Dashboard zeigt Ihnen aggregierte Informationen über den
-                  Sicherheitszustand der von Ihnen verwalteten OZG-Dienste.
-                </p>
-                <div>
-                  <h2 className="text-2xl mt-10">Gesamtanzahl der Dienste</h2>
-                  <div className="flex mt-5 justify-start flex-wrap flex-wrap flex-row">
-                    <div>
-                      <div className="bg-deepblue-600 flex-row flex mr-2 items-center p-5 border border-deepblue-100">
-                        <FontAwesomeIcon
-                          className="text-slate-400 mx-2"
-                          fontSize={75}
-                          icon={faListCheck}
+            <div className="max-w-screen-xl w-full mb-5 pt-10 mx-auto">
+              <div className="text-white mb-0 gap-2 flex flex-row items-center">
+                <PageTitle
+                  className="text-4xl text-white font-bold"
+                  stringRep="Dashboard"
+                >
+                  Dashboard
+                </PageTitle>
+                <Tooltip
+                  tooltip={`         
+                    Das Dashboard zeigt Ihnen aggregierte Informationen über den
+                    Sicherheitszustand der von Ihnen verwalteten
+                    OZG-Dienste. Ausschliesslich erreichbare Domains können
+                    getestet werden. Die Anfrage muss vom Server in maximal zehn
+                    Sekunden beantwortet werden, damit eine Domain als
+                    erreichbar gilt. Derzeit sind ${currentStat.totalCount} von ${dashboard.totals.uniqueTargets} Domains erreichbar.`}
+                >
+                  <div className="text-slate-400">
+                    <FontAwesomeIcon icon={faQuestionCircle} />
+                  </div>
+                </Tooltip>
+              </div>
+            </div>
+            {!isGuest && (
+              <div className="text-white sticky z-100 top-14 p-2 bg-deepblue-300 flex flex-row mb-4 items-center">
+                <div className="max-w-screen-xl gap-2 flex flex-row flex-1 mx-auto">
+                  <div className="flex flex-row">
+                    <CollectionMenu
+                      selectedCollections={displayCollections}
+                      onCollectionClick={({ id }) => {
+                        handleDisplayCollectionToggle(id);
+                      }}
+                      collections={Object.fromEntries(
+                        Object.entries(props.collections).map(
+                          ([collectionId, c]) => [
+                            collectionId,
+                            localizeDefaultCollection(
+                              c,
+                              props.defaultCollectionId
+                            ),
+                          ]
+                        )
+                      )}
+                      Button={
+                        <div className="flex flex-row items-center">
+                          <div className="bg-deepblue-200 flex flex-row items-center p-2 whitespace-nowrap">
+                            Sammlungen anzeigen{" "}
+                            <FontAwesomeIcon
+                              className="ml-2"
+                              icon={faCaretDown}
+                            />
+                          </div>
+                        </div>
+                      }
+                    />
+                  </div>
+                  <div className="flex flex-wrap flex-row gap-2 items-center justify-start">
+                    {displayCollections.map((id) => {
+                      const col = props.collections[id];
+                      if (!col) {
+                        return null;
+                      }
+                      return (
+                        <CollectionPill
+                          onRemove={() => {
+                            handleDisplayCollectionToggle(id);
+                          }}
+                          key={col.id}
+                          {...col}
+                          title={
+                            id === props.defaultCollectionId
+                              ? `Alle` + ` (${col.size})`
+                              : `${col.title} (${col.size})`
+                          }
+                          color={
+                            id === props.defaultCollectionId
+                              ? tailwindColors.lightning["500"]
+                              : col.color
+                          }
                         />
-                        <div className="ml-5 text-xl">
-                          <b className="text-5xl">
-                            {dashboard.totals.uniqueTargets}
-                          </b>
-                          <br />
-                          Domains
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex flex-row mt-10  items-center justify-between">
-                  <div>
-                    <h2 className="text-2xl mb-5">Testergebnisse</h2>
-                    <p className="w-2/3 text-slate-300">
-                      Ausschlie&szlig;lich erreichbare Domains können getestet
-                      werden. Die Anfrage muss vom Server in maximal zehn
-                      Sekunden beantwortet werden, damit eine Domain als
-                      erreichbar gilt. Derzeit sind {currentStat.totalCount} von{" "}
-                      {dashboard.totals.uniqueTargets} erreichbar.
-                    </p>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="text-white sticky z-100 mt-5 top-14 p-2 bg-deepblue-300 flex flex-row mb-4 items-center">
-              <div className="max-w-screen-xl gap-2 flex flex-row flex-1 mx-auto">
-                <div className="flex flex-row">
-                  <CollectionMenu
-                    selectedCollections={displayCollections}
-                    onCollectionClick={({ id }) => {
-                      handleDisplayCollectionToggle(id);
-                    }}
-                    collections={Object.fromEntries(
-                      Object.entries(props.collections).map(
-                        ([collectionId, c]) => [
-                          collectionId,
-                          localizeDefaultCollection(
-                            c,
-                            props.defaultCollectionId
-                          ),
-                        ]
-                      )
-                    )}
-                    Button={
-                      <div className="flex flex-row items-center">
-                        <div className="bg-deepblue-200 flex flex-row items-center p-2 whitespace-nowrap">
-                          Sammlungen anzeigen{" "}
-                          <FontAwesomeIcon
-                            className="ml-2"
-                            icon={faCaretDown}
-                          />
-                        </div>
-                      </div>
-                    }
-                  />
-                </div>
-                <div className="flex flex-wrap flex-row gap-2 items-center justify-start">
-                  {displayCollections.map((id) => {
-                    const col = props.collections[id];
-                    if (!col) {
-                      return null;
-                    }
-                    return (
-                      <CollectionPill
-                        onRemove={() => {
-                          handleDisplayCollectionToggle(id);
-                        }}
-                        key={col.id}
-                        {...col}
-                        title={
-                          id === props.defaultCollectionId ? "Alle" : col.title
-                        }
-                        color={
-                          id === props.defaultCollectionId
-                            ? tailwindColors.lightning["500"]
-                            : col.color
-                        }
-                      />
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
+            )}
             <div className="max-w-screen-xl pb-10 mx-auto flex-1 text-white">
               <div>
                 <PieCharts
@@ -295,7 +291,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                 />
                 <h2 className="text-2xl mt-10 mb-5">Trendanalyse</h2>
                 <div className="justify-between items-start">
-                  <p className="w-2/3 mb-10 text-slate-300">
+                  <p className="mb-10 text-slate-300">
                     Die Trendanalyse visualisiert die Veränderung der
                     Sicherheitskriterien in Anbetracht der Zeit. Zusätzlich
                     stellt sie die Werte der verwalteten Dienste im Vergleich zu
@@ -339,13 +335,16 @@ export const getServerSideProps = decorateServerSideProps(
           },
         }),
         keycloakIssuer: process.env.KEYCLOAK_ISSUER as string,
-        defaultCollectionId: currentUser.defaultCollectionId,
+        defaultCollectionId: collectionId(currentUser),
         refCollections: config.generateStatsForCollections,
-        collections: normalizeToMap(toDTO(collections), "id"),
+        collections: normalizeToMap(
+          toDTO(collections).map((c) => ({ ...c, size: c._count.targets })),
+          "id"
+        ),
       },
     };
   },
-  withCurrentUserServerSideProps,
+  withCurrentUserOrGuestServerSideProps,
   withDB
 );
 

@@ -9,6 +9,16 @@ export default function SignIn() {
 
   useEffect(() => {
     if (status === "unauthenticated") {
+      // check the query
+      if (router.query.secret) {
+        console.log("Signing in with credentials");
+        void signIn("credentials", {
+          shareLinkSecret: router.query.secret as string,
+          callbackUrl: "/dashboard",
+        });
+        return;
+      }
+
       void signIn("keycloak");
     } else if (status === "authenticated") {
       if (ref.current === "idle") {

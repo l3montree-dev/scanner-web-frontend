@@ -149,6 +149,13 @@ article  {
 
 }
 
+#toast-container {
+    z-index: 9999;
+}
 .z-100 {
     z-index: 100;
+}
+
+.z-200 {
+    z-index: 200;
 }
