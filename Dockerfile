@@ -25,6 +25,7 @@ FROM gcr.io/distroless/nodejs18-debian11
 WORKDIR /usr/app/
 ENV PORT 3000
 
+COPY --from=builder /lib/x86_64-linux-gnu/libz.so.1 /lib/x86_64-linux-gnu/libz.so.1
 COPY --from=builder /usr/app .
 
 CMD [ "/usr/app/node_modules/.bin/next", "start" ]
