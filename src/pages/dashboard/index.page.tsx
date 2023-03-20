@@ -161,7 +161,14 @@ const Dashboard: FunctionComponent<Props> = (props) => {
   );
 
   const handleDisplayCollectionToggle = (collectionId: number) => {
+    console.log("handleDisplayCollectionToggle", collectionId);
     if (displayCollections.includes(collectionId)) {
+      console.log(
+        "handleDisplayCollectionToggle",
+        collectionId,
+        "includes",
+        displayCollections
+      );
       // check if there is at least one collection left
       if (displayCollections.length === 1) {
         setDisplayCollections([props.defaultCollectionId]);
