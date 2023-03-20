@@ -39,6 +39,11 @@ const getLinks = (isGuest: boolean, isAdmin: boolean) => {
 
   return defaultLinks.concat([
     {
+      icon: faTag,
+      name: "Sammlungen",
+      path: "/dashboard/collections",
+    },
+    {
       icon: faUsers,
       name: "Nuterverwaltung",
       path: "/administration/users",
