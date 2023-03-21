@@ -1,10 +1,12 @@
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { FunctionComponent, useEffect, useState } from "react";
 import Imprint from "./Imprint";
 import Privacy from "./Privacy";
 import Modal from "./Modal";
 import { useRouter } from "next/router";
+import { useSignOut } from "../hooks/useSignOut";
+import Image from "next/image";
 
 interface Props {
   hideLogin?: boolean;
@@ -14,6 +16,7 @@ const Footer: FunctionComponent<Props> = ({ hideLogin }) => {
   const [isPrivacyOpen, setPrivacyIsOpen] = useState(false);
   const session = useSession();
   const router = useRouter();
+  const signOut = useSignOut();
 
   useEffect(() => {
     if (router.query["action"] === "openImprintModal") {
@@ -30,7 +33,7 @@ const Footer: FunctionComponent<Props> = ({ hideLogin }) => {
         <div className="sm:flex flex-wrap justify-between flex-row p-0 pt-5 sm:pb-5">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <div className="flex px-1 flex-row">
-            <img
+            <Image
               width={370}
               height={100}
               src={"/assets/BMI_de_v3__BSI_de_v1__Web_farbig.svg"}
@@ -89,14 +92,8 @@ const Footer: FunctionComponent<Props> = ({ hideLogin }) => {
                     </Link>
                     <span
                       className="cursor-pointer p-2 block hover:underline"
-                      onClick={async () => {
-                        const res: { path: string } = await (
-                          await fetch("/api/auth/kc-signout")
-                        ).json();
-                        await signOut({
-                          redirect: false,
-                        });
-                        window.location.href = res.path;
+                      onClick={() => {
+                        return signOut();
                       }}
                     >
                       Logout
