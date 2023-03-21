@@ -210,7 +210,7 @@ const TargetTableItem: FunctionComponent<Props> = ({
                               "p-2 flex-row flex items-center px-4 hover:bg-deepblue-50 cursor-pointer w-full text-left"
                             )}
                           >
-                            Zu Sammlung hinzufügen
+                            Gruppen
                           </div>
                         }
                         selectedCollections={target.collections ?? []}
@@ -224,7 +224,7 @@ const TargetTableItem: FunctionComponent<Props> = ({
                         href={"/dashboard/collections"}
                       >
                         <div className="text-left px-4 py-2">
-                          Sammlung erstellen
+                          Gruppe erstellen
                         </div>
                       </Link>
                     )}
@@ -245,10 +245,19 @@ const TargetTableItem: FunctionComponent<Props> = ({
           className={classNames(clNames, "cursor-pointer")}
         >
           <td colSpan={9} className="p-0 pb-2">
-            <div className="flex flex-row gap-2 px-5 -mt-2 pl-10 justify-start">
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="flex flex-row gap-2 px-5 -mt-2 pl-10 justify-start"
+            >
               {target.collections.map((c) => {
                 const col = collections[c.toString()];
-                return <CollectionPill key={col.id} {...col} />;
+                return (
+                  <CollectionPill
+                    onRemove={() => onToggleCollection(col)}
+                    key={col.id}
+                    {...col}
+                  />
+                );
               })}
             </div>
           </td>

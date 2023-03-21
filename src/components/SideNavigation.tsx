@@ -32,7 +32,7 @@ const getLinks = (isGuest: boolean, isAdmin: boolean) => {
   } else if (!isAdmin) {
     return defaultLinks.concat({
       icon: faTag,
-      name: "Sammlungen",
+      name: "Gruppen",
       path: "/dashboard/collections",
     });
   }
@@ -40,7 +40,7 @@ const getLinks = (isGuest: boolean, isAdmin: boolean) => {
   return defaultLinks.concat([
     {
       icon: faTag,
-      name: "Sammlungen",
+      name: "Gruppen",
       path: "/dashboard/collections",
     },
     {

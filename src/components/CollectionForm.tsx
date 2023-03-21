@@ -45,9 +45,9 @@ const CollectionForm: FunctionComponent<Props> = ({ onCreate }) => {
         <div className="flex-1">
           <FormInput
             value={title}
-            placeholder="Sammlung"
+            placeholder="Gruppe"
             onChange={(e) => setTitle(e)}
-            label="Sammlung erstellen"
+            label="Gruppe erstellen"
           />
         </div>
         <Menu

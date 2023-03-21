@@ -226,7 +226,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
               </div>
             </div>
             {!isGuest && (
-              <div className="text-white sticky z-100 top-14 p-2 bg-deepblue-300 flex flex-row mb-4 items-center">
+              <div className="text-white sticky z-100 beneath-header p-2 bg-deepblue-300 flex flex-row mb-4 items-center">
                 <div className="max-w-screen-xl gap-2 flex flex-row flex-1 mx-auto">
                   <div className="flex flex-row">
                     <CollectionMenu
@@ -248,7 +248,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                       Button={
                         <div className="flex flex-row items-center">
                           <div className="bg-deepblue-200 flex flex-row items-center p-2 whitespace-nowrap">
-                            Sammlungen anzeigen{" "}
+                            Gruppen anzeigen{" "}
                             <FontAwesomeIcon
                               className="ml-2"
                               icon={faCaretDown}

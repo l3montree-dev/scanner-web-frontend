@@ -183,14 +183,14 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
 
   return (
     <>
-      <DashboardPage title="Sammlungen" keycloakIssuer={props.keycloakIssuer}>
+      <DashboardPage title="Gruppen" keycloakIssuer={props.keycloakIssuer}>
         <SideNavigation />
         <div className="flex-1">
-          <PageTitle stringRep="Sammlungen">Sammlungen</PageTitle>
+          <PageTitle stringRep="Gruppen">Gruppen</PageTitle>
           <div className="flex flex-row mb-10">
             <p className="text-slate-300">
-              Sammlungen dienen der Sortierung einzelner Domains. Es ist möglich
-              Sammlungen direkt miteinander zu vergleichen.
+              Gruppen dienen der Sortierung einzelner Domains. Es ist möglich
+              Gruppen direkt miteinander zu vergleichen.
             </p>
           </div>
           <div className="w-full border-deepblue-100 border bg-deepblue-500">
@@ -202,7 +202,9 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
                 <tr className="bg-deepblue-200 text-sm border-b border-t border-deepblue-50 text-left">
                   <th className="p-2">Titel</th>
                   <th className="p-2">Domains</th>
-                  <th className="p-2">Links</th>
+                  <th className="p-2">
+                    Links für externen readonly-zugriff ohne Account
+                  </th>
                   <th className="p-2 text-right">Aktionen</th>
                 </tr>
               </thead>
@@ -211,7 +213,7 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
                   return (
                     <tr
                       className={classNames(
-                        "align-top",
+                        "align-top group/collection-item",
                         i !== arr.length - 1 && "border-b",
                         "border-b-deepblue-300 transition-all",
                         i % 2 === 0 ? "bg-deepblue-400" : "bg-deepblue-500"
@@ -228,7 +230,7 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
                         <Link
                           href={`/dashboard/targets?collectionIds=${collection.id}`}
                         >
-                          Zu Domains der Sammlung
+                          Zu Domains der Gruppe
                         </Link>
                       </td>
                       <td>
@@ -245,14 +247,18 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
                             );
                           })}
 
-                          <div className="flex flex-row justify-end">
-                            <button
-                              onClick={() => handleGenerateLink(collection.id)}
-                              className="text-sm bg-deepblue-200 px-2 py-1"
-                            >
-                              <FontAwesomeIcon icon={faPlus} />
-                            </button>
-                          </div>
+                          {collection.shareLinks.length === 0 && (
+                            <div className="flex invisible group-hover/collection-item:visible flex-row justify-end">
+                              <button
+                                onClick={() =>
+                                  handleGenerateLink(collection.id)
+                                }
+                                className=" bg-deepblue-200 px-2 py-1"
+                              >
+                                Link erstellen
+                              </button>
+                            </div>
+                          )}
                         </div>
                       </td>
                       <td
@@ -295,7 +301,7 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
         </div>
       </DashboardPage>
       <Modal
-        title="Sammlung bearbeiten"
+        title="Gruppe bearbeiten"
         onClose={() => selectCollection(null)}
         isOpen={Boolean(selectedCollection)}
       >

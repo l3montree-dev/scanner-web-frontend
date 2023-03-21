@@ -444,8 +444,8 @@ const Targets: FunctionComponent<Props> = (props) => {
                             <div>Löschen</div>
                           </MenuItem>
                           <CollectionMenu
+                            nestedMenu
                             collections={props.collections}
-                            selectedCollections={collectionIds}
                             onCollectionClick={(c) =>
                               handleAddToCollection(
                                 selectedTargets.map((s) => ({ uri: s })),
@@ -454,7 +454,7 @@ const Targets: FunctionComponent<Props> = (props) => {
                             }
                             Button={
                               <div className="p-2 px-4 text-left">
-                                Zu Sammlung hinzufügen
+                                Zu Gruppe hinzufügen
                               </div>
                             }
                           />
@@ -502,7 +502,7 @@ const Targets: FunctionComponent<Props> = (props) => {
                     }
                     Button={
                       <div className="p-2 bg-deepblue-100 border border-deepblue-100 flex flex-row items-center justify-center">
-                        Filter nach Sammlungen
+                        Filter nach Gruppen
                         <FontAwesomeIcon className="ml-2" icon={faCaretDown} />
                       </div>
                     }
