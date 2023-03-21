@@ -38,7 +38,7 @@ const Menu: FunctionComponent<Props> = ({
   nestedMenu,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const buttonRef = useRef<HTMLDivElement>(null);
 
   const closeListener = useCallback(() => {
     setIsOpen(false);
@@ -102,14 +102,13 @@ const Menu: FunctionComponent<Props> = ({
 
   return (
     <div className="relative">
-      <button
+      <div
         ref={buttonRef}
-        type="button"
-        className={buttonClassNames}
+        className={classNames("cursor-pointer", buttonClassNames)}
         onClick={openMenu}
       >
         {Button}
-      </button>
+      </div>
       <div
         onClick={handleMenuClick}
         style={{ minWidth: Math.max(buttonRef.current?.clientWidth ?? 0, 200) }}

@@ -1,4 +1,4 @@
-import { InspectionTypeEnum } from "../inspection/scans";
+import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
 import { targetService } from "./targetService";
 
 jest.mock("next-auth", () => ({}));
@@ -113,10 +113,76 @@ describe("Target Service Test Suite", () => {
     });
   });
   it.each([
-    ...Object.values(InspectionTypeEnum).map((value) => ({
-      sort: value,
-      expected: `sr."${value}"`,
-    })),
+    {
+      actual: { [Math.random().toString().substring(2)]: "DROP TABLE" }, // any other value should default to uri.
+      expected: "",
+    },
+    {
+      actual: { responsibleDisclosure: "1", dnsSec: "-1", tlsv1_3: "0" },
+      expected:
+        '"responsibleDisclosure" = true AND "dnsSec" = false AND "tlsv1_3" IS NULL AND',
+    },
+    {
+      actual: {
+        responsibleDisclosure: "DROP TABLE", // should remove any values inside query params
+        dnsSec: "-1",
+        tlsv1_3: "0",
+      },
+      expected: '"dnsSec" = false AND "tlsv1_3" IS NULL AND',
+    },
+  ])(
+    "should not be possible to inject arbitrary data to the sql statement when fetching the targets with their latest network results: %s",
+    async ({ actual, expected }) => {
+      const prismaMock = {
+        target: {
+          findMany: jest.fn(),
+          count: jest.fn(),
+        },
+        $queryRawUnsafe: jest.fn(() => []),
+      } as any;
+
+      await targetService.getUserTargetsWithLatestTestResult(
+        { id: "abc", role: null, defaultCollectionId: 0 },
+        {
+          sortDirection: "1",
+          page: 0,
+          pageSize: 10,
+          ...(actual as { [key in InspectionType]?: "0" | "1" | "-1" }),
+        },
+        prismaMock
+      );
+
+      const query = prismaMock.$queryRawUnsafe.mock.calls[0][0];
+      const expectedQuery = `
+      SELECT count(*) OVER() AS "totalCount", t.*, lsd.details as details from targets t
+      LEFT JOIN scan_reports sr on t.uri = sr.uri
+      LEFT JOIN last_scan_details lsd on t.uri = lsd.uri
+      WHERE ${expected} NOT EXISTS(
+          SELECT 1 from scan_reports sr2 where sr.uri = sr2.uri AND sr."createdAt" < sr2."createdAt"
+        )
+        AND EXISTS( SELECT 1 from target_collections tc where tc.uri = t.uri AND tc."collectionId" = $1 )
+        ORDER BY t.uri ASC
+        LIMIT $2
+        OFFSET $3;
+`;
+      expect(
+        query
+          .split("\n")
+          .filter((s: string) => s.length > 0)
+          .map((s: string) => s.trim())
+          .join(" ")
+          .replace(/\s+/g, " ")
+      ).toEqual(
+        expectedQuery
+          .split("\n")
+          .filter((s: string) => s.length > 0)
+          .map((s) => s.trim())
+          .join(" ")
+          .replace(/\s+/g, " ")
+      );
+    }
+  );
+  it.each([
     {
       sort: Math.random().toString().substring(2), // any other value should default to uri.
       expected: "t.uri",
@@ -139,7 +205,6 @@ describe("Target Service Test Suite", () => {
       await targetService.getUserTargetsWithLatestTestResult(
         { id: "abc", role: null, defaultCollectionId: 0 },
         {
-          sort: sort,
           sortDirection: "1",
           page: 0,
           pageSize: 10,

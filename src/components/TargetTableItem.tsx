@@ -204,15 +204,7 @@ const TargetTableItem: FunctionComponent<Props> = ({
                       <CollectionMenu
                         nestedMenu
                         collections={collections}
-                        Button={
-                          <div
-                            className={classNames(
-                              "p-2 flex-row flex items-center px-4 hover:bg-deepblue-50 cursor-pointer w-full text-left"
-                            )}
-                          >
-                            Gruppen
-                          </div>
-                        }
+                        Button={<MenuItem>Gruppen</MenuItem>}
                         selectedCollections={target.collections ?? []}
                         onCollectionClick={(collection) =>
                           onToggleCollection(collection)

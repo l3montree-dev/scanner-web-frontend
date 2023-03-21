@@ -35,9 +35,7 @@ function CollectionMenu<T extends { id: number; title: string; color: string }>(
               <button
                 className={classNames(
                   "flex w-full gap-2 transition-all  items-center px-2 py-2",
-                  selected
-                    ? "bg-deepblue-100 hover:bg-deepblue-200"
-                    : "bg-deepblue-300 hover:bg-deepblue-200"
+                  "bg-deepblue-300 hover:bg-deepblue-200"
                 )}
                 key={collection.id}
                 onClick={() => props.onCollectionClick(collection)}
