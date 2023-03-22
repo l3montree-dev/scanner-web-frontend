@@ -1,6 +1,5 @@
 import {
   faCaretDown,
-  faListCheck,
   faQuestionCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -24,10 +23,7 @@ import SideNavigation from "../../components/SideNavigation";
 import Tooltip from "../../components/Tooltip";
 import { config } from "../../config";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
-import {
-  withCurrentUserOrGuestServerSideProps,
-  withCurrentUserServerSideProps,
-} from "../../decorators/withCurrentUser";
+import { withCurrentUserOrGuestServerSideProps } from "../../decorators/withCurrentUser";
 import { withDB } from "../../decorators/withDB";
 import { useIsGuest } from "../../hooks/useIsGuest";
 import { collectionService } from "../../services/collectionService";
@@ -289,17 +285,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                   defaultCollectionId={props.defaultCollectionId}
                   currentStat={data as ChartData}
                 />
-                <h2 className="text-2xl mt-10 mb-5">Trendanalyse</h2>
-                <div className="justify-between items-start">
-                  <p className="mb-10 text-slate-300">
-                    Die Trendanalyse visualisiert die Veränderung der
-                    Sicherheitskriterien in Anbetracht der Zeit. Zusätzlich
-                    stellt sie die Werte der verwalteten Dienste im Vergleich zu
-                    den Werten der Top 100.000 .de Domains sowie der globalen
-                    Top 100.000 Domains dar. Die Daten werden täglich
-                    aktualisiert.
-                  </p>
-                </div>
+
                 <LineCharts
                   displayCollections={_displayCollections}
                   displayInspections={displayInspections}

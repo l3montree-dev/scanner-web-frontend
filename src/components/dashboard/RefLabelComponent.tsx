@@ -14,7 +14,6 @@ export const RefLabelComponent: FunctionComponent<any & { fill: string }> = (
     return (
       <VictoryLabel
         {...props}
-        renderInPortal={false}
         textAnchor={"middle"}
         verticalAnchor={"middle"}
         backgroundPadding={2}
@@ -34,12 +33,11 @@ export const RefLabelComponent: FunctionComponent<any & { fill: string }> = (
     return (
       <VictoryLabel
         {...props}
-        renderInPortal={true}
         textAnchor={"end"}
         verticalAnchor={"middle"}
         backgroundPadding={3}
         dx={30}
-        dy={0}
+        dy={-3}
         style={{
           fontSize: 10,
           fill: props.fill,
