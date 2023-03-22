@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { useRouter } from "next/router";
 import { FunctionComponent } from "react";
 import {
   VictoryAxis,
@@ -51,6 +53,7 @@ const PieCharts: FunctionComponent<Props> = ({
   defaultCollectionId,
   historicalData,
 }) => {
+  const router = useRouter();
   return (
     <div className="mt-5 justify-start gap-2 flex-wrap grid grid-cols-4">
       {displayInspections.map((key) => {
@@ -104,6 +107,64 @@ const PieCharts: FunctionComponent<Props> = ({
                   width={300}
                   height={300}
                   padAngle={padAngle}
+                  eventKey="key"
+                  events={[
+                    {
+                      target: "data",
+                      eventHandlers: {
+                        onMouseLeave: (ev) => {
+                          if ("style" in ev.target)
+                            (ev.target.style as any).cursor = "";
+                          return [
+                            {
+                              target: "labels",
+                              mutation: () => ({ active: false }),
+                            },
+                            {
+                              mutation: () => null,
+                            },
+                          ];
+                        },
+                        onMouseOver: (ev) => {
+                          if ("style" in ev.target)
+                            (ev.target.style as any).cursor = "pointer";
+                          return [
+                            {
+                              target: "labels",
+                              mutation: () => ({ active: true }),
+                            },
+                            {
+                              mutation: (props) => {
+                                return {
+                                  style: Object.assign({}, props.style, {
+                                    fill:
+                                      props.datum.eventKey === "implemented"
+                                        ? tailwindColors.lightning["200"]
+                                        : tailwindColors.slate["500"],
+                                  }),
+                                };
+                              },
+                            },
+                          ];
+                        },
+                        onClick: () => {
+                          return [
+                            {
+                              mutation: (props) => {
+                                router.push(
+                                  `/dashboard/targets?${key}=${
+                                    props.datum.eventKey === "implemented"
+                                      ? "1"
+                                      : "-1"
+                                  } `
+                                );
+                              },
+                            },
+                          ];
+                        },
+                      },
+                    },
+                  ]}
                   innerRadius={90}
                   labelComponent={
                     <VictoryTooltip
@@ -128,12 +189,14 @@ const PieCharts: FunctionComponent<Props> = ({
                   ]}
                   data={[
                     {
+                      key: "implemented",
                       x: `Implementiert (${(
                         currentStat.data[key] * 100
                       ).toFixed(1)}%)`,
                       y: currentStat.totalCount * currentStat.data[key],
                     },
                     {
+                      key: "notImplemented",
                       x:
                         currentStat.totalCount === 0
                           ? "Keine Testergebnisse vorhanden"
