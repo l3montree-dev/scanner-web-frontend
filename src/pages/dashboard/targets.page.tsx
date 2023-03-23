@@ -598,14 +598,12 @@ const Targets: FunctionComponent<Props> = (props) => {
                     </div>
                   </th>
                   <th className="p-2">
-                    <div>
-                      <CheckStateMenu
-                        onChange={handleFilterCheckState}
-                        inspectionType={
-                          OrganizationalInspectionType.ResponsibleDisclosure
-                        }
-                      />
-                    </div>
+                    <CheckStateMenu
+                      onChange={handleFilterCheckState}
+                      inspectionType={
+                        OrganizationalInspectionType.ResponsibleDisclosure
+                      }
+                    />
                   </th>
                   <th className="p-2">
                     <div>

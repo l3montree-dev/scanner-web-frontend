@@ -54,13 +54,16 @@ const CheckStateMenu: FunctionComponent<Props> = ({
       menuCloseIndex={0}
       Button={
         <div
+          title={titleMapper[inspectionType]}
           className={classNames(
-            "flex flex-row gap-2 text-left items-center font-bold",
+            "flex flex-row gap-2 text-left w-24 items-center font-bold",
             selectedToClassName(+selected)
           )}
         >
-          <span>{titleMapper[inspectionType]}</span>
-          <FontAwesomeIcon icon={faCaretDown} />
+          <span className="text-ellipsis overflow-hidden whitespace-nowrap">
+            {titleMapper[inspectionType]}
+          </span>
+          <FontAwesomeIcon className="flex-1" icon={faCaretDown} />
         </div>
       }
       Menu={
