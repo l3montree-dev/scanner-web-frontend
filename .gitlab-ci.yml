@@ -44,6 +44,8 @@ jest:
         --destination $IMAGE_TAG
         --build-arg
         NEXT_PUBLIC_ENVIRONMENT=$NEXT_PUBLIC_ENVIRONMENT
+        --build-arg
+        NEXT_PUBLIC_SENTRY_DSN=$NEXT_PUBLIC_SENTRY_DSN
         --tarPath image.tar
   artifacts:
     paths:

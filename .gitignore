@@ -49,4 +49,3 @@ helm-chart/values.10million.yaml
 
 # Sentry
 next.config.original.js
-sentry.properties
