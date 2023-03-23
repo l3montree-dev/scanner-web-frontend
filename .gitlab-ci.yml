@@ -45,7 +45,7 @@ jest:
   script:
     - npm ci --include=dev
     - npm run build
-    - npm run lighthouse -- --output="json,html" --output-path="lighthouse-$FORM_FACTOR" $LIGHTHOUSE_ARGUMENTS
+    - npm run lighthouse -- --output="json,html" $LIGHTHOUSE_ARGUMENTS
 
 lighthouse:desktop:
   extends: .lighthouse
@@ -56,8 +56,7 @@ lighthouse:desktop:
     when: always
     expose_as: 'Lighthouse Report Desktop'
     paths:
-      - lighthouse-desktop.report.html
-      - lighthouse-desktop.report.json
+      - .lighthouseci
 
 lighthouse:mobile:
   extends: .lighthouse
@@ -68,8 +67,7 @@ lighthouse:mobile:
     when: always
     expose_as: 'Lighthouse Report Mobile'
     paths:
-      - lighthouse-mobile.report.html
-      - lighthouse-mobile.report.json
+      - .lighthouseci
 
 .docker:build:
   stage: build
