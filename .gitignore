@@ -46,3 +46,8 @@ helm-chart/values.prod.yaml
 helm-chart/values.10million.yaml
 
 .lighthouseci
+# Sentry
+.sentryclirc
+
+# Sentry
+next.config.original.js
