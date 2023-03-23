@@ -49,13 +49,13 @@ const LineCharts: FunctionComponent<Props> = ({
           täglich aktualisiert.
         </p>
       </div>
-      <div className="flex flex-row justify-end sticky zoom-button">
+      <div className="flex flex-row justify-end sticky pointer-events-none zoom-button">
         <button
           onClick={() => {
             setZoomLevel(Math.max(0, zoomLevel - 1));
           }}
           className={classNames(
-            "bg-deepblue-100 mr-1 p-2 hover:bg-deepblue-50 transition-all",
+            "bg-deepblue-100 mr-1 pointer-events-auto p-2 hover:bg-deepblue-50 transition-all",
             zoomLevel === 0 && "opacity-50 cursor-not-allowed"
           )}
         >
@@ -67,7 +67,7 @@ const LineCharts: FunctionComponent<Props> = ({
             setZoomLevel(Math.min(2, zoomLevel + 1));
           }}
           className={classNames(
-            "bg-deepblue-100 p-2 hover:bg-deepblue-50 transition-all",
+            "bg-deepblue-100 p-2 pointer-events-auto hover:bg-deepblue-50 transition-all",
             zoomLevel === 2 && "opacity-50 cursor-not-allowed"
           )}
         >

@@ -1,3 +1,10 @@
+import {
+  faArrowsDownToLine,
+  faDownload,
+  faDownLong,
+  faSave,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import React, { FunctionComponent } from "react";
 
@@ -14,7 +21,7 @@ import { theme } from "../../styles/victory-theme";
 import { linkMapper } from "../../utils/common";
 import { tailwindColors } from "../../utils/view";
 import { RefLabelComponent } from "./RefLabelComponent";
-
+import { Canvg } from "canvg";
 interface Props {
   displayCollections: number[];
   inspectionType: InspectionType;
@@ -54,8 +61,101 @@ const LineChart: FunctionComponent<Props> = ({
   defaultCollectionId,
   zoomLevel,
 }) => {
+  const chartRef = React.useRef<any>(null);
+  const exportToPng = async () => {
+    if (chartRef.current) {
+      const svg = (
+        chartRef.current.containerRef as HTMLDivElement
+      ).querySelector("svg");
+
+      if (svg) {
+        const clonedNode = svg.cloneNode(true) as SVGSVGElement;
+
+        // add a full size white rect as background color.
+        const rect = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "rect"
+        );
+        rect.setAttribute("width", "100%");
+        rect.setAttribute("height", "100%");
+        rect.setAttribute("fill", "white");
+        clonedNode.insertBefore(rect, clonedNode.firstChild);
+
+        // remove all elements with fill: url(#...)
+        const paths = clonedNode.querySelectorAll("path");
+        paths.forEach((path) => {
+          // remove any shade
+          if (
+            path.getAttribute("fill")?.startsWith("url") ||
+            path.style.fill.startsWith("url")
+          ) {
+            path.remove();
+          } else if (path.style.stroke === "rgb(172, 252, 207)") {
+            // primary line
+            path.style.stroke = tailwindColors.lightning["900"];
+          }
+        });
+
+        const lines = clonedNode.querySelectorAll("line");
+        lines.forEach((line) => {
+          if (line.style.stroke === "rgb(56, 63, 106)") {
+            line.style.stroke = "rgb(0, 0, 0)";
+          } else if (line.style.stroke === "rgb(203, 213, 225)") {
+            // ticks
+            line.style.stroke = "rgb(20,20,20)";
+          } else if (line.style.stroke === "rgba(255, 255, 255, 0.1)") {
+            // grid lines
+            line.style.stroke = "rgb(200,200,200)";
+          }
+        });
+
+        const rects = clonedNode.querySelectorAll("rect");
+        rects.forEach((rect) => {
+          if (rect.style.fill === "rgb(0, 3, 46)") {
+            rect.style.fill = "rgb(255,255,255)";
+          }
+        });
+
+        // change the font color
+        const texts = clonedNode.querySelectorAll("tspan");
+        texts.forEach((text) => {
+          if (text.style.fill === "rgb(203, 213, 225)") {
+            // tick labels
+            text.style.fill = "rgb(20, 20, 20)";
+          } else if (text.style.fill === "rgb(172, 252, 207)") {
+            // axis labels
+            text.style.fill = tailwindColors.lightning["900"];
+          }
+        });
+
+        const canvas = document.createElement("canvas");
+        const svgSize = svg.getBoundingClientRect();
+
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          return;
+        }
+
+        canvas.width = svgSize.width * 4;
+        canvas.height = svgSize.height * 4;
+        // add a white background color.
+        const serializer = new XMLSerializer();
+        const c = Canvg.fromString(
+          ctx,
+          serializer.serializeToString(clonedNode)
+        );
+        await c.render();
+
+        // download the image
+        const a = document.createElement("a");
+        a.href = canvas.toDataURL("image/png");
+        a.download = `${titleMapper[inspectionType]}.png`;
+        a.click();
+      }
+    }
+  };
   return (
-    <div className="bg-deepblue-600 historical-chart border flex-col flex border-deepblue-100">
+    <div className="group/chart bg-deepblue-600 historical-chart border flex-col flex border-deepblue-100">
       <div className="flex-1 pt-5 relative">
         {linkMapper[inspectionType] !== "" && (
           <Link
@@ -66,7 +166,23 @@ const LineChart: FunctionComponent<Props> = ({
             &quot;{titleMapper[inspectionType]}&quot; jetzt umsetzen!
           </Link>
         )}
-        <svg style={{ height: 0 }}>
+        <button
+          onClick={exportToPng}
+          className="group-hover/chart:opacity-100 cursor-pointer z-10 opacity-0 rounded-full bg-deepblue-100/50 h-6 absolute top-10 right-3 w-6 text-sm transition-all"
+        >
+          <FontAwesomeIcon className="opacity-100" icon={faDownload} />
+        </button>
+
+        <VictoryChart
+          containerComponent={<VictoryZoomContainer ref={chartRef} />}
+          theme={theme}
+          height={360}
+          width={zoomLevelToWidth(zoomLevel)}
+          padding={{ top: 20, bottom: 40, left: 55, right: 10 }}
+          minDomain={{ y: Math.max(-1, data.min - data.max / 20) }}
+          maxDomain={{ y: Math.min(101.5, data.max + data.max / 20) }}
+          domainPadding={{ x: [0, 30], y: [100, 100] }}
+        >
           <defs>
             <linearGradient x2="0%" y2="100%" id="serviceGradient">
               <stop offset="0%" stopColor={"rgba(172,252,207,0.2)"} />
@@ -74,21 +190,11 @@ const LineChart: FunctionComponent<Props> = ({
               <stop offset="100%" stopColor="rgba(0,0,0,0)" />
             </linearGradient>
           </defs>
-        </svg>
-        <VictoryChart
-          containerComponent={<VictoryZoomContainer />}
-          theme={theme}
-          height={360}
-          width={zoomLevelToWidth(zoomLevel)}
-          padding={{ top: 20, bottom: 40, left: 55, right: 10 }}
-          minDomain={{ y: Math.max(0, data.min - data.max / 20) }}
-          maxDomain={{ y: Math.min(100, data.max + data.max / 20) }}
-          domainPadding={{ x: [0, 30], y: [10, 10] }}
-        >
           <VictoryAxis fixLabelOverlap />
           <VictoryAxis
             tickFormat={(t) => `${t}%`}
             dependentAxis
+            domain={{ y: [-10, 1000] }}
             fixLabelOverlap
           />
           {displayCollections.map((collectionId, i, arr) => {
