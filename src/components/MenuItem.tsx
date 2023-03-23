@@ -19,8 +19,8 @@ const MenuItem: FunctionComponent<Props> = ({
     <button
       onClick={onClick}
       className={classNames(
-        "p-2 flex-row flex items-center px-4 hover:bg-deepblue-50 cursor-pointer w-full text-left",
-        selected && "bg-deepblue-50"
+        "p-2 flex-row flex items-center px-4 transition-all hover:text-deepblue-500 hover:bg-lightning-500 cursor-pointer w-full text-left",
+        selected && "bg-lightning-500 text-deepblue-500"
       )}
       {...(closeMenu ? { "data-closemenu": true } : {})}
     >

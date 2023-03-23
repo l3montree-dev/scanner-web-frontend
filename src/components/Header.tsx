@@ -1,10 +1,10 @@
 import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import EventEmitter from "events";
-import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { FunctionComponent, useEffect, useState } from "react";
 import { useSession } from "../hooks/useSession";
+import { useSignOut } from "../hooks/useSignOut";
 import { classNames, clientOnly, isGuestUser } from "../utils/common";
 import { useGlobalStore } from "../zustand/global";
 import Menu from "./Menu";
@@ -28,15 +28,7 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
   const [title, setTitle] = useState("");
   const store = useGlobalStore();
 
-  const handleSignOut = async () => {
-    const res: { path: string } = await (
-      await fetch("/api/auth/kc-signout")
-    ).json();
-    await signOut({
-      redirect: false,
-    });
-    window.location.href = res.path;
-  };
+  const signOut = useSignOut();
 
   useEffect(() => {
     pageTitleNotVisibleEmitter.on("set-content", (args) => {
@@ -99,7 +91,7 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
                 }
                 Menu={
                   <MenuList>
-                    <MenuItem onClick={handleSignOut}>
+                    <MenuItem onClick={signOut}>
                       <FontAwesomeIcon
                         className="mr-2 text-white"
                         icon={faArrowRightFromBracket}
@@ -123,7 +115,10 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
                         </a>
                       ))}
                     <div className="p-2 text-white text-sm border-t border-t-deepblue-200 bg-deepblue-300">
-                      Eingeloggt als: {session.data.user.name}
+                      Eingeloggt als:{" "}
+                      {isGuestUser(session.data.user)
+                        ? "Gast"
+                        : session.data.user.name}
                     </div>
                   </MenuList>
                 }

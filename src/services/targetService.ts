@@ -83,25 +83,39 @@ const translateSortDirection = (
   return "ASC";
 };
 
-const translateSort = (sort?: string): `sr."${InspectionType}"` | "t.uri" => {
-  if (!sort) {
-    return "t.uri";
-  }
+const inspectionFilter = (filter: {
+  [key in InspectionType]?: "0" | "1" | "-1";
+}): string => {
+  const obj = Object.entries(filter).filter(([key]) =>
+    Object.values(InspectionTypeEnum).includes(key as InspectionType)
+  );
 
-  if (Object.values(InspectionTypeEnum).includes(sort as InspectionType)) {
-    return `sr."${sort as InspectionType}"`;
+  if (obj.length === 0) {
+    return "";
   }
-
-  return "t.uri";
+  return `${obj
+    .map(([key, value]) => {
+      if (value === "1") {
+        return `"${key}" = true`;
+      } else if (value === "-1") {
+        return `"${key}" = false`;
+      } else if (value === "0") {
+        return `"${key}" IS NULL`;
+      } else {
+        return "";
+      }
+    })
+    .filter((s) => s !== "")
+    .join(" AND ")}  AND`;
 };
-
 const getUserTargetsWithLatestTestResult = async (
   user: User | Guest,
   paginateRequest: PaginateRequest & { search?: string } & {
-    sort?: string;
     sortDirection?: string;
     type?: TargetType;
     collectionIds?: Array<number>;
+  } & {
+    [key in InspectionType]?: "0" | "1" | "-1";
   },
   prisma: PrismaClient
 ): Promise<PaginateResult<DTO<DetailedTarget>>> => {
@@ -121,7 +135,7 @@ const getUserTargetsWithLatestTestResult = async (
       SELECT count(*) OVER() AS "totalCount", t.*, lsd.details as details from targets t 
       LEFT JOIN scan_reports sr on t.uri = sr.uri
       LEFT JOIN last_scan_details lsd on t.uri = lsd.uri
-      WHERE NOT EXISTS(
+      WHERE ${inspectionFilter(paginateRequest)} NOT EXISTS(
           SELECT 1 from scan_reports sr2 where sr.uri = sr2.uri AND sr."createdAt" < sr2."createdAt"
         )
         ${
@@ -149,9 +163,7 @@ const getUserTargetsWithLatestTestResult = async (
             ? 'AND "errorCount" < 5'
             : ""
         }
-        ORDER BY ${translateSort(
-          paginateRequest.sort
-        )} ${translateSortDirection(paginateRequest.sortDirection)}
+        ORDER BY t.uri ${translateSortDirection(paginateRequest.sortDirection)}
         LIMIT $2
         OFFSET $3;
 `,

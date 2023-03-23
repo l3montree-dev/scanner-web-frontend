@@ -31,6 +31,9 @@ const handleUpdate = async (
       title: req.body.title,
       color: req.body.color,
     },
+    include: {
+      shareLinks: true,
+    },
   });
 };
 

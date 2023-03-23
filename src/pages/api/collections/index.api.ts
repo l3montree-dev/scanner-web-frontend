@@ -62,6 +62,9 @@ const handlePost = async (
         },
       },
     },
+    include: {
+      shareLinks: true,
+    },
   });
 
   return res.send(d);

@@ -174,69 +174,63 @@ const TargetTableItem: FunctionComponent<Props> = ({
           </Tooltip>
         </td>
         <td className="text-right p-2" onClick={(e) => e.stopPropagation()}>
-          <Menu
-            menuCloseIndex={0}
-            Button={
-              <div className="p-2 h-8 w-8 flex flex-row items-center justify-center">
-                <FontAwesomeIcon icon={faEllipsisVertical} />
-              </div>
-            }
-            Menu={
-              <MenuList>
-                <MenuItem
-                  loading={
-                    scanRequest.key === target.uri && scanRequest.isLoading
-                  }
-                  onClick={() => scan(target.uri)}
-                >
-                  <div>
-                    <div>Erneut scannen</div>
-                    {scanRequest.key === target.uri && (
-                      <span className="block text-red-500 text-sm">
-                        {scanRequest.errorMessage}
-                      </span>
-                    )}
-                  </div>
-                </MenuItem>
-                {!isGuest && (
-                  <>
-                    {Object.keys(collections).length > 0 ? (
-                      <CollectionMenu
-                        nestedMenu
-                        collections={collections}
-                        Button={
-                          <div
-                            className={classNames(
-                              "p-2 flex-row flex items-center px-4 hover:bg-deepblue-50 cursor-pointer w-full text-left"
-                            )}
-                          >
-                            Zu Sammlung hinzufügen
+          <div className="flex flex-row justify-end">
+            <Menu
+              menuCloseIndex={0}
+              Button={
+                <div className="p-2 h-8 w-8 flex flex-row items-center justify-center">
+                  <FontAwesomeIcon icon={faEllipsisVertical} />
+                </div>
+              }
+              Menu={
+                <MenuList>
+                  <MenuItem
+                    loading={
+                      scanRequest.key === target.uri && scanRequest.isLoading
+                    }
+                    onClick={() => scan(target.uri)}
+                  >
+                    <div>
+                      <div>Erneut scannen</div>
+                      {scanRequest.key === target.uri && (
+                        <span className="block text-red-500 text-sm">
+                          {scanRequest.errorMessage}
+                        </span>
+                      )}
+                    </div>
+                  </MenuItem>
+                  {!isGuest && (
+                    <>
+                      {Object.keys(collections).length > 0 ? (
+                        <CollectionMenu
+                          nestedMenu
+                          collections={collections}
+                          Button={<MenuItem>Gruppen</MenuItem>}
+                          selectedCollections={target.collections ?? []}
+                          onCollectionClick={(collection) =>
+                            onToggleCollection(collection)
+                          }
+                        />
+                      ) : (
+                        <Link
+                          className="hover:no-underline block hover:bg-deepblue-50"
+                          href={"/dashboard/collections"}
+                        >
+                          <div className="text-left px-4 py-2">
+                            Gruppe erstellen
                           </div>
-                        }
-                        selectedCollections={target.collections ?? []}
-                        onCollectionClick={(collection) =>
-                          onToggleCollection(collection)
-                        }
-                      />
-                    ) : (
-                      <Link
-                        className="hover:no-underline block hover:bg-deepblue-50"
-                        href={"/dashboard/collections"}
-                      >
-                        <div className="text-left px-4 py-2">
-                          Sammlung erstellen
-                        </div>
-                      </Link>
-                    )}
+                        </Link>
+                      )}
 
-                    <MenuItem onClick={() => destroy(target.uri)}>
-                      <div>Löschen</div>
-                    </MenuItem>
-                  </>
-                )}
-              </MenuList>
-            }
-          />
+                      <MenuItem onClick={() => destroy(target.uri)}>
+                        <div>Löschen</div>
+                      </MenuItem>
+                    </>
+                  )}
+                </MenuList>
+              }
+            />
+          </div>
         </td>
       </tr>
       {target.collections !== undefined && target.collections.length > 0 && (
@@ -245,10 +239,19 @@ const TargetTableItem: FunctionComponent<Props> = ({
           className={classNames(clNames, "cursor-pointer")}
         >
           <td colSpan={9} className="p-0 pb-2">
-            <div className="flex flex-row gap-2 px-5 -mt-2 pl-10 justify-start">
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="flex flex-row gap-2 px-5 -mt-2 pl-10 justify-start"
+            >
               {target.collections.map((c) => {
                 const col = collections[c.toString()];
-                return <CollectionPill key={col.id} {...col} />;
+                return (
+                  <CollectionPill
+                    onRemove={() => onToggleCollection(col)}
+                    key={col.id}
+                    {...col}
+                  />
+                );
               })}
             </div>
           </td>

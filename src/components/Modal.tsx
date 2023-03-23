@@ -47,7 +47,7 @@ const Modal: FunctionComponent<Props> = (props) => {
         className="backdrop absolute top-0 bottom-0 left-0 right-0 bg-black opacity-50"
       />
       <div className="flex justify-center relative h-full overflow-auto z-10">
-        <div className="md:py-5 py-0 h-max">
+        <div className="md:py-5 mt-14 py-0 h-max">
           <div className="relative">
             <div
               className={classNames(

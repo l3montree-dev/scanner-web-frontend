@@ -24,8 +24,6 @@ export const withCurrentUserOrGuest = async (
     throw new Error("session is undefined");
   }
 
-  console.log(session.user);
-
   // check if guest
   if (isGuestUser(session.user)) {
     return session.user;

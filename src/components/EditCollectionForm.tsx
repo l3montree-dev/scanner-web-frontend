@@ -51,9 +51,9 @@ const EditCollectionForm: FunctionComponent<Props> = (props) => {
         <div className="flex-1">
           <FormInput
             value={title}
-            placeholder="Sammlung"
+            placeholder="Gruppe"
             onChange={(e) => setTitle(e)}
-            label="Name der Sammlung"
+            label="Name der Gruppe"
           />
         </div>
         <div className="flex flex-row justify-between items-end">
@@ -93,11 +93,10 @@ const EditCollectionForm: FunctionComponent<Props> = (props) => {
           </Button>
         </div>
         <div className="mt-5 text-white">
-          <div className="text-white">Geteilte Links</div>
-          <p className="opacity-75 text-sm">
-            Geteilte Links machen einen lesenden Zugriff auf die Sammlung
-            möglich.
-          </p>
+          <div className="text-white">
+            Links für externen readonly-zugriff ohne Account
+          </div>
+
           <div className="flex flex-col flex-wrap mt-1 mb-3 gap-2">
             {props.collection.shareLinks.length === 0 && (
               <div className="border border-deepblue-50 p-5 text-center flex-1">
@@ -126,7 +125,7 @@ const EditCollectionForm: FunctionComponent<Props> = (props) => {
               spinnerColor="white"
               className="bg-deepblue-50 px-3 py-2"
             >
-              <span className="text-white">Neuen Link generieren</span>
+              <span className="text-white">Link erstellen</span>
             </Button>
           </div>
         </div>

@@ -23,7 +23,7 @@ html,
 body {
   padding: 0;
   margin: 0;
-  font-size: 20px;
+  font-size: 19px;
   font-family: BundesSans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
   hyphens: auto;
@@ -158,4 +158,12 @@ article  {
 
 .z-200 {
     z-index: 200;
+}
+
+.beneath-header {
+    top: 65px;
+}
+.zoom-button {
+    top: 75px;
+    z-index: 100;
 }

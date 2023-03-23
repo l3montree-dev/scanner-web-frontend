@@ -1,7 +1,10 @@
 import {
   faCaretDown,
   faCaretUp,
+  faCheck,
+  faQuestion,
   faQuestionCircle,
+  faWarning,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
@@ -58,6 +61,7 @@ import {
 import { DTO, ServerSideProps, toDTO } from "../../utils/server";
 import { optimisticUpdate } from "../../utils/view";
 import { useIsGuest } from "../../hooks/useIsGuest";
+import CheckStateMenu from "../../components/CheckStateMenu";
 
 interface Props {
   targets: PaginateResult<DTO<DetailedTarget> & { collections?: number[] }>; // should include array of collection ids the target is in
@@ -91,7 +95,7 @@ const Targets: FunctionComponent<Props> = (props) => {
 
   const viewedDomainType =
     (router.query.domainType as TargetType | undefined) ?? TargetType.all;
-  const handleSort = (key: InspectionType | "uri") => {
+  const handleSort = (key: "uri") => {
     // check if we should reverse the order.
     const instructions = { key, direction: 1 as 1 | -1 };
     if (key === sort.key) {
@@ -100,6 +104,25 @@ const Targets: FunctionComponent<Props> = (props) => {
     patchQuery({
       sort: instructions.key,
       sortDirection: instructions.direction.toString(),
+    });
+  };
+
+  const handleFilterCheckState = (
+    key: InspectionType,
+    value: 1 | 0 | -1 | undefined
+  ) => {
+    if (value === undefined) {
+      const { [key]: _, ...query } = router.query;
+      router.push({
+        pathname: router.pathname,
+        query: {
+          ...query,
+        },
+      });
+      return;
+    }
+    patchQuery({
+      [key]: value.toString(),
     });
   };
 
@@ -444,8 +467,8 @@ const Targets: FunctionComponent<Props> = (props) => {
                             <div>Löschen</div>
                           </MenuItem>
                           <CollectionMenu
+                            nestedMenu
                             collections={props.collections}
-                            selectedCollections={collectionIds}
                             onCollectionClick={(c) =>
                               handleAddToCollection(
                                 selectedTargets.map((s) => ({ uri: s })),
@@ -454,7 +477,7 @@ const Targets: FunctionComponent<Props> = (props) => {
                             }
                             Button={
                               <div className="p-2 px-4 text-left">
-                                Zu Sammlung hinzufügen
+                                Zu Gruppe hinzufügen
                               </div>
                             }
                           />
@@ -502,29 +525,46 @@ const Targets: FunctionComponent<Props> = (props) => {
                     }
                     Button={
                       <div className="p-2 bg-deepblue-100 border border-deepblue-100 flex flex-row items-center justify-center">
-                        Filter nach Sammlungen
+                        Filter nach Gruppen
                         <FontAwesomeIcon className="ml-2" icon={faCaretDown} />
                       </div>
                     }
                   />
                 </div>
               )}
-
-              <div className="flex flex-wrap flex-row gap-2 px-5 items-center pl-4 justify-start">
-                {collectionIds.map((c) => {
-                  const col = props.collections[c.toString()];
-                  return (
-                    <CollectionPill
-                      onRemove={() => {
-                        handleCollectionFilterToggle(c);
-                      }}
-                      key={col.id}
-                      {...col}
-                    />
-                  );
-                })}
-              </div>
+              {Object.keys(router.query).length > 0 && (
+                <button
+                  onClick={() => {
+                    router.push({
+                      pathname: router.pathname,
+                      query: {},
+                    });
+                  }}
+                  className="bg-deepblue-100 border border-deepblue-100 hover:bg-deepblue-300 transition-all my-2 ml-2 px-2"
+                >
+                  Filter zurücksetzen
+                </button>
+              )}
             </div>
+
+            {collectionIds.length > 0 && (
+              <div className="flex flex-row py-2 border-b border-deepblue-100 items-center">
+                <div className="flex flex-wrap flex-row gap-2 px-5 items-center pl-4 justify-start">
+                  {collectionIds.map((c) => {
+                    const col = props.collections[c.toString()];
+                    return (
+                      <CollectionPill
+                        onRemove={() => {
+                          handleCollectionFilterToggle(c);
+                        }}
+                        key={col.id}
+                        {...col}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            )}
             <table className="w-full">
               <thead className="sticky top-14 z-100">
                 <tr className="bg-deepblue-200 text-sm border-b border-b-deepblue-50 text-left">
@@ -558,85 +598,52 @@ const Targets: FunctionComponent<Props> = (props) => {
                     </div>
                   </th>
                   <th className="p-2">
+                    <CheckStateMenu
+                      onChange={handleFilterCheckState}
+                      inspectionType={
+                        OrganizationalInspectionType.ResponsibleDisclosure
+                      }
+                    />
+                  </th>
+                  <th className="p-2">
                     <div>
-                      <span>Responsible Disclosure</span>
-                      <SortButton
-                        sortKey={
-                          OrganizationalInspectionType.ResponsibleDisclosure
-                        }
-                        onSort={handleSort}
-                        active={
-                          sort.key ===
-                          OrganizationalInspectionType.ResponsibleDisclosure
-                        }
-                        getIcon={() =>
-                          getIcon(
-                            OrganizationalInspectionType.ResponsibleDisclosure
-                          )
-                        }
+                      <CheckStateMenu
+                        onChange={handleFilterCheckState}
+                        inspectionType={TLSInspectionType.TLSv1_3}
                       />
                     </div>
                   </th>
                   <th className="p-2">
                     <div>
-                      <span>TLS 1.3</span>
-                      <SortButton
-                        sortKey={TLSInspectionType.TLSv1_3}
-                        onSort={handleSort}
-                        active={sort.key === TLSInspectionType.TLSv1_3}
-                        getIcon={() => getIcon(TLSInspectionType.TLSv1_3)}
-                      />
-                    </div>
-                  </th>
-                  <th className="p-2">
-                    <div>
-                      <span>
-                        Veraltete TLS/ SSL
-                        <br /> Protokolle deaktiviert
-                      </span>
-                      <SortButton
-                        sortKey={TLSInspectionType.DeprecatedTLSDeactivated}
-                        onSort={handleSort}
-                        active={
-                          sort.key ===
+                      <CheckStateMenu
+                        onChange={handleFilterCheckState}
+                        inspectionType={
                           TLSInspectionType.DeprecatedTLSDeactivated
                         }
-                        getIcon={() =>
-                          getIcon(TLSInspectionType.DeprecatedTLSDeactivated)
-                        }
                       />
                     </div>
                   </th>
                   <th className="p-2">
                     <div>
-                      <span className="whitespace-nowrap">HSTS</span>
-                      <SortButton
-                        sortKey={HeaderInspectionType.HSTS}
-                        onSort={handleSort}
-                        active={sort.key === HeaderInspectionType.HSTS}
-                        getIcon={() => getIcon(HeaderInspectionType.HSTS)}
+                      <CheckStateMenu
+                        onChange={handleFilterCheckState}
+                        inspectionType={HeaderInspectionType.HSTS}
                       />
                     </div>
                   </th>
                   <th className="p-2">
                     <div>
-                      <span>DNSSEC</span>
-                      <SortButton
-                        sortKey={DomainInspectionType.DNSSec}
-                        onSort={handleSort}
-                        active={sort.key === DomainInspectionType.DNSSec}
-                        getIcon={() => getIcon(DomainInspectionType.DNSSec)}
+                      <CheckStateMenu
+                        onChange={handleFilterCheckState}
+                        inspectionType={DomainInspectionType.DNSSec}
                       />
                     </div>
                   </th>
                   <th className="p-2">
                     <div>
-                      <span className="whitespace-nowrap">RPKI</span>
-                      <SortButton
-                        sortKey={NetworkInspectionType.RPKI}
-                        onSort={handleSort}
-                        active={sort.key === NetworkInspectionType.RPKI}
-                        getIcon={() => getIcon(NetworkInspectionType.RPKI)}
+                      <CheckStateMenu
+                        onChange={handleFilterCheckState}
+                        inspectionType={NetworkInspectionType.RPKI}
                       />
                     </div>
                   </th>
@@ -729,6 +736,7 @@ export const getServerSideProps = decorateServerSideProps(
       targetService.getUserTargetsWithLatestTestResult(
         currentUser,
         {
+          ...context.query,
           pageSize: 50,
           page,
           search,
@@ -736,7 +744,6 @@ export const getServerSideProps = decorateServerSideProps(
           type:
             (context.query["domainType"] as TargetType | undefined) ||
             TargetType.all,
-          sort: context.query["sort"] as string | undefined,
           sortDirection: context.query["sortDirection"] as string | undefined,
         },
         prisma

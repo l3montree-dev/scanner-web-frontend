@@ -1,20 +1,13 @@
-import Link from "next/link";
+import {
+  faMagnifyingGlassMinus,
+  faMagnifyingGlassPlus,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { FunctionComponent } from "react";
 
-import {
-  VictoryChart,
-  VictoryVoronoiContainer,
-  VictoryAxis,
-  VictoryLine,
-  VictoryArea,
-} from "victory";
 import { InspectionType } from "../../inspection/scans";
-import { titleMapper } from "../../messages";
-import { theme } from "../../styles/victory-theme";
-import { linkMapper } from "../../utils/common";
-import { tailwindColors } from "../../utils/view";
-import { LabelComponent } from "./LabelComponent";
-import { RefLabelComponent } from "./RefLabelComponent";
+import { classNames } from "../../utils/common";
+import LineChart from "./LineChart";
 
 interface Props {
   displayCollections: number[];
@@ -43,106 +36,64 @@ const LineCharts: FunctionComponent<Props> = ({
   dataPerInspection,
   defaultCollectionId,
 }) => {
+  const [zoomLevel, setZoomLevel] = React.useState(0);
   return (
-    <div className="mt-5 grid grid-cols-3 gap-2 justify-start">
-      {displayInspections.map((key) => {
-        const { data, min, max } = dataPerInspection[key];
-        return (
-          <div className="w-full" key={key}>
-            <div className="bg-deepblue-600 historical-chart border flex-col flex border-deepblue-100">
-              <div className="flex-1 pt-5 relative">
-                {linkMapper[key] !== "" && (
-                  <Link
-                    target={"_blank"}
-                    href={linkMapper[key]}
-                    className="text-sm absolute w-full inline-block overflow-hidden truncate text-right whitespace-nowrap top-1 underline right-0 mt-2 px-5"
-                  >
-                    &quot;{titleMapper[key]}&quot; jetzt umsetzen!
-                  </Link>
-                )}
-                <svg style={{ height: 0 }}>
-                  <defs>
-                    <linearGradient x2="0%" y2="100%" id="serviceGradient">
-                      <stop offset="0%" stopColor={"rgba(172,252,207,0.2)"} />
+    <>
+      <h2 className="text-2xl mt-10 mb-5">Trendanalyse</h2>
+      <div className="justify-between flex flex-row items-start">
+        <p className="mb-10 flex-1 text-slate-300">
+          Die Trendanalyse visualisiert die Veränderung der Sicherheitskriterien
+          in Anbetracht der Zeit. Zusätzlich stellt sie die Werte der
+          verwalteten Dienste im Vergleich zu den Werten der Top 100.000 .de
+          Domains sowie der globalen Top 100.000 Domains dar. Die Daten werden
+          täglich aktualisiert.
+        </p>
+      </div>
+      <div className="flex flex-row justify-end sticky pointer-events-none zoom-button">
+        <button
+          onClick={() => {
+            setZoomLevel(Math.max(0, zoomLevel - 1));
+          }}
+          className={classNames(
+            "bg-deepblue-100 mr-1 pointer-events-auto p-2 hover:bg-deepblue-50 transition-all",
+            zoomLevel === 0 && "opacity-50 cursor-not-allowed"
+          )}
+        >
+          <FontAwesomeIcon icon={faMagnifyingGlassMinus} />
+        </button>
 
-                      <stop offset="100%" stopColor="rgba(0,0,0,0)" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-                <VictoryChart
-                  containerComponent={
-                    <VictoryVoronoiContainer width={330} voronoiDimension="x" />
-                  }
-                  theme={theme}
-                  minDomain={{ y: Math.max(0, min - max / 20) }}
-                  maxDomain={{ y: Math.min(100, max + max / 20) }}
-                  domainPadding={{ x: [0, 5], y: [10, 10] }}
-                >
-                  <VictoryAxis fixLabelOverlap />
-                  <VictoryAxis
-                    tickFormat={(t) => `${t}%`}
-                    dependentAxis
-                    fixLabelOverlap
-                  />
-                  {displayCollections.map((collectionId, i, arr) => {
-                    const d = data[collectionId];
-                    if (!d) return null;
-                    const color =
-                      +collectionId === defaultCollectionId
-                        ? tailwindColors.lightning["500"]
-                        : d.color;
-
-                    return (
-                      <VictoryLine
-                        key={collectionId}
-                        style={{
-                          data: {
-                            strokeLinecap: "round",
-                            stroke: color,
-                          },
-                        }}
-                        interpolation={"basis"}
-                        labels={(label) => {
-                          if (+label.index === d.series.length - 1) {
-                            return `${label.datum.y.toFixed(1)}%`;
-                          }
-                          return d.title;
-                        }}
-                        labelComponent={
-                          <RefLabelComponent
-                            fill={color}
-                            nRefComponents={arr.length}
-                            i={i}
-                          />
-                        }
-                        data={d.series}
-                      />
-                    );
-                  })}
-                  {displayCollections.includes(defaultCollectionId) &&
-                    defaultCollectionId in data && (
-                      <VictoryArea
-                        style={{
-                          data: {
-                            fill: "url(#serviceGradient)",
-                          },
-                        }}
-                        data={data[defaultCollectionId]!.series}
-                      />
-                    )}
-                </VictoryChart>
-              </div>
-              <h2
-                title={titleMapper[key]}
-                className="text-center whitespace-nowrap text-ellipsis overflow-hidden border-t border-deepblue-50 bg-deepblue-400 mt-1 p-3"
-              >
-                {titleMapper[key]}
-              </h2>
-            </div>
-          </div>
-        );
-      })}
-    </div>
+        <button
+          onClick={() => {
+            setZoomLevel(Math.min(2, zoomLevel + 1));
+          }}
+          className={classNames(
+            "bg-deepblue-100 p-2 pointer-events-auto hover:bg-deepblue-50 transition-all",
+            zoomLevel === 2 && "opacity-50 cursor-not-allowed"
+          )}
+        >
+          <FontAwesomeIcon icon={faMagnifyingGlassPlus} />
+        </button>
+      </div>
+      <div
+        style={{
+          gridTemplateColumns: `repeat(${3 - zoomLevel}, 1fr)`,
+        }}
+        className={classNames("mt-5 grid gap-2 justify-start")}
+      >
+        {displayInspections.map((key) => {
+          return (
+            <LineChart
+              key={key}
+              zoomLevel={zoomLevel}
+              inspectionType={key}
+              displayCollections={displayCollections}
+              defaultCollectionId={defaultCollectionId}
+              data={dataPerInspection[key]}
+            />
+          );
+        })}
+      </div>
+    </>
   );
 };
 
