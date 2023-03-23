@@ -36,6 +36,7 @@ const Footer: FunctionComponent<Props> = ({ hideLogin }) => {
             <Image
               width={370}
               height={100}
+              priority
               src={"/assets/BMI_de_v3__BSI_de_v1__Web_farbig.svg"}
               alt="Logo BMI & BSI"
             />

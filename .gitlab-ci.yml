@@ -47,6 +47,7 @@ jest:
     - npm run build
     - npm run lighthouse -- --output="json,html" $LIGHTHOUSE_ARGUMENTS
 
+
 lighthouse:desktop:
   extends: .lighthouse
   variables:
