@@ -6,6 +6,9 @@ const { withSentryConfig } = require('@sentry/nextjs');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    sentry: {
+        tunnelRoute: "/api/tunnel",
+    },
     reactStrictMode: true,
     swcMinify: true,
     pageExtensions: ['page.tsx', "api.ts", "page.ts"],
@@ -18,7 +21,7 @@ const nextConfig = {
 module.exports = nextConfig;
 
 module.exports = withSentryConfig(
-  module.exports,
-  { silent: true },
-  { hideSourcemaps: true },
+    module.exports,
+    { silent: true },
+    { hideSourcemaps: true },
 );

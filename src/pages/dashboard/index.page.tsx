@@ -96,6 +96,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
   });
 
   useEffect(() => {
+    throw new Error("Client side tunnel test");
     setData(currentStat);
   }, [currentStat]);
 
