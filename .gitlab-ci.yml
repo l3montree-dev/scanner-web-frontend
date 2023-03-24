@@ -2,6 +2,7 @@ variables:
     GIT_SUBMODULE_STRATEGY: recursive
 
 stages:
+    - install
     - test
     - build
     - scan
@@ -14,7 +15,21 @@ gitguardianscan:
     rules:
       - if: '$CI_COMMIT_REF_PROTECTED == "true"'
 
+npm:
+  image: node:18@sha256:9d8a6466c6385e05f62f8ccf173e80209efb0ff4438f321f09ddf552b05af3ba
+  stage: install
+  script:
+    - npm ci --include=dev
+  # save the node_modules folder as a cache for later jobs
+  cache:
+    key: $CI_COMMIT_REF_SLUG
+    paths:
+      - node_modules/
+
+
 jest:
+    cache: 
+        key: $CI_COMMIT_REF_SLUG
     image: node:18@sha256:9d8a6466c6385e05f62f8ccf173e80209efb0ff4438f321f09ddf552b05af3ba
     stage: test
     script:
@@ -25,6 +40,41 @@ jest:
         reports:
             junit:
                 - junit.xml
+
+.lighthouse:
+  cache: 
+    key: $CI_COMMIT_REF_SLUG
+  image: cypress/browsers:node16.17.0-chrome106
+  stage: test
+  variables:
+    NEXTAUTH_SECRET: TipnQPvS70R6hdyRMr54wdjHLuxtpCmy
+  script:
+    - npm ci --include=dev
+    - npm run build
+    - npm run lighthouse -- --output="json,html" $LIGHTHOUSE_ARGUMENTS
+
+
+lighthouse:desktop:
+  extends: .lighthouse
+  variables:
+    LIGHTHOUSE_ARGUMENTS: '--preset=desktop'
+    FORM_FACTOR: 'desktop'
+  artifacts:
+    when: always
+    expose_as: 'Lighthouse Report Desktop'
+    paths:
+      - .lighthouseci
+
+lighthouse:mobile:
+  extends: .lighthouse
+  variables:
+    LIGHTHOUSE_ARGUMENTS: '--preset=mobile'
+    FORM_FACTOR: 'mobile'
+  artifacts:
+    when: always
+    expose_as: 'Lighthouse Report Mobile'
+    paths:
+      - .lighthouseci
 
 .docker:build:
   stage: build
