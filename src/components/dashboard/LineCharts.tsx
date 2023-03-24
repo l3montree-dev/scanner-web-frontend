@@ -1,8 +1,4 @@
-import {
-  faMagnifyingGlassMinus,
-  faMagnifyingGlassPlus,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import React, { FunctionComponent } from "react";
 
 import { InspectionType } from "../../inspection/scans";
@@ -50,29 +46,69 @@ const LineCharts: FunctionComponent<Props> = ({
         </p>
       </div>
       <div className="flex flex-row justify-end sticky pointer-events-none zoom-button">
-        <button
-          onClick={() => {
-            setZoomLevel(Math.max(0, zoomLevel - 1));
-          }}
-          className={classNames(
-            "bg-deepblue-100 mr-1 pointer-events-auto p-2 hover:bg-deepblue-50 transition-all",
-            zoomLevel === 0 && "opacity-50 cursor-not-allowed"
-          )}
-        >
-          <FontAwesomeIcon icon={faMagnifyingGlassMinus} />
-        </button>
-
-        <button
-          onClick={() => {
-            setZoomLevel(Math.min(2, zoomLevel + 1));
-          }}
-          className={classNames(
-            "bg-deepblue-100 p-2 pointer-events-auto hover:bg-deepblue-50 transition-all",
-            zoomLevel === 2 && "opacity-50 cursor-not-allowed"
-          )}
-        >
-          <FontAwesomeIcon icon={faMagnifyingGlassPlus} />
-        </button>
+        <div className="pointer-events-auto overflow-hidden rounded-sm">
+          <ToggleGroup.Root
+            className="ToggleGroup"
+            type="single"
+            onValueChange={(value) => {
+              setZoomLevel(parseInt(value));
+            }}
+            value={zoomLevel.toString()}
+            aria-label="Text alignment"
+          >
+            <ToggleGroup.Item
+              className="ToggleGroupItem"
+              value="0"
+              aria-label="Left aligned"
+            >
+              <div
+                className={classNames(
+                  "grid grid-cols-3 gap-0.5 p-3 hover:bg-deepblue-50 border-t border-t-deepblue-50",
+                  zoomLevel === 0 ? "bg-deepblue-50" : "bg-deepblue-100"
+                )}
+              >
+                <div className="w-0.5 h-1 bg-white" />
+                <div className="w-0.5 h-1 bg-white" />
+                <div className="w-0.5 h-1 bg-white" />
+                <div className="w-0.5 h-1 bg-white" />
+                <div className="w-0.5 h-1 bg-white" />
+                <div className="w-0.5 h-1 bg-white" />
+              </div>
+            </ToggleGroup.Item>
+            <ToggleGroup.Item
+              className="ToggleGroupItem"
+              value="1"
+              aria-label="Center aligned"
+            >
+              <div
+                className={classNames(
+                  "grid hover:bg-deepblue-50 grid-cols-2 gap-0.5 p-3 border-t border-t-deepblue-50",
+                  zoomLevel === 1 ? "bg-deepblue-50" : "bg-deepblue-100"
+                )}
+              >
+                <div className="w-1 h-1 bg-white" />
+                <div className="w-1 h-1 bg-white" />
+                <div className="w-1 h-1 bg-white" />
+                <div className="w-1 h-1 bg-white" />
+              </div>
+            </ToggleGroup.Item>
+            <ToggleGroup.Item
+              className="ToggleGroupItem"
+              value="2"
+              aria-label="Right aligned"
+            >
+              <div
+                className={classNames(
+                  "grid grid-cols-1 gap-0.5 p-3 hover:bg-deepblue-50 border-t border-t-deepblue-50",
+                  zoomLevel === 2 ? "bg-deepblue-50" : "bg-deepblue-100"
+                )}
+              >
+                <div className="w-3 h-1 bg-white" />
+                <div className="w-3 h-1 bg-white" />
+              </div>
+            </ToggleGroup.Item>
+          </ToggleGroup.Root>
+        </div>
       </div>
       <div
         style={{

@@ -14,6 +14,7 @@ module.exports = {
         "border-lightning-500",
         "text-gray-500",
         "border-gray-500",
+        "text-deepblue-900"
     ],
     theme: {
         extend: {

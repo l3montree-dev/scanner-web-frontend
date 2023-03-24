@@ -14,7 +14,7 @@ interface Props {
 const ShareLinkItem: FunctionComponent<Props> = ({ shareLink, onDelete }) => {
   return (
     <div
-      className="text-white text-sm flex-row flex justify-between items-center border border-deepblue-50 p-2 px-3"
+      className="text-white text-sm flex-row flex justify-between items-center  bg-deepblue-50 rounded-sm shadow-md p-2 px-3"
       key={shareLink.secret}
     >
       <Link href={secretToShareLink(shareLink.secret)}>

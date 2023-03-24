@@ -7,9 +7,8 @@ import { useSession } from "../hooks/useSession";
 import { useSignOut } from "../hooks/useSignOut";
 import { classNames, clientOnly, isGuestUser } from "../utils/common";
 import { useGlobalStore } from "../zustand/global";
-import Menu from "./Menu";
-import MenuItem from "./MenuItem";
-import MenuList from "./MenuList";
+import DropdownMenuItem from "./common/DropdownMenuItem";
+import Menu from "./common/Menu";
 
 const getInitials = (name: string) => {
   return name
@@ -28,37 +27,52 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
   const [title, setTitle] = useState("");
   const store = useGlobalStore();
 
+  const [scrolled, setScrolled] = useState(false);
+
   const signOut = useSignOut();
 
   useEffect(() => {
     pageTitleNotVisibleEmitter.on("set-content", (args) => {
       setTitle(args);
     });
+    const listener = () => {
+      if (window.scrollY > 0 && !scrolled) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+    // add scroll listener
+    window.addEventListener("scroll", listener);
 
     return () => {
       pageTitleNotVisibleEmitter.removeAllListeners("set-content");
+      // remove scroll listener
+      window.removeEventListener("scroll", listener);
     };
   }, []);
 
   return (
     <div
       className={classNames(
-        "h-14 sticky top-0 z-200 border-b transition-all duration-500 text-black ",
-        "bg-deepblue-700 border-deepblue-300 border-b"
+        "h-14 sticky top-0 z-10 transition-all duration-500 text-black ",
+        "",
+        !scrolled ? "bg-deepblue-600" : "bg-deepblue-300"
       )}
     >
       {session.status === "authenticated" && session.data && (
         <div className="flex flex-row items-center h-full">
           <div
             className={classNames(
-              "flex border-deepblue-500 bg-deepblue-700 h-full items-center"
+              "flex bg-deepblue-500 transition-all border-deepblue-300 h-full items-center",
+              store.sideMenuCollapsed ? "w-16" : "w-56"
             )}
           >
             <div className="px-4 flex gap-2 flex-row items-center text-white">
               <Link href="/" className="flex items-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  width={35}
+                  width={25}
                   height={45}
                   className="flex-1"
                   src={"/assets/sticker_challenge_mod_white_3.svg"}
@@ -66,7 +80,7 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
                 />
               </Link>
               {!store.sideMenuCollapsed && (
-                <span className="whitespace-nowrap">
+                <span className="whitespace-nowrap font-bold">
                   OZG-Security-Challenge
                 </span>
               )}
@@ -83,21 +97,24 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
             </h2>
             <div className="ml-2 text-sm absolute z-200 right-2 text-white">
               <Menu
-                menuCloseIndex={0}
                 Button={
-                  <div className="bg-deepblue-100 rounded-full text-white h-9 w-9 flex items-center justify-center text-sm mr-1">
+                  <div className="bg-deepblue-100 cursor-pointer rounded-full h-9 w-9 flex items-center justify-center text-sm mr-1">
                     {getInitials(session.data.user.name)}
                   </div>
                 }
                 Menu={
-                  <MenuList>
-                    <MenuItem onClick={signOut}>
-                      <FontAwesomeIcon
-                        className="mr-2 text-white"
-                        icon={faArrowRightFromBracket}
-                      />
+                  <>
+                    <DropdownMenuItem
+                      Icon={
+                        <FontAwesomeIcon
+                          className="mr-2"
+                          icon={faArrowRightFromBracket}
+                        />
+                      }
+                      onClick={signOut}
+                    >
                       Ausloggen
-                    </MenuItem>
+                    </DropdownMenuItem>
                     {!isGuestUser(session.data.user) &&
                       clientOnly(() => (
                         <a
@@ -105,22 +122,22 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
                             `${window.location.protocol}//${window.location.host}`
                           )}&response_type=code&scope=openid&kc_action=UPDATE_PASSWORD`}
                         >
-                          <MenuItem>
-                            <FontAwesomeIcon
-                              className="mr-2 text-white"
-                              icon={faArrowRightFromBracket}
-                            />
+                          <DropdownMenuItem
+                            Icon={
+                              <FontAwesomeIcon icon={faArrowRightFromBracket} />
+                            }
+                          >
                             Passwort ändern
-                          </MenuItem>
+                          </DropdownMenuItem>
                         </a>
                       ))}
-                    <div className="p-2 text-white text-sm border-t border-t-deepblue-200 bg-deepblue-300">
+                    <div className="p-2 relative top-1 text-white text-sm border-t border-t-deepblue-200 bg-deepblue-300">
                       Eingeloggt als:{" "}
                       {isGuestUser(session.data.user)
                         ? "Gast"
                         : session.data.user.name}
                     </div>
-                  </MenuList>
+                  </>
                 }
               />
             </div>

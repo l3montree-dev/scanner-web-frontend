@@ -11,6 +11,7 @@ import {
   checkResult2BorderClassName,
   checkResult2Icon,
 } from "../utils/view";
+import Button from "./common/Button";
 import ResultGrid from "./ResultGrid";
 
 interface Props {
@@ -67,25 +68,24 @@ const ResultEnvelope: FunctionComponent<Props> = ({
           )}
           <div className="flex-wrap mt-4 justify-between flex-row">
             <div className="flex-1">
-              <div className="flex flex-row">
+              <div className="flex gap-3 items-center flex-row">
                 <p>{dateString.substring(0, dateString.length - 3)}</p>
-                <button
+                <Button
                   onClick={handleRefresh}
                   title="Testergebnisse aktualisieren"
-                  className={classNames("ml-2 bg-deepblue-200 w-8 h-8")}
                 >
                   <FontAwesomeIcon
                     className={refreshRequest.isLoading ? "rotate" : ""}
                     icon={faRefresh}
                   />
-                </button>
+                </Button>
               </div>
               <p>Erfüllt: {amountPassed}/6</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-deepblue-400 md:w-1/3 mt-5 md:mt-0 p-4 text-white">
+        <div className="bg-deepblue-400 rounded-sm md:w-1/3 mt-5 md:mt-0 p-4 text-white">
           <div className="flex-row flex items-center">
             <FontAwesomeIcon
               className={`text-${checkResult2BorderClassName(

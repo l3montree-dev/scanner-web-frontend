@@ -11,8 +11,10 @@ import {
   useState,
   useTransition,
 } from "react";
-import CollectionMenu from "../../components/CollectionMenu";
+import CollectionMenuContent from "../../components/CollectionMenuContent";
 import CollectionPill from "../../components/CollectionPill";
+import Button from "../../components/common/Button";
+import Menu from "../../components/common/Menu";
 import LineCharts from "../../components/dashboard/LineCharts";
 import PieCharts from "../../components/dashboard/PieCharts";
 import Footer from "../../components/Footer";
@@ -190,7 +192,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
           <SideNavigation />
         </div>
         <div className="flex-1 flex flex-col">
-          <main className="bg-deepblue-500 flex-col flex flex-1">
+          <main className="bg-deepblue-600 flex-col flex flex-1">
             <div className="max-w-screen-xl w-full mb-5 pt-10 mx-auto">
               <div className="text-white mb-0 gap-2 flex flex-row items-center">
                 <PageTitle
@@ -215,35 +217,40 @@ const Dashboard: FunctionComponent<Props> = (props) => {
               </div>
             </div>
             {!isGuest && (
-              <div className="text-white sticky z-100 beneath-header p-2 bg-deepblue-300 flex flex-row mb-4 items-center">
+              <div className="text-white sticky z-10 beneath-header p-2 bg-deepblue-300 flex flex-row mb-4 items-center">
                 <div className="max-w-screen-xl gap-2 flex flex-row flex-1 mx-auto">
                   <div className="flex flex-row">
-                    <CollectionMenu
-                      selectedCollections={displayCollections}
-                      onCollectionClick={({ id }) => {
-                        handleDisplayCollectionToggle(id);
-                      }}
-                      collections={Object.fromEntries(
-                        Object.entries(props.collections).map(
-                          ([collectionId, c]) => [
-                            collectionId,
-                            localizeDefaultCollection(
-                              c,
-                              props.defaultCollectionId
-                            ),
-                          ]
-                        )
-                      )}
+                    <Menu
                       Button={
-                        <div className="flex flex-row items-center">
-                          <div className="bg-deepblue-200 flex flex-row items-center p-2 whitespace-nowrap">
-                            Gruppen anzeigen{" "}
+                        <Button
+                          RightIcon={
                             <FontAwesomeIcon
                               className="ml-2"
                               icon={faCaretDown}
                             />
-                          </div>
-                        </div>
+                          }
+                        >
+                          Gruppen anzeigen
+                        </Button>
+                      }
+                      Menu={
+                        <CollectionMenuContent
+                          selectedCollections={displayCollections}
+                          onCollectionClick={({ id }) => {
+                            handleDisplayCollectionToggle(id);
+                          }}
+                          collections={Object.fromEntries(
+                            Object.entries(props.collections).map(
+                              ([collectionId, c]) => [
+                                collectionId,
+                                localizeDefaultCollection(
+                                  c,
+                                  props.defaultCollectionId
+                                ),
+                              ]
+                            )
+                          )}
+                        />
                       }
                     />
                   </div>

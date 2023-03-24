@@ -14,7 +14,6 @@ import {
   OrganizationalInspectionType,
   TLSInspectionType,
 } from "../inspection/scans";
-import punycode from "punycode/";
 
 export enum CheckResult {
   Passed = "passed",

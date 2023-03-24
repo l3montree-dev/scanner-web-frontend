@@ -17,7 +17,7 @@ const Spinner: FunctionComponent<Props> = ({ color, size }) => {
         cx="50"
         cy="50"
         fill="none"
-        stroke={color ?? "#060d38"}
+        stroke={color ?? "currentColor"}
         strokeWidth="10"
         r={size ?? 35}
         strokeDasharray="164.93361431346415 56.97787143782138"

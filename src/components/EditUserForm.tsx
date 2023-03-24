@@ -3,8 +3,8 @@ import { User } from "@prisma/client";
 import React, { FunctionComponent, useState } from "react";
 import useLoading from "../hooks/useLoading";
 import { IUserPutDTO } from "../types";
+import Button from "./common/Button";
 import FormInput from "./FormInput";
-import PrimaryButton from "./PrimaryButton";
 
 type UserType = Omit<User, "_id"> & { id: string } & UserRepresentation;
 interface Props extends UserType {
@@ -36,9 +36,6 @@ const EditUserForm: FunctionComponent<Props> = (props) => {
   };
   return (
     <div>
-      <div className="text-white pt-5">
-        Ausgewähltes Nutzer: <b>{props.username}</b>
-      </div>
       <form onSubmit={onSubmit} className="pt-5  flex">
         <div className="flex flex-col flex-1">
           <div className="mt-4 flex-col flex">
@@ -59,9 +56,9 @@ const EditUserForm: FunctionComponent<Props> = (props) => {
             <FormInput label="Rolle" onChange={setRole} value={role} />
           </div>
           <div className="flex flex-row justify-end mt-5">
-            <PrimaryButton loading={createRequest.isLoading} type="submit">
+            <Button loading={createRequest.isLoading} type="submit">
               Speichern
-            </PrimaryButton>
+            </Button>
           </div>
         </div>
       </form>

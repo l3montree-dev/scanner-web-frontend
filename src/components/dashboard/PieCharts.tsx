@@ -1,3 +1,8 @@
+import {
+  faExternalLinkAlt,
+  faQuestionCircle,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FunctionComponent } from "react";
@@ -12,6 +17,7 @@ import { titleMapper } from "../../messages";
 import { ChartData, CollectionStatMap } from "../../types";
 import { linkMapper } from "../../utils/common";
 import { displayInspections, tailwindColors } from "../../utils/view";
+import Tooltip from "../Tooltip";
 
 interface Props {
   displayCollections: number[];
@@ -79,21 +85,10 @@ const PieCharts: FunctionComponent<Props> = ({
           .filter((r): r is RefData => r !== null);
         return (
           <div
-            className="bg-deepblue-600 border flex-col flex border-deepblue-100"
+            className="bg-deepblue-400 pb-5 rounded-md flex-col flex"
             key={key}
           >
-            <div className="flex-1 pt-5 relative">
-              {linkMapper[key] !== "" && (
-                <a
-                  download
-                  target={"_blank"}
-                  href={linkMapper[key]}
-                  className="text-sm absolute w-full inline-block overflow-hidden truncate text-right whitespace-nowrap top-1 underline right-0 mt-2 px-5"
-                  rel="noreferrer"
-                >
-                  &quot;{titleMapper[key]}&quot; jetzt umsetzen!
-                </a>
-              )}
+            <div className="flex-1 relative">
               <VictoryChart prependDefaultAxes={false} width={300} height={300}>
                 <VictoryAxis
                   style={{
@@ -190,9 +185,9 @@ const PieCharts: FunctionComponent<Props> = ({
                   data={[
                     {
                       key: "implemented",
-                      x: `Implementiert (${(
-                        currentStat.data[key] * 100
-                      ).toFixed(1)}%)`,
+                      x: `Erfüllt (${(currentStat.data[key] * 100).toFixed(
+                        1
+                      )}%)`,
                       y: currentStat.totalCount * currentStat.data[key],
                     },
                     {
@@ -200,7 +195,7 @@ const PieCharts: FunctionComponent<Props> = ({
                       x:
                         currentStat.totalCount === 0
                           ? "Keine Testergebnisse vorhanden"
-                          : `Fehlerhaft (${(
+                          : `Nicht erfüllt (${(
                               (1 - currentStat.data[key] || 1) * 100
                             ).toFixed(1)}%)`,
                       y:
@@ -254,12 +249,67 @@ const PieCharts: FunctionComponent<Props> = ({
                 })}
               </VictoryChart>
             </div>
-            <h2
-              title={titleMapper[key]}
-              className="text-center whitespace-nowrap text-ellipsis overflow-hidden bg-deepblue-400 border-t border-deepblue-50 mt-1 p-3"
-            >
-              {titleMapper[key]}
-            </h2>
+            <div className="flex flex-1 items-center px-6 flex-row">
+              <h2
+                title={titleMapper[key]}
+                className="text-left text-white text-lg overflow-hidden text-ellipsis font-bold bg-deepblue-400 border-deepblue-50 mt-1"
+              >
+                {titleMapper[key]}{" "}
+                <Tooltip
+                  tooltip={`         
+                    Das Dashboard zeigt Ihnen aggregierte Informationen über den
+                    Sicherheitszustand der von Ihnen verwalteten
+                    OZG-Dienste. Ausschliesslich erreichbare Domains können
+                    getestet werden. Die Anfrage muss vom Server in maximal zehn
+                    Sekunden beantwortet werden, damit eine Domain als
+                    erreichbar gilt. Derzeit si Domains erreichbar.`}
+                >
+                  <div className="text-slate-400 inline ml-2">
+                    <FontAwesomeIcon fontSize={18} icon={faQuestionCircle} />
+                  </div>
+                </Tooltip>
+              </h2>
+            </div>
+            <div className="flex-1">
+              <p className="text-sm px-6">
+                <Link href={`/dashboard/targets?${key}=1`}>
+                  <span className="text-lightning-500">
+                    Erfüllt von{" "}
+                    {(
+                      currentStat.data[key] * currentStat.totalCount
+                    ).toPrecision(1)}{" "}
+                    Domain
+                    {currentStat.data[key] * currentStat.totalCount !== 1
+                      ? "s"
+                      : ""}
+                    <FontAwesomeIcon
+                      fontSize={15}
+                      className="ml-2"
+                      icon={faExternalLinkAlt}
+                    />
+                  </span>
+                </Link>
+                <br />
+                <Link href={`/dashboard/targets?${key}=-1`}>
+                  <span className="opacity-75">
+                    Nicht erfüllt von{" "}
+                    {(
+                      (1 - currentStat.data[key]) *
+                      currentStat.totalCount
+                    ).toPrecision(1)}{" "}
+                    Domain
+                    {(1 - currentStat.data[key]) * currentStat.totalCount !== 1
+                      ? "s"
+                      : ""}
+                    <FontAwesomeIcon
+                      fontSize={15}
+                      className="ml-2"
+                      icon={faExternalLinkAlt}
+                    />
+                  </span>
+                </Link>
+              </p>
+            </div>
           </div>
         );
       })}

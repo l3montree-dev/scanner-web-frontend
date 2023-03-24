@@ -38,7 +38,7 @@ const FormTextarea: FunctionComponent<Props> = ({
         value={value}
         onBlur={validate}
         placeholder={placeholder}
-        className="sm:p-2 p-1 text-sm sm:text-base flex-1 outline-lightning-900 transition-all"
+        className="sm:p-2 p-1 rounded-sm text-sm sm:text-base flex-1 outline-lightning-900 transition-all"
       />
       {err !== null && <span className="text-red-500 text-sm mt-1">{err}</span>}
     </div>

@@ -22,11 +22,12 @@ import { classNames, toGermanDate } from "../utils/common";
 import { DTO } from "../utils/server";
 import { didPass2CheckResult } from "../utils/view";
 import Checkbox from "./Checkbox";
-import CollectionMenu from "./CollectionMenu";
+import CollectionMenuContent from "./CollectionMenuContent";
 import CollectionPill from "./CollectionPill";
-import Menu from "./Menu";
-import MenuItem from "./MenuItem";
-import MenuList from "./MenuList";
+import Button from "./common/Button";
+import DropdownMenuItem from "./common/DropdownMenuItem";
+import Menu from "./common/Menu";
+import SubMenu from "./common/SubMenu";
 import ResultIcon from "./ResultIcon";
 import Tooltip from "./Tooltip";
 
@@ -176,15 +177,14 @@ const TargetTableItem: FunctionComponent<Props> = ({
         <td className="text-right p-2" onClick={(e) => e.stopPropagation()}>
           <div className="flex flex-row justify-end">
             <Menu
-              menuCloseIndex={0}
               Button={
                 <div className="p-2 h-8 w-8 flex flex-row items-center justify-center">
                   <FontAwesomeIcon icon={faEllipsisVertical} />
                 </div>
               }
               Menu={
-                <MenuList>
-                  <MenuItem
+                <>
+                  <DropdownMenuItem
                     loading={
                       scanRequest.key === target.uri && scanRequest.isLoading
                     }
@@ -198,36 +198,38 @@ const TargetTableItem: FunctionComponent<Props> = ({
                         </span>
                       )}
                     </div>
-                  </MenuItem>
+                  </DropdownMenuItem>
+
                   {!isGuest && (
                     <>
                       {Object.keys(collections).length > 0 ? (
-                        <CollectionMenu
-                          nestedMenu
-                          collections={collections}
-                          Button={<MenuItem>Gruppen</MenuItem>}
-                          selectedCollections={target.collections ?? []}
-                          onCollectionClick={(collection) =>
-                            onToggleCollection(collection)
+                        <SubMenu
+                          Button={<div>Gruppen</div>}
+                          Menu={
+                            <CollectionMenuContent
+                              collections={collections}
+                              selectedCollections={target.collections ?? []}
+                              onCollectionClick={(collection) =>
+                                onToggleCollection(collection)
+                              }
+                            />
                           }
                         />
                       ) : (
                         <Link
-                          className="hover:no-underline block hover:bg-deepblue-50"
+                          className="hover:no-underline block"
                           href={"/dashboard/collections"}
                         >
-                          <div className="text-left px-4 py-2">
-                            Gruppe erstellen
-                          </div>
+                          <DropdownMenuItem>Gruppe erstellen</DropdownMenuItem>
                         </Link>
                       )}
 
-                      <MenuItem onClick={() => destroy(target.uri)}>
-                        <div>Löschen</div>
-                      </MenuItem>
+                      <DropdownMenuItem onClick={() => destroy(target.uri)}>
+                        Löschen
+                      </DropdownMenuItem>
                     </>
                   )}
-                </MenuList>
+                </>
               }
             />
           </div>

@@ -16,7 +16,7 @@ const CollectionPill: FunctionComponent<Props> = ({
   return (
     <div className="flex bg-deepblue-300 border-deepblue-50 flex-row items-center border rounded-full text-xs px-2 py-1">
       <div
-        className="w-3 h-3 border-deepblue-50 rounded-full inline-block mr-2"
+        className="w-3 h-3 border-deepblue-50  rounded-full inline-block mr-2"
         style={{
           backgroundColor: color,
         }}

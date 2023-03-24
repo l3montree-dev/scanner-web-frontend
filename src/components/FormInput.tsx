@@ -32,7 +32,7 @@ const FormInput: FunctionComponent<Props> = ({
   return (
     <div className="relative flex-col flex">
       <label htmlFor={id} className="mb-1">
-        <span className="text-white">{label}</span>
+        <span className="text-white opacity-80">{label}</span>
       </label>
       <input
         id={id}
@@ -41,7 +41,7 @@ const FormInput: FunctionComponent<Props> = ({
         type={type ?? "text"}
         onBlur={validate}
         placeholder={placeholder}
-        className="sm:p-2 p-1 text-sm sm:text-base flex-1 outline-lightning-900 transition-all bg-deepblue-100 text-white border border-deepblue-100 focus:border-lightning-900"
+        className="sm:p-2 p-1 placeholder-slate-400 text-sm sm:text-base flex-1 outline-lightning-900 transition-all bg-deepblue-400 text-white border border-deepblue-50 rounded-sm focus:border-lightning-900"
       />
       {err !== null && <span className="text-red-500 text-sm mt-1">{err}</span>}
     </div>

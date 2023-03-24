@@ -1,8 +1,8 @@
 import {
   faCaretDown,
   faCheck,
-  faWarning,
   faQuestion,
+  faWarning,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
@@ -10,9 +10,8 @@ import { FunctionComponent } from "react";
 import { InspectionType } from "../inspection/scans";
 import { titleMapper } from "../messages";
 import { classNames } from "../utils/common";
-import Menu from "./Menu";
-import MenuItem from "./MenuItem";
-import MenuList from "./MenuList";
+import DropdownMenuItem from "./common/DropdownMenuItem";
+import Menu from "./common/Menu";
 
 interface Props {
   onChange: (
@@ -51,7 +50,6 @@ const CheckStateMenu: FunctionComponent<Props> = ({
 
   return (
     <Menu
-      menuCloseIndex={0}
       Button={
         <div
           title={titleMapper[inspectionType]}
@@ -68,23 +66,29 @@ const CheckStateMenu: FunctionComponent<Props> = ({
       }
       Menu={
         <div className="font-normal">
-          <MenuList>
-            <MenuItem selected={+selected === 1} onClick={() => handleClick(1)}>
-              <FontAwesomeIcon icon={faCheck} />
-              <span className="ml-2">Erfüllt</span>
-            </MenuItem>
-            <MenuItem
-              selected={+selected === -1}
+          <>
+            <DropdownMenuItem
+              active={+selected === 1}
+              Icon={<FontAwesomeIcon icon={faCheck} />}
+              onClick={() => handleClick(1)}
+            >
+              Erfüllt
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              Icon={<FontAwesomeIcon icon={faWarning} />}
+              active={+selected === -1}
               onClick={() => handleClick(-1)}
             >
-              <FontAwesomeIcon icon={faWarning} />
-              <span className="ml-2">Nicht Erfüllt</span>
-            </MenuItem>
-            <MenuItem selected={+selected === 0} onClick={() => handleClick(0)}>
-              <FontAwesomeIcon icon={faQuestion} />
-              <span className="ml-2">Nicht überprüfbar</span>
-            </MenuItem>
-          </MenuList>
+              Nicht Erfüllt
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              Icon={<FontAwesomeIcon icon={faQuestion} />}
+              active={+selected === 0}
+              onClick={() => handleClick(0)}
+            >
+              Nicht überprüfbar
+            </DropdownMenuItem>
+          </>
         </div>
       }
     />

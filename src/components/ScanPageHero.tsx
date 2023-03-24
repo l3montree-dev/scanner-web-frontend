@@ -1,5 +1,5 @@
 import { FormEvent, FunctionComponent, SetStateAction } from "react";
-import Button from "./Button";
+import Button from "./common/Button";
 
 interface Props {
   onSubmit: (e: FormEvent) => void;
@@ -24,7 +24,7 @@ const ScanPageHero: FunctionComponent<Props> = ({
   scanRequest,
 }) => {
   return (
-    <div className="md:bg-deepblue-400 px-4 pt-4 md:mt-0 mt-10 p-10">
+    <div className="md:bg-deepblue-400 rounded-md px-4 pt-4 md:mt-0 mt-10 p-10">
       <div className="flex flex-wrap sm:flex-nowrap flex-row items-start justify-between">
         <div className="sm:order-1 order-2">
           <h1 className="text-5xl mb-5 sm:mb-10 text-white font-bold">
@@ -32,7 +32,7 @@ const ScanPageHero: FunctionComponent<Props> = ({
           </h1>
           <div className="flex-row items-center mt-0 md:-mt-5 flex">
             <h2 className="text-white text-2xl">Schnelltest </h2>
-            <div className="px-2 py-1 flex flex-row justify-center items-center ml-5 order-1 bg-deepblue-200">
+            <div className="px-2 py-1 flex flex-row justify-center rounded-sm items-center ml-5 order-1 bg-deepblue-200">
               <span className="text-white whitespace-nowrap">BETA</span>
             </div>
           </div>
@@ -54,13 +54,9 @@ const ScanPageHero: FunctionComponent<Props> = ({
             onChange={(e) => setWebsite(e.target.value)}
             value={website}
             placeholder="example.com"
-            className="sm:p-5 p-4 text-sm sm:text-base flex-1 outline-lightning-900 transition-all mr-3"
+            className="sm:p-5 rounded-sm p-4 text-sm sm:text-base flex-1 outline-lightning-900 transition-all mr-3"
           />
-          <Button
-            loading={scanRequest.isLoading}
-            type="submit"
-            className="bg-lightning-500 text-sm sm:text-base p-2 sm:p-3 hover:bg-lightning-900 font-bold leading-4 transition-all"
-          >
+          <Button primary loading={scanRequest.isLoading} type="submit">
             Scan starten
           </Button>
         </form>

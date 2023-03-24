@@ -8,12 +8,10 @@ import { User } from "@prisma/client";
 import { signIn } from "next-auth/react";
 import { FunctionComponent, useEffect, useState } from "react";
 import AdministrationPage from "../../components/AdministrationPage";
-import Button from "../../components/Button";
+import Button from "../../components/common/Button";
 import CreateUserForm from "../../components/CreateUserForm";
 import EditUserForm from "../../components/EditUserForm";
-import Menu from "../../components/Menu";
-import MenuItem from "../../components/MenuItem";
-import MenuList from "../../components/MenuList";
+import Menu from "../../components/common/Menu";
 import Modal from "../../components/Modal";
 import PageTitle from "../../components/PageTitle";
 import SideNavigation from "../../components/SideNavigation";
@@ -27,6 +25,7 @@ import { userService } from "../../services/userService";
 
 import { ICreateUserDTO } from "../../types";
 import { classNames, isAdmin } from "../../utils/common";
+import DropdownMenuItem from "../../components/common/DropdownMenuItem";
 
 export const parseCreateUserForm = ({
   firstName,
@@ -156,7 +155,6 @@ const Users: FunctionComponent<Props> = (props) => {
               </div>
             </div>
             <Button
-              className="bg-lightning-500 hover:bg-lightning-900 font-bold transition-all py-3 px-5 text-black"
               type="button"
               loading={false}
               onClick={() => setIsOpen(true)}
@@ -190,24 +188,27 @@ const Users: FunctionComponent<Props> = (props) => {
                   <td className="p-2">{user.lastName}</td>
                   <td className="p-2">{user.role ? user.role : ""}</td>
                   <td className="p-2 w-20 text-right">
-                    <Menu
-                      menuCloseIndex={0}
-                      Button={
-                        <div className="p-2 h-8 w-8 flex flex-row items-center justify-center">
-                          <FontAwesomeIcon icon={faEllipsisVertical} />
-                        </div>
-                      }
-                      Menu={
-                        <MenuList>
-                          <MenuItem onClick={() => setEdit(user)}>
-                            Bearbeiten
-                          </MenuItem>
-                          <MenuItem onClick={() => handleDelete(user.id)}>
-                            Löschen
-                          </MenuItem>
-                        </MenuList>
-                      }
-                    />
+                    <div className="flex flex-row justify-end">
+                      <Menu
+                        Button={
+                          <Button className="p-2 h-8 w-8 flex flex-row items-center justify-center">
+                            <FontAwesomeIcon icon={faEllipsisVertical} />
+                          </Button>
+                        }
+                        Menu={
+                          <>
+                            <DropdownMenuItem onClick={() => setEdit(user)}>
+                              Bearbeiten
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => handleDelete(user.id)}
+                            >
+                              Löschen
+                            </DropdownMenuItem>
+                          </>
+                        }
+                      />
+                    </div>
                   </td>
                 </tr>
               ))}

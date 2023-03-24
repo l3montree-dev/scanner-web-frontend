@@ -155,7 +155,7 @@ const LineChart: FunctionComponent<Props> = ({
     }
   };
   return (
-    <div className="group/chart bg-deepblue-600 historical-chart border flex-col flex border-deepblue-100">
+    <div className="group/chart bg-deepblue-600 rounded-sm shadow-xl overflow-hidden historical-chart border flex-col flex border-deepblue-100">
       <div className="flex-1 pt-5 relative">
         {linkMapper[inspectionType] !== "" && (
           <Link

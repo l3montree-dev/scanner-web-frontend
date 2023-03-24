@@ -4,10 +4,11 @@ import React, { FunctionComponent, useEffect, useState } from "react";
 import useLoading from "../hooks/useLoading";
 import { colors } from "../utils/common";
 import { DTO } from "../utils/server";
-import Button from "./Button";
+
 import FormInput from "./FormInput";
-import Menu from "./Menu";
+import Menu from "./common/Menu";
 import ShareLinkItem from "./ShareLinkItem";
+import Button from "./common/Button";
 
 interface Props {
   onSubmit: (collection: {
@@ -58,24 +59,23 @@ const EditCollectionForm: FunctionComponent<Props> = (props) => {
         </div>
         <div className="flex flex-row justify-between items-end">
           <Menu
-            menuCloseIndex={1}
-            buttonClassNames={
-              "flex flex-row w-full hover:bg-deepblue-50 transition-all"
-            }
             Button={
-              <div className="flex flex-row p-1 pr-3 border border-deepblue-50 items-center gap-5">
-                <div className="w-9 h-9" style={{ backgroundColor: color }} />
-                <span className="text-white">Farbe</span>
-              </div>
+              <Button>
+                <div
+                  className="w-6 h-6 rounded-sm border-t border-t-white/20"
+                  style={{ backgroundColor: color }}
+                />
+                Farbe
+              </Button>
             }
             Menu={
-              <div className="grid grid-cols-3 bg-deepblue-50 flex-wrap gap-1 p-2 justify-around items-center">
+              <div className="grid grid-cols-3 flex-wrap gap-1 px-1 justify-around items-center">
                 {colors.map((color) => (
                   <div
                     data-closemenu
                     onClick={() => setColor(color)}
                     key={color}
-                    className="w-11 h-11 cursor-pointer hover:opacity-50 transition-all "
+                    className="full rounded-sm h-11 border-t border-t-white/30 cursor-pointer hover:opacity-50 transition-all "
                     style={{ backgroundColor: color }}
                   />
                 ))}
@@ -83,12 +83,7 @@ const EditCollectionForm: FunctionComponent<Props> = (props) => {
             }
           />
 
-          <Button
-            spinnerColor="white"
-            className="bg-deepblue-100 h-full font-medium text-white hover:bg-deepblue-200 transition-all px-3 py-2 text-center"
-            loading={submitRequest.isLoading}
-            type="submit"
-          >
+          <Button loading={submitRequest.isLoading} type="submit">
             Speichern
           </Button>
         </div>
@@ -122,8 +117,6 @@ const EditCollectionForm: FunctionComponent<Props> = (props) => {
               }
               loading={generateLinkRequest.isLoading}
               type="button"
-              spinnerColor="white"
-              className="bg-deepblue-50 px-3 py-2"
             >
               <span className="text-white">Link erstellen</span>
             </Button>

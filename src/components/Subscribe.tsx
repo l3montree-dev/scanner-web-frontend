@@ -5,8 +5,8 @@ import useRequest from "../hooks/useRequest";
 import { clientHttpClient } from "../services/clientHttpClient";
 import { emailRegex } from "../utils/common";
 import Checkbox from "./Checkbox";
+import Button from "./common/Button";
 import FormInput from "./FormInput";
-import PrimaryButton from "./PrimaryButton";
 
 const Subscribe = () => {
   const email = useInput();
@@ -80,13 +80,13 @@ const Subscribe = () => {
               </p>
             </div>
             <div className="whitespace-nowrap">
-              <PrimaryButton
+              <Button
                 disabled={!check.checked || !emailRegex.test(email.value)}
                 loading={false}
                 type="submit"
               >
                 Anmelden
-              </PrimaryButton>
+              </Button>
             </div>
           </div>
         </div>

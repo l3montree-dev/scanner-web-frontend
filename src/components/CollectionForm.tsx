@@ -6,9 +6,9 @@ import {
 } from "react";
 import useLoading from "../hooks/useLoading";
 import { colors } from "../utils/common";
-import Button from "./Button";
+import Button from "./common/Button";
 import FormInput from "./FormInput";
-import Menu from "./Menu";
+import Menu from "./common/Menu";
 
 interface Props {
   onCreate: (tag: { title: string; color: string }) => Promise<void>;
@@ -51,19 +51,20 @@ const CollectionForm: FunctionComponent<Props> = ({ onCreate }) => {
           />
         </div>
         <Menu
-          menuCloseIndex={1}
-          buttonClassNames={"flex flex-row"}
           Button={
-            <div className="w-10 h-10" style={{ backgroundColor: color }} />
+            <div
+              className="w-10 h-10 cursor-pointer rounded-sm border-t transition-all hover:opacity-75 border-t-white/30"
+              style={{ backgroundColor: color }}
+            />
           }
           Menu={
-            <div className="flex bg-deepblue-50 flex-wrap gap-1 p-2 justify-around items-center">
+            <div className="grid grid-cols-3 gap-2 px-1 justify-between items-center">
               {colors.map((color) => (
                 <div
                   data-closemenu
                   onClick={() => setColor(color)}
                   key={color}
-                  className="w-11 h-11 cursor-pointer hover:opacity-50 transition-all "
+                  className="w-full h-12 border-t border-t-white/30 rounded-sm cursor-pointer hover:opacity-50 transition-all "
                   style={{ backgroundColor: color }}
                 />
               ))}
@@ -71,12 +72,7 @@ const CollectionForm: FunctionComponent<Props> = ({ onCreate }) => {
           }
         />
       </div>
-      <Button
-        className="bg-deepblue-100 font-medium text-white hover:bg-deepblue-200 transition-all px-3 py-2 text-center"
-        spinnerColor="white"
-        loading={createRequest.isLoading}
-        type="submit"
-      >
+      <Button loading={createRequest.isLoading} type="submit">
         Erstellen
       </Button>
     </form>

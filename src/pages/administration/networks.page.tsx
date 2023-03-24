@@ -7,12 +7,9 @@ import { Network } from "@prisma/client";
 import { GetServerSideProps } from "next";
 import { FunctionComponent, useState } from "react";
 import AdministrationPage from "../../components/AdministrationPage";
-import Button from "../../components/Button";
 import CreateNetworkForm from "../../components/CreateNetworkForm";
 import EditNetworkForm from "../../components/EditNetworkForm";
-import Menu from "../../components/Menu";
-import MenuItem from "../../components/MenuItem";
-import MenuList from "../../components/MenuList";
+import Menu from "../../components/common/Menu";
 import Modal from "../../components/Modal";
 import PageTitle from "../../components/PageTitle";
 import SideNavigation from "../../components/SideNavigation";
@@ -23,6 +20,8 @@ import { withTokenServerSideProps } from "../../decorators/withToken";
 import { clientHttpClient } from "../../services/clientHttpClient";
 import { networkService } from "../../services/networkService";
 import { classNames, isAdmin } from "../../utils/common";
+import DropdownMenuItem from "../../components/common/DropdownMenuItem";
+import Button from "../../components/common/Button";
 
 interface Props {
   keycloakIssuer: string;
@@ -122,7 +121,6 @@ const Network: FunctionComponent<Props> = (props) => {
             </div>
 
             <Button
-              className="bg-lightning-500 hover:bg-lightning-900 font-bold transition-all py-3 px-5 text-black"
               type="button"
               loading={false}
               onClick={() => setIsOpen(true)}
@@ -131,8 +129,8 @@ const Network: FunctionComponent<Props> = (props) => {
             </Button>
           </div>
           <table className="w-full text-left text-white border-deepblue-100 mt-10 border bg-deepblue-500">
-            <thead>
-              <tr className="bg-deepblue-200  text-sm border-b border-b-deepblue-50 text-left">
+            <thead className="bg-deepblue-200">
+              <tr className="text-sm border-b border-b-deepblue-50 text-left">
                 <th className="p-2 py-4">CIDR</th>
                 <th className="p-2 py-4">Kommentar</th>
                 <th className="p-2 py-4">Aktionen</th>
@@ -152,21 +150,22 @@ const Network: FunctionComponent<Props> = (props) => {
                   <td className="p-2">{network.comment}</td>
                   <td className="p-2 w-20 text-right">
                     <Menu
-                      menuCloseIndex={0}
                       Button={
                         <div className="p-2 h-8 w-8 flex flex-row items-center justify-center">
                           <FontAwesomeIcon icon={faEllipsisVertical} />
                         </div>
                       }
                       Menu={
-                        <MenuList>
-                          <MenuItem onClick={() => setEdit(network)}>
+                        <>
+                          <DropdownMenuItem onClick={() => setEdit(network)}>
                             Bearbeiten
-                          </MenuItem>
-                          <MenuItem onClick={() => handleDelete(network.cidr)}>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => handleDelete(network.cidr)}
+                          >
                             Löschen
-                          </MenuItem>
-                        </MenuList>
+                          </DropdownMenuItem>
+                        </>
                       }
                     />
                   </td>

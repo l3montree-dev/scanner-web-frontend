@@ -2,8 +2,8 @@ import React, { FormEvent, FunctionComponent, useState } from "react";
 import useLoading from "../hooks/useLoading";
 import { parseNetworkString } from "../utils/common";
 import { isValidIp, isValidMask } from "../utils/validator";
+import Button from "./common/Button";
 import FormTextarea from "./FormTextarea";
-import PrimaryButton from "./PrimaryButton";
 
 interface Props {
   onSubmit: (networks: string[]) => Promise<void>;
@@ -60,9 +60,9 @@ const CreateNetworkForm: FunctionComponent<Props> = ({ onSubmit }) => {
             </span>
           </div>
           <div className="flex flex-row justify-end mt-5">
-            <PrimaryButton loading={request.isLoading} type="submit">
+            <Button primary loading={request.isLoading} type="submit">
               Netzwerke dem System hinzufügen
-            </PrimaryButton>
+            </Button>
           </div>
         </div>
       </form>

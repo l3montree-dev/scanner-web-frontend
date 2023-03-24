@@ -42,7 +42,7 @@ export const titleMapper = {
   [TLSInspectionType.TLSv1_2]: "TLS 1.2",
   [TLSInspectionType.TLSv1_3]: "TLS 1.3",
   [TLSInspectionType.DeprecatedTLSDeactivated]:
-    "Deaktivierung von veralteten TLS/ SSL Protokollen",
+    "Veraltetes TLS/ SSL deaktiviert",
   [TLSInspectionType.StrongKeyExchange]: "Strong-Key-Exchange",
   [TLSInspectionType.StrongCipherSuites]: "Strong-Cipher-Suites",
   [CertificateInspectionType.ValidCertificate]: "Gültiges Zertifikat",

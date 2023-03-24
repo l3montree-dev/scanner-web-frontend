@@ -1,10 +1,9 @@
 import React, { FunctionComponent, useState } from "react";
 import useLoading from "../hooks/useLoading";
 import { ICreateUserDTO } from "../types";
-import { isValidIp, isValidMask } from "../utils/validator";
+import Button from "./common/Button";
+
 import FormInput from "./FormInput";
-import FormTextarea from "./FormTextarea";
-import PrimaryButton from "./PrimaryButton";
 
 interface Props {
   onCreateUser: (
@@ -78,9 +77,9 @@ const CreateUserForm: FunctionComponent<Props> = ({ onCreateUser }) => {
             <FormInput label="Rolle" onChange={setRole} value={role} />
           </div>
           <div className="flex flex-row justify-end mt-5">
-            <PrimaryButton loading={createRequest.isLoading} type="submit">
+            <Button primary loading={createRequest.isLoading} type="submit">
               Nutzer anlegen
-            </PrimaryButton>
+            </Button>
           </div>
         </div>
       </form>

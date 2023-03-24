@@ -1,18 +1,23 @@
-import { faEllipsisVertical, faPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEllipsisVertical,
+  faPen,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Collection, ShareLink } from "@prisma/client";
 import Link from "next/link";
 import { FunctionComponent, useState } from "react";
 import CollectionForm from "../../components/CollectionForm";
 import CollectionPill from "../../components/CollectionPill";
+import Button from "../../components/common/Button";
+import DropdownMenuItem from "../../components/common/DropdownMenuItem";
+import Menu from "../../components/common/Menu";
 import DashboardPage from "../../components/DashboardPage";
 import EditCollectionForm from "../../components/EditCollectionForm";
-import Menu from "../../components/Menu";
-import MenuItem from "../../components/MenuItem";
-import MenuList from "../../components/MenuList";
+
 import Modal from "../../components/Modal";
-import ShareLinkItem from "../../components/ShareLinkItem";
 import PageTitle from "../../components/PageTitle";
+import ShareLinkItem from "../../components/ShareLinkItem";
 import SideNavigation from "../../components/SideNavigation";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
 import { withCurrentUserServerSideProps } from "../../decorators/withCurrentUser";
@@ -267,27 +272,37 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
                       >
                         <div className="flex flex-row justify-end">
                           <Menu
-                            menuCloseIndex={0}
                             Button={
-                              <div className="p-2 h-8 w-8 flex flex-row items-center justify-center">
+                              <Button className="w-5 h-5">
                                 <FontAwesomeIcon icon={faEllipsisVertical} />
-                              </div>
+                              </Button>
                             }
                             Menu={
-                              <MenuList>
-                                <MenuItem
-                                  closeMenu
+                              <>
+                                <DropdownMenuItem
+                                  Icon={
+                                    <FontAwesomeIcon
+                                      icon={faPen}
+                                      fontSize={15}
+                                    />
+                                  }
                                   onClick={() => selectCollection(collection)}
                                 >
                                   Bearbeiten / Teilen
-                                </MenuItem>
+                                </DropdownMenuItem>
 
-                                <MenuItem
+                                <DropdownMenuItem
+                                  Icon={
+                                    <FontAwesomeIcon
+                                      icon={faTrash}
+                                      fontSize={15}
+                                    />
+                                  }
                                   onClick={() => destroy(collection.id)}
                                 >
                                   <div>Löschen</div>
-                                </MenuItem>
-                              </MenuList>
+                                </DropdownMenuItem>
+                              </>
                             }
                           />
                         </div>

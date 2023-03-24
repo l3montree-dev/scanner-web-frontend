@@ -1,9 +1,8 @@
 import { Network } from "@prisma/client";
 import { FormEvent, FunctionComponent, useState } from "react";
 import useLoading from "../hooks/useLoading";
-import Button from "./Button";
+import Button from "./common/Button";
 import FormTextarea from "./FormTextarea";
-import PrimaryButton from "./PrimaryButton";
 
 interface Props extends Network {
   onSubmit: (newComment: string) => Promise<void>;
@@ -50,18 +49,13 @@ const EditNetworkForm: FunctionComponent<Props> = (props) => {
               value={comment}
             />
           </div>
-          <div className="flex flex-row justify-end mt-5">
-            <Button
-              className="bg-deepblue-50 text-white px-5 mr-3"
-              type="button"
-              onClick={handleDelete}
-              loading={false}
-            >
+          <div className="flex flex-row gap-2 justify-end mt-5">
+            <Button type="button" onClick={handleDelete} loading={false}>
               Netzwerk löschen
             </Button>
-            <PrimaryButton loading={request.isLoading} type="submit">
+            <Button primary loading={request.isLoading} type="submit">
               Speichern
-            </PrimaryButton>
+            </Button>
           </div>
         </div>
       </form>

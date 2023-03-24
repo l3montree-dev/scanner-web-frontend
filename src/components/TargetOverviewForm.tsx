@@ -1,9 +1,12 @@
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
 import { FormEvent, FunctionComponent, useState } from "react";
 import { useIsGuest } from "../hooks/useIsGuest";
 import useLoading from "../hooks/useLoading";
-import { classNames } from "../utils/common";
-import Button from "./Button";
+import Button from "./common/Button";
+import OutlineButton from "./common/OutlineButton";
+
 import DragAndDrop from "./DragAndDrop";
 import FormInput from "./FormInput";
 
@@ -69,9 +72,9 @@ const TargetOverviewForm: FunctionComponent<{
 
   return (
     <div>
-      <div className="flex flex-row items-end">
+      <div className="flex gap-2 flex-row items-end">
         <form
-          className="flex flex-1 flex-row items-end"
+          className="flex flex-1 gap-2 flex-row items-end"
           onSubmit={handleSearch}
         >
           <div className="flex-1">
@@ -83,32 +86,21 @@ const TargetOverviewForm: FunctionComponent<{
             />
           </div>
           <div>
-            <Button
-              spinnerSize={32}
-              className="bg-deepblue-100 border border-deepblue-100 ml-2 hover:bg-deepblue-300 text-white p-2"
-              type="submit"
-              spinnerColor="white"
-              loading={searchRequest.isLoading}
-            >
+            <Button type="submit" loading={searchRequest.isLoading}>
               Suchen
             </Button>
           </div>
         </form>
         {!isGuest && (
           <div>
-            <Button
-              className={classNames(
-                "border border-deepblue-100 ml-2 transition-all text-white p-2",
-                addDomainIsOpen
-                  ? "bg-deepblue-100 hover:bg-deepblue-300"
-                  : "hover:bg-deepblue-200"
-              )}
+            <OutlineButton
               type="submit"
               loading={false}
+              active={addDomainIsOpen}
               onClick={() => setAddDomainIsOpen((prev) => !prev)}
             >
               Eintrag hinzufügen
-            </Button>
+            </OutlineButton>
           </div>
         )}
       </div>
@@ -121,7 +113,7 @@ const TargetOverviewForm: FunctionComponent<{
           <>
             <form
               onSubmit={handleAddRecord}
-              className="flex flex-row border-t pt-2 border-t-deepblue-200 items-end mt-5"
+              className="flex flex-row gap-2 border-t pt-2 border-t-deepblue-200 items-end mt-5"
             >
               <div className="flex-1">
                 <FormInput
@@ -132,13 +124,7 @@ const TargetOverviewForm: FunctionComponent<{
                 />
               </div>
               <div className="flex flex-row items-end">
-                <Button
-                  spinnerSize={32}
-                  spinnerColor="white"
-                  className="bg-deepblue-100 ml-2 text-white border border-deepblue-100 p-2 transition-all hover:bg-deepblue-300"
-                  type="submit"
-                  loading={createRequest.isLoading}
-                >
+                <Button type="submit" loading={createRequest.isLoading}>
                   Hinzufügen
                 </Button>
               </div>
@@ -165,13 +151,10 @@ const TargetOverviewForm: FunctionComponent<{
                           {f.map((file) => (
                             <div
                               key={file.name}
-                              className="flex mb-2 flex-row w-full justify-between items-center"
+                              className="flex text-sm mb-2 flex-row w-full justify-between items-center"
                             >
-                              <span className="text-white text-sm">
-                                {file.name}
-                              </span>
-                              <button
-                                className="text-white bg-deepblue-200 p-2 text-sm cursor-pointer"
+                              <span className="text-white ">{file.name}</span>
+                              <OutlineButton
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   setFiles((prev) =>
@@ -179,8 +162,8 @@ const TargetOverviewForm: FunctionComponent<{
                                   );
                                 }}
                               >
-                                Entfernen
-                              </button>
+                                <FontAwesomeIcon icon={faTrash} />
+                              </OutlineButton>
                             </div>
                           ))}
                         </div>
@@ -198,23 +181,17 @@ const TargetOverviewForm: FunctionComponent<{
                       )}
                     </DragAndDrop>
                   </div>
-                  <div className="flex flex-row justify-end mt-5">
-                    <Button
-                      className="bg-deepblue-200 transition-all hover:bg-deepblue-300 border border-deepblue-200 text-white px-4 py-2"
-                      loading={request.isLoading}
-                      spinnerColor="white"
-                      type="submit"
-                    >
+                  <div className="flex flex-row gap-2 justify-end mt-5">
+                    <Button loading={request.isLoading} type="submit">
                       Domains dem System hinzufügen
                     </Button>
-                    <Button
-                      className="border hover:bg-deepblue-200 transition-all border-deepblue-100 ml-2 text-white p-2"
+                    <OutlineButton
                       type="submit"
                       loading={createRequest.isLoading}
                       onClick={() => setAddDomainIsOpen(false)}
                     >
                       Schliessen
-                    </Button>
+                    </OutlineButton>
                   </div>
                 </div>
               </form>

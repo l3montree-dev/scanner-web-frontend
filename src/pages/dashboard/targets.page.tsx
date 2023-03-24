@@ -1,10 +1,7 @@
 import {
   faCaretDown,
   faCaretUp,
-  faCheck,
-  faQuestion,
   faQuestionCircle,
-  faWarning,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
@@ -16,10 +13,8 @@ import {
   useState,
 } from "react";
 import Checkbox from "../../components/Checkbox";
+import Menu from "../../components/common/Menu";
 import DashboardPage from "../../components/DashboardPage";
-import Menu from "../../components/Menu";
-import MenuItem from "../../components/MenuItem";
-import MenuList from "../../components/MenuList";
 import Pagination from "../../components/Pagination";
 import SideNavigation from "../../components/SideNavigation";
 import TargetOverviewForm from "../../components/TargetOverviewForm";
@@ -39,12 +34,17 @@ import { clientHttpClient } from "../../services/clientHttpClient";
 import { targetService } from "../../services/targetService";
 
 import { Collection, Target } from "@prisma/client";
-import CollectionMenu from "../../components/CollectionMenu";
+import CheckStateMenu from "../../components/CheckStateMenu";
+import CollectionMenuContent from "../../components/CollectionMenuContent";
 import CollectionPill from "../../components/CollectionPill";
+import Button from "../../components/common/Button";
+import DropdownMenuItem from "../../components/common/DropdownMenuItem";
+import SubMenu from "../../components/common/SubMenu";
 import PageTitle from "../../components/PageTitle";
 import { SortButton } from "../../components/SortButton";
 import TargetTableItem from "../../components/TargetTableItem";
 import Tooltip from "../../components/Tooltip";
+import { useIsGuest } from "../../hooks/useIsGuest";
 import { collectionService } from "../../services/collectionService";
 import {
   DetailedTarget,
@@ -60,8 +60,6 @@ import {
 } from "../../utils/common";
 import { DTO, ServerSideProps, toDTO } from "../../utils/server";
 import { optimisticUpdate } from "../../utils/view";
-import { useIsGuest } from "../../hooks/useIsGuest";
-import CheckStateMenu from "../../components/CheckStateMenu";
 
 interface Props {
   targets: PaginateResult<DTO<DetailedTarget> & { collections?: number[] }>; // should include array of collection ids the target is in
@@ -412,7 +410,7 @@ const Targets: FunctionComponent<Props> = (props) => {
           </Tooltip>
         </div>
         <div className="text-white">
-          <div className="w-full border-deepblue-100 border bg-deepblue-500">
+          <div className="w-full border-deepblue-100 rounded-sm  border bg-deepblue-500">
             <div className="p-5">
               <div className="text-black">
                 <TargetOverviewForm
@@ -424,29 +422,21 @@ const Targets: FunctionComponent<Props> = (props) => {
             </div>
             <div className="border-t flex flex-row border-deepblue-50 border-b">
               {!isGuest && (
-                <div
-                  className={classNames(
-                    "flex flex-row justify-start",
-                    selectedTargets.length === 0
-                      ? "opacity-50 pointer-events-none"
-                      : ""
-                  )}
-                >
+                <div className={classNames("flex flex-row justify-start")}>
                   <div className="my-2 ml-2">
                     <Menu
-                      menuCloseIndex={0}
+                      disabled={selectedTargets.length === 0}
                       Button={
-                        <div className="p-2 bg-deepblue-100 border border-deepblue-100 flex flex-row items-center justify-center">
+                        <Button
+                          disabled={selectedTargets.length === 0}
+                          RightIcon={<FontAwesomeIcon icon={faCaretDown} />}
+                        >
                           Gruppenaktionen ({selectedTargets.length})
-                          <FontAwesomeIcon
-                            className="ml-2"
-                            icon={faCaretDown}
-                          />
-                        </div>
+                        </Button>
                       }
                       Menu={
-                        <MenuList>
-                          <MenuItem
+                        <>
+                          <DropdownMenuItem
                             loading={scanAllLoading.isLoading}
                             onClick={async () => {
                               scanAllLoading.loading();
@@ -459,29 +449,26 @@ const Targets: FunctionComponent<Props> = (props) => {
                               }
                             }}
                           >
-                            <div>
-                              <div>Erneut scannen</div>
-                            </div>
-                          </MenuItem>
-                          <MenuItem onClick={deleteSelection}>
+                            Erneut scannen
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={deleteSelection}>
                             <div>Löschen</div>
-                          </MenuItem>
-                          <CollectionMenu
-                            nestedMenu
-                            collections={props.collections}
-                            onCollectionClick={(c) =>
-                              handleAddToCollection(
-                                selectedTargets.map((s) => ({ uri: s })),
-                                c.id
-                              )
+                          </DropdownMenuItem>
+                          <SubMenu
+                            Menu={
+                              <CollectionMenuContent
+                                collections={props.collections}
+                                onCollectionClick={(c) =>
+                                  handleAddToCollection(
+                                    selectedTargets.map((s) => ({ uri: s })),
+                                    c.id
+                                  )
+                                }
+                              />
                             }
-                            Button={
-                              <div className="p-2 px-4 text-left">
-                                Zu Gruppe hinzufügen
-                              </div>
-                            }
+                            Button={<>Zu Gruppe hinzufügen</>}
                           />
-                        </MenuList>
+                        </>
                       }
                     />
                   </div>
@@ -489,61 +476,66 @@ const Targets: FunctionComponent<Props> = (props) => {
               )}
               <div className="ml-2 my-2">
                 <Menu
-                  menuCloseIndex={0}
                   Button={
-                    <div className="p-2  bg-deepblue-100 border border-deepblue-100 flex flex-row items-center justify-center">
+                    <Button RightIcon={<FontAwesomeIcon icon={faCaretDown} />}>
                       Zeige: {translateDomainType(viewedDomainType)} (
                       {props.targets.total})
-                      <FontAwesomeIcon className="ml-2" icon={faCaretDown} />
-                    </div>
+                    </Button>
                   }
                   Menu={
-                    <MenuList>
+                    <>
                       {Object.values(TargetType).map((type) => (
-                        <MenuItem
+                        <DropdownMenuItem
                           key={type}
-                          selected={type === viewedDomainType}
+                          active={type === viewedDomainType}
                           loading={scanAllLoading.isLoading}
                           onClick={async () => {
                             patchQuery({ domainType: type, page: "0" });
                           }}
                         >
                           <div>{translateDomainType(type)}</div>
-                        </MenuItem>
+                        </DropdownMenuItem>
                       ))}
-                    </MenuList>
+                    </>
                   }
                 />
               </div>
               {Object.keys(props.collections).length > 0 && (
                 <div className="my-2 ml-2">
-                  <CollectionMenu
-                    collections={props.collections}
-                    selectedCollections={collectionIds}
-                    onCollectionClick={(c) =>
-                      handleCollectionFilterToggle(c.id)
-                    }
+                  <Menu
                     Button={
-                      <div className="p-2 bg-deepblue-100 border border-deepblue-100 flex flex-row items-center justify-center">
+                      <Button
+                        RightIcon={<FontAwesomeIcon icon={faCaretDown} />}
+                      >
                         Filter nach Gruppen
-                        <FontAwesomeIcon className="ml-2" icon={faCaretDown} />
-                      </div>
+                      </Button>
                     }
-                  />
+                    Menu={
+                      <CollectionMenuContent
+                        collections={props.collections}
+                        selectedCollections={collectionIds}
+                        onCollectionClick={(c) =>
+                          handleCollectionFilterToggle(c.id)
+                        }
+                      />
+                    }
+                  ></Menu>
                 </div>
               )}
+
               {Object.keys(router.query).length > 0 && (
-                <button
-                  onClick={() => {
-                    router.push({
-                      pathname: router.pathname,
-                      query: {},
-                    });
-                  }}
-                  className="bg-deepblue-100 border border-deepblue-100 hover:bg-deepblue-300 transition-all my-2 ml-2 px-2"
-                >
-                  Filter zurücksetzen
-                </button>
+                <div className="my-2 ml-2">
+                  <Button
+                    onClick={() => {
+                      router.push({
+                        pathname: router.pathname,
+                        query: {},
+                      });
+                    }}
+                  >
+                    Filter zurücksetzen
+                  </Button>
+                </div>
               )}
             </div>
 
@@ -566,7 +558,7 @@ const Targets: FunctionComponent<Props> = (props) => {
               </div>
             )}
             <table className="w-full">
-              <thead className="sticky top-14 z-100">
+              <thead className="sticky top-14 z-20">
                 <tr className="bg-deepblue-200 text-sm border-b border-b-deepblue-50 text-left">
                   <th className="p-2 pr-0">
                     {!isGuest && (

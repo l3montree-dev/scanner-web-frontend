@@ -85,7 +85,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
                   <div key={key} className="w-full flex-none sm:flex-1">
                     <div
                       className={classNames(
-                        "bg-deepblue-400 border-2 h-full p-5",
+                        "bg-deepblue-400 border-2 h-full rounded-sm p-5",
                         `border-${checkResult2BorderClassName(
                           CheckResult.Critical
                         )}`
@@ -111,7 +111,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
             <div key={key} className="">
               <div
                 className={classNames(
-                  "bg-deepblue-400 border-2 h-full p-5",
+                  "bg-deepblue-400 border-2 rounded-sm h-full p-5",
                   `border-${checkResult2BorderClassName(
                     didPass2CheckResult(
                       report.details !== null
