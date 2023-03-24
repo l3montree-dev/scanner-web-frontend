@@ -1,3 +1,4 @@
 *.config.js
 load-test.k6.js
 jestSetupFileAfterEnv.js
+lighthouserc.js
