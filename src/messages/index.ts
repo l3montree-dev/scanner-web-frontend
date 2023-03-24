@@ -5,6 +5,7 @@ import {
   DomainInspectionType,
   HeaderInspectionType,
   HttpInspectionType,
+  InspectionType,
   NetworkInspectionType,
   OrganizationalInspectionType,
   TLSInspectionType,
@@ -71,6 +72,45 @@ export const titleMapper = {
   [HeaderInspectionType.XFrameOptions]: "X-Frame-Options",
   [HeaderInspectionType.XSSProtection]: "X-XSS-Protection",
   [HeaderInspectionType.ContentTypeOptions]: "Content-Type-Options",
+};
+
+export const descriptionMapper: { [key in InspectionType]: string } = {
+  [OrganizationalInspectionType.ResponsibleDisclosure]:
+    "Maßnahme zur Meldung von Schwachstellen vor Veröffentlichung",
+  [HttpInspectionType.HTTP]: "",
+  [HttpInspectionType.HTTP308]: "",
+  [HttpInspectionType.HTTPRedirectsToHttps]: "",
+  [TLSInspectionType.TLSv1_2]: "",
+  [TLSInspectionType.TLSv1_3]:
+    "Aktuelle Verschlüsselung der Kommunikation zwischen Bürgerinnen, Bürgern und OZG-Dienst",
+  [TLSInspectionType.DeprecatedTLSDeactivated]:
+    "Veraltete Verschlüsselung deaktivieren",
+  [TLSInspectionType.StrongKeyExchange]: "",
+  [TLSInspectionType.StrongCipherSuites]: "",
+  [CertificateInspectionType.ValidCertificate]: "",
+  [CertificateInspectionType.StrongPrivateKey]: "",
+  [CertificateInspectionType.StrongSignatureAlgorithm]: "",
+  [CertificateInspectionType.MatchesHostname]: "",
+  [CertificateInspectionType.NotRevoked]: "",
+  [CertificateInspectionType.CertificateTransparency]: "",
+  [CertificateInspectionType.ValidCertificateChain]: "",
+  [CookieInspectionType.SecureSessionCookies]: "",
+  [NetworkInspectionType.IPv6]: "",
+  [NetworkInspectionType.RPKI]:
+    "Schutz vor nicht autorisierter Umleitung von Datenverkehr",
+  [DomainInspectionType.DNSSec]:
+    "Sichere Verknüpfung von Internetadresse und Serveradresse",
+  [DomainInspectionType.CAA]: "",
+  [ContentInspectionType.SubResourceIntegrity]: "",
+  [ContentInspectionType.NoMixedContent]: "",
+  [HeaderInspectionType.HTTPS]: "",
+  [HeaderInspectionType.HSTS]:
+    "Sicherstellung verschlüsselter Kommunikation zwischen Bürgerinnen, Bürgern und OZG-Dienst",
+  [HeaderInspectionType.HSTSPreloaded]: "",
+  [HeaderInspectionType.ContentSecurityPolicy]: "",
+  [HeaderInspectionType.XFrameOptions]: "",
+  [HeaderInspectionType.XSSProtection]: "",
+  [HeaderInspectionType.ContentTypeOptions]: "",
 };
 
 export const getCheckDescription = (

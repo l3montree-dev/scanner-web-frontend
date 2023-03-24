@@ -1,15 +1,13 @@
 import {
-  faArrowDown,
   faArrowRight,
   faArrowTrendDown,
   faArrowTrendUp,
-  faArrowUp,
   faDownload,
+  faExternalLinkAlt,
   faQuestionCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { FunctionComponent, useState } from "react";
-import tinycolor from "tinycolor2";
 
 import { Canvg } from "canvg";
 import {
@@ -20,11 +18,13 @@ import {
   VictoryZoomContainer,
 } from "victory";
 import { InspectionType } from "../../inspection/scans";
-import { titleMapper } from "../../messages";
+import { descriptionMapper, titleMapper } from "../../messages";
 import { theme } from "../../styles/victory-theme";
+import { linkMapper } from "../../utils/common";
 import { tailwindColors } from "../../utils/view";
 import Tooltip from "../Tooltip";
 import { RefLabelComponent } from "./RefLabelComponent";
+import tinycolor from "tinycolor2";
 interface Props {
   displayCollections: number[];
   inspectionType: InspectionType;
@@ -210,7 +210,7 @@ const LineChart: FunctionComponent<Props> = ({
   };
 
   return (
-    <div className="group/chart pb-5 bg-deepblue-400 rounded-md shadow-xl overflow-hidden historical-chart flex-col flex">
+    <div className="group/chart pb-4 bg-deepblue-400 rounded-md shadow-xl historical-chart flex-col flex">
       <div className="flex-1 pt-5 relative">
         <button
           onClick={exportToPng}
@@ -302,13 +302,28 @@ const LineChart: FunctionComponent<Props> = ({
       >
         {titleMapper[inspectionType]}{" "}
         <Tooltip
-          tooltip={`         
-                    Das Dashboard zeigt Ihnen aggregierte Informationen über den
-                    Sicherheitszustand der von Ihnen verwalteten
-                    OZG-Dienste. Ausschliesslich erreichbare Domains können
-                    getestet werden. Die Anfrage muss vom Server in maximal zehn
-                    Sekunden beantwortet werden, damit eine Domain als
-                    erreichbar gilt. Derzeit si Domains erreichbar.`}
+          tooltip={
+            <>
+              <p className="mb-4">{descriptionMapper[inspectionType]}</p>
+              {linkMapper[inspectionType] !== "" && (
+                <a
+                  download
+                  target={"_blank"}
+                  href={linkMapper[inspectionType]}
+                  className="text-lightning-500"
+                  rel="noreferrer"
+                >
+                  &quot;{titleMapper[inspectionType]}&quot; One-Pager
+                  herunterladen
+                  <FontAwesomeIcon
+                    fontSize={15}
+                    className="ml-2"
+                    icon={faExternalLinkAlt}
+                  />
+                </a>
+              )}
+            </>
+          }
         >
           <div className="text-slate-400 inline ml-2">
             <FontAwesomeIcon fontSize={18} icon={faQuestionCircle} />

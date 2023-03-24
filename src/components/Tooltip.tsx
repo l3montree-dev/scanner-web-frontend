@@ -8,7 +8,7 @@ import {
 import { classNames } from "../utils/common";
 
 interface Props {
-  tooltip: string;
+  tooltip: string | JSX.Element;
 }
 const Tooltip: FunctionComponent<PropsWithChildren<Props>> = (props) => {
   const messageRef = useRef<HTMLDivElement>(null);
