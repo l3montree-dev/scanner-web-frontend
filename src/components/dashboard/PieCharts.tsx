@@ -289,9 +289,9 @@ const PieCharts: FunctionComponent<Props> = ({
                 <Link href={`/dashboard/targets?${key}=1`}>
                   <span className="text-lightning-500">
                     Erfüllt von{" "}
-                    {(
-                      currentStat.data[key] * currentStat.totalCount
-                    ).toPrecision(1)}{" "}
+                    {(currentStat.data[key] * currentStat.totalCount).toFixed(
+                      0
+                    )}{" "}
                     Domain
                     {currentStat.data[key] * currentStat.totalCount !== 1
                       ? "s"
@@ -310,7 +310,7 @@ const PieCharts: FunctionComponent<Props> = ({
                     {(
                       (1 - currentStat.data[key]) *
                       currentStat.totalCount
-                    ).toPrecision(1)}{" "}
+                    ).toFixed(0)}{" "}
                     Domain
                     {(1 - currentStat.data[key]) * currentStat.totalCount !== 1
                       ? "s"
@@ -335,7 +335,9 @@ const PieCharts: FunctionComponent<Props> = ({
                     className="flex items-center text-deepblue-500  rounded-full px-2 py-1"
                   >
                     <div className="text-sm">{title}</div>
-                    <span className="ml-2 text-sm">{percentage}%</span>
+                    <span className="ml-2 text-sm">
+                      {percentage.toFixed(1)}%
+                    </span>
                   </div>
                 );
               })}

@@ -96,7 +96,7 @@ const SideNavigation = () => {
             store.sideMenuCollapsed ? "w-16" : "w-56"
           )}
         >
-          <div className="px-4 flex gap-2 flex-col items-start mb-5 text-white">
+          <div className="px-4 pl-3 flex gap-2 flex-col items-start mb-5 text-white">
             <Link href="/" className="flex items-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img

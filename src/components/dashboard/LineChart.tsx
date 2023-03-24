@@ -288,6 +288,7 @@ const LineChart: FunctionComponent<Props> = ({
           {displayCollections.includes(defaultCollectionId) &&
             defaultCollectionId in data.data && (
               <VictoryArea
+                interpolation={"basis"}
                 style={{
                   data: {
                     fill: "url(#serviceGradient)",
