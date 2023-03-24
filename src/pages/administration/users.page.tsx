@@ -177,9 +177,9 @@ const Users: FunctionComponent<Props> = (props) => {
               {users.map((user, i) => (
                 <tr
                   className={classNames(
-                    i % 2 === 0 ? "bg-deepblue-400" : "bg-deepblue-500",
+                    i % 2 !== 0 ? "bg-deepblue-200" : "bg-deepblue-300",
                     i + 1 !== users.length ? "border-b" : "",
-                    " border-b-deepblue-500 transition-all"
+                    " border-b-deepblue-400 transition-all"
                   )}
                   key={user.id}
                 >

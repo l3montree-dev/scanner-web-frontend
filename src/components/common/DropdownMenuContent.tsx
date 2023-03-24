@@ -8,7 +8,7 @@ const DropdownMenuContent = forwardRef<any, any>((props, ref) => {
     <Content
       ref={ref}
       sideOffset={5}
-      className="DropdownMenuContent overflow-hidden bg-deepblue-200 py-1 z-50 rounded-md text-white"
+      className="DropdownMenuContent overflow-hidden bg-deepblue-100 py-1 z-50 rounded-md text-white"
       {...props}
     ></Content>
   );

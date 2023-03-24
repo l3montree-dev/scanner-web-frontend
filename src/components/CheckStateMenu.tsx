@@ -54,7 +54,7 @@ const CheckStateMenu: FunctionComponent<Props> = ({
         <div
           title={titleMapper[inspectionType]}
           className={classNames(
-            "flex flex-row gap-2 text-left w-24 items-center font-bold",
+            "flex flex-row gap-2 cursor-pointer text-left w-24 items-center font-bold",
             selectedToClassName(+selected)
           )}
         >

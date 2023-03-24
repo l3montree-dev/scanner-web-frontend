@@ -673,10 +673,10 @@ const Targets: FunctionComponent<Props> = (props) => {
                         i !== targets.length - 1 && "border-b",
                         "border-b-deepblue-300 transition-all",
                         selection[target.uri]
+                          ? "bg-deepblue-100"
+                          : i % 2 !== 0
                           ? "bg-deepblue-200"
-                          : i % 2 === 0
-                          ? "bg-deepblue-400"
-                          : "bg-deepblue-500"
+                          : "bg-deepblue-300"
                       )}
                       onSelect={(target) => {
                         setSelection((prev) => {

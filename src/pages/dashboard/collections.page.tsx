@@ -221,7 +221,7 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
                         "align-top group/collection-item",
                         i !== arr.length - 1 && "border-b",
                         "border-b-deepblue-300 transition-all",
-                        i % 2 === 0 ? "bg-deepblue-400" : "bg-deepblue-500"
+                        i % 2 !== 0 ? "bg-deepblue-200" : "bg-deepblue-300"
                       )}
                       key={collection.id}
                     >
@@ -253,15 +253,14 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
                           })}
 
                           {collection.shareLinks.length === 0 && (
-                            <div className="flex invisible group-hover/collection-item:visible flex-row justify-end">
-                              <button
+                            <div className="flex opacity-0 group-hover/collection-item:opacity-100 transition-all text-sm flex-row justify-end">
+                              <Button
                                 onClick={() =>
                                   handleGenerateLink(collection.id)
                                 }
-                                className=" bg-deepblue-200 px-2 py-1"
                               >
                                 Link erstellen
-                              </button>
+                              </Button>
                             </div>
                           )}
                         </div>

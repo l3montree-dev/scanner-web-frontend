@@ -140,7 +140,7 @@ const Network: FunctionComponent<Props> = (props) => {
               {networks.map((network, i) => (
                 <tr
                   className={classNames(
-                    i % 2 === 0 ? "bg-deepblue-400" : "bg-deepblue-500",
+                    i % 2 !== 0 ? "bg-deepblue-200" : "bg-deepblue-300",
                     i + 1 !== networks.length ? "border-b" : "",
                     "border-b-deepblue-200 transition-all"
                   )}

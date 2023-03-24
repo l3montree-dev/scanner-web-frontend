@@ -24,7 +24,6 @@ import { didPass2CheckResult } from "../utils/view";
 import Checkbox from "./Checkbox";
 import CollectionMenuContent from "./CollectionMenuContent";
 import CollectionPill from "./CollectionPill";
-import Button from "./common/Button";
 import DropdownMenuItem from "./common/DropdownMenuItem";
 import Menu from "./common/Menu";
 import SubMenu from "./common/SubMenu";

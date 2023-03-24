@@ -20,8 +20,8 @@ const DropdownMenuItem: FunctionComponent<
       {...rest}
     >
       {loading ? (
-        <div className="absolute left-2 opacity-75">
-          <Spinner />
+        <div className="absolute left-0 top-0.5 opacity-75">
+          <Spinner size={30} />
         </div>
       ) : (
         Icon && <div className="absolute left-2 opacity-75">{props.Icon}</div>

@@ -187,7 +187,6 @@ const TargetOverviewForm: FunctionComponent<{
                     </Button>
                     <OutlineButton
                       type="submit"
-                      loading={createRequest.isLoading}
                       onClick={() => setAddDomainIsOpen(false)}
                     >
                       Schliessen

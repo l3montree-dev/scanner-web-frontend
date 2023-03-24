@@ -77,9 +77,13 @@ const LineChart: FunctionComponent<Props> = ({
   const calculateNewTrends = (startIdx: number, endIdx: number) => {
     return Object.fromEntries(
       Object.entries(data.data).map(([collectionId, value]) => {
+        if (!value) {
+          return [collectionId, { distance: 0 }];
+        }
+
         // calculate the distance from start to beginning
-        const start = value?.series[startIdx].y ?? 0;
-        const end = value?.series[endIdx].y ?? 0;
+        const start = value.series[startIdx]?.y ?? 0;
+        const end = value.series[endIdx]?.y ?? 0;
         const distance = end - start;
 
         return [
