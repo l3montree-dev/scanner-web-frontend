@@ -218,7 +218,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
               </div>
             </div>
             {!isGuest && (
-              <div className="text-white sticky z-10 beneath-header p-2 bg-deepblue-300 flex flex-row mb-4 items-center">
+              <div className="text-white sticky z-20 beneath-header p-2 bg-deepblue-300 flex flex-row mb-4 items-center">
                 <div className="max-w-screen-xl gap-2 flex flex-row flex-1 mx-auto">
                   <div className="flex flex-row">
                     <Menu

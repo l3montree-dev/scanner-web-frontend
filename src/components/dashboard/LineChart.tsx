@@ -80,7 +80,6 @@ const LineChart: FunctionComponent<Props> = ({
         if (!value) {
           return [collectionId, { distance: 0 }];
         }
-
         // calculate the distance from start to beginning
         const start = value.series[startIdx]?.y ?? 0;
         const end = value.series[endIdx]?.y ?? 0;
@@ -168,7 +167,7 @@ const LineChart: FunctionComponent<Props> = ({
 
         const rects = clonedNode.querySelectorAll("rect");
         rects.forEach((rect) => {
-          if (rect.style.fill === "rgb(0, 3, 46)") {
+          if (rect.style.fill === "rgb(16, 23, 66)") {
             rect.style.fill = "rgb(255,255,255)";
           }
         });
