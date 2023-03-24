@@ -21,7 +21,7 @@ export const RefLabelComponent: FunctionComponent<any & { fill: string }> = (
         dx={30}
         dy={-2}
         backgroundStyle={{
-          fill: tailwindColors.deepblue["600"],
+          fill: tailwindColors.deepblue["400"],
         }}
         style={{
           fontSize: 10,

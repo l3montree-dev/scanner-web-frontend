@@ -1,29 +1,30 @@
 import {
-  faArrowsDownToLine,
+  faArrowDown,
+  faArrowRight,
+  faArrowTrendDown,
+  faArrowTrendUp,
+  faArrowUp,
   faDownload,
-  faDownLong,
   faQuestionCircle,
-  faSave,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Link from "next/link";
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useState } from "react";
+import tinycolor from "tinycolor2";
 
+import { Canvg } from "canvg";
 import {
-  VictoryChart,
-  VictoryZoomContainer,
-  VictoryAxis,
-  VictoryLine,
   VictoryArea,
+  VictoryAxis,
+  VictoryChart,
+  VictoryLine,
+  VictoryZoomContainer,
 } from "victory";
 import { InspectionType } from "../../inspection/scans";
 import { titleMapper } from "../../messages";
 import { theme } from "../../styles/victory-theme";
-import { linkMapper } from "../../utils/common";
 import { tailwindColors } from "../../utils/view";
-import { RefLabelComponent } from "./RefLabelComponent";
-import { Canvg } from "canvg";
 import Tooltip from "../Tooltip";
+import { RefLabelComponent } from "./RefLabelComponent";
 interface Props {
   displayCollections: number[];
   inspectionType: InspectionType;
@@ -64,6 +65,57 @@ const LineChart: FunctionComponent<Props> = ({
   zoomLevel,
 }) => {
   const chartRef = React.useRef<any>(null);
+
+  const [visibleDomain, setVisibleDomain] = useState<
+    [string | undefined, string | undefined]
+  >([
+    data.data[defaultCollectionId]?.series[0].x,
+    data.data[defaultCollectionId]?.series[
+      (data.data[defaultCollectionId]?.series.length ?? 0) - 1
+    ].x,
+  ]);
+
+  const calculateNewTrends = (startIdx: number, endIdx: number) => {
+    return Object.fromEntries(
+      Object.entries(data.data).map(([collectionId, value]) => {
+        // calculate the distance from start to beginning
+        const start = value?.series[startIdx].y ?? 0;
+        const end = value?.series[endIdx].y ?? 0;
+        const distance = end - start;
+
+        return [
+          collectionId,
+          {
+            distance,
+          },
+        ];
+      })
+    );
+  };
+
+  const [trends, setTrends] = useState(
+    // calculate the trend over the whole time
+    calculateNewTrends(
+      0,
+      (data.data[defaultCollectionId]?.series.length ?? 0) - 1
+    )
+  );
+
+  const handleDomainChange = (newDomain: [Date, Date] | [number, number]) => {
+    const startIdx = Math.floor(newDomain[0] as number);
+    const endIdx = Math.ceil(
+      Math.min(
+        newDomain[1] as number,
+        (data.data[defaultCollectionId]?.series.length ?? 0) - 1
+      )
+    );
+    setTrends(calculateNewTrends(startIdx, endIdx));
+    setVisibleDomain([
+      data.data[defaultCollectionId]?.series[startIdx].x,
+      data.data[defaultCollectionId]?.series[endIdx].x,
+    ]);
+  };
+
   const exportToPng = async () => {
     if (chartRef.current) {
       const svg = (
@@ -156,18 +208,24 @@ const LineChart: FunctionComponent<Props> = ({
       }
     }
   };
+
   return (
-    <div className="group/chart pb-4 bg-deepblue-400 rounded-md shadow-xl overflow-hidden historical-chart flex-col flex">
+    <div className="group/chart pb-5 bg-deepblue-400 rounded-md shadow-xl overflow-hidden historical-chart flex-col flex">
       <div className="flex-1 pt-5 relative">
         <button
           onClick={exportToPng}
-          className="group-hover/chart:opacity-100 cursor-pointer z-10 opacity-0 rounded-full bg-deepblue-100/50 h-6 absolute top-3 right-3 w-6 text-sm transition-all"
+          className="group-hover/chart:opacity-100 cursor-pointer z-10 opacity-0 rounded-full bg-deepblue-100/50 h-9 absolute top-3 right-3 w-9 text-sm transition-all"
         >
           <FontAwesomeIcon className="opacity-100" icon={faDownload} />
         </button>
 
         <VictoryChart
-          containerComponent={<VictoryZoomContainer ref={chartRef} />}
+          containerComponent={
+            <VictoryZoomContainer
+              onZoomDomainChange={(ev) => handleDomainChange(ev.x)}
+              ref={chartRef}
+            />
+          }
           theme={theme}
           height={360}
           width={zoomLevelToWidth(zoomLevel)}
@@ -257,6 +315,41 @@ const LineChart: FunctionComponent<Props> = ({
           </div>
         </Tooltip>
       </h2>
+      <div>
+        <div className="opacity-75 px-6">
+          {visibleDomain[0]} - {visibleDomain[1]}
+        </div>
+      </div>
+      <div className="flex flex-row items-center flex-wrap mt-2 gap-2 px-6">
+        {displayCollections.map((collectionId) => {
+          const col = data.data[collectionId];
+          const trend = trends[collectionId];
+          if (!col || !trend) return null;
+
+          return (
+            <div
+              key={collectionId}
+              style={{
+                backgroundColor: tinycolor(col.color).setAlpha(1).toRgbString(),
+              }}
+              className="flex items-center text-deepblue-500  rounded-full px-2 py-1"
+            >
+              <div className="text-sm">{col.title}</div>
+              <span className="ml-2 text-sm">{trend.distance.toFixed(1)}%</span>
+              <FontAwesomeIcon
+                className="text-sm ml-2"
+                icon={
+                  trend.distance === 0
+                    ? faArrowRight
+                    : trend.distance > 0
+                    ? faArrowTrendUp
+                    : faArrowTrendDown
+                }
+              />
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };
