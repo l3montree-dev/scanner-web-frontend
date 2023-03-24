@@ -24,6 +24,7 @@ import { linkMapper } from "../../utils/common";
 import { tailwindColors } from "../../utils/view";
 import Tooltip from "../Tooltip";
 import { RefLabelComponent } from "./RefLabelComponent";
+import CollectionDataPill from "../CollectionDataPill";
 interface Props {
   displayCollections: number[];
   inspectionType: InspectionType;
@@ -346,12 +347,10 @@ const LineChart: FunctionComponent<Props> = ({
           if (!col || !trend) return null;
 
           return (
-            <div
+            <CollectionDataPill
               key={collectionId}
-              style={{
-                backgroundColor: col.color,
-              }}
-              className="flex items-center text-deepblue-500  rounded-full px-2 py-1"
+              color={col.color}
+              title={col.title}
             >
               <div className="text-sm">{col.title}</div>
               <span className="ml-2 text-sm">{trend.distance.toFixed(1)}%</span>
@@ -365,7 +364,7 @@ const LineChart: FunctionComponent<Props> = ({
                     : faArrowTrendDown
                 }
               />
-            </div>
+            </CollectionDataPill>
           );
         })}
       </div>
