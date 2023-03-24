@@ -84,6 +84,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
     [dashboard.historicalData, props.defaultCollectionId]
   );
   const user = useSession();
+
   const [displayCollections, setDisplayCollections] = useState<number[]>(
     props.refCollections.concat(props.defaultCollectionId)
   );
@@ -159,7 +160,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
           ];
         })
       ),
-    [dashboard.historicalData]
+    [dashboard.historicalData, user.data]
   );
 
   const handleDisplayCollectionToggle = (collectionId: number) => {
