@@ -46,6 +46,8 @@ jest:
     key: $CI_COMMIT_REF_SLUG
   image: cypress/browsers:node16.17.0-chrome106
   stage: test
+  variables:
+    NEXTAUTH_SECRET: TipnQPvS70R6hdyRMr54wdjHLuxtpCmy
   script:
     - npm ci --include=dev
     - npm run build
