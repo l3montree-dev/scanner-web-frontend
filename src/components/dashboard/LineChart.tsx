@@ -24,7 +24,6 @@ import { linkMapper } from "../../utils/common";
 import { tailwindColors } from "../../utils/view";
 import Tooltip from "../Tooltip";
 import { RefLabelComponent } from "./RefLabelComponent";
-import tinycolor from "tinycolor2";
 interface Props {
   displayCollections: number[];
   inspectionType: InspectionType;
@@ -210,7 +209,7 @@ const LineChart: FunctionComponent<Props> = ({
   };
 
   return (
-    <div className="group/chart pb-4 bg-deepblue-400 rounded-md shadow-xl historical-chart flex-col flex">
+    <div className="group/chart pb-5 bg-deepblue-400 rounded-md shadow-xl historical-chart flex-col flex">
       <div className="flex-1 pt-5 relative">
         <button
           onClick={exportToPng}
@@ -345,7 +344,7 @@ const LineChart: FunctionComponent<Props> = ({
             <div
               key={collectionId}
               style={{
-                backgroundColor: tinycolor(col.color).setAlpha(1).toRgbString(),
+                backgroundColor: col.color,
               }}
               className="flex items-center text-deepblue-500  rounded-full px-2 py-1"
             >

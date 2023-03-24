@@ -45,7 +45,7 @@ const LineCharts: FunctionComponent<Props> = ({
           täglich aktualisiert.
         </p>
       </div>
-      <div className="flex flex-row justify-end sticky pointer-events-none zoom-button">
+      <div className="flex flex-row justify-end sticky pointer-events-none zoom-button z-10">
         <div className="pointer-events-auto overflow-hidden rounded-sm">
           <ToggleGroup.Root
             className="ToggleGroup"

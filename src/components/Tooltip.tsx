@@ -6,6 +6,7 @@ import {
   useState,
 } from "react";
 import { classNames } from "../utils/common";
+import * as BaseTooltip from "@radix-ui/react-tooltip";
 
 interface Props {
   tooltip: string | JSX.Element;
@@ -25,19 +26,21 @@ const Tooltip: FunctionComponent<PropsWithChildren<Props>> = (props) => {
       }
     }
   }, [props.tooltip]);
+
   return (
-    <div className="tooltip-container relative cursor-pointer inline">
-      {props.children}
-      <div
-        ref={messageRef}
-        className={classNames(
-          "tooltip p-2 z-200 bg-deepblue-200 shadow-lg rounded-sm opacity-0 absolute transition-all scale-50 text-sm font-normal",
-          clNames
-        )}
-      >
-        {props.tooltip}
-      </div>
-    </div>
+    <BaseTooltip.Provider>
+      <BaseTooltip.Root>
+        <BaseTooltip.Trigger>{props.children}</BaseTooltip.Trigger>
+        <BaseTooltip.Portal>
+          <BaseTooltip.Content
+            className="TooltipContent w-56 bg-deepblue-100 z-200 text-white text-sm p-2 rounded-md"
+            sideOffset={5}
+          >
+            {props.tooltip}
+          </BaseTooltip.Content>
+        </BaseTooltip.Portal>
+      </BaseTooltip.Root>
+    </BaseTooltip.Provider>
   );
 };
 

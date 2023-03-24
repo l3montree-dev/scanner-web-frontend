@@ -75,7 +75,7 @@ const translateDomainType = (type: TargetType) => {
     case TargetType.unreachable:
       return "Nicht erreichbare Domains";
     case TargetType.all:
-      return "Alle Domains";
+      return "Meine Domains";
   }
 };
 

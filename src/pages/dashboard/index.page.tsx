@@ -59,7 +59,7 @@ const localizeDefaultCollection = <
     return {
       ...collection,
       color: tailwindColors.lightning["500"],
-      title: "Alle",
+      title: "Meine",
     };
   }
 
@@ -270,7 +270,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                           {...col}
                           title={
                             id === props.defaultCollectionId
-                              ? `Alle` + ` (${col.size})`
+                              ? `Meine` + ` (${col.size})`
                               : `${col.title} (${col.size})`
                           }
                           color={

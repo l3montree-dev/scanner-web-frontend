@@ -324,6 +324,22 @@ const PieCharts: FunctionComponent<Props> = ({
                 </Link>
               </p>
             </div>
+            <div className="flex flex-row items-center flex-wrap mt-2 gap-2 px-6">
+              {refData.map(({ title, percentage, color }, i) => {
+                return (
+                  <div
+                    key={title}
+                    style={{
+                      backgroundColor: color,
+                    }}
+                    className="flex items-center text-deepblue-500  rounded-full px-2 py-1"
+                  >
+                    <div className="text-sm">{title}</div>
+                    <span className="ml-2 text-sm">{percentage}%</span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         );
       })}
