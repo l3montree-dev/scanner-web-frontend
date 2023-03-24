@@ -2,6 +2,7 @@ import {
   faArrowsDownToLine,
   faDownload,
   faDownLong,
+  faQuestionCircle,
   faSave,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -22,6 +23,7 @@ import { linkMapper } from "../../utils/common";
 import { tailwindColors } from "../../utils/view";
 import { RefLabelComponent } from "./RefLabelComponent";
 import { Canvg } from "canvg";
+import Tooltip from "../Tooltip";
 interface Props {
   displayCollections: number[];
   inspectionType: InspectionType;
@@ -155,20 +157,11 @@ const LineChart: FunctionComponent<Props> = ({
     }
   };
   return (
-    <div className="group/chart bg-deepblue-600 rounded-sm shadow-xl overflow-hidden historical-chart border flex-col flex border-deepblue-100">
+    <div className="group/chart pb-4 bg-deepblue-400 rounded-md shadow-xl overflow-hidden historical-chart flex-col flex">
       <div className="flex-1 pt-5 relative">
-        {linkMapper[inspectionType] !== "" && (
-          <Link
-            target={"_blank"}
-            href={linkMapper[inspectionType]}
-            className="text-sm absolute w-full inline-block overflow-hidden truncate text-right whitespace-nowrap top-1 underline right-0 mt-2 px-5"
-          >
-            &quot;{titleMapper[inspectionType]}&quot; jetzt umsetzen!
-          </Link>
-        )}
         <button
           onClick={exportToPng}
-          className="group-hover/chart:opacity-100 cursor-pointer z-10 opacity-0 rounded-full bg-deepblue-100/50 h-6 absolute top-10 right-3 w-6 text-sm transition-all"
+          className="group-hover/chart:opacity-100 cursor-pointer z-10 opacity-0 rounded-full bg-deepblue-100/50 h-6 absolute top-3 right-3 w-6 text-sm transition-all"
         >
           <FontAwesomeIcon className="opacity-100" icon={faDownload} />
         </button>
@@ -247,9 +240,22 @@ const LineChart: FunctionComponent<Props> = ({
       </div>
       <h2
         title={titleMapper[inspectionType]}
-        className="text-center whitespace-nowrap text-ellipsis overflow-hidden border-t border-deepblue-50 bg-deepblue-400 mt-1 p-3"
+        className="text-left text-white px-6 text-lg text-ellipsis font-bold bg-deepblue-400 border-deepblue-50 mt-1"
       >
-        {titleMapper[inspectionType]}
+        {titleMapper[inspectionType]}{" "}
+        <Tooltip
+          tooltip={`         
+                    Das Dashboard zeigt Ihnen aggregierte Informationen über den
+                    Sicherheitszustand der von Ihnen verwalteten
+                    OZG-Dienste. Ausschliesslich erreichbare Domains können
+                    getestet werden. Die Anfrage muss vom Server in maximal zehn
+                    Sekunden beantwortet werden, damit eine Domain als
+                    erreichbar gilt. Derzeit si Domains erreichbar.`}
+        >
+          <div className="text-slate-400 inline ml-2">
+            <FontAwesomeIcon fontSize={18} icon={faQuestionCircle} />
+          </div>
+        </Tooltip>
       </h2>
     </div>
   );

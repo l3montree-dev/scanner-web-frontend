@@ -98,7 +98,7 @@ const SideNavigation = () => {
                   className={classNames(
                     "py-2 px-3 m-2 flex flex-row border rounded-sm hover:bg-deepblue-300 transition-all hover:text-white cursor-pointer",
                     pathname === path
-                      ? "bg-deepblue-100 border border-t border-t-deepblue-50 border-deepblue-300 text-white"
+                      ? "bg-deepblue-100 border border-deepblue-300 text-white"
                       : "text-slate-400 border-transparent"
                   )}
                 >

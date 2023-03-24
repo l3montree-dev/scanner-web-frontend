@@ -7,7 +7,7 @@ const DropdownSubMenuContent: FunctionComponent<
 > = (props) => {
   return (
     <SubContent
-      className="DropdownMenuContent overflow-hidden bg-deepblue-200 py-1 z-50  border border-deepblue-50 rounded-md text-white"
+      className="DropdownMenuContent overflow-hidden bg-deepblue-200 py-1 z-50  rounded-md text-white"
       {...props}
     ></SubContent>
   );

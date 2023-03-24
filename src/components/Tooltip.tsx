@@ -31,7 +31,7 @@ const Tooltip: FunctionComponent<PropsWithChildren<Props>> = (props) => {
       <div
         ref={messageRef}
         className={classNames(
-          "tooltip p-2 z-200 bg-deepblue-200 shadow-lg rounded-sm opacity-0 absolute transition-all scale-50 text-sm",
+          "tooltip p-2 z-200 bg-deepblue-200 shadow-lg rounded-sm opacity-0 absolute transition-all scale-50 text-sm font-normal",
           clNames
         )}
       >

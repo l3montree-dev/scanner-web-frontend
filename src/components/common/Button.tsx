@@ -32,7 +32,7 @@ const Button =
       <button
         ref={ref}
         className={classNames(
-          "transition-all flex flex-row items-center gap-3 rounded-sm border-t  shadow-md  p-2 px-3 ",
+          "transition-all flex flex-row items-center gap-3 rounded-sm border-t p-2 px-3 ",
           clNames(props.primary),
           props.disabled && "opacity-50 cursor-not-allowed"
         )}
