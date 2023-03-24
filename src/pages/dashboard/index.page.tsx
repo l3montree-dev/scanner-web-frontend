@@ -28,6 +28,7 @@ import { decorateServerSideProps } from "../../decorators/decorateServerSideProp
 import { withCurrentUserOrGuestServerSideProps } from "../../decorators/withCurrentUser";
 import { withDB } from "../../decorators/withDB";
 import { useIsGuest } from "../../hooks/useIsGuest";
+import { useSession } from "../../hooks/useSession";
 import { collectionService } from "../../services/collectionService";
 import { statService } from "../../services/statService";
 import { ChartData, IDashboard } from "../../types";
@@ -53,13 +54,14 @@ const localizeDefaultCollection = <
   T extends { id: number; title: string; color: string }
 >(
   collection: T,
-  defaultCollectionId: number
+  defaultCollectionId: number,
+  username: string
 ): T => {
   if (collection.id === defaultCollectionId) {
     return {
       ...collection,
       color: tailwindColors.lightning["500"],
-      title: "Meine",
+      title: username,
     };
   }
 
@@ -81,6 +83,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
           } as ChartData),
     [dashboard.historicalData, props.defaultCollectionId]
   );
+  const user = useSession();
   const [displayCollections, setDisplayCollections] = useState<number[]>(
     props.refCollections.concat(props.defaultCollectionId)
   );
@@ -125,7 +128,8 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                         };
                       }),
                     },
-                    props.defaultCollectionId
+                    props.defaultCollectionId,
+                    user.data?.user.name || "Meine"
                   ),
                 ];
               }
@@ -246,7 +250,8 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                                 collectionId,
                                 localizeDefaultCollection(
                                   c,
-                                  props.defaultCollectionId
+                                  props.defaultCollectionId,
+                                  user.data?.user.name || "Meine"
                                 ),
                               ]
                             )
@@ -270,7 +275,9 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                           {...col}
                           title={
                             id === props.defaultCollectionId
-                              ? `Meine` + ` (${col.size})`
+                              ? `${user.data?.user.name || "Meine"} (${
+                                  col.size
+                                })`
                               : `${col.title} (${col.size})`
                           }
                           color={

@@ -192,8 +192,9 @@ const LineChart: FunctionComponent<Props> = ({
           return;
         }
 
-        canvas.width = svgSize.width * 4;
-        canvas.height = svgSize.height * 4;
+        // make sure to have the equal size on retina screens
+        canvas.width = svgSize.width * (8 / window.devicePixelRatio);
+        canvas.height = svgSize.height * (8 / window.devicePixelRatio);
         // add a white background color.
         const serializer = new XMLSerializer();
         const c = Canvg.fromString(
