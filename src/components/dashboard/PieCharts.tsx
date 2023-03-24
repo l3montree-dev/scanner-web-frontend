@@ -13,7 +13,7 @@ import {
   VictoryPie,
   VictoryTooltip,
 } from "victory";
-import { titleMapper } from "../../messages";
+import { descriptionMapper, titleMapper } from "../../messages";
 import { ChartData, CollectionStatMap } from "../../types";
 import { linkMapper } from "../../utils/common";
 import { displayInspections, tailwindColors } from "../../utils/view";
@@ -256,13 +256,27 @@ const PieCharts: FunctionComponent<Props> = ({
               >
                 {titleMapper[key]}{" "}
                 <Tooltip
-                  tooltip={`         
-                    Das Dashboard zeigt Ihnen aggregierte Informationen über den
-                    Sicherheitszustand der von Ihnen verwalteten
-                    OZG-Dienste. Ausschliesslich erreichbare Domains können
-                    getestet werden. Die Anfrage muss vom Server in maximal zehn
-                    Sekunden beantwortet werden, damit eine Domain als
-                    erreichbar gilt. Derzeit si Domains erreichbar.`}
+                  tooltip={
+                    <>
+                      <p className="mb-4">{descriptionMapper[key]}</p>
+                      {linkMapper[key] !== "" && (
+                        <a
+                          download
+                          target={"_blank"}
+                          href={linkMapper[key]}
+                          className="text-lightning-500"
+                          rel="noreferrer"
+                        >
+                          &quot;{titleMapper[key]}&quot; One-Pager herunterladen
+                          <FontAwesomeIcon
+                            fontSize={15}
+                            className="ml-2"
+                            icon={faExternalLinkAlt}
+                          />
+                        </a>
+                      )}
+                    </>
+                  }
                 >
                   <div className="text-slate-400 inline ml-2">
                     <FontAwesomeIcon fontSize={18} icon={faQuestionCircle} />
