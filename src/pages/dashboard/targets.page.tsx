@@ -558,7 +558,7 @@ const Targets: FunctionComponent<Props> = (props) => {
               </div>
             )}
             <table className="w-full">
-              <thead className="sticky top-14 z-20">
+              <thead className="sticky table-header z-20">
                 <tr className="bg-deepblue-200 text-sm border-b-deepblue-50 text-left">
                   <th className="p-2 pr-0">
                     {!isGuest && (
