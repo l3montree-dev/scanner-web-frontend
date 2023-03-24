@@ -53,7 +53,9 @@ const Button =
         ) : (
           props.LeftIcon && <div className="opacity-50">{props.LeftIcon}</div>
         )}
-        {props.children}
+        <div className={classNames(loading && "hidden sm:block")}>
+          {props.children}
+        </div>
         {props.RightIcon && <div className="opacity-50">{props.RightIcon}</div>}
       </button>
     );
