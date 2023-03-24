@@ -44,6 +44,8 @@ helm-chart/charts/*
 helm-chart/values.yaml
 helm-chart/values.prod.yaml
 helm-chart/values.10million.yaml
+
+.lighthouseci
 # Sentry
 .sentryclirc
 

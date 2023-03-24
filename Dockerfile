@@ -1,13 +1,12 @@
-FROM node:18
-LABEL maintainer="bastin.tim@gmail.com"
+FROM node:18.15.0@sha256:33f306d574d22a441f6473d09c851763ff0d44459af682a2ff23b6ec8a06b03e as builder
+LABEL maintainer="ozgsec@neuland-homeland.de"
 
 WORKDIR /usr/app/
 ENV PORT 3000
+EXPOSE 3000
 
 ARG NEXT_PUBLIC_ENVIRONMENT
 ENV NEXT_PUBLIC_ENVIRONMENT=$NEXT_PUBLIC_ENVIRONMENT
-
-EXPOSE 3000
 
 COPY package.json .
 COPY ./prisma prisma
@@ -18,6 +17,13 @@ COPY . .
 ENV NODE_ENV production
 RUN npm run build
 
-RUN npm prune --production
+FROM gcr.io/distroless/nodejs18-debian11@sha256:c6163adfda796463a5691fc9f29733320ca2846985ba3708e0d490fbcbdc66f8
 
-CMD [ "npm", "start" ]
+WORKDIR /usr/app/
+ENV PORT 3000
+
+# Copy libs for prisma
+COPY --from=builder /lib/x86_64-linux-gnu /lib/x86_64-linux-gnu
+COPY --from=builder /usr/app /usr/app
+
+CMD [ "./node_modules/next/dist/bin/next", "start" ]
