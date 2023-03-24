@@ -198,13 +198,13 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
               Gruppen direkt miteinander zu vergleichen.
             </p>
           </div>
-          <div className="w-full border-deepblue-100 border bg-deepblue-500">
+          <div className="w-full border-deepblue-100 bg-deepblue-400 rounded-md">
             <div className="p-5">
               <CollectionForm onCreate={handleCollectionCreate} />
             </div>
             <table className="w-full text-white ">
               <thead>
-                <tr className="bg-deepblue-200 text-sm border-b border-t border-deepblue-50 text-left">
+                <tr className="bg-deepblue-200 text-sm border-deepblue-50 text-left">
                   <th className="p-2">Titel</th>
                   <th className="p-2">Domains</th>
                   <th className="p-2">

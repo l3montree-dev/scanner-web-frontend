@@ -85,11 +85,35 @@ const SideNavigation = () => {
   return (
     <div
       className={classNames(
-        "bg-deepblue-500 border-deepblue-300 transition-all relative h-full",
+        "bg-deepblue-400 transition-all relative h-full",
         store.sideMenuCollapsed ? "w-16" : "w-56"
       )}
     >
-      <div className="sticky top-14 pt-10">
+      <div className="sticky top-5">
+        <div
+          className={classNames(
+            "flex transition-all ml-1 border-deepblue-300 h-full items-center",
+            store.sideMenuCollapsed ? "w-16" : "w-56"
+          )}
+        >
+          <div className="px-4 flex gap-2 flex-col items-start mb-5 text-white">
+            <Link href="/" className="flex items-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                width={35}
+                height={45}
+                className="flex-1"
+                src={"/assets/sticker_challenge_mod_white_3.svg"}
+                alt="Logo OZG"
+              />
+            </Link>
+            {!store.sideMenuCollapsed && (
+              <span className="text-left text-sm font-bold uppercase">
+                <span>OZG</span>-Security-Challenge
+              </span>
+            )}
+          </div>
+        </div>
         <div>
           {getLinks(isGuestUser(session.data?.user), isAdmin(session.data)).map(
             ({ path, name, icon }) => (
