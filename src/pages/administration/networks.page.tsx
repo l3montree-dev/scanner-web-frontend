@@ -128,9 +128,9 @@ const Network: FunctionComponent<Props> = (props) => {
               Netzwerk hinzufügen
             </Button>
           </div>
-          <table className="w-full text-left text-white border-deepblue-100 mt-10 border bg-deepblue-500">
+          <table className="w-full text-left rounded-md overflow-hidden text-white border-deepblue-100 mt-10 border bg-deepblue-500">
             <thead className="bg-deepblue-200">
-              <tr className="text-sm border-b border-b-deepblue-50 text-left">
+              <tr className="text-sm border-b-deepblue-50 text-left">
                 <th className="p-2 py-4">CIDR</th>
                 <th className="p-2 py-4">Kommentar</th>
                 <th className="p-2 py-4">Aktionen</th>

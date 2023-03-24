@@ -410,7 +410,7 @@ const Targets: FunctionComponent<Props> = (props) => {
           </Tooltip>
         </div>
         <div className="text-white">
-          <div className="w-full border-deepblue-100 rounded-sm  border bg-deepblue-500">
+          <div className="w-full rounded-md bg-deepblue-400">
             <div className="p-5">
               <div className="text-black">
                 <TargetOverviewForm
@@ -420,7 +420,7 @@ const Targets: FunctionComponent<Props> = (props) => {
                 />
               </div>
             </div>
-            <div className="border-t flex flex-row border-deepblue-50 border-b">
+            <div className="flex flex-row border-deepblue-50">
               {!isGuest && (
                 <div className={classNames("flex flex-row justify-start")}>
                   <div className="my-2 ml-2">
@@ -540,7 +540,7 @@ const Targets: FunctionComponent<Props> = (props) => {
             </div>
 
             {collectionIds.length > 0 && (
-              <div className="flex flex-row py-2 border-b border-deepblue-100 items-center">
+              <div className="flex flex-row py-2 border-deepblue-100 items-center">
                 <div className="flex flex-wrap flex-row gap-2 px-5 items-center pl-4 justify-start">
                   {collectionIds.map((c) => {
                     const col = props.collections[c.toString()];
@@ -559,7 +559,7 @@ const Targets: FunctionComponent<Props> = (props) => {
             )}
             <table className="w-full">
               <thead className="sticky top-14 z-20">
-                <tr className="bg-deepblue-200 text-sm border-b border-b-deepblue-50 text-left">
+                <tr className="bg-deepblue-200 text-sm border-b-deepblue-50 text-left">
                   <th className="p-2 pr-0">
                     {!isGuest && (
                       <Checkbox

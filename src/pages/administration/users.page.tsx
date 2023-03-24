@@ -163,9 +163,9 @@ const Users: FunctionComponent<Props> = (props) => {
             </Button>
           </div>
 
-          <table className="w-full text-left text-white border-deepblue-50 border bg-deepblue-500">
+          <table className="w-full text-left overflow-hidden text-white border-deepblue-50 rounded-md bg-deepblue-500">
             <thead>
-              <tr className="bg-deepblue-200  text-sm border-b border-b-deepblue-50 text-left">
+              <tr className="bg-deepblue-200  text-sm rounded-t-md border-b-deepblue-50 text-left">
                 <th className="p-2 py-4">Nutzername</th>
                 <th className="p-2 py-4">Vorname</th>
                 <th className="p-2 py-4">Nachname</th>

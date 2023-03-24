@@ -113,7 +113,7 @@ const TargetOverviewForm: FunctionComponent<{
           <>
             <form
               onSubmit={handleAddRecord}
-              className="flex flex-row gap-2 border-t pt-2 border-t-deepblue-200 items-end mt-5"
+              className="flex flex-row gap-2 b pt-2 border-t-deepblue-200 items-end mt-5"
             >
               <div className="flex-1">
                 <FormInput

@@ -62,30 +62,6 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
     >
       {session.status === "authenticated" && session.data && (
         <div className="flex flex-row items-center h-full">
-          <div
-            className={classNames(
-              "flex bg-deepblue-500 transition-all border-deepblue-300 h-full items-center",
-              store.sideMenuCollapsed ? "w-16" : "w-56"
-            )}
-          >
-            <div className="px-4 flex gap-2 flex-row items-center text-white">
-              <Link href="/" className="flex items-center">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  width={25}
-                  height={45}
-                  className="flex-1"
-                  src={"/assets/sticker_challenge_mod_white_3.svg"}
-                  alt="Logo OZG"
-                />
-              </Link>
-              {!store.sideMenuCollapsed && (
-                <span className="whitespace-nowrap font-bold">
-                  OZG-Security-Challenge
-                </span>
-              )}
-            </div>
-          </div>
           <div className="flex flex-1 max-w-screen-xl mx-auto flex-row justify-between items-center">
             <h2
               className={classNames(

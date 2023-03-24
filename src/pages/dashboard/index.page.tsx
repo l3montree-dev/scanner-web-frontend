@@ -186,12 +186,13 @@ const Dashboard: FunctionComponent<Props> = (props) => {
   return (
     <>
       <Meta title="Dashboard" />
-      <Header keycloakIssuer={props.keycloakIssuer} />
+
       <div className="flex-row min-h-screen flex w-full flex-1">
         <div>
           <SideNavigation />
         </div>
         <div className="flex-1 flex flex-col">
+          <Header keycloakIssuer={props.keycloakIssuer} />
           <main className="bg-deepblue-600 flex-col flex flex-1">
             <div className="max-w-screen-xl w-full mb-5 pt-10 mx-auto">
               <div className="text-white mb-0 gap-2 flex flex-row items-center">
