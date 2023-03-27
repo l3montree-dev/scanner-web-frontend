@@ -62,10 +62,8 @@ lighthouse:mobile:
 
 .docker:build:
   stage: build
-  needs: [jest, gitguardianscan]
-  dependencies:
-      - jest
-      - gitguardianscan
+  needs: []
+  dependencies: []
   image:
       name: gcr.io/kaniko-project/executor:v1.9.1-debug@sha256:ac169723b2076f9d5804f4bc05c98397e286da6fdcdd5a09fdc179f06ccb3be1
       entrypoint: [""]
@@ -113,6 +111,9 @@ docker:build:main:
 
 trivy:scan:main:
     extends: .trivy:scan
+    needs: [docker:build:main]
+    dependencies:
+      - docker:build:main
     variables:
         IMAGE_TAG: $CI_REGISTRY_IMAGE:unstable
     only:
@@ -120,6 +121,9 @@ trivy:scan:main:
   
 trivy:scan:tag:
     extends: .trivy:scan
+    needs: [docker:build:tag]
+    dependencies:
+      - docker:build:tag
     variables:
         IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
     only:
@@ -138,6 +142,14 @@ trivy:scan:tag:
 
 docker:push:tag:
     extends: .docker:push
+    needs: [docker:build:tag, trivy:scan:tag, gitguardianscan, jest, lighthouse:desktop, lighthouse:mobile]
+    dependencies:
+      - docker:build:tag
+      - trivy:scan:tag
+      - gitguardianscan
+      - jest
+      - lighthouse:desktop
+      - lighthouse:mobile
     variables:
         IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
         NEXT_PUBLIC_ENVIRONMENT: production
@@ -146,6 +158,14 @@ docker:push:tag:
 
 docker:push:main:
     extends: .docker:push
+    needs: [docker:build:main, trivy:scan:main, gitguardianscan, jest, lighthouse:desktop, lighthouse:mobile]
+    dependencies:
+      - docker:build:main
+      - trivy:scan:main
+      - gitguardianscan
+      - jest
+      - lighthouse:desktop
+      - lighthouse:mobile
     variables:
         IMAGE_TAG: $CI_REGISTRY_IMAGE:unstable
         NEXT_PUBLIC_ENVIRONMENT: development
