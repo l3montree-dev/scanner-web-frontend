@@ -116,7 +116,6 @@ export const authOptions: AuthOptions = {
         // check if guest user.
         // if so, the collectionId is defined on the user.
         if (params.user.collectionId) {
-          ("RETURNING USER ");
           return {
             ...params.user,
           };

@@ -62,7 +62,7 @@ const PieCharts: FunctionComponent<Props> = ({
 }) => {
   const router = useRouter();
   return (
-    <div className="mt-5 justify-start gap-2 flex-wrap grid grid-cols-4">
+    <div className="mt-5 justify-start gap-2 flex-wrap grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 grid 2xl:grid-cols-4">
       {displayInspections.map((key) => {
         const percentage = currentStat.data[key] * 100;
         let padAngle = 3;
@@ -86,7 +86,7 @@ const PieCharts: FunctionComponent<Props> = ({
           .filter((r): r is RefData => r !== null);
         return (
           <div
-            className="bg-deepblue-400 pb-5 rounded-md flex-col flex"
+            className="bg-deepblue-300 pb-5 rounded-md flex-col flex"
             key={key}
           >
             <div className="flex-1 relative">
@@ -253,7 +253,7 @@ const PieCharts: FunctionComponent<Props> = ({
             <div className="flex flex-1 items-center px-6 flex-row">
               <h2
                 title={titleMapper[key]}
-                className="text-left text-white text-lg text-ellipsis font-bold bg-deepblue-400 border-deepblue-50 mt-1"
+                className="text-left text-white text-lg text-ellipsis font-bold bg-deepblue-300 border-deepblue-50 mt-1"
               >
                 {titleMapper[key]}{" "}
                 <Tooltip

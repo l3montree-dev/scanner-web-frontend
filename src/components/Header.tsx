@@ -1,14 +1,18 @@
-import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowRightFromBracket,
+  faBars,
+  faTimes,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import * as Portal from "@radix-ui/react-portal";
 import EventEmitter from "events";
-import Link from "next/link";
 import { FunctionComponent, useEffect, useState } from "react";
 import { useSession } from "../hooks/useSession";
 import { useSignOut } from "../hooks/useSignOut";
 import { classNames, clientOnly, isGuestUser } from "../utils/common";
-import { useGlobalStore } from "../zustand/global";
 import DropdownMenuItem from "./common/DropdownMenuItem";
 import Menu from "./common/Menu";
+import SideNavigation from "./SideNavigation";
 
 const getInitials = (name: string) => {
   return name
@@ -25,9 +29,9 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
   const session = useSession();
 
   const [title, setTitle] = useState("");
-  const store = useGlobalStore();
 
   const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuIsOpen, setMobileMenuIsOpen] = useState(false);
 
   const signOut = useSignOut();
 
@@ -42,6 +46,7 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
         setScrolled(false);
       }
     };
+    listener();
     // add scroll listener
     window.addEventListener("scroll", listener);
 
@@ -51,6 +56,18 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
       window.removeEventListener("scroll", listener);
     };
   }, []);
+
+  const openMenu = () => {
+    setMobileMenuIsOpen(true);
+    // stop scrolling
+    document.body.style.overflow = "hidden";
+  };
+
+  const closeMenu = () => {
+    setMobileMenuIsOpen(false);
+    // allow scrolling
+    document.body.style.overflow = "auto";
+  };
 
   return (
     <div
@@ -62,7 +79,7 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
     >
       {session.status === "authenticated" && session.data && (
         <div className="flex flex-row items-center h-full">
-          <div className="flex flex-1 max-w-screen-xl mx-auto flex-row justify-between items-center">
+          <div className="flex flex-1 max-w-screen-xl mx-auto px-3 flex-row justify-between items-center">
             <h2
               className={classNames(
                 "text-white text-2xl font-bold transition duration-500",
@@ -71,7 +88,36 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
             >
               {title}
             </h2>
-            <div className="ml-2 text-sm absolute z-200 right-2 text-white">
+            <div className="block text-white md:hidden">
+              <button className="p-3" onClick={openMenu}>
+                <FontAwesomeIcon icon={faBars} />
+              </button>
+              <Portal.Root>
+                <div
+                  className={classNames(
+                    "fixed bottom-0 left-0 right-0 transition-all bg-black/50 z-100 top-0",
+                    mobileMenuIsOpen
+                      ? "pointer-events-auto opacity-100"
+                      : "pointer-events-none opacity-0"
+                  )}
+                >
+                  <div
+                    className={classNames(
+                      "bg-deepblue-400 absolute right-0 top-0 bottom-0 transition-all",
+                      mobileMenuIsOpen ? "translate-x-0" : "translate-x-full"
+                    )}
+                  >
+                    <div className="px-3 py-1 flex flex-row justify-end">
+                      <button className="p-3" onClick={closeMenu}>
+                        <FontAwesomeIcon icon={faTimes} />
+                      </button>
+                    </div>
+                    <SideNavigation />
+                  </div>
+                </div>
+              </Portal.Root>
+            </div>
+            <div className="ml-2 text-sm absolute z-200 hidden md:block right-2 text-white">
               <Menu
                 Button={
                   <div className="bg-deepblue-100 cursor-pointer rounded-full h-9 w-9 flex items-center justify-center text-sm mr-1">

@@ -191,15 +191,14 @@ const Dashboard: FunctionComponent<Props> = (props) => {
   return (
     <>
       <Meta title="Dashboard" />
-
       <div className="flex-row min-h-screen flex w-full flex-1">
-        <div>
+        <div className="hidden lg:block">
           <SideNavigation />
         </div>
         <div className="flex-1 flex flex-col">
           <Header keycloakIssuer={props.keycloakIssuer} />
           <main className="bg-deepblue-600 flex-col flex flex-1">
-            <div className="max-w-screen-xl w-full mb-5 pt-10 mx-auto">
+            <div className="max-w-screen-xl w-full mb-5 pt-10 px-3 mx-auto">
               <div className="text-white mb-0 gap-2 flex flex-row items-center">
                 <PageTitle
                   className="text-4xl text-white font-bold"
@@ -223,8 +222,8 @@ const Dashboard: FunctionComponent<Props> = (props) => {
               </div>
             </div>
             {!isGuest && (
-              <div className="text-white sticky z-20 beneath-header p-2 bg-deepblue-300 flex flex-row mb-4 items-center">
-                <div className="max-w-screen-xl gap-2 flex flex-row flex-1 mx-auto">
+              <div className="text-white sticky z-20 shadow-lg beneath-header py-2 bg-deepblue-300 flex flex-row mb-4 items-center">
+                <div className="max-w-screen-xl gap-2 flex flex-col px-3 flex-1 mx-auto">
                   <div className="flex flex-row">
                     <Menu
                       Button={
@@ -293,22 +292,20 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                 </div>
               </div>
             )}
-            <div className="max-w-screen-xl pb-10 mx-auto flex-1 text-white">
-              <div>
-                <PieCharts
-                  displayCollections={_displayCollections}
-                  historicalData={dashboard.historicalData}
-                  defaultCollectionId={props.defaultCollectionId}
-                  currentStat={data as ChartData}
-                />
+            <div className="max-w-screen-xl pb-10 px-3 mx-auto flex-1 text-white">
+              <PieCharts
+                displayCollections={_displayCollections}
+                historicalData={dashboard.historicalData}
+                defaultCollectionId={props.defaultCollectionId}
+                currentStat={data as ChartData}
+              />
 
-                <LineCharts
-                  displayCollections={_displayCollections}
-                  displayInspections={displayInspections}
-                  dataPerInspection={dataPerInspection}
-                  defaultCollectionId={props.defaultCollectionId}
-                />
-              </div>
+              <LineCharts
+                displayCollections={_displayCollections}
+                displayInspections={displayInspections}
+                dataPerInspection={dataPerInspection}
+                defaultCollectionId={props.defaultCollectionId}
+              />
             </div>
           </main>
         </div>

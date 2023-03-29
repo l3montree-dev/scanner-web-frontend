@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { FunctionComponent } from "react";
+import { tailwindColors } from "../utils/view";
 
 export interface Props {
   title?: string;
@@ -41,6 +42,7 @@ const Meta: FunctionComponent<Props> = ({
           "OZG, Security, IT-Security, Schnelltest, IT-Sicherheit, Onlinezugangsgesetz, Security-Challenge, OZG Security-Challenge 2023, Best-Practices, Website Scan"
         }
       />
+      <meta name="theme-color" content={tailwindColors.deepblue["900"]} />
 
       <meta property="og:type" content="website" />
       <meta property="og:url" content="https://ozgsec.de/" />

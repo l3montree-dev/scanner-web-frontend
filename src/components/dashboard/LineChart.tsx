@@ -25,6 +25,7 @@ import { tailwindColors } from "../../utils/view";
 import Tooltip from "../Tooltip";
 import { RefLabelComponent } from "./RefLabelComponent";
 import CollectionDataPill from "../CollectionDataPill";
+import useWindowSize from "../../hooks/useWindowSize";
 interface Props {
   displayCollections: number[];
   inspectionType: InspectionType;
@@ -44,13 +45,22 @@ interface Props {
   defaultCollectionId: number;
   zoomLevel: number;
 }
-const zoomLevelToWidth = (zoomLevel: number) => {
+const zoomLevelToWidth = (zoomLevel: number, windowWidth: number) => {
   switch (zoomLevel) {
     case 0:
       return 358;
     case 1:
       return 540;
     case 2:
+      if (windowWidth < 400) {
+        return 300;
+      }
+      if (windowWidth < 600) {
+        return 400;
+      }
+      if (windowWidth < 768) {
+        return 540;
+      }
       return 1090;
     default:
       return 360;
@@ -65,6 +75,7 @@ const LineChart: FunctionComponent<Props> = ({
   zoomLevel,
 }) => {
   const chartRef = React.useRef<any>(null);
+  const { width } = useWindowSize();
 
   const [visibleDomain, setVisibleDomain] = useState<
     [string | undefined, string | undefined]
@@ -214,7 +225,7 @@ const LineChart: FunctionComponent<Props> = ({
   };
 
   return (
-    <div className="group/chart pb-5 bg-deepblue-400 rounded-md shadow-xl historical-chart flex-col flex">
+    <div className="group/chart pb-5 bg-deepblue-300 rounded-md shadow-xl historical-chart flex-col flex">
       <div className="flex-1 pt-5 relative">
         <button
           onClick={exportToPng}
@@ -226,13 +237,14 @@ const LineChart: FunctionComponent<Props> = ({
         <VictoryChart
           containerComponent={
             <VictoryZoomContainer
+              disable={width < 768}
               onZoomDomainChange={(ev) => handleDomainChange(ev.x)}
               ref={chartRef}
             />
           }
           theme={theme}
           height={360}
-          width={zoomLevelToWidth(zoomLevel)}
+          width={zoomLevelToWidth(zoomLevel, width)}
           padding={{ top: 20, bottom: 40, left: 55, right: 10 }}
           minDomain={{ y: Math.max(-1, data.min - data.max / 20) }}
           maxDomain={{ y: Math.min(101.5, data.max + data.max / 20) }}
@@ -303,7 +315,7 @@ const LineChart: FunctionComponent<Props> = ({
       </div>
       <h2
         title={titleMapper[inspectionType]}
-        className="text-left text-white px-6 text-lg text-ellipsis font-bold bg-deepblue-400 border-deepblue-50 mt-1"
+        className="text-left text-white px-6 text-lg text-ellipsis font-bold bg-deepblue-300 border-deepblue-50 mt-1"
       >
         {titleMapper[inspectionType]}{" "}
         <Tooltip

@@ -14,9 +14,8 @@ const DashboardPage: FunctionComponent<Props> = (props) => {
   return (
     <>
       <Meta {...rest} />
-
       <div className="flex-row min-h-screen flex w-full flex-1">
-        <div>{left}</div>
+        <div className="hidden lg:block">{left}</div>
         <div className="flex-1 flex flex-col">
           <Header keycloakIssuer={props.keycloakIssuer} />
           <main className="p-10 bg-deepblue-600 flex flex-1">

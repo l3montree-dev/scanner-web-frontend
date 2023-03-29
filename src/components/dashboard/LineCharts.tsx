@@ -1,5 +1,6 @@
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useEffect } from "react";
+import useWindowSize from "../../hooks/useWindowSize";
 
 import { InspectionType } from "../../inspection/scans";
 import { classNames } from "../../utils/common";
@@ -33,6 +34,14 @@ const LineCharts: FunctionComponent<Props> = ({
   defaultCollectionId,
 }) => {
   const [zoomLevel, setZoomLevel] = React.useState(0);
+  const { width } = useWindowSize();
+
+  useEffect(() => {
+    if (width < 768) {
+      setZoomLevel(2);
+    }
+  }, [width]);
+
   return (
     <>
       <h2 className="text-2xl mt-10 mb-5">Trendanalyse</h2>
@@ -45,7 +54,7 @@ const LineCharts: FunctionComponent<Props> = ({
           täglich aktualisiert.
         </p>
       </div>
-      <div className="flex flex-row justify-end sticky pointer-events-none zoom-button z-20">
+      <div className="flex-row hidden md:flex justify-end sticky pointer-events-none zoom-button z-20">
         <div className="pointer-events-auto overflow-hidden rounded-sm">
           <ToggleGroup.Root
             className="ToggleGroup"

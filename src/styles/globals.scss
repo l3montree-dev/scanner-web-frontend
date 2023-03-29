@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    color-scheme: dark;
+}
 
 @font-face {
     font-family: 'BundesSans';
@@ -317,3 +320,11 @@ article  {
   .table-header {
     top: 66px
   }
+
+  @media screen and (max-width: 768px) {
+    .VictoryContainer {
+        user-select: auto !important;
+        pointer-events: auto !important;
+        touch-action: auto !important;
+    }
+}

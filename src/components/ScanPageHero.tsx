@@ -54,7 +54,7 @@ const ScanPageHero: FunctionComponent<Props> = ({
             onChange={(e) => setWebsite(e.target.value)}
             value={website}
             placeholder="example.com"
-            className="sm:p-5 rounded-sm p-4 text-sm sm:text-base flex-1 outline-lightning-900 transition-all mr-3"
+            className="sm:p-5 rounded-sm bg-white p-4 text-sm sm:text-base flex-1 outline-lightning-900 transition-all mr-3"
           />
 
           <Button primary loading={scanRequest.isLoading} type="submit">
