@@ -12,9 +12,9 @@ interface Props {
 
 const clNames = (primary: boolean = false) => {
   if (primary) {
-    return "border-t-lightning-50 bg-lightning-500 focus:bg-lightning-300 hover:bg-lightning-300 font-bold text-deepblue-900";
+    return " bg-lightning-500 focus:bg-lightning-300 hover:bg-lightning-300 font-bold text-deepblue-900";
   }
-  return "text-white border-t-deepblue-50 bg-deepblue-100 focus:bg-deepblue-50 hover:bg-deepblue-50";
+  return "text-white  bg-deepblue-100 focus:bg-deepblue-50 hover:bg-deepblue-50";
 };
 const Button =
   // eslint-disable-next-line react/display-name
@@ -32,7 +32,7 @@ const Button =
       <button
         ref={ref}
         className={classNames(
-          "transition-all flex flex-row items-center gap-3 rounded-sm border-t p-2 px-3 ",
+          "transition-all flex flex-row items-center gap-3 rounded-sm p-2 px-3 ",
           clNames(props.primary),
           props.disabled && "opacity-50 cursor-not-allowed"
         )}

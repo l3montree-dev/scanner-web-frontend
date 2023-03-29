@@ -63,7 +63,7 @@ const LineCharts: FunctionComponent<Props> = ({
             >
               <div
                 className={classNames(
-                  "grid grid-cols-3 gap-0.5 p-3 hover:bg-deepblue-50 border-t border-t-deepblue-50",
+                  "grid grid-cols-3 gap-0.5 p-3 hover:bg-deepblue-50",
                   zoomLevel === 0 ? "bg-deepblue-50" : "bg-deepblue-100"
                 )}
               >
@@ -82,7 +82,7 @@ const LineCharts: FunctionComponent<Props> = ({
             >
               <div
                 className={classNames(
-                  "grid hover:bg-deepblue-50 grid-cols-2 gap-0.5 p-3 border-t border-t-deepblue-50",
+                  "grid hover:bg-deepblue-50 grid-cols-2 gap-0.5 p-3",
                   zoomLevel === 1 ? "bg-deepblue-50" : "bg-deepblue-100"
                 )}
               >
@@ -99,7 +99,7 @@ const LineCharts: FunctionComponent<Props> = ({
             >
               <div
                 className={classNames(
-                  "grid grid-cols-1 gap-0.5 p-3 hover:bg-deepblue-50 border-t border-t-deepblue-50",
+                  "grid grid-cols-1 gap-0.5 p-3 hover:bg-deepblue-50",
                   zoomLevel === 2 ? "bg-deepblue-50" : "bg-deepblue-100"
                 )}
               >

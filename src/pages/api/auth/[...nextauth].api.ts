@@ -1,10 +1,9 @@
 import NextAuth, { AuthOptions } from "next-auth";
-import KeycloakProvider from "next-auth/providers/keycloak";
 import CredentialsProvider from "next-auth/providers/credentials";
+import KeycloakProvider from "next-auth/providers/keycloak";
 
-import { IToken } from "../../../types";
 import { prisma } from "../../../db/connection";
-import { toDTO } from "../../../utils/server";
+import { IToken } from "../../../types";
 
 /**
  * Takes a token, and returns a new token with updated
@@ -89,6 +88,14 @@ export const authOptions: AuthOptions = {
       clientId: process.env.KEYCLOAK_ID as string,
       clientSecret: process.env.KEYCLOAK_SECRET as string,
       issuer: process.env.KEYCLOAK_ISSUER,
+      profile(profile: any) {
+        return {
+          id: profile.sub,
+          name: profile.preferred_username,
+          email: profile.email,
+          image: profile.picture,
+        };
+      },
     }),
   ],
   callbacks: {

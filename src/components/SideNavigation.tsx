@@ -117,12 +117,12 @@ const SideNavigation = () => {
         <div>
           {getLinks(isGuestUser(session.data?.user), isAdmin(session.data)).map(
             ({ path, name, icon }) => (
-              <Link key={name} href={path}>
+              <Link key={name} className="hover:no-underline" href={path}>
                 <div
                   className={classNames(
-                    "py-2 px-3 m-2 flex flex-row border rounded-sm hover:bg-deepblue-300 transition-all hover:text-white cursor-pointer",
+                    "py-2 px-3 m-2 flex flex-row border rounded-sm hover:bg-deepblue-100 hover:no-underline transition-all hover:text-white cursor-pointer",
                     pathname === path
-                      ? "bg-deepblue-100 border border-deepblue-300 text-white"
+                      ? "bg-deepblue-100 border border-deepblue-100 text-white"
                       : "text-slate-400 border-transparent"
                   )}
                 >
@@ -135,7 +135,7 @@ const SideNavigation = () => {
                   </div>
                   <span
                     title={name}
-                    className="whitespace-nowrap overflow-hidden text-ellipsis"
+                    className="whitespace-nowrap hover:no-underline overflow-hidden text-ellipsis"
                   >
                     {name}
                   </span>

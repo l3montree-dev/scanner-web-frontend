@@ -1,6 +1,5 @@
-import { Collection, Target } from "@prisma/client";
+import { Target } from "@prisma/client";
 import { InspectionType, InspectResultDTO } from "./inspection/scans";
-import { DTO } from "./utils/server";
 
 export interface IDashboard {
   historicalData: CollectionStatMap;
@@ -80,6 +79,7 @@ export enum TargetType {
 export interface ISession {
   user: {
     name: string;
+    username: string;
     email: string;
     image: string;
     id: string;
