@@ -410,7 +410,7 @@ const Targets: FunctionComponent<Props> = (props) => {
           </Tooltip>
         </div>
         <div className="text-white">
-          <div className="w-full rounded-md bg-deepblue-400">
+          <div className="w-full rounded-md bg-deepblue-300">
             <div className="p-5">
               <div className="text-black">
                 <TargetOverviewForm
