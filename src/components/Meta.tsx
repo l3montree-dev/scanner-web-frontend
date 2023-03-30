@@ -26,6 +26,7 @@ const Meta: FunctionComponent<Props> = ({
           "OZG Security Schnelltest einer Webseite in Bezug auf IT-Sicherheitsmaßnahmen und Best-Practices"
         }
       />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
       <link
         rel="canonical"
         data-testid="canonical"

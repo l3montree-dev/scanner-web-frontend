@@ -410,24 +410,25 @@ const Targets: FunctionComponent<Props> = (props) => {
           </Tooltip>
         </div>
         <div className="text-white">
-          <div className="w-full rounded-md bg-deepblue-300">
-            <div className="p-5">
-              <div className="text-black">
-                <TargetOverviewForm
-                  onSearch={handleSearch}
-                  onNewDomain={handleAddRecord}
-                  onFileFormSubmit={handleFileFormSubmit}
-                />
+          <div className="w-full">
+            <div className="bg-deepblue-300 lg:rounded-t-md lg:rounded-b-none rounded-md">
+              <div className="p-5">
+                <div className="text-black">
+                  <TargetOverviewForm
+                    onSearch={handleSearch}
+                    onNewDomain={handleAddRecord}
+                    onFileFormSubmit={handleFileFormSubmit}
+                  />
+                </div>
               </div>
-            </div>
-            <div className="flex flex-row border-deepblue-50">
-              {!isGuest && (
-                <div className={classNames("flex flex-row justify-start")}>
-                  <div className="my-2 ml-2">
+              <div className="flex flex-wrap py-2 mx-2 gap-2 flex-row border-deepblue-50">
+                {!isGuest && (
+                  <>
                     <Menu
                       disabled={selectedTargets.length === 0}
                       Button={
                         <Button
+                          additionalClasses="flex-1 whitespace-nowrap"
                           disabled={selectedTargets.length === 0}
                           RightIcon={<FontAwesomeIcon icon={faCaretDown} />}
                         >
@@ -471,13 +472,15 @@ const Targets: FunctionComponent<Props> = (props) => {
                         </>
                       }
                     />
-                  </div>
-                </div>
-              )}
-              <div className="ml-2 my-2">
+                  </>
+                )}
+
                 <Menu
                   Button={
-                    <Button RightIcon={<FontAwesomeIcon icon={faCaretDown} />}>
+                    <Button
+                      additionalClasses="flex-1 whitespace-nowrap"
+                      RightIcon={<FontAwesomeIcon icon={faCaretDown} />}
+                    >
                       Zeige: {translateDomainType(viewedDomainType)} (
                       {props.targets.total})
                     </Button>
@@ -499,12 +502,12 @@ const Targets: FunctionComponent<Props> = (props) => {
                     </>
                   }
                 />
-              </div>
-              {Object.keys(props.collections).length > 0 && (
-                <div className="my-2 ml-2">
+
+                {Object.keys(props.collections).length > 0 && (
                   <Menu
                     Button={
                       <Button
+                        additionalClasses="whitespace-nowrap flex-1"
                         RightIcon={<FontAwesomeIcon icon={faCaretDown} />}
                       >
                         Filter nach Gruppen
@@ -520,12 +523,11 @@ const Targets: FunctionComponent<Props> = (props) => {
                       />
                     }
                   ></Menu>
-                </div>
-              )}
+                )}
 
-              {Object.keys(router.query).length > 0 && (
-                <div className="my-2 ml-2">
+                {Object.keys(router.query).length > 0 && (
                   <Button
+                    additionalClasses="flex-1 whitespace-nowrap"
                     onClick={() => {
                       router.push({
                         pathname: router.pathname,
@@ -535,30 +537,30 @@ const Targets: FunctionComponent<Props> = (props) => {
                   >
                     Filter zurücksetzen
                   </Button>
+                )}
+              </div>
+
+              {collectionIds.length > 0 && (
+                <div className="flex flex-row py-2 border-deepblue-100 items-center">
+                  <div className="flex flex-wrap flex-row gap-2 px-5 items-center pl-4 justify-start">
+                    {collectionIds.map((c) => {
+                      const col = props.collections[c.toString()];
+                      return (
+                        <CollectionPill
+                          onRemove={() => {
+                            handleCollectionFilterToggle(c);
+                          }}
+                          key={col.id}
+                          {...col}
+                        />
+                      );
+                    })}
+                  </div>
                 </div>
               )}
             </div>
-
-            {collectionIds.length > 0 && (
-              <div className="flex flex-row py-2 border-deepblue-100 items-center">
-                <div className="flex flex-wrap flex-row gap-2 px-5 items-center pl-4 justify-start">
-                  {collectionIds.map((c) => {
-                    const col = props.collections[c.toString()];
-                    return (
-                      <CollectionPill
-                        onRemove={() => {
-                          handleCollectionFilterToggle(c);
-                        }}
-                        key={col.id}
-                        {...col}
-                      />
-                    );
-                  })}
-                </div>
-              </div>
-            )}
             <table className="w-full">
-              <thead className="sticky table-header z-20">
+              <thead className="sticky hidden lg:table-header-group table-header z-20">
                 <tr className="bg-deepblue-200 text-sm border-b-deepblue-50 text-left">
                   <th className="p-2 pr-0">
                     {!isGuest && (
@@ -641,7 +643,7 @@ const Targets: FunctionComponent<Props> = (props) => {
                   </th>
                   <th className="p-2">
                     <div>
-                      <span>Aktionen</span>
+                      <span className="whitespace-nowrap">Aktionen</span>
                     </div>
                   </th>
                 </tr>
@@ -670,8 +672,7 @@ const Targets: FunctionComponent<Props> = (props) => {
                       target={target}
                       selected={Boolean(selection[target.uri])}
                       classNames={classNames(
-                        i !== targets.length - 1 && "border-b",
-                        "border-b-deepblue-300 transition-all",
+                        "transition-all",
                         selection[target.uri]
                           ? "bg-deepblue-100"
                           : i % 2 !== 0

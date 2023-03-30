@@ -16,7 +16,7 @@ import {
   OrganizationalInspectionType,
   TLSInspectionType,
 } from "../inspection/scans";
-import { getCheckDescription } from "../messages";
+import { getCheckDescription, titleMapper } from "../messages";
 import { DetailedTarget } from "../types";
 import { classNames, toGermanDate } from "../utils/common";
 import { DTO } from "../utils/server";
@@ -72,32 +72,30 @@ const TargetTableItem: FunctionComponent<Props> = ({
       <tr
         onClick={() => onSelect(target)}
         className={classNames(
-          "cursor-pointer",
+          "cursor-pointer relative lg:static lg:rounded-t-none mt-3 grid-cols-8 lg:mt-0 grid lg:table-row flex-wrap rounded-t-md",
           target.errorCount !== null && target.errorCount >= 5
             ? "line-through"
             : "",
           clNames,
-          target.collections !== undefined &&
-            target.collections.length > 0 &&
-            "border-none" // the second row will be displayed, which does include the border
+          Object.keys(collections).length === 0 ? "rounded-b-md" : ""
         )}
       >
-        <td className="p-2 pr-0">
+        <td className="px-4 py-2 lg:p-2 col-span-1 bg-deepblue-50 lg:bg-transparent lg:rounded-tl-none pr-0 rounded-tl-md">
           {!isGuest && (
-            <div className="flex flex-row items-center">
+            <div className="flex flex-row  items-center">
               <Checkbox onChange={() => onSelect(target)} checked={selected} />
             </div>
           )}
         </td>
-        <td className="p-2">
+        <td className="px-4 py-2 lg:p-2 col-span-7 bg-deepblue-50 lg:bg-transparent lg:rounded-tr-none rounded-tr-md">
           <div className="flex flex-row">
             <span
               title={target.uri}
-              className="whitespace-nowrap overflow-hidden text-ellipsis max-w-xs block"
+              className="lg:whitespace-nowrap overflow-hidden text-ellipsis max-w-xs block"
             >
               {toUnicode(target.uri)}
             </span>
-            <div className="inline ml-2">
+            <div className="hidden lg:inline ml-2">
               <Tooltip tooltip={infoMessage(target)}>
                 <FontAwesomeIcon
                   className="opacity-50"
@@ -107,7 +105,10 @@ const TargetTableItem: FunctionComponent<Props> = ({
             </div>
           </div>
         </td>
-        <td className="p-2">
+        <td className="px-4 py-2 lg:p-2 col-span-8 flex lg:table-cell flex-row justify-between items-center">
+          <span className="lg:hidden text-sm opacity-75">
+            {titleMapper[OrganizationalInspectionType.ResponsibleDisclosure]}
+          </span>
           <Tooltip
             tooltip={getCheckDescription(
               target,
@@ -121,7 +122,10 @@ const TargetTableItem: FunctionComponent<Props> = ({
             />
           </Tooltip>
         </td>
-        <td className="p-2">
+        <td className="px-4 py-2 lg:p-2 col-span-8 flex lg:table-cell flex-row items-center justify-between">
+          <span className="lg:hidden text-sm opacity-75">
+            {titleMapper[TLSInspectionType.TLSv1_3]}
+          </span>
           <Tooltip
             tooltip={getCheckDescription(target, TLSInspectionType.TLSv1_3)}
           >
@@ -132,7 +136,10 @@ const TargetTableItem: FunctionComponent<Props> = ({
             />
           </Tooltip>
         </td>
-        <td className="p-2">
+        <td className="px-4 py-2 lg:p-2 col-span-8 flex lg:table-cell flex-row justify-between items-center">
+          <span className="lg:hidden text-sm opacity-75">
+            {titleMapper[TLSInspectionType.DeprecatedTLSDeactivated]}
+          </span>
           <Tooltip
             tooltip={getCheckDescription(
               target,
@@ -146,7 +153,10 @@ const TargetTableItem: FunctionComponent<Props> = ({
             />
           </Tooltip>
         </td>
-        <td className="p-2">
+        <td className="px-4 py-2 lg:p-2 col-span-8 flex lg:table-cell flex-row justify-between items-center">
+          <span className="lg:hidden text-sm opacity-75">
+            {titleMapper[HeaderInspectionType.HSTS]}
+          </span>
           <Tooltip
             tooltip={getCheckDescription(target, HeaderInspectionType.HSTS)}
           >
@@ -155,7 +165,10 @@ const TargetTableItem: FunctionComponent<Props> = ({
             />
           </Tooltip>
         </td>
-        <td className="p-2">
+        <td className="px-4 py-2 lg:p-2 col-span-8 flex lg:table-cell flex-row justify-between items-center">
+          <span className="lg:hidden text-sm opacity-75">
+            {titleMapper[DomainInspectionType.DNSSec]}
+          </span>
           <Tooltip
             tooltip={getCheckDescription(target, DomainInspectionType.DNSSec)}
           >
@@ -164,7 +177,10 @@ const TargetTableItem: FunctionComponent<Props> = ({
             />
           </Tooltip>
         </td>
-        <td className="p-2">
+        <td className="px-4 py-2 lg:p-2 col-span-8 flex lg:table-cell flex-row justify-between items-center">
+          <span className="lg:hidden text-sm opacity-75">
+            {titleMapper[NetworkInspectionType.RPKI]}
+          </span>
           <Tooltip
             tooltip={getCheckDescription(target, NetworkInspectionType.RPKI)}
           >
@@ -173,11 +189,14 @@ const TargetTableItem: FunctionComponent<Props> = ({
             />
           </Tooltip>
         </td>
-        <td className="text-right p-2" onClick={(e) => e.stopPropagation()}>
+        <td
+          className="text-right -top-1 -right-2 px-4 py-2 lg:p-2 absolute lg:static"
+          onClick={(e) => e.stopPropagation()}
+        >
           <div className="flex flex-row justify-end">
             <Menu
               Button={
-                <div className="p-2 h-8 w-8 flex flex-row items-center justify-center">
+                <div className="px-4 py-2 lg:p-2 h-8 w-8 flex flex-row items-center justify-center">
                   <FontAwesomeIcon icon={faEllipsisVertical} />
                 </div>
               }
@@ -237,12 +256,15 @@ const TargetTableItem: FunctionComponent<Props> = ({
       {target.collections !== undefined && target.collections.length > 0 && (
         <tr
           onClick={() => onSelect(target)}
-          className={classNames(clNames, "cursor-pointer")}
+          className={classNames(
+            clNames,
+            "cursor-pointer rounded-b-md lg:rounded-none pointer-events-none"
+          )}
         >
-          <td colSpan={9} className="p-0 pb-2">
+          <td colSpan={9} className="py-2 lg:pb-2">
             <div
               onClick={(e) => e.stopPropagation()}
-              className="flex flex-row gap-2 px-5 -mt-2 pl-10 justify-start"
+              className="flex flex-row gapx-4 py-2 lg:p-2 lg:px-5 px-2 -mt-2 lg:pl-10 justify-start"
             >
               {target.collections.map((c) => {
                 const col = collections[c.toString()];

@@ -72,12 +72,12 @@ const TargetOverviewForm: FunctionComponent<{
 
   return (
     <div>
-      <div className="flex gap-2 flex-row items-end">
+      <div className="flex gap-2 flex-col md:flex-row items-end">
         <form
-          className="flex flex-1 gap-2 flex-row items-end"
+          className="flex flex-1 gap-2 w-full flex-col md:flex-row items-end"
           onSubmit={handleSearch}
         >
-          <div className="flex-1">
+          <div className="flex-1 w-full">
             <FormInput
               onChange={setSearch}
               label="Suche nach Domains"
@@ -92,7 +92,7 @@ const TargetOverviewForm: FunctionComponent<{
           </div>
         </form>
         {!isGuest && (
-          <div>
+          <div className="md:block hidden">
             <OutlineButton
               type="submit"
               loading={false}
@@ -113,9 +113,9 @@ const TargetOverviewForm: FunctionComponent<{
           <>
             <form
               onSubmit={handleAddRecord}
-              className="flex flex-row gap-2 b pt-2 border-t-deepblue-200 items-end mt-5"
+              className="flex flex-col md:flex-row gap-2 b pt-2 border-t-deepblue-200 items-end mt-5"
             >
-              <div className="flex-1">
+              <div className="flex-1 w-full">
                 <FormInput
                   onChange={setNewDomain}
                   label={`Domain hinzufügen`}
@@ -141,7 +141,10 @@ const TargetOverviewForm: FunctionComponent<{
             )}
 
             <div>
-              <form onSubmit={handleFileFormSubmit} className="pt-5  flex">
+              <form
+                onSubmit={handleFileFormSubmit}
+                className="pt-5 hidden md:flex"
+              >
                 <div className="flex flex-col flex-1">
                   <div className="flex-col flex">
                     <span className="text-white mb-1">Listenimport</span>

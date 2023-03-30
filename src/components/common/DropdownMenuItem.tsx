@@ -14,7 +14,7 @@ const DropdownMenuItem: FunctionComponent<
   return (
     <Item
       className={classNames(
-        "px-5 pl-8 py-1 cursor-pointer mx-1 my-1 rounded-sm focus:bg-lightning-500 text-white focus:text-deepblue-500 relative focus:outline-none",
+        "lg:px-5 lg:pl-8 px-2 py-1 cursor-pointer mx-1 my-1 rounded-sm focus:bg-lightning-500 text-white focus:text-deepblue-500 relative focus:outline-none",
         props.active && "bg-deepblue-50"
       )}
       {...rest}

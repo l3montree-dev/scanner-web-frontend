@@ -72,7 +72,7 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
   return (
     <div
       className={classNames(
-        "h-14 sticky top-0 z-20 transition-all duration-500 text-black ",
+        "h-14 sticky top-0 z-20 transition-all shadow-lg duration-500 text-black ",
         "",
         !scrolled ? "bg-deepblue-600" : "bg-deepblue-300"
       )}
@@ -88,7 +88,7 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
             >
               {title}
             </h2>
-            <div className="block text-white md:hidden">
+            <div className="block text-white lg:hidden">
               <button className="p-3" onClick={openMenu}>
                 <FontAwesomeIcon icon={faBars} />
               </button>
@@ -107,7 +107,7 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
                       mobileMenuIsOpen ? "translate-x-0" : "translate-x-full"
                     )}
                   >
-                    <div className="px-3 py-1 flex flex-row justify-end">
+                    <div className="px-4 py-1 flex flex-row justify-end">
                       <button className="p-3" onClick={closeMenu}>
                         <FontAwesomeIcon icon={faTimes} />
                       </button>
@@ -117,7 +117,7 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
                 </div>
               </Portal.Root>
             </div>
-            <div className="ml-2 text-sm absolute z-200 hidden md:block right-2 text-white">
+            <div className="ml-2 text-sm absolute z-200 hidden lg:block right-2 text-white">
               <Menu
                 Button={
                   <div className="bg-deepblue-100 cursor-pointer rounded-full h-9 w-9 flex items-center justify-center text-sm mr-1">

@@ -8,11 +8,12 @@ interface Props {
   RightIcon?: React.ReactNode;
   LeftIcon?: React.ReactNode;
   primary?: boolean;
+  additionalClasses?: string;
 }
 
 const clNames = (primary: boolean = false) => {
   if (primary) {
-    return " bg-lightning-500 focus:bg-lightning-300 hover:bg-lightning-300 font-bold text-deepblue-900";
+    return "bg-lightning-500 focus:bg-lightning-300 hover:bg-lightning-300 font-bold text-deepblue-900";
   }
   return "text-white  bg-deepblue-100 focus:bg-deepblue-50 hover:bg-deepblue-50";
 };
@@ -26,15 +27,24 @@ const Button =
         HTMLButtonElement
       >
   >((props, ref) => {
-    const { loading, disabled, RightIcon, LeftIcon, ...rest } = props;
+    const {
+      loading,
+      disabled,
+      RightIcon,
+      LeftIcon,
+      primary,
+      additionalClasses,
+      ...rest
+    } = props;
 
     return (
       <button
         ref={ref}
         className={classNames(
-          "transition-all flex flex-row items-center gap-3 rounded-sm p-2 px-3 ",
-          clNames(props.primary),
-          props.disabled && "opacity-50 cursor-not-allowed"
+          "transition-all flex justify-between flex-row items-center gap-3 rounded-sm p-2 px-3 ",
+          clNames(primary),
+          props.disabled && "opacity-50 cursor-not-allowed",
+          additionalClasses
         )}
         {...rest}
         onClick={(e) => {
