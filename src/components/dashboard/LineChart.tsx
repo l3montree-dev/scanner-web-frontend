@@ -237,7 +237,6 @@ const LineChart: FunctionComponent<Props> = ({
         <VictoryChart
           containerComponent={
             <VictoryZoomContainer
-              disable={width < 768}
               onZoomDomainChange={(ev) => handleDomainChange(ev.x)}
               ref={chartRef}
             />
@@ -253,7 +252,6 @@ const LineChart: FunctionComponent<Props> = ({
           <defs>
             <linearGradient x2="0%" y2="100%" id="serviceGradient">
               <stop offset="0%" stopColor={"rgba(172,252,207,0.2)"} />
-
               <stop offset="100%" stopColor="rgba(0,0,0,0)" />
             </linearGradient>
           </defs>
