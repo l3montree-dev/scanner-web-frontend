@@ -89,7 +89,7 @@ const PieCharts: FunctionComponent<Props> = ({
             className="bg-deepblue-300 pb-5 rounded-md flex-col flex"
             key={key}
           >
-            <div className="flex-1 relative">
+            <div className="flex-1 z-0">
               <VictoryChart prependDefaultAxes={false} width={300} height={300}>
                 <VictoryAxis
                   style={{

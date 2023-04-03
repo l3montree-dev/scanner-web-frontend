@@ -218,7 +218,7 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
                   return (
                     <tr
                       className={classNames(
-                        "mt-3 lg:table-row flex flex-row flex-wrap justify-between rounded-md lg:mt-0 lg:rounded-none",
+                        "mt-3 lg:table-row relative p-1 lg:p-0 flex flex-col flex-wrap justify-between rounded-md lg:mt-0 lg:rounded-none",
                         "align-top group/collection-item",
                         i !== arr.length - 1 && "border-b",
                         "border-b-deepblue-300 transition-all",
@@ -274,7 +274,7 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
                         </div>
                       </td>
                       <td
-                        className="text-right p-2"
+                        className="text-right lg:static absolute top-0 right-0 p-2"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <div className="flex flex-row justify-end">

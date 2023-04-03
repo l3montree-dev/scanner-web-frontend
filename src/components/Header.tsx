@@ -6,6 +6,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as Portal from "@radix-ui/react-portal";
 import EventEmitter from "events";
+import { useRouter } from "next/router";
 import { FunctionComponent, useEffect, useState } from "react";
 import { useSession } from "../hooks/useSession";
 import { useSignOut } from "../hooks/useSignOut";
@@ -32,6 +33,8 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
 
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuIsOpen, setMobileMenuIsOpen] = useState(false);
+
+  const router = useRouter();
 
   const signOut = useSignOut();
 
@@ -68,6 +71,10 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
     // allow scrolling
     document.body.style.overflow = "auto";
   };
+
+  useEffect(() => {
+    document.body.style.overflow = "auto";
+  }, [router.pathname]);
 
   return (
     <div
@@ -140,6 +147,7 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
                     {!isGuestUser(session.data.user) &&
                       clientOnly(() => (
                         <a
+                          className="hover:no-underline"
                           href={`${keycloakIssuer}/protocol/openid-connect/auth?client_id=quicktest&redirect_uri=${encodeURIComponent(
                             `${window.location.protocol}//${window.location.host}`
                           )}&response_type=code&scope=openid&kc_action=UPDATE_PASSWORD`}
