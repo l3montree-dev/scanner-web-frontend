@@ -134,7 +134,7 @@ const Users: FunctionComponent<Props> = (props) => {
       <SideNavigation />
       <>
         <div className="flex-1">
-          <div className="flex flex-row w-full items-start justfy-between">
+          <div className="lg:flex lg:flex-row w-full flex-wrap  items-start justfy-between">
             <div className="flex-1">
               <div className="text-white mb-10 gap-2 flex flex-row items-center">
                 <PageTitle
@@ -163,8 +163,8 @@ const Users: FunctionComponent<Props> = (props) => {
             </Button>
           </div>
 
-          <table className="w-full text-left overflow-hidden text-white border-deepblue-50 rounded-md bg-deepblue-500">
-            <thead>
+          <table className="w-full text-left overflow-hidden text-white border-deepblue-50 rounded-md ">
+            <thead className="hidden lg:table-header-group">
               <tr className="bg-deepblue-200  text-sm rounded-t-md border-b-deepblue-50 text-left">
                 <th className="p-2 py-4">Nutzername</th>
                 <th className="p-2 py-4">Vorname</th>
@@ -177,6 +177,7 @@ const Users: FunctionComponent<Props> = (props) => {
               {users.map((user, i) => (
                 <tr
                   className={classNames(
+                    "flex flex-col lg:table-row relative mt-3 rounded-md",
                     i % 2 !== 0 ? "bg-deepblue-200" : "bg-deepblue-300",
                     i + 1 !== users.length ? "border-b" : "",
                     " border-b-deepblue-400 transition-all"
@@ -187,7 +188,7 @@ const Users: FunctionComponent<Props> = (props) => {
                   <td className="p-2">{user.firstName}</td>
                   <td className="p-2">{user.lastName}</td>
                   <td className="p-2">{user.role ? user.role : ""}</td>
-                  <td className="p-2 w-20 text-right">
+                  <td className="p-2 w-20 absolute lg:static top-0 right-0 text-right">
                     <div className="flex flex-row justify-end">
                       <Menu
                         Button={
