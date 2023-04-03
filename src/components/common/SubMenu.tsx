@@ -16,7 +16,7 @@ const SubMenu: FunctionComponent<Props> = ({ Button, Menu }) => {
   return (
     <DropdownMenu.Sub>
       <DropdownMenu.SubTrigger>
-        <div className="px-5 pl-8 py-1 mx-1 rounded-sm cursor-pointer hover:bg-lightning-500 flex flex-row items-center justify-between gap-2 focus:text-deepblue-500 hover:text-deepblue-500">
+        <div className="lg:px-5 px-2 py-1 mx-1 rounded-sm cursor-pointer hover:bg-lightning-500 flex flex-row items-center justify-between gap-2 focus:text-deepblue-500 hover:text-deepblue-500">
           {Button}
           <FontAwesomeIcon
             fontSize={15}

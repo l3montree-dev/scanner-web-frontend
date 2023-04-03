@@ -198,12 +198,12 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
               Gruppen direkt miteinander zu vergleichen.
             </p>
           </div>
-          <div className="w-full border-deepblue-100 bg-deepblue-300 rounded-md">
-            <div className="p-5">
+          <div className="w-full border-deepblue-100">
+            <div className="p-5 bg-deepblue-300 rounded-t-md rounded-b-md lg:rounded-b-none">
               <CollectionForm onCreate={handleCollectionCreate} />
             </div>
             <table className="w-full text-white ">
-              <thead>
+              <thead className="hidden lg:table-header-group">
                 <tr className="bg-deepblue-200 text-sm border-deepblue-50 text-left">
                   <th className="p-2">Titel</th>
                   <th className="p-2">Domains</th>
@@ -218,6 +218,7 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
                   return (
                     <tr
                       className={classNames(
+                        "mt-3 lg:table-row flex flex-row flex-wrap justify-between rounded-md lg:mt-0 lg:rounded-none",
                         "align-top group/collection-item",
                         i !== arr.length - 1 && "border-b",
                         "border-b-deepblue-300 transition-all",
@@ -238,7 +239,14 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
                           Zu Domains der Gruppe
                         </Link>
                       </td>
-                      <td>
+                      <td
+                        className={classNames(
+                          "order-2 md:w-auto w-full",
+                          collection.shareLinks.length > 0
+                            ? "px-2 "
+                            : "hidden md:table-cell"
+                        )}
+                      >
                         <div className="py-2 flex flex-col gap-2">
                           {collection.shareLinks.map((shareLink) => {
                             return (

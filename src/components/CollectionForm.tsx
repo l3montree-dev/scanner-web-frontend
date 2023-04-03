@@ -38,7 +38,7 @@ const CollectionForm: FunctionComponent<Props> = ({ onCreate }) => {
 
   return (
     <form
-      className="justify-between flex gap-2 flex-row items-end"
+      className="justify-between flex gap-2 flex-wrap flex-row items-end"
       onSubmit={handleSubmit}
     >
       <div className="flex items-end gap-2 flex-1 flex-row">
@@ -64,7 +64,7 @@ const CollectionForm: FunctionComponent<Props> = ({ onCreate }) => {
                   data-closemenu
                   onClick={() => setColor(color)}
                   key={color}
-                  className="w-full h-12 border-t border-t-white/30 rounded-sm cursor-pointer hover:opacity-50 transition-all "
+                  className="w-10 h-10 border-t border-t-white/30 rounded-sm cursor-pointer hover:opacity-50 transition-all "
                   style={{ backgroundColor: color }}
                 />
               ))}
@@ -72,7 +72,11 @@ const CollectionForm: FunctionComponent<Props> = ({ onCreate }) => {
           }
         />
       </div>
-      <Button loading={createRequest.isLoading} type="submit">
+      <Button
+        additionalClasses="w-full sm:w-auto"
+        loading={createRequest.isLoading}
+        type="submit"
+      >
         Erstellen
       </Button>
     </form>

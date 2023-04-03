@@ -91,7 +91,7 @@ const TargetTableItem: FunctionComponent<Props> = ({
           <div className="flex flex-row">
             <span
               title={target.uri}
-              className="lg:whitespace-nowrap overflow-hidden text-ellipsis max-w-xs block"
+              className="2xl:whitespace-nowrap overflow-hidden text-ellipsis max-w-xs block"
             >
               {toUnicode(target.uri)}
             </span>

@@ -559,6 +559,7 @@ const Targets: FunctionComponent<Props> = (props) => {
                 </div>
               )}
             </div>
+
             <table className="w-full">
               <thead className="sticky hidden lg:table-header-group table-header z-20">
                 <tr className="bg-deepblue-200 text-sm border-b-deepblue-50 text-left">
@@ -697,14 +698,14 @@ const Targets: FunctionComponent<Props> = (props) => {
               </tbody>
             </table>
           </div>
-          <div className="mt-5 flex flex-row justify-center">
-            <Pagination
-              onPageChange={(page) => {
-                patchQuery({ page: page.toString() });
-              }}
-              {...props.targets}
-            />
-          </div>
+        </div>
+        <div className="mt-5 flex flex-row justify-center">
+          <Pagination
+            onPageChange={(page) => {
+              patchQuery({ page: page.toString() });
+            }}
+            {...props.targets}
+          />
         </div>
       </div>
     </DashboardPage>

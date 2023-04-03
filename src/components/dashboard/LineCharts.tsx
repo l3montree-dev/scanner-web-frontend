@@ -37,7 +37,7 @@ const LineCharts: FunctionComponent<Props> = ({
   const { width } = useWindowSize();
 
   useEffect(() => {
-    if (width < 768) {
+    if (width < 768 && width > 0) {
       setZoomLevel(2);
     }
   }, [width]);
