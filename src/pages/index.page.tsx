@@ -28,6 +28,7 @@ import { clientHttpClient } from "../services/clientHttpClient";
 import { DetailedTarget, IScanSuccessResponse } from "../types";
 import { sanitizeFQDN, staticSecrets } from "../utils/common";
 import { DTO } from "../utils/server";
+import { monitoringService } from "../services/monitoringService";
 
 const isInViewport = (element: HTMLElement) => {
   const rect = element.getBoundingClientRect();
@@ -236,6 +237,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   // check if the user does provide a valid query parameter
   const code = query["s"];
   if (code && staticSecrets.includes(code as string)) {
+    monitoringService.trackSecret(code as string);
     return {
       props: {
         displayNotAvailable: false,

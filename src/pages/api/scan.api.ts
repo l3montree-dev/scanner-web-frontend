@@ -23,6 +23,7 @@ import {
   timeout,
 } from "../../utils/common";
 import { DTO, toDTO } from "../../utils/server";
+import { monitoringService } from "../../services/monitoringService";
 
 const logger = getLogger(__filename);
 
@@ -66,6 +67,11 @@ export const handler: DecoratedHandler<
       uri: req.query.site as string,
     });
   }
+
+  monitoringService.trackApiCall(
+    siteToScan,
+    (req.query.s as string) || session?.user.id
+  );
 
   if (req.query.refresh !== "true") {
     // check if we already have a report for this site

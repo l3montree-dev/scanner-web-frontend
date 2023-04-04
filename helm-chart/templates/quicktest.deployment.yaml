@@ -28,26 +28,7 @@ spec:
       {{- end }}
       securityContext:
         {{- toYaml .Values.quicktest.podSecurityContext | nindent 8 }}
-      volumes:
-        - name: request-montioring-config
-          configMap:
-            name: request-montioring-config
       containers:
-        - name: request-monitoring-sidecar
-          image: "registry.gitlab.com/l3montree/request-monitoring-sidecar:{{ .Values.requestMonitoringSidecar.image.tag | default ":latest" }}"
-          ports:
-            - name: rqm
-              containerPort: 4000
-          env:
-            - name: INFLUXDB_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: influxdb-token
-                  key: token
-          volumeMounts:
-            - mountPath: "/go/src/app/config"
-              name: request-montioring-config
-          imagePullPolicy: {{ .Values.requestMonitoringSidecar.image.pullPolicy }}
         - name: leader-election-sidecar
           image: k8s.gcr.io/leader-elector:0.5
           imagePullPolicy: IfNotPresent
@@ -117,6 +98,17 @@ spec:
                 secretKeyRef:
                   name: quicktest-keycloak-secret
                   key: keycloak-secret
+            - name: INFLUX_URL
+              value: http://{{.Release.Name}}-influxdb:8086
+            - name: INFLUX_ORG
+              value: ozgsec
+            - name: INFLUX_BUCKET
+              value: quicktest
+            - name: INFLUXDB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: influxdb-token
+                  key: token
             - name: KEYCLOAK_ID
               value: quicktest
             - name: POD_NAME

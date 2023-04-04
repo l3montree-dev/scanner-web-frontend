@@ -11,4 +11,10 @@ export const config = {
     .filter((d) => !isNaN(d))
     .filter((d) => d > 0),
   canonicalUrl: process.env.CANONICAL_URL,
+  influx: {
+    url: process.env.INFLUX_URL as string,
+    token: process.env.INFLUX_TOKEN as string,
+    org: process.env.INFLUX_ORG as string,
+    bucket: process.env.INFLUX_BUCKET as string,
+  },
 };
