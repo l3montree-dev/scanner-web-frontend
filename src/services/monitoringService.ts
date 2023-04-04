@@ -2,7 +2,6 @@ import { InfluxDB, Point } from "@influxdata/influxdb-client";
 import { config } from "../config";
 import { getLogger } from "./logger";
 
-const logger = getLogger(__filename);
 const { url, token, org, bucket } = config.influx;
 const writeApi = new InfluxDB({ url, token }).getWriteApi(org, bucket);
 

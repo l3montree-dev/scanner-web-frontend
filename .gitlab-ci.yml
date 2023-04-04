@@ -32,6 +32,10 @@ jest:
   stage: test
   variables:
     NEXTAUTH_SECRET: TipnQPvS70R6hdyRMr54wdjHLuxtpCmy
+    INFLUX_URL: https://influxdb:8086
+    INFLUX_TOKEN: 123456789
+    INFLUX_ORG: 123456789
+    INFLUX_BUCKET: 123456789
   script:
     - npm ci --include=dev
     - npm run build
