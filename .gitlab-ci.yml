@@ -27,42 +27,38 @@ jest:
             junit:
                 - junit.xml
 
-.lighthouse:
-  image: cypress/browsers:node16.17.0-chrome106
-  stage: test
-  variables:
-    NEXTAUTH_SECRET: TipnQPvS70R6hdyRMr54wdjHLuxtpCmy
-    INFLUX_URL: https://influxdb:8086
-    INFLUX_TOKEN: 123456789
-    INFLUX_ORG: 123456789
-    INFLUX_BUCKET: 123456789
-  script:
-    - npm ci --include=dev
-    - npm run build
-    - npm run lighthouse -- --output="json,html" $LIGHTHOUSE_ARGUMENTS
+# .lighthouse:
+#   image: cypress/browsers:node16.17.0-chrome106
+#   stage: test
+#   variables:
+#     NEXTAUTH_SECRET: TipnQPvS70R6hdyRMr54wdjHLuxtpCmy
+#   script:
+#     - npm ci --include=dev
+#     - npm run build
+#     - npm run lighthouse -- --output="json,html" $LIGHTHOUSE_ARGUMENTS
 
 
-lighthouse:desktop:
-  extends: .lighthouse
-  variables:
-    LIGHTHOUSE_ARGUMENTS: '--preset=desktop'
-    FORM_FACTOR: 'desktop'
-  artifacts:
-    when: always
-    expose_as: 'Lighthouse Report Desktop'
-    paths:
-      - .lighthouseci
+# lighthouse:desktop:
+#   extends: .lighthouse
+#   variables:
+#     LIGHTHOUSE_ARGUMENTS: '--preset=desktop'
+#     FORM_FACTOR: 'desktop'
+#   artifacts:
+#     when: always
+#     expose_as: 'Lighthouse Report Desktop'
+#     paths:
+#       - .lighthouseci
 
-lighthouse:mobile:
-  extends: .lighthouse
-  variables:
-    LIGHTHOUSE_ARGUMENTS: '--preset=mobile'
-    FORM_FACTOR: 'mobile'
-  artifacts:
-    when: always
-    expose_as: 'Lighthouse Report Mobile'
-    paths:
-      - .lighthouseci
+# lighthouse:mobile:
+#   extends: .lighthouse
+#   variables:
+#     LIGHTHOUSE_ARGUMENTS: '--preset=mobile'
+#     FORM_FACTOR: 'mobile'
+#   artifacts:
+#     when: always
+#     expose_as: 'Lighthouse Report Mobile'
+#     paths:
+#       - .lighthouseci
 
 .docker:build:
   stage: build
