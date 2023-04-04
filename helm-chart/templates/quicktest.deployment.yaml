@@ -104,7 +104,7 @@ spec:
               value: ozgsec
             - name: INFLUX_BUCKET
               value: quicktest
-            - name: INFLUXDB_TOKEN
+            - name: INFLUX_TOKEN
               valueFrom:
                 secretKeyRef:
                   name: influxdb-token
