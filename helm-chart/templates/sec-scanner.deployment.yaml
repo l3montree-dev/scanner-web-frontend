@@ -55,7 +55,7 @@ spec:
             - name: INFLUX_ORG
               value: ozgsec
             - name: INFLUX_BUCKET
-              value: ozgsec
+              value: sec-scanner
             - name: PREFETCH_COUNT
               value: {{ .Values.secScanner.prefetchCount | default "5" | quote }}
             - name: UV_THREADPOOL_SIZE

@@ -1,5 +1,5 @@
 {{- if .Values.quicktestIngress.enabled -}}
-{{- $svcPort := 4000 -}}
+{{- $svcPort := 3000 -}}
 {{- if and .Values.quicktestIngress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
   {{- if not (hasKey .Values.quicktestIngress.annotations "kubernetes.io/ingress.class") }}
   {{- $_ := set .Values.quicktestIngress.annotations "kubernetes.io/ingress.class" .Values.quicktestIngress.className}}
@@ -46,13 +46,13 @@ spec:
               service:
                 name: quicktest-service
                 port:
-                  number: 4000
+                  number: 3000
     {{- end }}
 {{- end }}
 
 ---
 {{- if .Values.authIngress.enabled -}}
-{{- $svcPort := 4000 -}}
+{{- $svcPort := 3000 -}}
 {{- if and .Values.authIngress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
   {{- if not (hasKey .Values.authIngress.annotations "kubernetes.io/ingress.class") }}
   {{- $_ := set .Values.authIngress.annotations "kubernetes.io/ingress.class" .Values.authIngress.className}}
