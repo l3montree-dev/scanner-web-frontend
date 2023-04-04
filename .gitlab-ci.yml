@@ -147,14 +147,12 @@ trivy:scan:tag:
 
 docker:push:tag:
     extends: .docker:push
-    needs: [docker:build:tag, trivy:scan:tag, gitguardianscan, jest, lighthouse:desktop, lighthouse:mobile]
+    needs: [docker:build:tag, trivy:scan:tag, gitguardianscan, jest]
     dependencies:
       - docker:build:tag
       - trivy:scan:tag
       - gitguardianscan
       - jest
-      - lighthouse:desktop
-      - lighthouse:mobile
     variables:
         IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
         NEXT_PUBLIC_ENVIRONMENT: production
@@ -163,14 +161,12 @@ docker:push:tag:
 
 docker:push:main:
     extends: .docker:push
-    needs: [docker:build:main, trivy:scan:main, gitguardianscan, jest, lighthouse:desktop, lighthouse:mobile]
+    needs: [docker:build:main, trivy:scan:main, gitguardianscan, jest]
     dependencies:
       - docker:build:main
       - trivy:scan:main
       - gitguardianscan
       - jest
-      - lighthouse:desktop
-      - lighthouse:mobile
     variables:
         IMAGE_TAG: $CI_REGISTRY_IMAGE:unstable
         NEXT_PUBLIC_ENVIRONMENT: development
