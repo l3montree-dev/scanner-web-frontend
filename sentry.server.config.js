@@ -13,11 +13,8 @@ if (!isDev && SENTRY_DSN) {
 
     Sentry.init({
         dsn: SENTRY_DSN,
-        // Adjust this value in production, or use tracesSampler for greater control
+        environment: process.env.NEXT_PUBLIC_ENVIRONMENT,
         tracesSampleRate: 1.0,
-        // ...
-        // Note: if you want to override the automatic release value, do not set a
-        // `release` value here - use the environment variable `SENTRY_RELEASE`, so
-        // that it will also get attached to your source maps
+        release: "quicktest@" + process.env.npm_package_version,
     });
 }

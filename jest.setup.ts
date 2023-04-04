@@ -8,6 +8,13 @@ jest.mock("./src/services/rabbitmqClient", () => ({
   },
 }));
 
+jest.mock("./src/services/monitoringService", () => ({
+  monitoringService: {
+    trackSecret: jest.fn(),
+    trackApiCall: jest.fn(),
+  },
+}));
+
 Object.defineProperty(global.self, "crypto", {
   value: {
     randomUUID: () => "00000000-0000-0000-0000-000000000000",
