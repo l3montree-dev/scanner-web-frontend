@@ -30,7 +30,7 @@ spec:
         - name: sec-scanner
           securityContext:
             {{- toYaml .Values.secScanner.securityContext | nindent 12 }}
-          image: "registry.gitlab.com/ozg-security/sec-scanner:{{ .Values.secScanner.image.tag | default "latest" }}"
+          image: "{{.Values.secScanner.image.name}}:{{ .Values.secScanner.image.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.secScanner.image.pullPolicy }}
           env:
             - name: INFLUX_URL
