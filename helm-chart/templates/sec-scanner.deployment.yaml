@@ -34,11 +34,7 @@ spec:
           imagePullPolicy: {{ .Values.secScanner.image.pullPolicy }}
           env:
             - name: INFLUX_URL
-              value: http://{{ .Release.Name }}-influxdb:8086  
-            - name: SERVER_TIMEOUT
-              value: {{ .Values.secScanner.serverTimeout | default "3000" | quote }}
-            - name: SERVER_RETRIES
-              value: {{ .Values.secScanner.serverRetries | default "0" | quote }}
+              value: http://{{ .Release.Name }}-influxdb:8086 
             - name: RABBITMQ_HOST
               value: {{.Release.Name}}-rabbitmq
             - name : RABBITMQ_PORT
@@ -56,10 +52,6 @@ spec:
               value: ozgsec
             - name: INFLUX_BUCKET
               value: sec-scanner
-            - name: PREFETCH_COUNT
-              value: {{ .Values.secScanner.prefetchCount | default "5" | quote }}
-            - name: UV_THREADPOOL_SIZE
-              value: {{ .Values.secScanner.uvThreadpoolSize | default "4" | quote }}
             - name: REDIS_HOST
               value: {{ .Release.Name }}-redis-master
             - name: INFLUX_TOKEN
