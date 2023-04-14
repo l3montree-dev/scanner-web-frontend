@@ -4,28 +4,16 @@ import Page from "../components/Page";
 
 import Image from "next/image";
 import ReleasePlaceHolder from "../components/ReleasePlaceholder";
-import { staticSecrets } from "../utils/common";
+
 import Link from "next/link";
 import { useRouter } from "next/router";
-const isInViewport = (element: HTMLElement) => {
-  const rect = element.getBoundingClientRect();
-  return (
-    rect.top >= 0 &&
-    rect.left >= 0 &&
-    rect.bottom <=
-      (window.innerHeight || document.documentElement.clientHeight) &&
-    rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-  );
-};
+import { staticSecrets } from "../utils/staticSecrets";
 
 interface Props {
   displayNotAvailable: boolean;
   code: string;
 }
-const OZGSecurityChallenge2023: NextPage<Props> = ({
-  displayNotAvailable,
-  code,
-}) => {
+const OZGSecurityChallenge2023: NextPage<Props> = ({ displayNotAvailable }) => {
   const router = useRouter();
   if (displayNotAvailable) {
     return (
@@ -282,7 +270,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const { query } = context;
   // check if the user does provide a valid query parameter
   const code = query["s"];
-  if (code && staticSecrets.includes(code as string)) {
+  if (code && staticSecrets[code as string]) {
     return {
       props: {
         displayNotAvailable: false,

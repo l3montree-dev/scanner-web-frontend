@@ -19,11 +19,11 @@ import {
   isScanError,
   neverThrow,
   sanitizeFQDN,
-  staticSecrets,
   timeout,
 } from "../../utils/common";
 import { DTO, toDTO } from "../../utils/server";
 import { monitoringService } from "../../services/monitoringService";
+import { staticSecrets } from "../../utils/staticSecrets";
 
 const logger = getLogger(__filename);
 
@@ -39,7 +39,7 @@ export const handler: DecoratedHandler<
 ) => {
   const start = Date.now();
 
-  if (!session && !staticSecrets.includes(req.query.s as string)) {
+  if (!session && !staticSecrets[req.query.s as string]) {
     logger.error(`invalid secret provided: ${req.query.s}`);
     return res.status(403).json({
       error: "Invalid secret provided",

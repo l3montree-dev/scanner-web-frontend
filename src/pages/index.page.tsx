@@ -26,9 +26,10 @@ import ScanPageHero from "../components/ScanPageHero";
 import { getErrorMessage } from "../messages/http";
 import { clientHttpClient } from "../services/clientHttpClient";
 import { DetailedTarget, IScanSuccessResponse } from "../types";
-import { sanitizeFQDN, staticSecrets } from "../utils/common";
+import { sanitizeFQDN } from "../utils/common";
 import { DTO } from "../utils/server";
 import { monitoringService } from "../services/monitoringService";
+import { staticSecrets } from "../utils/staticSecrets";
 
 const isInViewport = (element: HTMLElement) => {
   const rect = element.getBoundingClientRect();
@@ -236,7 +237,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const { query } = context;
   // check if the user does provide a valid query parameter
   const code = query["s"];
-  if (code && staticSecrets.includes(code as string)) {
+  if (code && staticSecrets[code as string]) {
     monitoringService.trackSecret(code as string);
     return {
       props: {
