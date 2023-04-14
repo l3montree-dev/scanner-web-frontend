@@ -60,6 +60,9 @@ import {
 } from "../../utils/common";
 import { DTO, ServerSideProps, toDTO } from "../../utils/server";
 import { optimisticUpdate } from "../../utils/view";
+import OutlineButton from "../../components/common/OutlineButton";
+import Modal from "../../components/Modal";
+import AddDomainForm from "../../components/AddDomainForm";
 
 interface Props {
   targets: PaginateResult<DTO<DetailedTarget> & { collections?: number[] }>; // should include array of collection ids the target is in
@@ -80,6 +83,7 @@ const translateDomainType = (type: TargetType) => {
 };
 
 const Targets: FunctionComponent<Props> = (props) => {
+  const [isOpen, setIsOpen] = useState(false);
   const [targets, setTargets] = useState<
     Array<DTO<DetailedTarget> & { collections?: number[] }>
   >(props.targets.data);
@@ -389,325 +393,346 @@ const Targets: FunctionComponent<Props> = (props) => {
       title="Domainübersicht"
     >
       <SideNavigation />
-      <div className="flex-1">
-        <div className="text-white mb-10 gap-2 flex flex-row items-center">
-          <PageTitle
-            className="text-4xl text-white mb-0 font-bold"
-            stringRep="Domainübersicht"
-          >
-            Domainübersicht
-          </PageTitle>
-          <Tooltip
-            tooltip={`         
+      <>
+        <div className="flex-1">
+          <div className="lg:flex lg:flex-row w-full flex-wrap  items-start justfy-between mb-12 lg:mb-0">
+            <div className="flex-1">
+              <div className="text-white mb-10 gap-2 flex flex-row items-center">
+                <PageTitle
+                  className="text-4xl text-white mb-0 font-bold"
+                  stringRep="Domainübersicht"
+                >
+                  Domainübersicht
+                </PageTitle>
+                <Tooltip
+                  tooltip={`         
                   Auf der Domainübersicht finden Sie alle Testergebnisse für Ihre
                   Domains auf einen Blick. Hier können Sie schnell und einfach
                   vergleichen, wie gut die verschiedenen Domains in Bezug auf die
                   verschiedenen ausgeführten Sicherheitstest abschneiden.`}
-          >
-            <div className="text-slate-400">
-              <FontAwesomeIcon icon={faQuestionCircle} />
-            </div>
-          </Tooltip>
-        </div>
-        <div className="text-white">
-          <div className="w-full">
-            <div className="bg-deepblue-300 lg:rounded-t-md lg:rounded-b-none rounded-md">
-              <div className="p-5">
-                <div className="text-black">
-                  <TargetOverviewForm
-                    onSearch={handleSearch}
-                    onNewDomain={handleAddRecord}
-                    onFileFormSubmit={handleFileFormSubmit}
-                  />
-                </div>
+                >
+                  <div className="text-slate-400">
+                    <FontAwesomeIcon icon={faQuestionCircle} />
+                  </div>
+                </Tooltip>
               </div>
-              <div className="flex flex-wrap py-2 mx-2 gap-2 flex-row border-deepblue-50">
-                {!isGuest && (
-                  <>
-                    <Menu
-                      disabled={selectedTargets.length === 0}
-                      Button={
-                        <Button
-                          additionalClasses="flex-1 whitespace-nowrap"
-                          disabled={selectedTargets.length === 0}
-                          RightIcon={<FontAwesomeIcon icon={faCaretDown} />}
-                        >
-                          Gruppenaktionen ({selectedTargets.length})
-                        </Button>
-                      }
-                      Menu={
-                        <>
-                          <DropdownMenuItem
-                            loading={scanAllLoading.isLoading}
-                            onClick={async () => {
-                              scanAllLoading.loading();
-                              try {
-                                await Promise.all(
-                                  selectedTargets.map((d) => scanTarget(d))
-                                );
-                              } finally {
-                                scanAllLoading.success();
-                              }
-                            }}
-                          >
-                            Erneut scannen
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={deleteSelection}>
-                            <div>Löschen</div>
-                          </DropdownMenuItem>
-                          <SubMenu
-                            Menu={
-                              <CollectionMenuContent
-                                collections={props.collections}
-                                onCollectionClick={(c) =>
-                                  handleAddToCollection(
-                                    selectedTargets.map((s) => ({ uri: s })),
-                                    c.id
-                                  )
-                                }
-                              />
-                            }
-                            Button={<>Zu Gruppe hinzufügen</>}
-                          />
-                        </>
-                      }
-                    />
-                  </>
-                )}
-
-                <Menu
-                  Button={
-                    <Button
-                      additionalClasses="flex-1 whitespace-nowrap"
-                      RightIcon={<FontAwesomeIcon icon={faCaretDown} />}
-                    >
-                      Zeige: {translateDomainType(viewedDomainType)} (
-                      {props.targets.total})
-                    </Button>
-                  }
-                  Menu={
+            </div>
+            {!isGuest && (
+              <Button
+                type="button"
+                loading={false}
+                onClick={() => setIsOpen(true)}
+              >
+                Domains hinzufügen
+              </Button>
+            )}
+          </div>
+          <div className="text-white">
+            <div className="w-full">
+              <div className="bg-deepblue-300 lg:rounded-t-md lg:rounded-b-none rounded-md">
+                <div className="p-5">
+                  <div className="text-black">
+                    <TargetOverviewForm onSearch={handleSearch} />
+                  </div>
+                </div>
+                <div className="flex flex-wrap py-2 mx-2 gap-2 flex-row border-deepblue-50">
+                  {!isGuest && (
                     <>
-                      {Object.values(TargetType).map((type) => (
-                        <DropdownMenuItem
-                          key={type}
-                          active={type === viewedDomainType}
-                          loading={scanAllLoading.isLoading}
-                          onClick={async () => {
-                            patchQuery({ domainType: type, page: "0" });
-                          }}
-                        >
-                          <div>{translateDomainType(type)}</div>
-                        </DropdownMenuItem>
-                      ))}
+                      <Menu
+                        disabled={selectedTargets.length === 0}
+                        Button={
+                          <Button
+                            additionalClasses="flex-1 whitespace-nowrap"
+                            disabled={selectedTargets.length === 0}
+                            RightIcon={<FontAwesomeIcon icon={faCaretDown} />}
+                          >
+                            Gruppenaktionen ({selectedTargets.length})
+                          </Button>
+                        }
+                        Menu={
+                          <>
+                            <DropdownMenuItem
+                              loading={scanAllLoading.isLoading}
+                              onClick={async () => {
+                                scanAllLoading.loading();
+                                try {
+                                  await Promise.all(
+                                    selectedTargets.map((d) => scanTarget(d))
+                                  );
+                                } finally {
+                                  scanAllLoading.success();
+                                }
+                              }}
+                            >
+                              Erneut scannen
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={deleteSelection}>
+                              <div>Löschen</div>
+                            </DropdownMenuItem>
+                            <SubMenu
+                              Menu={
+                                <CollectionMenuContent
+                                  collections={props.collections}
+                                  onCollectionClick={(c) =>
+                                    handleAddToCollection(
+                                      selectedTargets.map((s) => ({ uri: s })),
+                                      c.id
+                                    )
+                                  }
+                                />
+                              }
+                              Button={<>Zu Gruppe hinzufügen</>}
+                            />
+                          </>
+                        }
+                      />
                     </>
-                  }
-                />
+                  )}
 
-                {Object.keys(props.collections).length > 0 && (
                   <Menu
                     Button={
                       <Button
-                        additionalClasses="whitespace-nowrap flex-1"
+                        additionalClasses="flex-1 whitespace-nowrap"
                         RightIcon={<FontAwesomeIcon icon={faCaretDown} />}
                       >
-                        Filter nach Gruppen
+                        Zeige: {translateDomainType(viewedDomainType)} (
+                        {props.targets.total})
                       </Button>
                     }
                     Menu={
-                      <CollectionMenuContent
-                        collections={props.collections}
-                        selectedCollections={collectionIds}
-                        onCollectionClick={(c) =>
-                          handleCollectionFilterToggle(c.id)
-                        }
-                      />
+                      <>
+                        {Object.values(TargetType).map((type) => (
+                          <DropdownMenuItem
+                            key={type}
+                            active={type === viewedDomainType}
+                            loading={scanAllLoading.isLoading}
+                            onClick={async () => {
+                              patchQuery({ domainType: type, page: "0" });
+                            }}
+                          >
+                            <div>{translateDomainType(type)}</div>
+                          </DropdownMenuItem>
+                        ))}
+                      </>
                     }
-                  ></Menu>
-                )}
+                  />
 
-                {Object.keys(router.query).length > 0 && (
-                  <Button
-                    additionalClasses="flex-1 whitespace-nowrap"
-                    onClick={() => {
-                      router.push({
-                        pathname: router.pathname,
-                        query: {},
-                      });
-                    }}
-                  >
-                    Filter zurücksetzen
-                  </Button>
+                  {Object.keys(props.collections).length > 0 && (
+                    <Menu
+                      Button={
+                        <Button
+                          additionalClasses="whitespace-nowrap flex-1"
+                          RightIcon={<FontAwesomeIcon icon={faCaretDown} />}
+                        >
+                          Filter nach Gruppen
+                        </Button>
+                      }
+                      Menu={
+                        <CollectionMenuContent
+                          collections={props.collections}
+                          selectedCollections={collectionIds}
+                          onCollectionClick={(c) =>
+                            handleCollectionFilterToggle(c.id)
+                          }
+                        />
+                      }
+                    ></Menu>
+                  )}
+
+                  {Object.keys(router.query).length > 0 && (
+                    <Button
+                      additionalClasses="flex-1 whitespace-nowrap"
+                      onClick={() => {
+                        router.push({
+                          pathname: router.pathname,
+                          query: {},
+                        });
+                      }}
+                    >
+                      Filter zurücksetzen
+                    </Button>
+                  )}
+                </div>
+
+                {collectionIds.length > 0 && (
+                  <div className="flex flex-row py-2 border-deepblue-100 items-center">
+                    <div className="flex flex-wrap flex-row gap-2 px-5 items-center pl-4 justify-start">
+                      {collectionIds.map((c) => {
+                        const col = props.collections[c.toString()];
+                        return (
+                          <CollectionPill
+                            onRemove={() => {
+                              handleCollectionFilterToggle(c);
+                            }}
+                            key={col.id}
+                            {...col}
+                          />
+                        );
+                      })}
+                    </div>
+                  </div>
                 )}
               </div>
 
-              {collectionIds.length > 0 && (
-                <div className="flex flex-row py-2 border-deepblue-100 items-center">
-                  <div className="flex flex-wrap flex-row gap-2 px-5 items-center pl-4 justify-start">
-                    {collectionIds.map((c) => {
-                      const col = props.collections[c.toString()];
-                      return (
-                        <CollectionPill
-                          onRemove={() => {
-                            handleCollectionFilterToggle(c);
+              <table className="w-full">
+                <thead className="sticky hidden lg:table-header-group table-header z-20">
+                  <tr className="bg-deepblue-200 text-sm border-b-deepblue-50 text-left">
+                    <th className="p-2 pr-0">
+                      {!isGuest && (
+                        <Checkbox
+                          checked={
+                            selectedTargets.length > 0 &&
+                            selectedTargets.length === targets.length
+                          }
+                          onChange={() => {
+                            setSelection((prev) => {
+                              return targets.reduce((acc, domain) => {
+                                acc[domain.uri] = !Boolean(prev[domain.uri]);
+                                return acc;
+                              }, {} as Record<string, boolean>);
+                            });
                           }}
-                          key={col.id}
-                          {...col}
                         />
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <table className="w-full">
-              <thead className="sticky hidden lg:table-header-group table-header z-20">
-                <tr className="bg-deepblue-200 text-sm border-b-deepblue-50 text-left">
-                  <th className="p-2 pr-0">
-                    {!isGuest && (
-                      <Checkbox
-                        checked={
-                          selectedTargets.length > 0 &&
-                          selectedTargets.length === targets.length
-                        }
-                        onChange={() => {
-                          setSelection((prev) => {
-                            return targets.reduce((acc, domain) => {
-                              acc[domain.uri] = !Boolean(prev[domain.uri]);
-                              return acc;
-                            }, {} as Record<string, boolean>);
-                          });
-                        }}
-                      />
-                    )}
-                  </th>
-                  <th className="p-2">
-                    <div>
-                      <span>Domain</span>
-                      <SortButton
-                        sortKey="uri"
-                        onSort={handleSort}
-                        active={sort.key === "uri"}
-                        getIcon={() => getIcon("uri")}
-                      />
-                    </div>
-                  </th>
-                  <th className="p-2">
-                    <CheckStateMenu
-                      onChange={handleFilterCheckState}
-                      inspectionType={
-                        OrganizationalInspectionType.ResponsibleDisclosure
-                      }
-                    />
-                  </th>
-                  <th className="p-2">
-                    <div>
-                      <CheckStateMenu
-                        onChange={handleFilterCheckState}
-                        inspectionType={TLSInspectionType.TLSv1_3}
-                      />
-                    </div>
-                  </th>
-                  <th className="p-2">
-                    <div>
+                      )}
+                    </th>
+                    <th className="p-2">
+                      <div>
+                        <span>Domain</span>
+                        <SortButton
+                          sortKey="uri"
+                          onSort={handleSort}
+                          active={sort.key === "uri"}
+                          getIcon={() => getIcon("uri")}
+                        />
+                      </div>
+                    </th>
+                    <th className="p-2">
                       <CheckStateMenu
                         onChange={handleFilterCheckState}
                         inspectionType={
-                          TLSInspectionType.DeprecatedTLSDeactivated
+                          OrganizationalInspectionType.ResponsibleDisclosure
                         }
                       />
-                    </div>
-                  </th>
-                  <th className="p-2">
-                    <div>
-                      <CheckStateMenu
-                        onChange={handleFilterCheckState}
-                        inspectionType={HeaderInspectionType.HSTS}
-                      />
-                    </div>
-                  </th>
-                  <th className="p-2">
-                    <div>
-                      <CheckStateMenu
-                        onChange={handleFilterCheckState}
-                        inspectionType={DomainInspectionType.DNSSec}
-                      />
-                    </div>
-                  </th>
-                  <th className="p-2">
-                    <div>
-                      <CheckStateMenu
-                        onChange={handleFilterCheckState}
-                        inspectionType={NetworkInspectionType.RPKI}
-                      />
-                    </div>
-                  </th>
-                  <th className="p-2">
-                    <div>
-                      <span className="whitespace-nowrap">Aktionen</span>
-                    </div>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {targets.map((target, i) => {
-                  return (
-                    <TargetTableItem
-                      collections={props.collections}
-                      onToggleCollection={(collection) => {
-                        if (
-                          target.collections &&
-                          target.collections.includes(+collection.id)
-                        ) {
-                          return handleRemoveFromCollection(
-                            [target],
-                            collection.id
-                          );
-                        }
-                        return handleAddToCollection([target], collection.id);
-                      }}
-                      destroy={(uri) => deleteTarget(uri)}
-                      scanRequest={scanRequest}
-                      scan={(uri) => scanTarget(uri)}
-                      key={target.uri}
-                      target={target}
-                      selected={Boolean(selection[target.uri])}
-                      classNames={classNames(
-                        "transition-all",
-                        selection[target.uri]
-                          ? "bg-deepblue-100"
-                          : i % 2 !== 0
-                          ? "bg-deepblue-200"
-                          : "bg-deepblue-300"
-                      )}
-                      onSelect={(target) => {
-                        setSelection((prev) => {
-                          if (prev[target.uri] === undefined) {
-                            prev[target.uri] = true;
-                            return { ...prev };
+                    </th>
+                    <th className="p-2">
+                      <div>
+                        <CheckStateMenu
+                          onChange={handleFilterCheckState}
+                          inspectionType={TLSInspectionType.TLSv1_3}
+                        />
+                      </div>
+                    </th>
+                    <th className="p-2">
+                      <div>
+                        <CheckStateMenu
+                          onChange={handleFilterCheckState}
+                          inspectionType={
+                            TLSInspectionType.DeprecatedTLSDeactivated
                           }
-                          return {
-                            ...prev,
-                            [target.uri]: !prev[target.uri],
-                          };
-                        });
-                      }}
-                    />
-                  );
-                })}
-              </tbody>
-            </table>
+                        />
+                      </div>
+                    </th>
+                    <th className="p-2">
+                      <div>
+                        <CheckStateMenu
+                          onChange={handleFilterCheckState}
+                          inspectionType={HeaderInspectionType.HSTS}
+                        />
+                      </div>
+                    </th>
+                    <th className="p-2">
+                      <div>
+                        <CheckStateMenu
+                          onChange={handleFilterCheckState}
+                          inspectionType={DomainInspectionType.DNSSec}
+                        />
+                      </div>
+                    </th>
+                    <th className="p-2">
+                      <div>
+                        <CheckStateMenu
+                          onChange={handleFilterCheckState}
+                          inspectionType={NetworkInspectionType.RPKI}
+                        />
+                      </div>
+                    </th>
+                    <th className="p-2">
+                      <div>
+                        <span className="whitespace-nowrap">Aktionen</span>
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {targets.map((target, i) => {
+                    return (
+                      <TargetTableItem
+                        collections={props.collections}
+                        onToggleCollection={(collection) => {
+                          if (
+                            target.collections &&
+                            target.collections.includes(+collection.id)
+                          ) {
+                            return handleRemoveFromCollection(
+                              [target],
+                              collection.id
+                            );
+                          }
+                          return handleAddToCollection([target], collection.id);
+                        }}
+                        destroy={(uri) => deleteTarget(uri)}
+                        scanRequest={scanRequest}
+                        scan={(uri) => scanTarget(uri)}
+                        key={target.uri}
+                        target={target}
+                        selected={Boolean(selection[target.uri])}
+                        classNames={classNames(
+                          "transition-all",
+                          selection[target.uri]
+                            ? "bg-deepblue-100"
+                            : i % 2 !== 0
+                            ? "bg-deepblue-200"
+                            : "bg-deepblue-300"
+                        )}
+                        onSelect={(target) => {
+                          setSelection((prev) => {
+                            if (prev[target.uri] === undefined) {
+                              prev[target.uri] = true;
+                              return { ...prev };
+                            }
+                            return {
+                              ...prev,
+                              [target.uri]: !prev[target.uri],
+                            };
+                          });
+                        }}
+                      />
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div className="mt-5 flex flex-row justify-center">
+            <Pagination
+              onPageChange={(page) => {
+                patchQuery({ page: page.toString() });
+              }}
+              {...props.targets}
+            />
           </div>
         </div>
-        <div className="mt-5 flex flex-row justify-center">
-          <Pagination
-            onPageChange={(page) => {
-              patchQuery({ page: page.toString() });
-            }}
-            {...props.targets}
+        <Modal
+          title="Domains hinzufügen"
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
+        >
+          <AddDomainForm
+            onNewDomain={handleAddRecord}
+            onFileFormSubmit={handleFileFormSubmit}
           />
-        </div>
-      </div>
+        </Modal>
+      </>
     </DashboardPage>
   );
 };
