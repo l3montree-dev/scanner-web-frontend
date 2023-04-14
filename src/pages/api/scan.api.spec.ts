@@ -40,7 +40,7 @@ describe("Scan API Test Suite", () => {
     await handler(
       {
         query: {
-          s: staticSecrets[Object.keys(staticSecrets)[0]],
+          s: Object.keys(staticSecrets)[0],
         },
         headers: {},
       } as any,
@@ -54,7 +54,7 @@ describe("Scan API Test Suite", () => {
     await handler(
       {
         query: {
-          s: staticSecrets[Object.keys(staticSecrets)[0]],
+          s: Object.keys(staticSecrets)[0],
           site: "invalid",
         },
         headers: {},
@@ -85,7 +85,7 @@ describe("Scan API Test Suite", () => {
     await handler(
       {
         query: {
-          s: staticSecrets[Object.keys(staticSecrets)[0]],
+          s: Object.keys(staticSecrets)[0],
           site: "example.com",
         },
         headers: {},
@@ -134,7 +134,7 @@ describe("Scan API Test Suite", () => {
       await handler(
         {
           query: {
-            s: staticSecrets[Object.keys(staticSecrets)[0]],
+            s: Object.keys(staticSecrets)[0],
             site: "example.com",
           },
           headers: {},
@@ -209,7 +209,7 @@ describe("Scan API Test Suite", () => {
       await handler(
         {
           query: {
-            s: staticSecrets[Object.keys(staticSecrets)[0]],
+            s: Object.keys(staticSecrets)[0],
             site: "example.com",
           },
           headers: {},
@@ -249,7 +249,7 @@ describe("Scan API Test Suite", () => {
       await handler(
         {
           query: {
-            s: staticSecrets[Object.keys(staticSecrets)[0]],
+            s: Object.keys(staticSecrets)[0],
             site: "example.com",
           },
           headers: {},
@@ -300,7 +300,7 @@ describe("Scan API Test Suite", () => {
       await handler(
         {
           query: {
-            s: staticSecrets[Object.keys(staticSecrets)[0]],
+            s: Object.keys(staticSecrets)[0],
             site: "example.com",
           },
           headers: {},
@@ -348,7 +348,7 @@ describe("Scan API Test Suite", () => {
       await handler(
         {
           query: {
-            s: staticSecrets[Object.keys(staticSecrets)[0]],
+            s: Object.keys(staticSecrets)[0],
             site: "example.com",
           },
           headers: {},
