@@ -14,7 +14,7 @@ if (!isDev && SENTRY_DSN) {
     Sentry.init({
         dsn: SENTRY_DSN,
         environment: process.env.NEXT_PUBLIC_ENVIRONMENT,
-        tracesSampleRate: 1.0,
+        enableTracing: false,
         release: "quicktest@" + process.env.npm_package_version,
     });
 }

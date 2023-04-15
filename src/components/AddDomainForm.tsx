@@ -14,7 +14,6 @@ const AddDomainForm: FunctionComponent<{
   const [newDomain, setNewDomain] = useState("");
   const createRequest = useLoading();
 
-  const [addDomainIsOpen, setAddDomainIsOpen] = useState(false);
   const [f, setFiles] = useState<File[]>([]);
 
   const request = useLoading();
@@ -130,12 +129,6 @@ const AddDomainForm: FunctionComponent<{
                   Domains in der Liste hinzufügen
                 </Button>
               )}
-              <OutlineButton
-                type="submit"
-                onClick={() => setAddDomainIsOpen(false)}
-              >
-                Schliessen
-              </OutlineButton>
             </div>
           </div>
         </form>

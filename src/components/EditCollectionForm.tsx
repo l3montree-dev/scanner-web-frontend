@@ -61,11 +61,13 @@ const EditCollectionForm: FunctionComponent<Props> = (props) => {
           <Menu
             Button={
               <Button>
-                <div
-                  className="w-6 h-6 rounded-sm border-t border-t-white/20"
-                  style={{ backgroundColor: color }}
-                />
-                Farbe
+                <div className="flex flex-row gap-2 items-center">
+                  <div
+                    className="w-7 h-7 rounded-sm border-t border-t-white/20"
+                    style={{ backgroundColor: color }}
+                  />
+                  Farbe
+                </div>
               </Button>
             }
             Menu={
