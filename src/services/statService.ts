@@ -37,7 +37,9 @@ const generateStatsForCollection = async (
   promiseQueue: PQueue,
   prisma: PrismaClient
 ) => {
-  eachDay(config.statFirstDay, new Date()).forEach((date) => {
+  // tomorrow
+  const tomorrow = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
+  eachDay(config.statFirstDay, tomorrow).forEach((date) => {
     // check if the stat does exist.
     promiseQueue.add(async () => {
       let exists = false;
@@ -163,6 +165,7 @@ export const getReferenceChartData = async (
       },
       time: {
         gte: config.statFirstDay.getTime(),
+        lt: new Date().getTime(),
       },
     },
     include: {
@@ -235,6 +238,7 @@ export const getDashboardForUser = async (
 
         time: {
           gte: config.statFirstDay.getTime(),
+          lt: new Date().getTime(),
         },
       },
       orderBy: {
