@@ -1,6 +1,7 @@
 import {
   faEllipsisVertical,
   faPen,
+  faQuestionCircle,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -27,6 +28,7 @@ import { collectionService } from "../../services/collectionService";
 import { shareLinkService } from "../../services/shareLinkService";
 import { classNames } from "../../utils/common";
 import { DTO, ServerSideProps, toDTO } from "../../utils/server";
+import Tooltip from "../../components/Tooltip";
 
 interface Props {
   keycloakIssuer: string;
@@ -34,6 +36,7 @@ interface Props {
 }
 const LabelsPage: FunctionComponent<Props> = (props) => {
   const [collections, setCollections] = useState(props.collections);
+  const [isOpen, setIsOpen] = useState(false);
 
   const [selectedCollection, selectCollection] = useState<DTO<
     Collection & { shareLinks: Array<DTO<ShareLink>> }
@@ -62,6 +65,7 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
     setCollections((prev) => {
       return prev.concat(coll);
     });
+    setIsOpen(false);
   };
 
   const destroy = async (id: number) => {
@@ -187,156 +191,171 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
   };
 
   return (
-    <>
-      <DashboardPage title="Gruppen" keycloakIssuer={props.keycloakIssuer}>
-        <SideNavigation />
+    <DashboardPage title="Gruppen" keycloakIssuer={props.keycloakIssuer}>
+      <SideNavigation />
+      <>
         <div className="flex-1">
-          <PageTitle stringRep="Gruppen">Gruppen</PageTitle>
-          <div className="flex flex-row mb-10">
-            <p className="text-slate-300">
-              Gruppen dienen der Sortierung einzelner Domains. Es ist möglich
-              Gruppen direkt miteinander zu vergleichen.
-            </p>
-          </div>
-          <div className="w-full border-deepblue-100">
-            <div className="p-5 bg-deepblue-300 rounded-t-md rounded-b-md lg:rounded-b-none">
-              <CollectionForm onCreate={handleCollectionCreate} />
+          <div className="lg:flex lg:flex-row w-full flex-wrap  items-start justfy-between mb-12 lg:mb-0">
+            <div className="flex-1">
+              <div className="text-white mb-10 gap-2 flex flex-row items-center">
+                <PageTitle
+                  className="text-4xl text-white mb-0 font-bold"
+                  stringRep="Gruppen"
+                >
+                  Gruppen
+                </PageTitle>
+                <Tooltip
+                  tooltip={`Gruppen dienen der Sortierung einzelner Domains. Es ist möglich Gruppen direkt miteinander zu vergleichen.`}
+                >
+                  <div className="text-slate-400">
+                    <FontAwesomeIcon icon={faQuestionCircle} />
+                  </div>
+                </Tooltip>
+              </div>
             </div>
-            <table className="w-full text-white ">
-              <thead className="hidden lg:table-header-group">
-                <tr className="bg-deepblue-200 text-sm border-deepblue-50 text-left">
-                  <th className="p-2">Titel</th>
-                  <th className="p-2">Domains</th>
-                  <th className="p-2">
-                    Links für externen readonly-zugriff ohne Account
-                  </th>
-                  <th className="p-2 text-right">Aktionen</th>
-                </tr>
-              </thead>
-              <tbody>
-                {collections.map((collection, i, arr) => {
-                  return (
-                    <tr
-                      className={classNames(
-                        "mt-3 lg:table-row relative p-1 lg:p-0 flex flex-col flex-wrap justify-between rounded-md lg:mt-0 lg:rounded-none",
-                        "align-top group/collection-item",
-                        i !== arr.length - 1 && "border-b",
-                        "border-b-deepblue-300 transition-all",
-                        i % 2 !== 0 ? "bg-deepblue-200" : "bg-deepblue-300"
-                      )}
-                      key={collection.id}
-                    >
-                      <td className="p-2 text-sm">
-                        <div className="flex">
-                          <CollectionPill {...collection} />
-                        </div>
-                      </td>
-
-                      <td className="p-2 underline">
-                        <Link
-                          href={`/dashboard/targets?collectionIds=${collection.id}`}
-                        >
-                          Zu Domains der Gruppe
-                        </Link>
-                      </td>
-                      <td
-                        className={classNames(
-                          "order-2 md:w-auto w-full",
-                          collection.shareLinks.length > 0
-                            ? "px-2 "
-                            : "hidden md:table-cell"
-                        )}
-                      >
-                        <div className="py-2 flex flex-col gap-2">
-                          {collection.shareLinks.map((shareLink) => {
-                            return (
-                              <ShareLinkItem
-                                onDelete={() =>
-                                  handleShareLinkDelete(shareLink)
-                                }
-                                shareLink={shareLink}
-                                key={shareLink.secret}
-                              />
-                            );
-                          })}
-
-                          {collection.shareLinks.length === 0 && (
-                            <div className="flex opacity-0 group-hover/collection-item:opacity-100 transition-all text-sm flex-row justify-end">
-                              <Button
-                                onClick={() =>
-                                  handleGenerateLink(collection.id)
-                                }
-                              >
-                                Link erstellen
-                              </Button>
-                            </div>
-                          )}
-                        </div>
-                      </td>
-                      <td
-                        className="text-right lg:static absolute top-0 right-0 p-2"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <div className="flex flex-row justify-end">
-                          <Menu
-                            Button={
-                              <Button className="w-5 h-5">
-                                <FontAwesomeIcon icon={faEllipsisVertical} />
-                              </Button>
-                            }
-                            Menu={
-                              <>
-                                <DropdownMenuItem
-                                  Icon={
-                                    <FontAwesomeIcon
-                                      icon={faPen}
-                                      fontSize={15}
-                                    />
-                                  }
-                                  onClick={() => selectCollection(collection)}
-                                >
-                                  Bearbeiten / Teilen
-                                </DropdownMenuItem>
-
-                                <DropdownMenuItem
-                                  Icon={
-                                    <FontAwesomeIcon
-                                      icon={faTrash}
-                                      fontSize={15}
-                                    />
-                                  }
-                                  onClick={() => destroy(collection.id)}
-                                >
-                                  <div>Löschen</div>
-                                </DropdownMenuItem>
-                              </>
-                            }
-                          />
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+            <Button
+              type="button"
+              loading={false}
+              onClick={() => setIsOpen(true)}
+            >
+              Gruppe hinzufügen
+            </Button>
           </div>
+
+          <table className="w-full text-left overflow-hidden text-white border-deepblue-50 rounded-md">
+            <thead className="hidden lg:table-header-group">
+              <tr className="bg-deepblue-200  text-sm rounded-t-md border-b-deepblue-50 text-left">
+                <th className="p-2 py-4">Titel</th>
+                <th className="p-2 py-4">Domains</th>
+                <th className="p-2 py-4">
+                  Links für externen readonly-zugriff ohne Account
+                </th>
+                <th className="p-2 text-right py-4">Aktionen</th>
+              </tr>
+            </thead>
+            <tbody>
+              {collections.map((collection, i, arr) => {
+                return (
+                  <tr
+                    className={classNames(
+                      "mt-3 lg:table-row relative p-1 lg:p-0 flex flex-col flex-wrap justify-between rounded-md lg:mt-0 lg:rounded-none",
+                      " group/collection-item",
+                      i !== arr.length - 1 && "border-b",
+                      "border-b-deepblue-300 transition-all",
+                      i % 2 !== 0 ? "bg-deepblue-200" : "bg-deepblue-300"
+                    )}
+                    key={collection.id}
+                  >
+                    <td className="p-2 text-sm">
+                      <div className="flex">
+                        <CollectionPill {...collection} />
+                      </div>
+                    </td>
+
+                    <td className="p-2 underline">
+                      <Link
+                        href={`/dashboard/targets?collectionIds=${collection.id}`}
+                      >
+                        Zu Domains der Gruppe
+                      </Link>
+                    </td>
+                    <td
+                      className={classNames(
+                        "order-2 md:w-auto w-full",
+                        collection.shareLinks.length > 0
+                          ? "px-2 "
+                          : "hidden md:table-cell"
+                      )}
+                    >
+                      <div className="py-2 flex flex-col gap-2">
+                        {collection.shareLinks.map((shareLink) => {
+                          return (
+                            <ShareLinkItem
+                              onDelete={() => handleShareLinkDelete(shareLink)}
+                              shareLink={shareLink}
+                              key={shareLink.secret}
+                            />
+                          );
+                        })}
+
+                        {collection.shareLinks.length === 0 && (
+                          <div className="flex opacity-0 group-hover/collection-item:opacity-100 transition-all text-sm flex-row justify-end">
+                            <Button
+                              onClick={() => handleGenerateLink(collection.id)}
+                            >
+                              Link erstellen
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                    <td
+                      className="text-right lg:static absolute top-0 right-0 p-2"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div className="flex flex-row justify-end">
+                        <Menu
+                          Button={
+                            <Button className="w-5 h-5">
+                              <FontAwesomeIcon icon={faEllipsisVertical} />
+                            </Button>
+                          }
+                          Menu={
+                            <>
+                              <DropdownMenuItem
+                                Icon={
+                                  <FontAwesomeIcon icon={faPen} fontSize={15} />
+                                }
+                                onClick={() => selectCollection(collection)}
+                              >
+                                Bearbeiten / Teilen
+                              </DropdownMenuItem>
+
+                              <DropdownMenuItem
+                                Icon={
+                                  <FontAwesomeIcon
+                                    icon={faTrash}
+                                    fontSize={15}
+                                  />
+                                }
+                                onClick={() => destroy(collection.id)}
+                              >
+                                <div>Löschen</div>
+                              </DropdownMenuItem>
+                            </>
+                          }
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
-      </DashboardPage>
-      <Modal
-        title="Gruppe bearbeiten"
-        onClose={() => selectCollection(null)}
-        isOpen={Boolean(selectedCollection)}
-      >
-        {selectedCollection && (
-          <EditCollectionForm
-            onShareLinkDelete={handleShareLinkDelete}
-            onGenerateLink={handleGenerateLink}
-            collection={selectedCollection}
-            onSubmit={handleUpdateCollection}
-          />
-        )}
-      </Modal>
-    </>
+        <Modal
+          title="Gruppe hinzufügen"
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
+        >
+          <CollectionForm onCreate={handleCollectionCreate} />
+        </Modal>
+        <Modal
+          title="Gruppe bearbeiten"
+          onClose={() => selectCollection(null)}
+          isOpen={Boolean(selectedCollection)}
+        >
+          {selectedCollection && (
+            <EditCollectionForm
+              onShareLinkDelete={handleShareLinkDelete}
+              onGenerateLink={handleGenerateLink}
+              collection={selectedCollection}
+              onSubmit={handleUpdateCollection}
+            />
+          )}
+        </Modal>
+      </>
+    </DashboardPage>
   );
 };
 

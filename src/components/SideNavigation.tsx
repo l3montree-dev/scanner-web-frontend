@@ -48,11 +48,6 @@ const getLinks = (isGuest: boolean, isAdmin: boolean) => {
       name: "Nuterverwaltung",
       path: "/administration/users",
     },
-    {
-      icon: faNetworkWired,
-      name: "Netzwerkverwaltung",
-      path: "/administration/networks",
-    },
   ]);
 };
 
