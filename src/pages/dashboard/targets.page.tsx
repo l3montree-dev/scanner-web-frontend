@@ -60,7 +60,6 @@ import {
 } from "../../utils/common";
 import { DTO, ServerSideProps, toDTO } from "../../utils/server";
 import { optimisticUpdate } from "../../utils/view";
-import OutlineButton from "../../components/common/OutlineButton";
 import Modal from "../../components/Modal";
 import AddDomainForm from "../../components/AddDomainForm";
 
@@ -711,6 +710,31 @@ const Targets: FunctionComponent<Props> = (props) => {
                   })}
                 </tbody>
               </table>
+
+              {targets.length === 0 && (
+                <div className="px-6 py-24">
+                  <div className="mx-auto max-w-2xl text-center">
+                    <h2 className="text-3xl font-bold">
+                      Keine Domains gefunden
+                    </h2>
+                    <p className="mx-auto mt-6 max-w-xl text-sm text-white/75">
+                      Ihre Such- bzw. Filtereinstellungen haben keine Treffer
+                      erzielt oder Sie haben noch keine Domains hinterlegt.
+                    </p>
+                    <div className="mt-10 flex items-center justify-center gap-x-6">
+                      {!isGuest && (
+                        <Button
+                          type="button"
+                          loading={false}
+                          onClick={() => setIsOpen(true)}
+                        >
+                          Domains hinzufügen
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
           <div className="mt-5 flex flex-row justify-center">

@@ -41,6 +41,7 @@ import {
 } from "../../utils/common";
 import { DTO, ServerSideProps, toDTO } from "../../utils/server";
 import { displayInspections, tailwindColors } from "../../utils/view";
+import EmptyDashboardNotice from "../../components/EmptyDashboardNotice";
 
 interface Props {
   dashboard: IDashboard;
@@ -292,6 +293,9 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                 </div>
               </div>
             )}
+            <div className="max-w-screen-xl py-12 px-3 mx-auto flex-1">
+              <EmptyDashboardNotice />
+            </div>
             <div className="max-w-screen-xl pb-10 px-3 mx-auto flex-1 text-white">
               <PieCharts
                 displayCollections={_displayCollections}
