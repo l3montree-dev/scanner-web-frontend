@@ -13,11 +13,11 @@ import {
   useState,
 } from "react";
 import Checkbox from "../../components/Checkbox";
-import Menu from "../../components/common/Menu";
 import DashboardPage from "../../components/DashboardPage";
 import Pagination from "../../components/Pagination";
 import SideNavigation from "../../components/SideNavigation";
 import TargetOverviewForm from "../../components/TargetOverviewForm";
+import Menu from "../../components/common/Menu";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
 import { withCurrentUserOrGuestServerSideProps } from "../../decorators/withCurrentUser";
 import { withDB } from "../../decorators/withDB";
@@ -34,16 +34,18 @@ import { clientHttpClient } from "../../services/clientHttpClient";
 import { targetService } from "../../services/targetService";
 
 import { Collection, Target } from "@prisma/client";
+import AddDomainForm from "../../components/AddDomainForm";
 import CheckStateMenu from "../../components/CheckStateMenu";
 import CollectionMenuContent from "../../components/CollectionMenuContent";
 import CollectionPill from "../../components/CollectionPill";
-import Button from "../../components/common/Button";
-import DropdownMenuItem from "../../components/common/DropdownMenuItem";
-import SubMenu from "../../components/common/SubMenu";
+import Modal from "../../components/Modal";
 import PageTitle from "../../components/PageTitle";
 import { SortButton } from "../../components/SortButton";
 import TargetTableItem from "../../components/TargetTableItem";
 import Tooltip from "../../components/Tooltip";
+import Button from "../../components/common/Button";
+import DropdownMenuItem from "../../components/common/DropdownMenuItem";
+import SubMenu from "../../components/common/SubMenu";
 import { useIsGuest } from "../../hooks/useIsGuest";
 import { collectionService } from "../../services/collectionService";
 import {
@@ -60,9 +62,6 @@ import {
 } from "../../utils/common";
 import { DTO, ServerSideProps, toDTO } from "../../utils/server";
 import { optimisticUpdate } from "../../utils/view";
-import OutlineButton from "../../components/common/OutlineButton";
-import Modal from "../../components/Modal";
-import AddDomainForm from "../../components/AddDomainForm";
 
 interface Props {
   targets: PaginateResult<DTO<DetailedTarget> & { collections?: number[] }>; // should include array of collection ids the target is in

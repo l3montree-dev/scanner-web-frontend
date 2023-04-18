@@ -89,10 +89,7 @@ const TargetTableItem: FunctionComponent<Props> = ({
         </td>
         <td className="px-4 py-2 lg:p-2 col-span-7 bg-deepblue-50 lg:bg-transparent lg:rounded-tr-none rounded-tr-md">
           <div className="flex flex-row">
-            <span
-              title={target.uri}
-              className="2xl:whitespace-nowrap overflow-hidden text-ellipsis max-w-xs block"
-            >
+            <span title={target.uri} className="text-ellipsis max-w-xs block">
               {toUnicode(target.uri)}
             </span>
             <div className="hidden lg:inline ml-2">
