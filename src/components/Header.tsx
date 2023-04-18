@@ -134,12 +134,7 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
                 Menu={
                   <>
                     <DropdownMenuItem
-                      Icon={
-                        <FontAwesomeIcon
-                          className="mr-2"
-                          icon={faArrowRightFromBracket}
-                        />
-                      }
+                      Icon={<FontAwesomeIcon icon={faArrowRightFromBracket} />}
                       onClick={signOut}
                     >
                       Ausloggen

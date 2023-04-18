@@ -53,7 +53,7 @@ spec:
             - name: INFLUX_BUCKET
               value: sec-scanner
             - name: REDIS_HOST
-              value: {{ .Release.Name }}-redis-master
+              value: {{ .Release.Name }}-redis-master:6379
             - name: INFLUX_TOKEN
               valueFrom:
                 secretKeyRef:
@@ -61,6 +61,8 @@ spec:
                   key: token
             - name: LOG_LEVEL
               value: {{ .Values.secScanner.logLevel | default "info" | quote }}
+            - name: GOMEMLIMIT
+              value: {{ .Values.secScanner.gomemlimit | default "750MiB" | quote }}
           resources:
             {{- toYaml .Values.secScanner.resources | nindent 12 }}
       {{- with .Values.secScanner.nodeSelector }}

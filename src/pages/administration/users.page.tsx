@@ -136,7 +136,7 @@ const Users: FunctionComponent<Props> = (props) => {
         <div className="flex-1">
           <div className="lg:flex lg:flex-row w-full flex-wrap  items-start justfy-between">
             <div className="flex-1">
-              <div className="text-white mb-10 gap-2 flex flex-row items-center">
+              <div className="text-white mb-10 gap-2 px-4 flex flex-row items-center">
                 <PageTitle
                   className="text-4xl text-white mb-0 font-bold"
                   stringRep="Nutzerverwaltung"
@@ -166,10 +166,10 @@ const Users: FunctionComponent<Props> = (props) => {
           <table className="w-full text-left overflow-hidden text-white border-deepblue-50 rounded-md ">
             <thead className="hidden lg:table-header-group">
               <tr className="bg-deepblue-200  text-sm rounded-t-md border-b-deepblue-50 text-left">
-                <th className="p-2 py-4">Nutzername</th>
-                <th className="p-2 py-4">Vorname</th>
-                <th className="p-2 py-4">Nachname</th>
-                <th className="p-2 py-4">Rolle</th>
+                <th className="p-2 px-4 py-4">Nutzername</th>
+                <th className="p-2 px-4 py-4">Vorname</th>
+                <th className="p-2 px-4 py-4">Nachname</th>
+                <th className="p-2 px-4 py-4">Rolle</th>
                 <th className="p-2 py-4">Aktionen</th>
               </tr>
             </thead>
@@ -184,15 +184,15 @@ const Users: FunctionComponent<Props> = (props) => {
                   )}
                   key={user.id}
                 >
-                  <td className="p-2">{user.username}</td>
-                  <td className="p-2">{user.firstName}</td>
-                  <td className="p-2">{user.lastName}</td>
-                  <td className="p-2">{user.role ? user.role : ""}</td>
+                  <td className="p-2 px-4">{user.username}</td>
+                  <td className="p-2 px-4">{user.firstName}</td>
+                  <td className="p-2 px-4">{user.lastName}</td>
+                  <td className="p-2 px-4">{user.role ? user.role : ""}</td>
                   <td className="p-2 w-20 absolute lg:static top-0 right-0 text-right">
                     <div className="flex flex-row justify-end">
                       <Menu
                         Button={
-                          <Button className="p-2 h-8 w-8 flex flex-row items-center justify-center">
+                          <Button className="p-2 px-4 h-8 w-8 flex flex-row items-center justify-center">
                             <FontAwesomeIcon icon={faEllipsisVertical} />
                           </Button>
                         }

@@ -1,5 +1,6 @@
 import {
   faCaretDown,
+  faCircleInfo,
   faQuestionCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -13,16 +14,17 @@ import {
 } from "react";
 import CollectionMenuContent from "../../components/CollectionMenuContent";
 import CollectionPill from "../../components/CollectionPill";
-import Button from "../../components/common/Button";
-import Menu from "../../components/common/Menu";
-import LineCharts from "../../components/dashboard/LineCharts";
-import PieCharts from "../../components/dashboard/PieCharts";
+import EmptyDashboardNotice from "../../components/EmptyDashboardNotice";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
 import Meta from "../../components/Meta";
 import PageTitle from "../../components/PageTitle";
 import SideNavigation from "../../components/SideNavigation";
 import Tooltip from "../../components/Tooltip";
+import Button from "../../components/common/Button";
+import Menu from "../../components/common/Menu";
+import LineCharts from "../../components/dashboard/LineCharts";
+import PieCharts from "../../components/dashboard/PieCharts";
 import { config } from "../../config";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
 import { withCurrentUserOrGuestServerSideProps } from "../../decorators/withCurrentUser";
@@ -33,15 +35,15 @@ import { collectionService } from "../../services/collectionService";
 import { statService } from "../../services/statService";
 import { ChartData, IDashboard } from "../../types";
 import {
+  Normalized,
+  classNames,
   collectionId,
   dateFormat,
-  Normalized,
   normalizeToMap,
   replaceNullWithZero,
 } from "../../utils/common";
 import { DTO, ServerSideProps, toDTO } from "../../utils/server";
 import { displayInspections, tailwindColors } from "../../utils/view";
-import EmptyDashboardNotice from "../../components/EmptyDashboardNotice";
 
 interface Props {
   dashboard: IDashboard;
@@ -101,6 +103,8 @@ const Dashboard: FunctionComponent<Props> = (props) => {
       Object.keys(currentStat.data).map((key) => [key, 0])
     ),
   });
+
+  const noDomains = dashboard.totals.uniqueTargets === 0;
 
   useEffect(() => {
     setData(currentStat);
@@ -222,6 +226,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                 </Tooltip>
               </div>
             </div>
+
             {!isGuest && (
               <div className="text-white sticky z-20 shadow-lg beneath-header py-2 bg-deepblue-300 flex flex-row mb-4 items-center">
                 <div className="max-w-screen-xl gap-2 flex flex-col px-3 flex-1 mx-auto">
@@ -293,28 +298,46 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                 </div>
               </div>
             )}
-            <div className="max-w-screen-xl py-12 px-3 mx-auto flex-1">
-              <EmptyDashboardNotice />
-            </div>
-            <div className="max-w-screen-xl pb-10 px-3 mx-auto flex-1 text-white">
-              <PieCharts
-                displayCollections={_displayCollections}
-                historicalData={dashboard.historicalData}
-                defaultCollectionId={props.defaultCollectionId}
-                currentStat={data as ChartData}
-              />
 
-              <LineCharts
-                displayCollections={_displayCollections}
-                displayInspections={displayInspections}
-                dataPerInspection={dataPerInspection}
-                defaultCollectionId={props.defaultCollectionId}
-              />
+            <div
+              className={classNames(
+                noDomains && "relative pointer-events-none"
+              )}
+            >
+              <div
+                className={classNames(
+                  "max-w-screen-xl pb-10 px-3 mx-auto flex-1 text-white",
+                  noDomains && "blur-sm"
+                )}
+              >
+                <PieCharts
+                  displayCollections={_displayCollections}
+                  historicalData={dashboard.historicalData}
+                  defaultCollectionId={props.defaultCollectionId}
+                  currentStat={data as ChartData}
+                />
+
+                <LineCharts
+                  displayCollections={_displayCollections}
+                  displayInspections={displayInspections}
+                  dataPerInspection={dataPerInspection}
+                  defaultCollectionId={props.defaultCollectionId}
+                />
+              </div>
+              {noDomains && (
+                <div className="absolute mt-10 top-0 lg:left-1/2 right-0 lg:-translate-x-1/2 mb-10 px-3 flex-1">
+                  <div className="border-blue-500/20 p-5 flex flex-row rounded-md bg-slate-300 text-deepblue-500">
+                    <div className="pr-3">
+                      <FontAwesomeIcon size={"lg"} icon={faCircleInfo} />
+                    </div>
+                    <EmptyDashboardNotice />
+                  </div>
+                </div>
+              )}
             </div>
           </main>
         </div>
       </div>
-
       <Footer />
     </>
   );
