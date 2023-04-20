@@ -127,6 +127,8 @@ spec:
               value: "60000"
             - name: NEXT_PUBLIC_REFERENCE_COLLECTIONS
               value: {{.Values.quicktest.referenceCollections | default "" | quote}}
+            - name: LOG_LEVEL
+              value: {{.Values.quicktest.logLevel | default "info" | quote}}
           livenessProbe:
             initialDelaySeconds: 10
             periodSeconds: 10
