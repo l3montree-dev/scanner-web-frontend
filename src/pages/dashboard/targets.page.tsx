@@ -559,13 +559,7 @@ const Targets: FunctionComponent<Props> = (props) => {
                       {collectionIds.map((c) => {
                         const col = props.collections[c.toString()];
                         return (
-                          <CollectionPill
-                            onRemove={() => {
-                              handleCollectionFilterToggle(c);
-                            }}
-                            key={col.id}
-                            {...col}
-                          />
+                          <CollectionPill selected key={col.id} {...col} />
                         );
                       })}
                     </div>
