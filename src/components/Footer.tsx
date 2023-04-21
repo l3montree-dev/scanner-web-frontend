@@ -31,7 +31,6 @@ const Footer: FunctionComponent<Props> = ({ hideLogin }) => {
     <>
       <footer className="bg-white text-black relative md:text-md text-sm px-2 md:px-10 pb-10">
         <div className="sm:flex flex-wrap justify-between flex-row p-0 pt-5 sm:pb-5">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <div className="flex px-1 flex-row">
             <Image
               width={370}
@@ -41,9 +40,8 @@ const Footer: FunctionComponent<Props> = ({ hideLogin }) => {
               alt="Logo BMI & BSI"
             />
           </div>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            width={120}
+          <Image
+            width={140}
             height={61}
             className="sm:ml-5 mb-10 sm:mb-0 ml-0 mt-5 sm:mt-0"
             src={"/assets/ozg-logo-colored.svg"}

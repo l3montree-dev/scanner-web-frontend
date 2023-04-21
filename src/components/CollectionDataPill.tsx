@@ -1,17 +1,7 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Collection } from "@prisma/client";
-import React, { FunctionComponent, PropsWithChildren } from "react";
-import tinycolor from "tinycolor2";
+import { FunctionComponent, PropsWithChildren } from "react";
 import { classNames } from "../utils/common";
-import { DTO } from "../utils/server";
+import { textCLNames } from "../utils/view";
 
-const clNames = (color: string) => {
-  // check if the color is dark
-  if (tinycolor(color).isDark()) {
-    return "text-white";
-  }
-  return "text-deepblue-500";
-};
 interface Props {
   color: string;
   title: string;
@@ -26,7 +16,7 @@ const CollectionDataPill: FunctionComponent<PropsWithChildren<Props>> = (
       }}
       className={classNames(
         "flex items-center rounded-full px-2 py-1",
-        clNames(props.color)
+        textCLNames(props.color)
       )}
     >
       {props.children}

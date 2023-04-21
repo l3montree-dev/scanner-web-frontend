@@ -1,7 +1,18 @@
-import { PrismaClient, ScanReport } from "@prisma/client";
+import { Prisma, PrismaClient, ScanReport, User } from "@prisma/client";
 import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
-import { DetailedTarget, IScanSuccessResponse } from "../types";
-import { getHostnameFromUri, limitStringValues } from "../utils/common";
+import {
+  DetailedTarget,
+  Diffs,
+  Guest,
+  IScanSuccessResponse,
+  PaginateRequest,
+  UriDiff,
+} from "../types";
+import {
+  collectionId,
+  getHostnameFromUri,
+  limitStringValues,
+} from "../utils/common";
 import { DTO, toDTO } from "../utils/server";
 
 const reportDidChange = (
@@ -13,6 +24,71 @@ const reportDidChange = (
   });
 
   return res;
+};
+
+export const diffReport = (
+  lastReport: ScanReport,
+  secondLastReport: ScanReport
+): Record<InspectionType, { was: boolean | null; now: boolean | null }> => {
+  const res = Object.values(InspectionTypeEnum).reduce((acc, key) => {
+    if (lastReport[key] === secondLastReport[key]) {
+      return acc;
+    }
+    acc[key] = {
+      was: lastReport[key],
+      now: secondLastReport[key],
+    };
+    return acc;
+  }, {} as Record<InspectionType, { was: boolean | null; now: boolean | null }>);
+  return res;
+};
+
+// get the changed inspections of a user between start and end.
+export const getChangedInspectionsOfUser = async (
+  user: User | Guest,
+  options: PaginateRequest & { start: Date; end: Date },
+  prisma: PrismaClient
+): Promise<Diffs> => {
+  // get the latest 10 scan reports of the user - using the collectionId
+
+  const reports = (await prisma.$queryRaw(
+    Prisma.sql`
+    WITH last_report AS (
+        SELECT DISTINCT ON (uri) * FROM scan_reports sr WHERE "createdAt" >= ${
+          options.start
+        } AND "createdAt" < ${
+      options.end
+    } AND EXISTS(select 1 from target_collections tc 
+            WHERE sr.uri = tc.uri AND tc."collectionId" = ${collectionId(user)}
+        ) ORDER BY uri, "createdAt" DESC
+    )
+    SELECT row_to_json(sr1.*) as "lastReport", row_to_json(sr2.*) as "secondLastReport" from last_report sr1
+    INNER JOIN scan_reports sr2 ON sr1.uri = sr2.uri AND sr2."createdAt" < sr1."createdAt"
+    AND (
+        sr2.hsts != sr1.hsts OR
+        sr2."responsibleDisclosure" != sr1."responsibleDisclosure" OR
+        sr2."tlsv1_3" != sr1."tlsv1_3" OR
+        sr2."deprecatedTLSDeactivated" != sr1."deprecatedTLSDeactivated" OR
+        sr2."dnsSec" != sr1."dnsSec" OR
+        sr2."rpki" != sr1."rpki"
+    )
+    AND sr2.id = (SELECT max(sr3.id) from scan_reports sr3 where sr3.uri = sr1.uri AND sr3."createdAt" < sr1."createdAt")
+    `
+  )) as Array<{
+    lastReport: ScanReport;
+    secondLastReport: ScanReport;
+  }>;
+
+  return {
+    start: options.start.getTime(),
+    end: options.end.getTime(),
+    uriDiffs: reports.map((report) => {
+      return {
+        uri: report.lastReport.uri,
+        diff: diffReport(report.lastReport, report.secondLastReport),
+      };
+    }),
+  };
 };
 
 export const scanResult2TargetDetails = (
@@ -149,4 +225,5 @@ const handleNewScanReport = async (
 
 export const reportService = {
   handleNewScanReport,
+  getChangedInspectionsOfUser,
 };

@@ -1,37 +1,32 @@
-import { faClose } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Collection } from "@prisma/client";
-import React, { FunctionComponent } from "react";
+import { FunctionComponent } from "react";
 import { DTO } from "../utils/server";
+import { classNames } from "../utils/common";
+import { textCLNames } from "../utils/view";
 
 interface Props extends DTO<Collection> {
-  onRemove?: (id: number) => void;
+  onClick?: (id: number) => void;
+  selected: boolean;
 }
 const CollectionPill: FunctionComponent<Props> = ({
   id,
   color,
   title,
-  onRemove,
+  onClick,
+  selected,
 }) => {
   return (
-    <div className="flex bg-deepblue-300 border-deepblue-50 flex-row items-center border rounded-full text-xs px-2 py-1">
-      <div
-        className="w-3 h-3 border-deepblue-50  rounded-full inline-block mr-2"
-        style={{
-          backgroundColor: color,
-        }}
-      />
-      {title}
-      {onRemove && (
-        <div
-          className="ml-2 cursor-pointer"
-          onClick={() => {
-            onRemove(id);
-          }}
-        >
-          <FontAwesomeIcon icon={faClose} />
-        </div>
+    <div
+      onClick={() => {
+        onClick?.(id);
+      }}
+      className={classNames(
+        "flex bg-deepblue-300 cursor-pointer  flex-row items-center rounded-full text-sm px-2 py-1",
+        selected ? textCLNames(color) : "border-2 border-slate-400"
       )}
+      style={{ backgroundColor: selected ? color : undefined }}
+    >
+      {title}
     </div>
   );
 };

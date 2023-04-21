@@ -14,6 +14,7 @@ import {
   OrganizationalInspectionType,
   TLSInspectionType,
 } from "../inspection/scans";
+import tinycolor from "tinycolor2";
 
 export enum CheckResult {
   Passed = "passed",
@@ -104,4 +105,12 @@ export const w = () => {
     return window;
   }
   return null;
+};
+
+export const textCLNames = (color: string) => {
+  // check if the color is dark
+  if (tinycolor(color).isDark()) {
+    return "text-white";
+  }
+  return "text-deepblue-500";
 };

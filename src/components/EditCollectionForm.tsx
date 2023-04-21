@@ -77,7 +77,7 @@ const EditCollectionForm: FunctionComponent<Props> = (props) => {
                     data-closemenu
                     onClick={() => setColor(color)}
                     key={color}
-                    className="full rounded-sm h-11 border-t border-t-white/30 cursor-pointer hover:opacity-50 transition-all "
+                    className="rounded-sm border-t border-t-white/30 cursor-pointer hover:opacity-50 transition-all"
                     style={{ backgroundColor: color }}
                   />
                 ))}

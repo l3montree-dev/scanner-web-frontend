@@ -1,34 +1,33 @@
 import type { GetServerSideProps, NextPage } from "next";
-import Meta from "../components/Meta";
-import Page from "../components/Page";
+import Meta from "../../components/Meta";
+import Page from "../../components/Page";
 
 import Image from "next/image";
-import ReleasePlaceHolder from "../components/ReleasePlaceholder";
+import ReleasePlaceHolder from "../../components/ReleasePlaceholder";
 
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { staticSecrets } from "../utils/staticSecrets";
+import { staticSecrets } from "../../utils/staticSecrets";
+import DashboardPage from "../../components/DashboardPage";
+import SideNavigation from "../../components/SideNavigation";
 
 interface Props {
   displayNotAvailable: boolean;
   code: string;
+  keycloakIssuer: string;
 }
-const OZGSecurityChallenge2023: NextPage<Props> = ({ displayNotAvailable }) => {
+const OZGSecurityChallenge2023: NextPage<Props> = ({ keycloakIssuer }) => {
   const router = useRouter();
-  if (displayNotAvailable) {
-    return (
-      <Page hideLogin>
-        <Meta />
-        <ReleasePlaceHolder />
-      </Page>
-    );
-  }
 
   const queryString = new URLSearchParams(router.query as any).toString();
 
   return (
-    <Page>
-      <Meta />
+    <DashboardPage
+      keycloakIssuer={keycloakIssuer}
+      title="Die OZG-Security-Challenge 2023: Gemeinsam zu mehr IT-Sicherheit
+    "
+    >
+      <SideNavigation />
       <div className="flex-1">
         <article>
           <div className="max-w-screen-xl text-white w-full md:pb-5 mx-auto">
@@ -54,7 +53,7 @@ const OZGSecurityChallenge2023: NextPage<Props> = ({ displayNotAvailable }) => {
                 src={"/assets/OZG_Security-Challenge_Headerbild.png"}
               />
             </div>
-            <div className="p-5 mb-10 px-2 sm:px-10 -mt-10 relative z-10 bg-deepblue-400 mx-2 sm:mx-5 text-center border border-deepblue-100 shadow-lg shadow-deepblue-900/50">
+            <div className="p-5 mb-10 px-2 sm:px-10 -mt-10 relative z-10 bg-deepblue-300 mx-2 sm:mx-5 text-center rounded-md shadow-lg shadow-deepblue-900/50">
               <h1>
                 Die OZG-Security-Challenge 2023: Gemeinsam zu mehr IT-Sicherheit
               </h1>
@@ -83,7 +82,7 @@ const OZGSecurityChallenge2023: NextPage<Props> = ({ displayNotAvailable }) => {
               </p>
 
               <h2>Die Challenge im Überblick</h2>
-              <div className="desc sm:float-right sm:mx-2 mb-2 text-right bg-deepblue-300 border border-deepblue-100 p-5">
+              <div className="desc sm:float-right rounded-md sm:mx-2 mb-2 text-right bg-deepblue-300 p-5">
                 <b>Sprechstunde:</b> Infos folgen demnächst
                 <br />
                 <b>Workshops:</b> Infos folgen demnächst
@@ -262,7 +261,7 @@ const OZGSecurityChallenge2023: NextPage<Props> = ({ displayNotAvailable }) => {
           </div>
         </article>
       </div>
-    </Page>
+    </DashboardPage>
   );
 };
 
@@ -280,6 +279,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
   return {
     props: {
+      keycloakIssuer: process.env.KEYCLOAK_ISSUER as string,
       displayNotAvailable: true,
       code: !!code ? code : null,
     },

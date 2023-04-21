@@ -233,7 +233,7 @@ const PieCharts: FunctionComponent<Props> = ({
                         textAnchor="middle"
                         x={percentageToXInPieChart(
                           +percentage,
-                          i % 2 == 0 ? 70 : 130
+                          i % 2 == 0 ? 60 : 130
                         )}
                         y={percentageToYInPieChart(
                           +percentage,
@@ -253,7 +253,7 @@ const PieCharts: FunctionComponent<Props> = ({
             <div className="flex flex-1 items-center px-6 flex-row">
               <h2
                 title={titleMapper[key]}
-                className="text-left text-white text-lg text-ellipsis font-bold bg-deepblue-300 border-deepblue-50 mt-1"
+                className="text-left text-white break-normal text-lg font-bold bg-deepblue-300 border-deepblue-50 mt-1"
               >
                 {titleMapper[key]}{" "}
                 <Tooltip
@@ -306,7 +306,7 @@ const PieCharts: FunctionComponent<Props> = ({
                 </Link>
                 <br />
                 <Link href={`/dashboard/targets?${key}=-1`}>
-                  <span className="opacity-75">
+                  <span className="text-yellow-500">
                     Nicht erfüllt von{" "}
                     {(
                       (1 - currentStat.data[key]) *
@@ -326,7 +326,7 @@ const PieCharts: FunctionComponent<Props> = ({
               </p>
             </div>
             <div className="flex flex-row items-center flex-wrap mt-2 gap-2 px-6">
-              {refData.map(({ title, percentage, color }, i) => {
+              {refData.concat().map(({ title, percentage, color }, i) => {
                 return (
                   <CollectionDataPill key={title} color={color} title={title}>
                     <div className="text-sm">{title}</div>

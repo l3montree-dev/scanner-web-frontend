@@ -31,8 +31,8 @@ const FormInput: FunctionComponent<Props> = ({
   };
   return (
     <div className="relative flex-col flex">
-      <label htmlFor={id} className="mb-1">
-        <span className="text-white opacity-80">{label}</span>
+      <label htmlFor={id} className="mb-1 text-lg font-semibold">
+        <span className="text-white">{label}</span>
       </label>
       <input
         id={id}

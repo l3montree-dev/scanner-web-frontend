@@ -1,24 +1,38 @@
 import {
   faArrowLeftLong,
   faChartLine,
+  faGaugeHigh,
+  faInfo,
   faListCheck,
-  faNetworkWired,
+  faSquareCheck,
   faTag,
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useSession } from "../hooks/useSession";
 import { classNames, isAdmin, isGuestUser } from "../utils/common";
 import { useGlobalStore } from "../zustand/global";
+import useWindowSize from "../hooks/useWindowSize";
 
 const defaultLinks = [
   {
-    icon: faChartLine,
+    icon: faSquareCheck,
+    name: "Schnelltest",
+    path: "/dashboard/quicktest",
+  },
+  {
+    icon: faGaugeHigh,
     name: "Dashboard",
     path: "/dashboard",
+  },
+  {
+    icon: faChartLine,
+    name: "Trendanalyse",
+    path: "/dashboard/trends",
   },
   {
     icon: faListCheck,
@@ -40,13 +54,18 @@ const getLinks = (isGuest: boolean, isAdmin: boolean) => {
   return defaultLinks.concat([
     {
       icon: faTag,
-      name: "Gruppen",
+      name: "Domain-Gruppen",
       path: "/dashboard/collections",
     },
     {
       icon: faUsers,
-      name: "Nuterverwaltung",
+      name: "Nutzerverwaltung",
       path: "/administration/users",
+    },
+    {
+      icon: faInfo,
+      name: "Informationen zur OZG-Security-Challenge",
+      path: "/dashboard/info",
     },
   ]);
 };
@@ -55,6 +74,7 @@ const SideNavigation = () => {
   const session = useSession();
 
   const store = useGlobalStore();
+  const { width } = useWindowSize();
 
   const handleCollapseToggle = () => {
     // save it inside local storage
@@ -80,42 +100,36 @@ const SideNavigation = () => {
   return (
     <div
       className={classNames(
-        "bg-deepblue-300 transition-all border-r-2 border-deepblue-600 relative h-full",
+        "bg-deepblue-300 transition-all relative border-r-2 border-deepblue-600 lg:h-full",
         store.sideMenuCollapsed ? "w-16" : "w-56"
       )}
     >
-      <div className="sticky top-5">
+      <div className="md:sticky top-5">
+        <div className="pt-5 flex -ml-2 text-center items-start mb-5 text-white">
+          <Link href="/dashboard" className="flex mx-auto items-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              width={width <= 768 ? 100 : store.sideMenuCollapsed ? 55 : 130}
+              height={45}
+              className="flex-1"
+              src={"/assets/sticker_challenge_white.svg"}
+              alt="Logo OZG"
+            />
+          </Link>
+        </div>
         <div
           className={classNames(
-            "flex transition-all ml-1 border-deepblue-300 h-full items-center",
+            "flex transition-all ml-1 pt-5 border-deepblue-300 lg:h-full items-center",
             store.sideMenuCollapsed ? "w-16" : "w-56"
           )}
-        >
-          <div className="px-4 pl-3 flex gap-2 flex-col items-start mb-5 text-white">
-            <Link href="/" className="flex items-center">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                width={35}
-                height={45}
-                className="flex-1"
-                src={"/assets/sticker_challenge_mod_white_3.svg"}
-                alt="Logo OZG"
-              />
-            </Link>
-            {!store.sideMenuCollapsed && (
-              <span className="text-left text-sm font-bold uppercase">
-                <span>OZG</span>-Security-Challenge
-              </span>
-            )}
-          </div>
-        </div>
+        ></div>
         <div>
           {getLinks(isGuestUser(session.data?.user), isAdmin(session.data)).map(
             ({ path, name, icon }) => (
               <Link key={name} className="hover:no-underline" href={path}>
                 <div
                   className={classNames(
-                    "py-2 px-3 m-2 flex flex-row border rounded-sm hover:bg-deepblue-100 hover:no-underline transition-all hover:text-white cursor-pointer",
+                    "py-2 px-3 m-2 flex flex-row border items-center rounded-sm hover:bg-deepblue-100 hover:no-underline transition-all hover:text-white cursor-pointer",
                     pathname === path
                       ? "bg-deepblue-100 border border-deepblue-100 text-white"
                       : "text-slate-400 border-transparent"
@@ -123,8 +137,7 @@ const SideNavigation = () => {
                 >
                   <div className="mr-4">
                     <FontAwesomeIcon
-                      className="opacity-75"
-                      fontSize={20}
+                      className="opacity-75 w-5 h-5"
                       icon={icon}
                     />
                   </div>
@@ -139,17 +152,26 @@ const SideNavigation = () => {
             )
           )}
         </div>
-      </div>
-
-      <button
-        onClick={handleCollapseToggle}
-        className={classNames(
-          "fixed right-0 bg-deepblue-100 left-4 bottom-5 p-2 rounded-full w-8 h-8 flex flex-row items-center justify-center text-white transition-all hover:bg-deepblue-50",
-          store.sideMenuCollapsed ? "rotate-180" : ""
+        <button
+          onClick={handleCollapseToggle}
+          className={classNames(
+            "fixed hidden lg:flex top-5 right-0 bg-deepblue-100 left-4 bottom-5 p-2 rounded-full w-8 h-8 flex-row items-center justify-center text-white transition-all hover:bg-deepblue-50",
+            store.sideMenuCollapsed ? "rotate-180" : ""
+          )}
+        >
+          <FontAwesomeIcon icon={faArrowLeftLong} />
+        </button>
+        {!store.sideMenuCollapsed && (
+          <div className="p-2 md:fixed bottom-0 w-56 right-0 left-0 ">
+            <Image
+              width={210}
+              height={50}
+              alt="Logo BMI"
+              src={"/assets/bmi_logo_weiss.svg"}
+            />
+          </div>
         )}
-      >
-        <FontAwesomeIcon icon={faArrowLeftLong} />
-      </button>
+      </div>
     </div>
   );
 };

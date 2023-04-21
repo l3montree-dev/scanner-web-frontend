@@ -52,6 +52,9 @@ const zoomLevelToWidth = (zoomLevel: number, windowWidth: number) => {
     case 1:
       return 540;
     case 2:
+      if (windowWidth === 0) {
+        return 890;
+      }
       if (windowWidth < 400) {
         return 300;
       }
@@ -61,7 +64,7 @@ const zoomLevelToWidth = (zoomLevel: number, windowWidth: number) => {
       if (windowWidth < 768) {
         return 540;
       }
-      return 1090;
+      return 890;
     default:
       return 360;
   }
@@ -247,7 +250,7 @@ const LineChart: FunctionComponent<Props> = ({
           padding={{ top: 20, bottom: 40, left: 55, right: 10 }}
           minDomain={{ y: Math.max(-1, data.min - data.max / 20) }}
           maxDomain={{ y: Math.min(101.5, data.max + data.max / 20) }}
-          domainPadding={{ x: [0, 30], y: [100, 100] }}
+          domainPadding={{ x: [0, 35], y: [100, 100] }}
         >
           <defs>
             <linearGradient x2="0%" y2="100%" id="serviceGradient">

@@ -10,7 +10,7 @@ const Tooltip: FunctionComponent<PropsWithChildren<Props>> = (props) => {
       <Popover.Trigger>{props.children}</Popover.Trigger>
       <Popover.Portal>
         <Popover.Content
-          className="TooltipContent w-56 bg-deepblue-100 shadow-lg z-200 text-white text-sm p-2 rounded-md"
+          className="TooltipContent lg:w-72 w-56 bg-deepblue-100 shadow-lg z-200 m-1 text-white p-2 rounded-md"
           sideOffset={5}
         >
           {props.tooltip}

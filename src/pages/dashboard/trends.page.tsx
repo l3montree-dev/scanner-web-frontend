@@ -41,6 +41,9 @@ import {
 } from "../../utils/common";
 import { DTO, ServerSideProps, toDTO } from "../../utils/server";
 import { displayInspections, tailwindColors } from "../../utils/view";
+import * as ToggleGroup from "@radix-ui/react-toggle-group";
+import useWindowSize from "../../hooks/useWindowSize";
+import React from "react";
 
 interface Props {
   diffs: Diffs;
@@ -70,6 +73,15 @@ const localizeDefaultCollection = <
 };
 
 const Dashboard: FunctionComponent<Props> = (props) => {
+  const [zoomLevel, setZoomLevel] = React.useState(2);
+  const { width } = useWindowSize();
+
+  useEffect(() => {
+    if (width < 768 && width > 0) {
+      setZoomLevel(2);
+    }
+  }, [width]);
+
   const dashboard = props.dashboard;
   const currentStat = useMemo(
     () =>
@@ -193,7 +205,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
 
   return (
     <>
-      <Meta title="Dashboard" />
+      <Meta title="Trendanalyse" />
       <div className="flex-row min-h-screen flex w-full flex-1">
         <div className="hidden lg:block">
           <SideNavigation />
@@ -205,13 +217,17 @@ const Dashboard: FunctionComponent<Props> = (props) => {
               <div className="text-white mb-0 px-3 gap-2 flex flex-row items-center">
                 <PageTitle
                   className="text-4xl text-white font-bold"
-                  stringRep="Dashboard"
+                  stringRep="Trendanalyse"
                 >
-                  Dashboard
+                  Trendanalyse
                 </PageTitle>
                 <Tooltip
                   tooltip={`         
-                    Das Dashboard bietet eine Übersicht über den Sicherheitszustand von Domain-Gruppen.`}
+                  Die Trendanalyse visualisiert die Veränderung der
+                  Sicherheitskriterien in Anbetracht der Zeit. Zusätzlich stellt sie
+                  die Werte der verwalteten Dienste im Vergleich zu den Werten der Top
+                  100.000 .de Domains sowie der globalen Top 100.000 Domains dar. Die
+                  Daten werden täglich aktualisiert.`}
                 >
                   <div className="text-slate-400">
                     <FontAwesomeIcon size="xl" icon={faQuestionCircle} />
@@ -223,9 +239,83 @@ const Dashboard: FunctionComponent<Props> = (props) => {
             {!isGuest && (
               <div className="text-white sticky z-20 shadow-lg beneath-header py-2 bg-deepblue-300 flex flex-row mb-4 items-center">
                 <div className="max-w-screen-xl px-3 text-lg gap-1 flex flex-col flex-1 mx-auto">
-                  <span className="font-semibold">
-                    Domain-Gruppe (Anzahl der Domains)
-                  </span>
+                  <div className="flex flex-row justify-between">
+                    <span className="font-semibold">
+                      Domain-Gruppe (Anzahl der Domains)
+                    </span>
+                    <div className="flex-row hidden md:flex justify-end sticky pointer-events-none zoom-button z-20">
+                      <div className="pointer-events-auto overflow-hidden rounded-sm">
+                        <ToggleGroup.Root
+                          className="ToggleGroup"
+                          type="single"
+                          onValueChange={(value) => {
+                            setZoomLevel(parseInt(value));
+                          }}
+                          value={zoomLevel.toString()}
+                          aria-label="Text alignment"
+                        >
+                          <ToggleGroup.Item
+                            className="ToggleGroupItem"
+                            value="2"
+                            aria-label="Right aligned"
+                          >
+                            <div
+                              className={classNames(
+                                "grid grid-cols-1 gap-0.5 p-3 hover:bg-deepblue-50",
+                                zoomLevel === 2
+                                  ? "bg-deepblue-50"
+                                  : "bg-deepblue-100"
+                              )}
+                            >
+                              <div className="w-3 h-1 bg-white" />
+                              <div className="w-3 h-1 bg-white" />
+                            </div>
+                          </ToggleGroup.Item>
+                          <ToggleGroup.Item
+                            className="ToggleGroupItem"
+                            value="1"
+                            aria-label="Center aligned"
+                          >
+                            <div
+                              className={classNames(
+                                "grid hover:bg-deepblue-50 grid-cols-2 gap-0.5 p-3",
+                                zoomLevel === 1
+                                  ? "bg-deepblue-50"
+                                  : "bg-deepblue-100"
+                              )}
+                            >
+                              <div className="w-1 h-1 bg-white" />
+                              <div className="w-1 h-1 bg-white" />
+                              <div className="w-1 h-1 bg-white" />
+                              <div className="w-1 h-1 bg-white" />
+                            </div>
+                          </ToggleGroup.Item>
+
+                          <ToggleGroup.Item
+                            className="ToggleGroupItem"
+                            value="0"
+                            aria-label="Left aligned"
+                          >
+                            <div
+                              className={classNames(
+                                "grid grid-cols-3 gap-0.5 p-3 hover:bg-deepblue-50",
+                                zoomLevel === 0
+                                  ? "bg-deepblue-50"
+                                  : "bg-deepblue-100"
+                              )}
+                            >
+                              <div className="w-0.5 h-1 bg-white" />
+                              <div className="w-0.5 h-1 bg-white" />
+                              <div className="w-0.5 h-1 bg-white" />
+                              <div className="w-0.5 h-1 bg-white" />
+                              <div className="w-0.5 h-1 bg-white" />
+                              <div className="w-0.5 h-1 bg-white" />
+                            </div>
+                          </ToggleGroup.Item>
+                        </ToggleGroup.Root>
+                      </div>
+                    </div>
+                  </div>
                   <div className="flex flex-wrap flex-row gap-2 items-center justify-start">
                     {Object.values(props.collections).map((col) => {
                       // check if selected
@@ -270,11 +360,13 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                   noDomains && "blur-sm"
                 )}
               >
-                <PieCharts
+                <LineCharts
+                  diffs={props.diffs}
+                  zoomLevel={zoomLevel}
                   displayCollections={_displayCollections}
-                  historicalData={dashboard.historicalData}
+                  displayInspections={displayInspections}
+                  dataPerInspection={dataPerInspection}
                   defaultCollectionId={props.defaultCollectionId}
-                  currentStat={data as ChartData}
                 />
               </div>
               {noDomains && (

@@ -35,6 +35,10 @@ export const serverOnly = <T>(fn: () => T): T | null => {
   return null;
 };
 
+export const zip = <T, U>(arr1: T[], arr2: U[]): [T, U][] => {
+  return arr1.map((el, i) => [el, arr2[i]]);
+};
+
 export const clientOnly = <T>(fn: () => T): T | null => {
   if (typeof window !== "undefined") {
     return fn();

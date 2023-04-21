@@ -53,7 +53,7 @@ const CollectionForm: FunctionComponent<Props> = ({ onCreate }) => {
         <Menu
           Button={
             <div
-              className="w-10 h-10 cursor-pointer rounded-sm border-t transition-all hover:opacity-75 border-t-white/30"
+              className="w-10 h-10 cursor-pointer rounded-sm transition-all hover:opacity-75"
               style={{ backgroundColor: color }}
             />
           }
@@ -64,7 +64,7 @@ const CollectionForm: FunctionComponent<Props> = ({ onCreate }) => {
                   data-closemenu
                   onClick={() => setColor(color)}
                   key={color}
-                  className="w-10 h-10 border-t border-t-white/30 rounded-sm cursor-pointer hover:opacity-50 transition-all "
+                  className="h-10 rounded-sm cursor-pointer hover:opacity-50 transition-all "
                   style={{ backgroundColor: color }}
                 />
               ))}

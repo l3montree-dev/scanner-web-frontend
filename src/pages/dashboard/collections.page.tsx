@@ -248,7 +248,7 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
                   >
                     <td className="p-2 text-sm">
                       <div className="flex">
-                        <CollectionPill {...collection} />
+                        <CollectionPill selected {...collection} />
                       </div>
                     </td>
 

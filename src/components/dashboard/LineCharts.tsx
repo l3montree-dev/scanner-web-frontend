@@ -1,8 +1,7 @@
-import * as ToggleGroup from "@radix-ui/react-toggle-group";
-import React, { FunctionComponent, useEffect } from "react";
-import useWindowSize from "../../hooks/useWindowSize";
+import { FunctionComponent } from "react";
 
 import { InspectionType } from "../../inspection/scans";
+import { Diffs } from "../../types";
 import { classNames } from "../../utils/common";
 import LineChart from "./LineChart";
 
@@ -24,7 +23,9 @@ interface Props {
       max: number;
     };
   };
+  diffs: Diffs;
   defaultCollectionId: number;
+  zoomLevel: number;
 }
 
 const LineCharts: FunctionComponent<Props> = ({
@@ -32,113 +33,33 @@ const LineCharts: FunctionComponent<Props> = ({
   displayInspections,
   dataPerInspection,
   defaultCollectionId,
+  zoomLevel,
 }) => {
-  const [zoomLevel, setZoomLevel] = React.useState(0);
-  const { width } = useWindowSize();
-
-  useEffect(() => {
-    if (width < 768 && width > 0) {
-      setZoomLevel(2);
-    }
-  }, [width]);
-
   return (
-    <>
-      <h2 className="text-2xl mt-10 mb-5">Trendanalyse</h2>
-      <div className="justify-between flex flex-row items-start">
-        <p className="mb-10 flex-1 text-slate-300">
-          Die Trendanalyse visualisiert die Veränderung der Sicherheitskriterien
-          in Anbetracht der Zeit. Zusätzlich stellt sie die Werte der
-          verwalteten Dienste im Vergleich zu den Werten der Top 100.000 .de
-          Domains sowie der globalen Top 100.000 Domains dar. Die Daten werden
-          täglich aktualisiert.
-        </p>
-      </div>
-      <div className="flex-row hidden md:flex justify-end sticky pointer-events-none zoom-button z-20">
-        <div className="pointer-events-auto overflow-hidden rounded-sm">
-          <ToggleGroup.Root
-            className="ToggleGroup"
-            type="single"
-            onValueChange={(value) => {
-              setZoomLevel(parseInt(value));
-            }}
-            value={zoomLevel.toString()}
-            aria-label="Text alignment"
-          >
-            <ToggleGroup.Item
-              className="ToggleGroupItem"
-              value="0"
-              aria-label="Left aligned"
-            >
-              <div
-                className={classNames(
-                  "grid grid-cols-3 gap-0.5 p-3 hover:bg-deepblue-50",
-                  zoomLevel === 0 ? "bg-deepblue-50" : "bg-deepblue-100"
-                )}
-              >
-                <div className="w-0.5 h-1 bg-white" />
-                <div className="w-0.5 h-1 bg-white" />
-                <div className="w-0.5 h-1 bg-white" />
-                <div className="w-0.5 h-1 bg-white" />
-                <div className="w-0.5 h-1 bg-white" />
-                <div className="w-0.5 h-1 bg-white" />
-              </div>
-            </ToggleGroup.Item>
-            <ToggleGroup.Item
-              className="ToggleGroupItem"
-              value="1"
-              aria-label="Center aligned"
-            >
-              <div
-                className={classNames(
-                  "grid hover:bg-deepblue-50 grid-cols-2 gap-0.5 p-3",
-                  zoomLevel === 1 ? "bg-deepblue-50" : "bg-deepblue-100"
-                )}
-              >
-                <div className="w-1 h-1 bg-white" />
-                <div className="w-1 h-1 bg-white" />
-                <div className="w-1 h-1 bg-white" />
-                <div className="w-1 h-1 bg-white" />
-              </div>
-            </ToggleGroup.Item>
-            <ToggleGroup.Item
-              className="ToggleGroupItem"
-              value="2"
-              aria-label="Right aligned"
-            >
-              <div
-                className={classNames(
-                  "grid grid-cols-1 gap-0.5 p-3 hover:bg-deepblue-50",
-                  zoomLevel === 2 ? "bg-deepblue-50" : "bg-deepblue-100"
-                )}
-              >
-                <div className="w-3 h-1 bg-white" />
-                <div className="w-3 h-1 bg-white" />
-              </div>
-            </ToggleGroup.Item>
-          </ToggleGroup.Root>
+    <div>
+      <div>
+        <div
+          style={{
+            gridTemplateColumns: `repeat(${3 - zoomLevel}, 1fr)`,
+          }}
+          className={classNames("mt-5 grid gap-2 justify-start")}
+        >
+          {displayInspections.map((key) => {
+            return (
+              <LineChart
+                key={key}
+                zoomLevel={zoomLevel}
+                inspectionType={key}
+                displayCollections={displayCollections}
+                defaultCollectionId={defaultCollectionId}
+                data={dataPerInspection[key]}
+              />
+            );
+          })}
         </div>
       </div>
-      <div
-        style={{
-          gridTemplateColumns: `repeat(${3 - zoomLevel}, 1fr)`,
-        }}
-        className={classNames("mt-5 grid gap-2 justify-start")}
-      >
-        {displayInspections.map((key) => {
-          return (
-            <LineChart
-              key={key}
-              zoomLevel={zoomLevel}
-              inspectionType={key}
-              displayCollections={displayCollections}
-              defaultCollectionId={defaultCollectionId}
-              data={dataPerInspection[key]}
-            />
-          );
-        })}
-      </div>
-    </>
+      <div></div>
+    </div>
   );
 };
 

@@ -172,3 +172,19 @@ export interface Guest {
   id: string;
   collectionId: number;
 }
+
+export interface UriDiff {
+  uri: string;
+  diff: {
+    [key in InspectionType]: {
+      was: boolean | null;
+      now: boolean | null;
+    };
+  };
+}
+
+export interface Diffs {
+  uriDiffs: UriDiff[];
+  start: number;
+  end: number;
+}
