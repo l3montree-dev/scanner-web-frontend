@@ -51,13 +51,6 @@ const QuicktestPage: FunctionComponent<Props> = (props) => {
                 >
                   Schnelltest
                 </PageTitle>
-                <Tooltip
-                  tooltip={`Gruppen dienen der Sortierung einzelner Domains. Es ist möglich Gruppen direkt miteinander zu vergleichen.`}
-                >
-                  <div className="text-slate-400">
-                    <FontAwesomeIcon icon={faQuestionCircle} />
-                  </div>
-                </Tooltip>
               </div>
             </div>
           </div>

@@ -261,7 +261,7 @@ const TargetTableItem: FunctionComponent<Props> = ({
           <td colSpan={9} className="py-2 lg:pb-2 lg:pt-0">
             <div
               onClick={(e) => e.stopPropagation()}
-              className="flex flex-row gapx-4 py-2 lg:p-2 lg:px-5 px-2 -mt-2 lg:pl-10 justify-start"
+              className="flex flex-row gap-2 lg:p-2 lg:px-5 px-2 -mt-2 lg:pl-10 justify-start"
             >
               {target.collections.map((c) => {
                 const col = collections[c.toString()];
