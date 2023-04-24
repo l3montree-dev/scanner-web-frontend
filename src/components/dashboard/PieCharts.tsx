@@ -16,15 +16,21 @@ import {
 import { descriptionMapper, titleMapper } from "../../messages";
 import { ChartData, CollectionStatMap } from "../../types";
 import { linkMapper } from "../../utils/common";
-import { displayInspections, tailwindColors } from "../../utils/view";
+import {
+  displayInspections,
+  localizeDefaultCollection,
+  tailwindColors,
+} from "../../utils/view";
 import CollectionDataPill from "../CollectionDataPill";
 import Tooltip from "../Tooltip";
+import tinycolor from "tinycolor2";
 
 interface Props {
   displayCollections: number[];
   defaultCollectionId: number;
   currentStat: ChartData;
   historicalData: CollectionStatMap;
+  username: string;
 }
 
 const percentageToXInPieChart = (percentage: number, r = 100) => {
@@ -50,6 +56,7 @@ const percentageToYInPieChart = (percentage: number, r = 100) => {
 };
 
 type RefData = {
+  id: number;
   title: string;
   color: string;
   percentage: number;
@@ -59,31 +66,38 @@ const PieCharts: FunctionComponent<Props> = ({
   currentStat,
   defaultCollectionId,
   historicalData,
+  username,
 }) => {
   const router = useRouter();
   return (
     <div className="mt-5 justify-start gap-2 flex-wrap grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 grid 2xl:grid-cols-4">
       {displayInspections.map((key) => {
         const percentage = currentStat.data[key] * 100;
-        let padAngle = 3;
+        let padAngle = 0;
         // If the percentage is too small, don't show the padAngle
         if (100 - percentage < 1.5 || percentage < 1.5) {
           padAngle = 0;
         }
 
         const refData = displayCollections
-          .filter((c) => c !== defaultCollectionId)
           .map((collection) => {
             const ref = historicalData[collection];
             if (!ref) return null;
+            const loc = localizeDefaultCollection(
+              { ...ref, id: collection },
+              defaultCollectionId,
+              username
+            );
 
             return {
-              title: ref.title,
-              color: ref.color,
+              title: loc.title,
+              color: loc.color,
+              id: collection,
               percentage: ref.series[ref.series.length - 1].data[key] * 100,
             };
           })
           .filter((r): r is RefData => r !== null);
+
         return (
           <div
             className="bg-deepblue-300 pb-5 rounded-md flex-col flex"
@@ -98,156 +112,112 @@ const PieCharts: FunctionComponent<Props> = ({
                     tickLabels: { fill: "transparent" },
                   }}
                 />
-                <VictoryPie
-                  standalone={false}
-                  width={300}
-                  height={300}
-                  padAngle={padAngle}
-                  eventKey="key"
-                  events={[
-                    {
-                      target: "data",
-                      eventHandlers: {
-                        onMouseLeave: (ev) => {
-                          if ("style" in ev.target)
-                            (ev.target.style as any).cursor = "";
-                          return [
-                            {
-                              target: "labels",
-                              mutation: () => ({ active: false }),
-                            },
-                            {
-                              mutation: () => null,
-                            },
-                          ];
-                        },
-                        onMouseOver: (ev) => {
-                          if ("style" in ev.target)
-                            (ev.target.style as any).cursor = "pointer";
-                          return [
-                            {
-                              target: "labels",
-                              mutation: () => ({ active: true }),
-                            },
-                            {
-                              mutation: (props) => {
-                                return {
-                                  style: Object.assign({}, props.style, {
-                                    fill:
+                {refData.map((r, i) => (
+                  <VictoryPie
+                    key={r.id}
+                    standalone={false}
+                    width={300}
+                    height={300}
+                    padAngle={padAngle}
+                    eventKey="key"
+                    events={[
+                      {
+                        target: "data",
+                        eventHandlers: {
+                          onMouseLeave: (ev) => {
+                            if ("style" in ev.target)
+                              (ev.target.style as any).cursor = "";
+                            return [
+                              {
+                                target: "labels",
+                                mutation: () => ({ active: false }),
+                              },
+                              {
+                                mutation: () => null,
+                              },
+                            ];
+                          },
+                          onMouseOver: (ev) => {
+                            if ("style" in ev.target)
+                              (ev.target.style as any).cursor = "pointer";
+                            return [
+                              {
+                                target: "labels",
+                                mutation: () => ({ active: true }),
+                              },
+                              {
+                                mutation: (props) => {
+                                  return {
+                                    style: Object.assign({}, props.style, {
+                                      fill:
+                                        props.datum.eventKey === "implemented"
+                                          ? tinycolor(r.color)
+                                              .setAlpha(0.8)
+                                              .toString()
+                                          : tailwindColors.slate["500"],
+                                    }),
+                                  };
+                                },
+                              },
+                            ];
+                          },
+                          onClick: () => {
+                            return [
+                              {
+                                mutation: (props) => {
+                                  router.push(
+                                    `/dashboard/targets?${key}=${
                                       props.datum.eventKey === "implemented"
-                                        ? tailwindColors.lightning["200"]
-                                        : tailwindColors.slate["500"],
-                                  }),
-                                };
+                                        ? "1"
+                                        : "-1"
+                                    }&collectionIds=${r.id}`
+                                  );
+                                },
                               },
-                            },
-                          ];
-                        },
-                        onClick: () => {
-                          return [
-                            {
-                              mutation: (props) => {
-                                router.push(
-                                  `/dashboard/targets?${key}=${
-                                    props.datum.eventKey === "implemented"
-                                      ? "1"
-                                      : "-1"
-                                  } `
-                                );
-                              },
-                            },
-                          ];
+                            ];
+                          },
                         },
                       },
-                    },
-                  ]}
-                  innerRadius={90}
-                  labelComponent={
-                    <VictoryTooltip
-                      renderInPortal
-                      constrainToVisibleArea
-                      cornerRadius={0}
-                      style={{
-                        fill: "white",
-                        fontSize: 14,
-                      }}
-                      flyoutStyle={{
-                        stroke: "none",
-                        fill: tailwindColors.deepblue["500"],
-                      }}
-                      dx={0}
-                      pointerLength={0}
-                    />
-                  }
-                  colorScale={[
-                    tailwindColors.lightning["500"],
-                    tailwindColors.slate["600"],
-                  ]}
-                  data={[
-                    {
-                      key: "implemented",
-                      x: `Erfüllt (${(currentStat.data[key] * 100).toFixed(
-                        1
-                      )}%)`,
-                      y: currentStat.totalCount * currentStat.data[key],
-                    },
-                    {
-                      key: "notImplemented",
-                      x:
-                        currentStat.totalCount === 0
-                          ? "Keine Testergebnisse vorhanden"
-                          : `Nicht erfüllt (${(
-                              (1 - currentStat.data[key] || 1) * 100
-                            ).toFixed(1)}%)`,
-                      y:
-                        currentStat.totalCount === 0
-                          ? 100
-                          : currentStat.totalCount *
-                            (1 - currentStat.data[key]),
-                    },
-                  ]}
-                />
-                <VictoryLabel
-                  textAnchor="middle"
-                  style={{ fontSize: 30, fill: "white" }}
-                  x={150}
-                  y={150}
-                  text={`${(currentStat.data[key] * 100).toFixed(1)}%`}
-                />
-                {refData.map(({ title, percentage, color }, i) => {
-                  return (
-                    <g key={title}>
-                      <line
-                        x1={percentageToXInPieChart(+percentage, 110)}
-                        y1={percentageToYInPieChart(+percentage, 110)}
-                        x2={percentageToXInPieChart(+percentage, 80)}
-                        y2={percentageToYInPieChart(+percentage, 80)}
-                        width={10}
+                    ]}
+                    innerRadius={57 + i * 15}
+                    radius={70 + i * 15}
+                    labelComponent={
+                      <VictoryTooltip
+                        renderInPortal
+                        constrainToVisibleArea
+                        cornerRadius={0}
                         style={{
-                          stroke: color,
-                          strokeWidth: 2,
+                          fill: "white",
+                          fontSize: 14,
                         }}
-                      />
-
-                      <VictoryLabel
-                        textAnchor="middle"
-                        x={percentageToXInPieChart(
-                          +percentage,
-                          i % 2 == 0 ? 60 : 130
-                        )}
-                        y={percentageToYInPieChart(
-                          +percentage,
-                          i % 2 == 0 ? 70 : 130
-                        )}
-                        style={{
-                          fontSize: 16,
-                          fill: color,
+                        flyoutStyle={{
+                          stroke: "none",
+                          fill: tailwindColors.deepblue["500"],
                         }}
-                        text={title}
+                        dx={0}
+                        pointerLength={0}
                       />
-                    </g>
-                  );
-                })}
+                    }
+                    colorScale={[r.color, tailwindColors.deepblue["100"]]}
+                    data={[
+                      {
+                        key: "implemented",
+                        x: `${r.title} ${r.percentage.toFixed(1)}%`,
+                        y: r.percentage,
+                      },
+                      {
+                        key: "notImplemented",
+                        x:
+                          currentStat.totalCount === 0
+                            ? "Keine Testergebnisse vorhanden"
+                            : `${r.title} nicht erfüllt ${r.percentage.toFixed(
+                                1
+                              )}%`,
+                        y: 100 - r.percentage,
+                      },
+                    ]}
+                  />
+                ))}
               </VictoryChart>
             </div>
             <div className="flex flex-1 items-center px-6 flex-row">
@@ -287,8 +257,10 @@ const PieCharts: FunctionComponent<Props> = ({
             </div>
             <div className="flex-1">
               <p className="text-sm px-6">
+                <span className="text-slate-400">Gesamt</span>
+                <br />
                 <Link href={`/dashboard/targets?${key}=1`}>
-                  <span className="text-lightning-500">
+                  <span className="">
                     Erfüllt von{" "}
                     {(currentStat.data[key] * currentStat.totalCount).toFixed(
                       0
@@ -326,7 +298,7 @@ const PieCharts: FunctionComponent<Props> = ({
               </p>
             </div>
             <div className="flex flex-row items-center flex-wrap mt-2 gap-2 px-6">
-              {refData.concat().map(({ title, percentage, color }, i) => {
+              {refData.map(({ title, percentage, color }, i) => {
                 return (
                   <CollectionDataPill key={title} color={color} title={title}>
                     <div className="text-sm">{title}</div>

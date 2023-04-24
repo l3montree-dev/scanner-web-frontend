@@ -107,10 +107,28 @@ export const w = () => {
   return null;
 };
 
-export const textCLNames = (color: string) => {
+export const adaptiveTextColorBasedOnContrast = (color: string) => {
   // check if the color is dark
   if (tinycolor(color).isDark()) {
     return "text-white";
   }
   return "text-deepblue-500";
+};
+
+export const localizeDefaultCollection = <
+  T extends { id: number; title: string; color: string }
+>(
+  collection: T,
+  defaultCollectionId: number,
+  username: string
+): T => {
+  if (collection.id === defaultCollectionId) {
+    return {
+      ...collection,
+      color: tailwindColors.lightning["500"],
+      title: username,
+    };
+  }
+
+  return collection;
 };

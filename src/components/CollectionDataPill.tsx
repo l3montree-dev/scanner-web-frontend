@@ -1,6 +1,6 @@
 import { FunctionComponent, PropsWithChildren } from "react";
 import { classNames } from "../utils/common";
-import { textCLNames } from "../utils/view";
+import { adaptiveTextColorBasedOnContrast } from "../utils/view";
 
 interface Props {
   color: string;
@@ -16,7 +16,7 @@ const CollectionDataPill: FunctionComponent<PropsWithChildren<Props>> = (
       }}
       className={classNames(
         "flex items-center rounded-full px-2 py-1",
-        textCLNames(props.color)
+        adaptiveTextColorBasedOnContrast(props.color)
       )}
     >
       {props.children}

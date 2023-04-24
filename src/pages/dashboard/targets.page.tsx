@@ -558,6 +558,9 @@ const Targets: FunctionComponent<Props> = (props) => {
                     <div className="flex flex-wrap flex-row gap-2 px-5 items-center pl-4 justify-start">
                       {collectionIds.map((c) => {
                         const col = props.collections[c.toString()];
+                        if (!col) {
+                          return null;
+                        }
                         return (
                           <CollectionPill selected key={col.id} {...col} />
                         );

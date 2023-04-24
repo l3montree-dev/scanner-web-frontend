@@ -19,7 +19,6 @@ import Meta from "../../components/Meta";
 import PageTitle from "../../components/PageTitle";
 import SideNavigation from "../../components/SideNavigation";
 import Tooltip from "../../components/Tooltip";
-import LineCharts from "../../components/dashboard/LineCharts";
 import PieCharts from "../../components/dashboard/PieCharts";
 import { config } from "../../config";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
@@ -28,46 +27,25 @@ import { withDB } from "../../decorators/withDB";
 import { useIsGuest } from "../../hooks/useIsGuest";
 import { useSession } from "../../hooks/useSession";
 import { collectionService } from "../../services/collectionService";
-import { reportService } from "../../services/reportService";
 import { statService } from "../../services/statService";
-import { ChartData, Diffs, IDashboard } from "../../types";
+import { ChartData, IDashboard } from "../../types";
 import {
   Normalized,
   classNames,
   collectionId,
-  dateFormat,
   normalizeToMap,
   replaceNullWithZero,
 } from "../../utils/common";
 import { DTO, ServerSideProps, toDTO } from "../../utils/server";
-import { displayInspections, tailwindColors } from "../../utils/view";
+import { tailwindColors } from "../../utils/view";
 
 interface Props {
-  diffs: Diffs;
   dashboard: IDashboard;
   keycloakIssuer: string;
   defaultCollectionId: number;
   collections: Normalized<DTO<Collection & { size: number }>>;
   refCollections: number[]; // the collections which were defined using environment variables
 }
-
-const localizeDefaultCollection = <
-  T extends { id: number; title: string; color: string }
->(
-  collection: T,
-  defaultCollectionId: number,
-  username: string
-): T => {
-  if (collection.id === defaultCollectionId) {
-    return {
-      ...collection,
-      color: tailwindColors.lightning["500"],
-      title: username,
-    };
-  }
-
-  return collection;
-};
 
 const Dashboard: FunctionComponent<Props> = (props) => {
   const dashboard = props.dashboard;
@@ -107,64 +85,6 @@ const Dashboard: FunctionComponent<Props> = (props) => {
   useEffect(() => {
     setData(currentStat);
   }, [currentStat]);
-
-  const dataPerInspection = useMemo(
-    () =>
-      Object.fromEntries(
-        displayInspections.map((key) => {
-          const data = Object.fromEntries(
-            Object.entries(dashboard.historicalData).map(
-              ([collectionId, stat]) => {
-                return [
-                  collectionId,
-                  localizeDefaultCollection(
-                    {
-                      id: parseInt(collectionId),
-                      title: stat!.title,
-                      color: stat!.color,
-                      series: stat!.series.map((item) => {
-                        return {
-                          y: item.data[key] * 100,
-                          x: new Date(item.date).toLocaleDateString(
-                            "de-DE",
-                            dateFormat
-                          ),
-                        };
-                      }),
-                    },
-                    props.defaultCollectionId,
-                    user.data?.user.name || "Meine"
-                  ),
-                ];
-              }
-            )
-          );
-
-          const min = Math.min(
-            ...Object.values(data)
-              .map((item) => item.series)
-              .flat()
-              .map((item) => item.y)
-          );
-          const max = Math.max(
-            ...Object.values(data)
-              .map((item) => item.series)
-              .flat()
-              .map((item) => item.y)
-          );
-
-          return [
-            key,
-            {
-              data,
-              min,
-              max,
-            },
-          ];
-        })
-      ),
-    [dashboard.historicalData, user.data, props.defaultCollectionId]
-  );
 
   const handleDisplayCollectionToggle = (collectionId: number) => {
     if (displayCollections.includes(collectionId)) {
@@ -271,6 +191,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                 )}
               >
                 <PieCharts
+                  username={user.data?.user.name || "Meine"}
                   displayCollections={_displayCollections}
                   historicalData={dashboard.historicalData}
                   defaultCollectionId={props.defaultCollectionId}
@@ -301,21 +222,14 @@ export const getServerSideProps = decorateServerSideProps(
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
 
-    const [dashboard, referenceChartData, collections, diffs] =
-      await Promise.all([
-        statService.getDashboardForUser(currentUser, prisma),
-        statService.getReferenceChartData(prisma),
-        collectionService.getAllCollectionsOfUser(currentUser, prisma, true),
-        await reportService.getChangedInspectionsOfUser(
-          currentUser,
-          { start: yesterday, end: new Date(), page: 0, pageSize: 20 },
-          prisma
-        ),
-      ]);
+    const [dashboard, referenceChartData, collections] = await Promise.all([
+      statService.getDashboardForUser(currentUser, prisma),
+      statService.getReferenceChartData(prisma),
+      collectionService.getAllCollectionsOfUser(currentUser, prisma, true),
+    ]);
 
     return {
       props: {
-        diffs: diffs,
         dashboard: replaceNullWithZero({
           ...dashboard,
           historicalData: {
