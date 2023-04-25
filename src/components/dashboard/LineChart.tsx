@@ -7,9 +7,10 @@ import {
   faQuestionCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useCallback, useState } from "react";
 
 import { Canvg } from "canvg";
+import { debounce } from "lodash";
 import {
   VictoryArea,
   VictoryAxis,
@@ -17,15 +18,19 @@ import {
   VictoryLine,
   VictoryZoomContainer,
 } from "victory";
+import useWindowSize from "../../hooks/useWindowSize";
 import { InspectionType } from "../../inspection/scans";
 import { descriptionMapper, titleMapper } from "../../messages";
 import { theme } from "../../styles/victory-theme";
-import { linkMapper } from "../../utils/common";
+import { isAdmin, linkMapper } from "../../utils/common";
 import { tailwindColors } from "../../utils/view";
+import CollectionDataPill from "../CollectionDataPill";
 import Tooltip from "../Tooltip";
 import { RefLabelComponent } from "./RefLabelComponent";
-import CollectionDataPill from "../CollectionDataPill";
-import useWindowSize from "../../hooks/useWindowSize";
+import TrendDiff from "./TrendDiff";
+import { config } from "../../config";
+import { useRouter } from "next/router";
+
 interface Props {
   displayCollections: number[];
   inspectionType: InspectionType;
@@ -80,6 +85,8 @@ const LineChart: FunctionComponent<Props> = ({
   const chartRef = React.useRef<any>(null);
   const { width } = useWindowSize();
 
+  const router = useRouter();
+
   const [visibleDomain, setVisibleDomain] = useState<
     [string | undefined, string | undefined]
   >([
@@ -118,20 +125,23 @@ const LineChart: FunctionComponent<Props> = ({
     )
   );
 
-  const handleDomainChange = (newDomain: [Date, Date] | [number, number]) => {
-    const startIdx = Math.floor(newDomain[0] as number);
-    const endIdx = Math.ceil(
-      Math.min(
-        newDomain[1] as number,
-        (data.data[defaultCollectionId]?.series.length ?? 0) - 1
-      )
-    );
-    setTrends(calculateNewTrends(startIdx, endIdx));
-    setVisibleDomain([
-      data.data[defaultCollectionId]?.series[startIdx].x,
-      data.data[defaultCollectionId]?.series[endIdx].x,
-    ]);
-  };
+  const handleDomainChange = useCallback(
+    debounce((newDomain: [Date, Date] | [number, number]) => {
+      const startIdx = Math.floor(newDomain[0] as number);
+      const endIdx = Math.floor(
+        Math.min(
+          (newDomain[1] as number) - 1,
+          (data.data[defaultCollectionId]?.series.length ?? 0) - 1
+        )
+      );
+
+      setTrends(calculateNewTrends(startIdx, endIdx));
+      const startX = data.data[defaultCollectionId]?.series[startIdx].x;
+      const endX = data.data[defaultCollectionId]?.series[endIdx].x;
+      setVisibleDomain([startX, endX]);
+    }, 500),
+    [data.data, defaultCollectionId]
+  );
 
   const exportToPng = async () => {
     if (chartRef.current) {
@@ -381,6 +391,16 @@ const LineChart: FunctionComponent<Props> = ({
           );
         })}
       </div>
+      {router.query.displayDiff === "1" && (
+        <div className="px-6 mt-5">
+          <TrendDiff
+            inspectionType={inspectionType}
+            start={visibleDomain[0]}
+            end={visibleDomain[1]}
+            displayCollections={displayCollections}
+          />
+        </div>
+      )}
     </div>
   );
 };

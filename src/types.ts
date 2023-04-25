@@ -176,7 +176,7 @@ export interface Guest {
 export interface UriDiff {
   uri: string;
   diff: {
-    [key in InspectionType]: {
+    [key in InspectionType]?: {
       was: boolean | null;
       now: boolean | null;
     };

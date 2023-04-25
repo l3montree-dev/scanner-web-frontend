@@ -1,9 +1,9 @@
 import { FunctionComponent } from "react";
 
 import { InspectionType } from "../../inspection/scans";
-import { Diffs } from "../../types";
 import { classNames } from "../../utils/common";
 import LineChart from "./LineChart";
+import { Diffs } from "../../types";
 
 interface Props {
   displayCollections: number[];
@@ -23,7 +23,6 @@ interface Props {
       max: number;
     };
   };
-  diffs: Diffs;
   defaultCollectionId: number;
   zoomLevel: number;
 }
@@ -42,7 +41,7 @@ const LineCharts: FunctionComponent<Props> = ({
           style={{
             gridTemplateColumns: `repeat(${3 - zoomLevel}, 1fr)`,
           }}
-          className={classNames("mt-5 grid gap-2 justify-start")}
+          className={classNames("grid gap-2 justify-start")}
         >
           {displayInspections.map((key) => {
             return (
