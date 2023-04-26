@@ -72,16 +72,15 @@ export const getChangedInspectionsOfCollections = async (
         SELECT DISTINCT ON (nii.uri)
         *
         FROM scan_reports nii
-        WHERE nii."createdAt" <= ${start} AND nii."createdAt" >= ${
-      config.statFirstDay
-    } AND exists(SELECT 1 from last_report where last_report.uri = nii.uri)
+        WHERE nii."createdAt" <= ${start}
+     AND exists(SELECT 1 from last_report where last_report.uri = nii.uri)
         ORDER BY nii.uri,nii."createdAt" DESC
     ),
     in_interval AS (
         SELECT DISTINCT ON (scan_reports.uri)
         scan_reports.*
         FROM scan_reports
-        WHERE scan_reports."createdAt" >= '2023-01-15'::date AND exists(SELECT 1 from last_report where last_report.uri = scan_reports.uri) AND scan_reports."createdAt" >= '2023-01-15'::date AND NOT EXISTS(
+        WHERE exists(SELECT 1 from last_report where last_report.uri = scan_reports.uri) AND NOT EXISTS(
             SELECT 1 from not_in_interval nii where nii.uri = scan_reports.uri
             )
         ORDER BY scan_reports.uri, scan_reports."createdAt" ASC
@@ -94,12 +93,12 @@ export const getChangedInspectionsOfCollections = async (
     SELECT row_to_json(sr1.*) as "lastReport", row_to_json(sr2.*) as "secondLastReport" from last_report sr1
     INNER JOIN second_last_report sr2 ON sr1.uri = sr2.uri
     AND (
-        sr2.hsts != sr1.hsts OR
-        sr2."responsibleDisclosure" != sr1."responsibleDisclosure" OR
-        sr2."tlsv1_3" != sr1."tlsv1_3" OR
-        sr2."deprecatedTLSDeactivated" != sr1."deprecatedTLSDeactivated" OR
-        sr2."dnsSec" != sr1."dnsSec" OR
-        sr2."rpki" != sr1."rpki"
+        sr2.hsts is distinct from  sr1.hsts OR
+        sr2."responsibleDisclosure" is distinct from  sr1."responsibleDisclosure" OR
+        sr2."tlsv1_3" is distinct from sr1."tlsv1_3" OR
+        sr2."deprecatedTLSDeactivated" is distinct from  sr1."deprecatedTLSDeactivated" OR
+        sr2."dnsSec" is distinct from sr1."dnsSec" OR
+        sr2."rpki" is distinct from  sr1."rpki"
     )
     `
   )) as Array<{

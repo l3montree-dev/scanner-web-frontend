@@ -100,7 +100,9 @@ const getCollectionFailedSuccessPercentage = async (
         SELECT DISTINCT ON (uri)
         *
         FROM scan_reports
-        WHERE "createdAt" <= to_timestamp(${until / 1000})
+        WHERE "createdAt" <= to_timestamp(${until / 1000}) AND EXISTS(
+            SELECT 1 from target_collections where target_collections.uri = scan_reports.uri AND target_collections."collectionId" = ${collectionId}
+            )
         ORDER BY uri,"createdAt" DESC
     )
     ,
@@ -109,7 +111,9 @@ const getCollectionFailedSuccessPercentage = async (
         *
         FROM scan_reports
         WHERE "createdAt" > to_timestamp(${until / 1000})
-        AND NOT EXISTS(SELECT 1 from older where older.uri = scan_reports.uri)
+        AND NOT EXISTS(SELECT 1 from older where older.uri = scan_reports.uri) AND EXISTS(
+            SELECT 1 from target_collections where target_collections.uri = scan_reports.uri AND target_collections."collectionId" = ${collectionId}
+        )
         ORDER BY uri,"createdAt" ASC
     ),
     reports AS (
@@ -146,7 +150,7 @@ const getCollectionFailedSuccessPercentage = async (
         AVG("notRevoked"::int) as "notRevoked",
         AVG("certificateTransparency"::int) as "certificateTransparency",
         AVG("validCertificateChain"::int) as "validCertificateChain",
-        COUNT(*) as "totalCount" from reports inner join targets ON reports.uri = targets.uri inner join target_collections tc ON targets.uri = tc.uri where tc."collectionId" = ${collectionId}`
+        COUNT(*) as "totalCount" from reports`
   )) as any;
 
   res = toDTO(res);

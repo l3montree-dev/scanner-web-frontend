@@ -257,7 +257,7 @@ const PieCharts: FunctionComponent<Props> = ({
             </div>
             <div className="flex-1">
               <p className="text-sm px-6">
-                <span className="text-slate-400">Gesamt</span>
+                <span className="text-slate-300">Gesamt</span>
                 <br />
                 <Link href={`/dashboard/targets?${key}=1`}>
                   <span className="">
