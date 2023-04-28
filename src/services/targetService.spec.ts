@@ -22,7 +22,6 @@ describe("Target Service Test Suite", () => {
       create: {
         uri: "example.com/test",
         lastScan: null,
-        group: "unknown",
         queued: false,
         hostname: "example.com",
       },
@@ -106,7 +105,6 @@ describe("Target Service Test Suite", () => {
       create: {
         errorCount: 1,
         uri: "example.com/test",
-        group: "unknown",
         lastScan: expect.any(Number),
         hostname: "example.com",
       },
