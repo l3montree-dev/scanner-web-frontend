@@ -221,4 +221,18 @@ describe("Report Service Test Suite", () => {
       },
     });
   });
+  it("should not return that a scan report did change, if one of the values is null and the other one is undefined", () => {
+    let actual = reportService.reportDidChange(
+      { dnsSec: null } as any,
+      { dnsSec: undefined } as any
+    );
+    expect(actual).toBe(false);
+
+    actual = reportService.reportDidChange(
+      { dnsSec: undefined } as any,
+      { dnsSec: null } as any
+    );
+
+    expect(actual).toBe(false);
+  });
 });

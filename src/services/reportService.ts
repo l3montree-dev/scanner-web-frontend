@@ -10,12 +10,27 @@ import {
 import { getHostnameFromUri, limitStringValues } from "../utils/common";
 import { DTO, toDTO } from "../utils/server";
 
+const didPassEq = (
+  didPassA: boolean | null | undefined,
+  didPassB: boolean | null | undefined
+) => {
+  if (didPassA === didPassB) {
+    return true;
+  }
+  if (
+    (didPassA === null && didPassB === undefined) ||
+    (didPassA === undefined && didPassB === null)
+  ) {
+    return true;
+  }
+  return false;
+};
 const reportDidChange = (
   lastReport: ScanReport,
   newReport: Omit<ScanReport, "createdAt" | "updatedAt" | "id">
 ) => {
   const res = Object.values(InspectionTypeEnum).some((key) => {
-    return lastReport[key] !== newReport[key];
+    return !didPassEq(lastReport[key], newReport[key]);
   });
 
   return res;
@@ -252,6 +267,7 @@ const handleNewScanReport = async (
 export const reportService = {
   handleNewScanReport,
   getChangedInspectionsOfCollections,
+  reportDidChange,
 };
 
 // 2406.679ms
