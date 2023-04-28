@@ -14,7 +14,7 @@ import { DTO, toDTO } from "../utils/server";
 import { targetCollectionService } from "./targetCollectionService";
 
 const handleNewTarget = async (
-  target: { uri: string; group?: string; queued?: boolean },
+  target: { uri: string; queued?: boolean },
   prisma: PrismaClient,
   connectToUser?: User
 ): Promise<Target> => {
@@ -22,7 +22,6 @@ const handleNewTarget = async (
   let payload = {
     uri: target.uri,
     lastScan: null,
-    group: target.group ?? "unknown",
     queued: target.queued ?? false,
     hostname: getHostnameFromUri(target.uri),
   };

@@ -79,7 +79,6 @@ describe("Report Service Test Suite", () => {
         errorCount: 0,
         // make sure the hostname is set correctly.
         hostname: "example.com",
-        group: "unknown",
       };
 
       const prismaMock = {
@@ -145,7 +144,6 @@ describe("Report Service Test Suite", () => {
       errorCount: 0,
       // make sure the hostname is set correctly.
       hostname: "example.com",
-      group: "unknown",
     };
 
     const prismaMock = {
