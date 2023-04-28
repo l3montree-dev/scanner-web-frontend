@@ -86,8 +86,6 @@ model Target {
   errorCount Int     @default(0)
   queued     Boolean @default(false)
 
-  // pretty much the reason why this domain is part of the system at all.
-  group String
 
   scanReports ScanReport[]
 
@@ -95,7 +93,6 @@ model Target {
 
   collections TargetCollectionRelation[]
 
-  @@index([group])
   @@index([lastScan])
   @@index([hostname])
   @@map("targets")

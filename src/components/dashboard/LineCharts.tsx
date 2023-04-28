@@ -3,7 +3,6 @@ import { FunctionComponent } from "react";
 import { InspectionType } from "../../inspection/scans";
 import { classNames } from "../../utils/common";
 import LineChart from "./LineChart";
-import { Diffs } from "../../types";
 
 interface Props {
   displayCollections: number[];

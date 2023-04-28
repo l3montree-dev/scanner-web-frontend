@@ -1,6 +1,5 @@
 import { PrismaClient, Target, User } from "@prisma/client";
-import { encode, toASCII } from "punycode";
-import { config } from "../config";
+import { toASCII } from "punycode";
 import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
 import {
   DetailedTarget,
@@ -11,7 +10,7 @@ import {
   TargetType,
 } from "../types";
 import { collectionId, getHostnameFromUri } from "../utils/common";
-import { DTO, shuffle, toDTO } from "../utils/server";
+import { DTO, toDTO } from "../utils/server";
 import { targetCollectionService } from "./targetCollectionService";
 
 const handleNewTarget = async (
@@ -65,7 +64,6 @@ const handleTargetScanError = async (
     create: {
       errorCount: 1,
       uri: content.target,
-      group: "unknown",
       lastScan: content.timestamp ?? Date.now(),
       hostname: getHostnameFromUri(content.target),
     },
@@ -231,7 +229,7 @@ const getTargets2Scan = async (prisma: PrismaClient) => {
     },
   });
 
-  return shuffle(targets);
+  return targets;
 };
 
 export const targetService = {

@@ -195,7 +195,6 @@ const handleNewScanReport = async (
         queued: false,
         errorCount: 0,
         lastScan: result.timestamp,
-        group: "unknown",
         hostname: getHostnameFromUri(result.target),
       },
       update: {

@@ -10,6 +10,7 @@ import {
   DomainInspectionType,
   HeaderInspectionType,
   InspectionType,
+  InspectionTypeEnum,
   NetworkInspectionType,
   OrganizationalInspectionType,
   TLSInspectionType,
@@ -84,14 +85,15 @@ export const optimisticUpdate = <T>(
   return () => setStateFn(() => oldState);
 };
 
-export const displayInspections: Array<InspectionType> = [
+export const displayInspections: Array<InspectionType> =
+  Object.values(InspectionTypeEnum); /* [
   OrganizationalInspectionType.ResponsibleDisclosure,
   TLSInspectionType.TLSv1_3,
   TLSInspectionType.DeprecatedTLSDeactivated,
   HeaderInspectionType.HSTS,
   DomainInspectionType.DNSSec,
   NetworkInspectionType.RPKI,
-];
+]; */
 
 const fullConfig = resolveConfig(tailwindConfig);
 export const tailwindColors = (fullConfig.theme as any).colors;
