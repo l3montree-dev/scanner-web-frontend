@@ -85,10 +85,7 @@ const TrendDiff: FunctionComponent<Props> = ({
     const url = new URLSearchParams({
       start: parseDate(start).getTime().toString(),
       end: parseDate(end).getTime().toString(),
-      collectionIds: collectionIds
-        .filter((id) => !config.generateStatsForCollections.includes(id))
-        .map((id) => id.toString())
-        .join(","),
+      collectionIds: collectionIds.map((id) => id.toString()).join(","),
       inspectionType,
     }).toString();
     const res = await clientHttpClient(`/api/diff?${url}`, crypto.randomUUID());

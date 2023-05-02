@@ -15,6 +15,7 @@ import { InspectionType } from "../../inspection/scans";
 import { collectionService } from "../../services/collectionService";
 import { Guest } from "../../types";
 import ForbiddenException from "../../errors/ForbiddenException";
+import { config } from "../../config";
 
 const handleGet = async (
   req: NextApiRequest,
@@ -26,7 +27,8 @@ const handleGet = async (
   const end = parseInt(req.query.end as string);
   const collectionIds = (req.query.collectionIds as string)
     .split(",")
-    .map((d) => +d);
+    .map((d) => +d)
+    .filter((id) => !config.generateStatsForCollections.includes(id));
 
   // check if the user has access to the collections
   const cols = (
