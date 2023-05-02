@@ -185,7 +185,7 @@ const getTargets2Scan = async (prisma: PrismaClient) => {
   const targets = (await prisma.$queryRaw(Prisma.sql`
   SELECT * from targets where ("lastScan" < ${new Date(
     new Date().getTime() -
-      +(process.env.SCAN_INTERVAL_DAYS ?? 7) * 24 * 60 * 60 * 1000
+      +(process.env.SCAN_INTERVAL_DAYS ?? 1) * 24 * 60 * 60 * 1000
   ).getTime()} OR "lastScan" IS NULL) AND "queued" = false AND "errorCount" < 5 AND MOD(number, ${
     scanIntervalMinutes - currentMinute
   }) = 0`)) as Array<Target>;
