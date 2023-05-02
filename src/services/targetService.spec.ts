@@ -251,6 +251,7 @@ describe("Target Service Test Suite", () => {
       },
     ];
     const prismaMock = {
+      $queryRaw: jest.fn(() => targets),
       target: {
         findMany: jest.fn(() => targets),
         updateMany: jest.fn(),
