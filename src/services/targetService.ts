@@ -1,4 +1,4 @@
-import { PrismaClient, Target, User } from "@prisma/client";
+import { Prisma, PrismaClient, Target, User } from "@prisma/client";
 import { toASCII } from "punycode";
 import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
 import {
@@ -176,46 +176,19 @@ const getUserTargetsWithLatestTestResult = async (
 };
 
 const getTargets2Scan = async (prisma: PrismaClient) => {
-  // get all domains which have not been scanned in the last 24 hours
-  const targets = await prisma.target.findMany({
-    where: {
-      AND: [
-        // it has not been scanned in the past scan interval days.
-        {
-          OR: [
-            {
-              lastScan: null,
-            },
-            {
-              lastScan: {
-                lt: new Date(
-                  new Date().getTime() -
-                    +(process.env.SCAN_INTERVAL_DAYS ?? 7) * 24 * 60 * 60 * 1000
-                ).getTime(),
-              },
-            },
-          ],
-        },
-        // it either belongs to a group which is configured to be scanned or it is monitored by a user
-        {
-          collections: {
-            some: {},
-          },
-        },
-        {
-          queued: false,
-          // it is scan-able
-          errorCount: {
-            lt: 5,
-          },
-        },
-      ],
-    },
-    orderBy: {
-      lastScan: "asc",
-    },
-    take: 10_000,
-  });
+  const scanIntervalMinutes = +(process.env.SCAN_INTERVAL_DAYS ?? 1) * 24 * 60;
+
+  // make sure to round - otherwise we might miss some targets since it does two ticks in the same minute even though one tick is at 01 seconds and the other at 59 seconds
+  const currentMinute =
+    Math.round(Date.now() / 1000 / 60) % scanIntervalMinutes;
+
+  const targets = (await prisma.$queryRaw(Prisma.sql`
+  SELECT * from targets where ("lastScan" < ${new Date(
+    new Date().getTime() -
+      +(process.env.SCAN_INTERVAL_DAYS ?? 7) * 24 * 60 * 60 * 1000
+  ).getTime()} OR "lastScan" IS NULL) AND "queued" = false AND "errorCount" < 5 AND MOD(number, ${
+    scanIntervalMinutes - currentMinute
+  }) = 0`)) as Array<Target>;
 
   await prisma.target.updateMany({
     where: {

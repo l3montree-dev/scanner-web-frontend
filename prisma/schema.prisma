@@ -79,6 +79,8 @@ model Target {
   uri      String @id
   hostname String
 
+  number Int @default(autoincrement())
+
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
