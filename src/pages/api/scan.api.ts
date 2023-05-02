@@ -147,6 +147,7 @@ export const handler: DecoratedHandler<
         lastScan: result.timestamp,
         hostname: "",
         errorCount: 0,
+        number: 0,
         queued: false,
         createdAt: new Date(result.timestamp).toString(),
         updatedAt: new Date(result.timestamp).toString(),
