@@ -123,8 +123,6 @@ spec:
                   fieldPath: metadata.namespace
             - name: SCAN_INTERVAL_DAYS
               value: {{.Values.quicktest.scanInterval | default "7" | quote}}
-            - name: SCAN_INTERVAL
-              value: "60000"
             - name: NEXT_PUBLIC_REFERENCE_COLLECTIONS
               value: {{.Values.quicktest.referenceCollections | default "" | quote}}
             - name: LOG_LEVEL
