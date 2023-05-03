@@ -19,16 +19,19 @@ module.exports = {
     theme: {
         container: {
             center: true,
-            padding: '2rem'
+            padding: '2rem',
+            screens: {
+                'sm': '100%',
+                'md': '100%',
+                'lg': '73.125rem',
+            }
         },
         fontSize: {
             sm: '0.8rem',
             base: '1.5rem',
-            xl: '1.25rem',
-            '2xl': '1.563rem',
-            '3xl': '1.953rem',
-            '4xl': '2.441rem',
-            '5xl': '3.052rem',
+            lg: '1.625rem',
+            xl: '1.75rem',
+            '2xl': '3.5rem',
         },
         borderWidth: {
             DEFAULT: '1px',

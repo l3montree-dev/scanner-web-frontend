@@ -18,6 +18,14 @@
     font-display: swap;
 }
 
+@font-face {
+    font-family: 'BundesSans';
+    src: url('../../public/assets/fonts/BundesSans-Web-Medium.woff');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
 html,
 body {
   @apply text-textblack;
@@ -125,10 +133,10 @@ th > div {
 
 article  {
     h1 {
-        @apply font-medium text-2xl sm:text-3xl mb-4
+        @apply font-medium text-2xl mb-4
     }
     h2 {
-        @apply font-medium text-xl sm:text-2xl mb-5 mt-10
+        @apply text-xl mb-5 mt-10 text-blau-100
     }
     p {
         @apply mb-5;
@@ -142,7 +150,7 @@ article  {
         }
     }
     a {
-        @apply text-lightning-500 underline;
+        @apply border-b hover:text-blau-100 hover:no-underline border-b-blau-100;
     }
     b {
         @apply font-medium;
@@ -349,17 +357,12 @@ article  {
   left: 0;
 }
 
-.border-t-10 {
-    border-top-width: 10px;
-}
 
-.border-r-6 {
-    border-right-width: 6px;
-}
-
-.border-b-6 {
-  border-bottom-width: 6px;
-}
 .transition-bund {
     transition: all 500ms ease-in-out 0ms
+}
+
+
+.header-border {
+    border-bottom-color: rgba(0,0,0,0.15);
 }
