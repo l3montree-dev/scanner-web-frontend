@@ -30,17 +30,22 @@ import { useSession } from "../../hooks/useSession";
 import useWindowSize from "../../hooks/useWindowSize";
 import { collectionService } from "../../services/collectionService";
 import { statService } from "../../services/statService";
-import { ChartData, IDashboard } from "../../types";
+import { ChartData, Guest, IDashboard } from "../../types";
 import {
   Normalized,
   classNames,
   collectionId,
   dateFormat,
+  isAdmin,
   normalizeToMap,
   replaceNullWithZero,
 } from "../../utils/common";
 import { DTO, ServerSideProps, toDTO } from "../../utils/server";
 import { displayInspections, tailwindColors } from "../../utils/view";
+import {
+  withSession,
+  withSessionServerSideProps,
+} from "../../decorators/withSession";
 
 interface Props {
   dashboard: IDashboard;
@@ -386,12 +391,24 @@ const Dashboard: FunctionComponent<Props> = (props) => {
 };
 
 export const getServerSideProps = decorateServerSideProps(
-  async (_context, [currentUser, prisma]): Promise<ServerSideProps<Props>> => {
+  async (
+    context,
+    [currentUser, session, prisma]
+  ): Promise<ServerSideProps<Props>> => {
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 2);
     yesterday.setHours(0, 0, 0, 0);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+
+    const forceCollection = context.query.forceCollection as string | undefined;
+    if (forceCollection && isAdmin(session)) {
+      currentUser = {
+        id: "admin",
+        defaultCollectionId: +forceCollection,
+        collectionId: +forceCollection,
+      } as Guest;
+    }
 
     const [dashboard, referenceChartData, collections] = await Promise.all([
       statService.getDashboardForUser(currentUser, prisma),
@@ -419,6 +436,7 @@ export const getServerSideProps = decorateServerSideProps(
     };
   },
   withCurrentUserOrGuestServerSideProps,
+  withSessionServerSideProps,
   withDB
 );
 
