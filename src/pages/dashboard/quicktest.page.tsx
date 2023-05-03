@@ -44,9 +44,9 @@ const QuicktestPage: FunctionComponent<Props> = (props) => {
         <div className="flex-1">
           <div className="lg:flex lg:flex-row w-full flex-wrap  items-start justfy-between mb-12 lg:mb-0">
             <div className="flex-1">
-              <div className="text-white mb-10 gap-2 flex flex-row items-center">
+              <div className="text-black mb-10 gap-2 flex flex-row items-center">
                 <PageTitle
-                  className="text-4xl text-white mb-0 font-bold"
+                  className="text-4xl text-black mb-0 font-bold"
                   stringRep="Schnelltest"
                 >
                   Schnelltest

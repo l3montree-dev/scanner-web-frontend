@@ -100,19 +100,19 @@ const SideNavigation = () => {
   return (
     <div
       className={classNames(
-        "bg-deepblue-300 transition-all relative border-r-2 border-deepblue-600 lg:h-full",
+        "bg-white transition-all relative border-r-2 border-deepblue-600 lg:h-full",
         store.sideMenuCollapsed ? "w-16" : "w-56"
       )}
     >
       <div className="md:sticky top-5">
-        <div className="pt-5 flex -ml-2 text-center items-start mb-5 text-white">
+        <div className="pt-5 flex text-center items-start mb-5 text-white">
           <Link href="/dashboard" className="flex mx-auto items-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               width={width <= 768 ? 100 : store.sideMenuCollapsed ? 55 : 130}
               height={45}
-              className="flex-1"
-              src={"/assets/sticker_challenge_white.svg"}
+              className={store.sideMenuCollapsed ? "flex-1 mt-8" : "flex-1"}
+              src={"/assets/sticker_challenge_black.svg"}
               alt="Logo OZG"
             />
           </Link>
@@ -129,17 +129,12 @@ const SideNavigation = () => {
               <Link key={name} className="hover:no-underline" href={path}>
                 <div
                   className={classNames(
-                    "py-2 px-3 m-2 flex flex-row border items-center rounded-sm hover:bg-deepblue-100 hover:no-underline transition-all hover:text-white cursor-pointer",
-                    pathname === path
-                      ? "bg-deepblue-100 border border-deepblue-100 text-white"
-                      : "text-slate-400 border-transparent"
+                    "py-2 px-3 m-2 flex flex-row items-center hover:bg-gray-900 hover:no-underline transition-all hover:text-white cursor-pointer",
+                    pathname === path ? "text-blau-100" : "text-textblack"
                   )}
                 >
                   <div className="mr-4">
-                    <FontAwesomeIcon
-                      className="opacity-75 w-5 h-5"
-                      icon={icon}
-                    />
+                    <FontAwesomeIcon className="w-5 h-5" icon={icon} />
                   </div>
                   <span
                     title={name}
