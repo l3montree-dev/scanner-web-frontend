@@ -48,7 +48,7 @@ const InfoContent = () => {
             />
           </div>
 
-          <div className="">
+          <div className="mt-10">
             <p>
               Mit der zunehmenden Digitalisierung der öffentlichen Verwaltung
               steigt die Bedeutung der zugrundeliegenden Informationssicherheit.
