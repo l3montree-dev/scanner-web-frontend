@@ -21,6 +21,7 @@
 
 html,
 body {
+  @apply text-textblack;
   padding: 0;
   margin: 0;
   font-size: 19px;
@@ -352,4 +353,8 @@ article  {
 
 .border-t-10 {
     border-top-width: 10px;
+}
+
+.transition-bund {
+    transition: all 500ms ease-in-out 0ms
 }

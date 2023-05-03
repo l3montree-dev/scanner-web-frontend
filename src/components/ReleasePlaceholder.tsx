@@ -14,7 +14,7 @@ const ReleasePlaceHolder: FunctionComponent = () => {
           />
         </div>
         <div className="md:mt-0 text-center pb-14 text-2xl p-5 pt-0 md:pt-5">
-          <p className="text-white">
+          <p>
             Neugierig? <br />
             <a className="underline" href="mailto:ozgsec@bmi.bund.de">
               ozgsec@bmi.bund.de

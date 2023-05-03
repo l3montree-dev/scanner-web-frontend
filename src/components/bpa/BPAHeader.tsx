@@ -4,6 +4,7 @@ import React from "react";
 import SmallLink from "./SmallLink";
 import { useRouter } from "next/router";
 import { classNames } from "../../utils/common";
+import Logo from "./Logo";
 
 const BPAHeader = () => {
   const activeLink = useRouter().pathname;
@@ -11,12 +12,7 @@ const BPAHeader = () => {
     <header className="pt-4 border-t-10 sticky top-0 shadow-lg border-t-bund">
       <div className="container">
         <div className="flex flex-row pb-4 justify-between items-start">
-          <Image
-            alt="Logo BMI + BSI"
-            src={"/assets/BMI_de_v3__BSI_de_v1__Web_farbig.svg"}
-            width={300}
-            height={200}
-          />
+          <Logo />
           <div>
             <nav className="flex flex-row justify-end">
               <ul>
