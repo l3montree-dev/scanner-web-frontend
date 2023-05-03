@@ -16,6 +16,7 @@ import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import useLoading from "../../hooks/useLoading";
 import Spinner from "../Spinner";
 import { classNames } from "../../utils/common";
+import { useRouter } from "next/router";
 
 const parseDate = (date: string) => {
   let [day, month, year] = date.split(".");
@@ -61,6 +62,8 @@ const TrendDiff: FunctionComponent<Props> = ({
     collectionIds: [],
   });
 
+  const router = useRouter();
+
   const [isOpen, setIsOpen] = useState(false);
 
   const diffRequest = useLoading();
@@ -87,6 +90,8 @@ const TrendDiff: FunctionComponent<Props> = ({
       end: parseDate(end).getTime().toString(),
       collectionIds: collectionIds.map((id) => id.toString()).join(","),
       inspectionType,
+      forceCollection:
+        (router.query["forceCollection"] as string | undefined) ?? "",
     }).toString();
     const res = await clientHttpClient(`/api/diff?${url}`, crypto.randomUUID());
     const diff: {

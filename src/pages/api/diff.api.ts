@@ -13,9 +13,11 @@ import { reportService } from "../../services/reportService";
 import { groupBy } from "lodash";
 import { InspectionType } from "../../inspection/scans";
 import { collectionService } from "../../services/collectionService";
-import { Guest } from "../../types";
+import { Guest, ISession } from "../../types";
 import ForbiddenException from "../../errors/ForbiddenException";
 import { config } from "../../config";
+import { withSession } from "../../decorators/withSession";
+import { isAdmin } from "../../utils/common";
 
 const handleGet = async (
   req: NextApiRequest,
@@ -67,17 +69,28 @@ const handleGet = async (
   return filteredInspections;
 };
 // exporting just for testing purposes.
-export const handler: DecoratedHandler<[PrismaClient, User | Guest]> = async (
+export const handler: DecoratedHandler<
+  [PrismaClient, User | Guest, ISession | null]
+> = async (
   req: NextApiRequest,
   res: NextApiResponse,
-  [prisma, currentUser]
+  [prisma, currentUser, session]
 ) => {
   switch (req.method) {
     case "GET":
+      const forceCollection = req.query.forceCollection as string | undefined;
+      if (isAdmin(session) && forceCollection) {
+        currentUser = {
+          id: "admin",
+          collectionId: +forceCollection,
+          defaultCollectionId: +forceCollection,
+        } as Guest;
+      }
+
       return handleGet(req, currentUser, prisma);
     default:
       throw new MethodNotAllowed();
   }
 };
 
-export default decorate(handler, withDB, withCurrentUserOrGuest);
+export default decorate(handler, withDB, withCurrentUserOrGuest, withSession);
