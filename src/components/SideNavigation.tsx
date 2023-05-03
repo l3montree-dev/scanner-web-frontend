@@ -100,8 +100,8 @@ const SideNavigation = () => {
   return (
     <div
       className={classNames(
-        "bg-white transition-all relative border-r-6 border-hellgrau-20 lg:h-full",
-        store.sideMenuCollapsed ? "w-16" : "w-56"
+        "bg-white transition-all relative border-r-6 border-hellgrau-40 lg:h-full",
+        store.sideMenuCollapsed ? "w-16" : "w-72"
       )}
     >
       <div className="md:sticky top-5">
@@ -120,7 +120,7 @@ const SideNavigation = () => {
         <div
           className={classNames(
             "flex transition-all ml-1 pt-5 border-deepblue-300 lg:h-full items-center",
-            store.sideMenuCollapsed ? "w-16" : "w-56"
+            store.sideMenuCollapsed ? "w-16" : "w-72"
           )}
         ></div>
         <div>
@@ -129,7 +129,7 @@ const SideNavigation = () => {
               <Link key={name} className="hover:no-underline" href={path}>
                 <div
                   className={classNames(
-                    "py-3 px-5 flex flex-row items-center hover:bg-hellgrau-20 hover:no-underline transition-all  cursor-pointer",
+                    "py-3 px-3 m-2 flex flex-row items-center hover:bg-hellgrau-20 hover:no-underline transition-all border-b cursor-pointer",
                     pathname === path ? "text-blau-100" : "text-textblack"
                   )}
                 >

@@ -1,4 +1,4 @@
-import { faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
+import { faCaretDown, faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Collection, ShareLink } from "@prisma/client";
 import { FunctionComponent } from "react";
@@ -54,7 +54,7 @@ const QuicktestPage: FunctionComponent<Props> = (props) => {
               </div>
             </div>
           </div>
-          <div className="bg-deepblue-300 p-2 lg:p-5 rounded-md">
+          <div className="bg-hellgrau-40 p-2 lg:p-5 rounded-md">
             <form
               onSubmit={onSubmit}
               className="flex items-end gap-2 justify-between"
@@ -68,19 +68,23 @@ const QuicktestPage: FunctionComponent<Props> = (props) => {
                 />
               </div>
 
-              <Button loading={scanRequest.isLoading} type="submit">
+              <Button
+                loading={scanRequest.isLoading}
+                RightIcon={<FontAwesomeIcon icon={faAngleRight} />}
+                type="submit"
+              >
                 Scan starten
               </Button>
             </form>
 
             {scanRequest.errored && (
-              <small className="text-red-600 mt-3 -mb-5 flex">
+              <small className="text-rot-100 mt-3 -mb-5 flex">
                 {scanRequest.errorMessage}
               </small>
             )}
           </div>
           {target !== null && (
-            <div className="bg-deepblue-300 lg:p-5 p-0 rounded-md mt-2">
+            <div className="lg:p-5 p-0 mt-2">
               <ResultEnvelope
                 target={target}
                 dateString={dateString}

@@ -3,6 +3,10 @@ import {
   faQuestion,
   faTimes,
   faWarning,
+  faCheckCircle,
+  faCircleExclamation,
+  faCircleXmark,
+  faCircleQuestion,
 } from "@fortawesome/free-solid-svg-icons";
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "../../tailwind.config";
@@ -38,11 +42,11 @@ export const didPass2CheckResult = (didPass?: boolean | null) => {
 export const checkResult2BorderClassName = (checkResult: CheckResult) => {
   switch (checkResult) {
     case CheckResult.Passed:
-      return "lightning-500";
+      return "dunkelgruen-80";
     case CheckResult.Failed:
-      return "yellow-500";
+      return "hellorange-100";
     case CheckResult.Critical:
-      return "red-500";
+      return "rot-100";
     default:
       return "gray-500";
   }
@@ -57,20 +61,20 @@ export const checkResult2TextClassName = (checkResult: CheckResult) => {
     case CheckResult.Critical:
       return checkResult2BorderClassName(checkResult);
     default:
-      return "white";
+      return "hellgrau-100";
   }
 };
 
 export const checkResult2Icon = (checkResult: CheckResult) => {
   switch (checkResult) {
     case CheckResult.Passed:
-      return faCheck;
+      return faCheckCircle;
     case CheckResult.Failed:
-      return faWarning;
+      return faCircleExclamation;
     case CheckResult.Critical:
-      return faTimes;
+      return faCircleXmark;
     default:
-      return faQuestion;
+      return faCircleQuestion;
   }
 };
 
