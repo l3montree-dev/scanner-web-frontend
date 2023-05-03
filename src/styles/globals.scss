@@ -2,9 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-    color-scheme: dark;
-}
 
 @font-face {
     font-family: 'BundesSans';
@@ -32,6 +29,7 @@ body {
   hyphens: auto;
   word-break: break-word;
 }
+
 
 @-moz-document url-prefix() {
     html, body {
@@ -350,4 +348,8 @@ article  {
   position: absolute;
   top: 0;
   left: 0;
+}
+
+.border-t-10 {
+    border-top-width: 10px;
 }
