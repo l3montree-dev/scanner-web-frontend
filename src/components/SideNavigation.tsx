@@ -100,7 +100,7 @@ const SideNavigation = () => {
   return (
     <div
       className={classNames(
-        "bg-white transition-all relative border-r-2 border-deepblue-600 lg:h-full",
+        "bg-white transition-all relative border-r-6 border-hellgrau-20 lg:h-full",
         store.sideMenuCollapsed ? "w-16" : "w-56"
       )}
     >
@@ -129,7 +129,7 @@ const SideNavigation = () => {
               <Link key={name} className="hover:no-underline" href={path}>
                 <div
                   className={classNames(
-                    "py-2 px-3 m-2 flex flex-row items-center hover:bg-gray-900 hover:no-underline transition-all hover:text-white cursor-pointer",
+                    "py-3 px-5 flex flex-row items-center hover:bg-hellgrau-20 hover:no-underline transition-all  cursor-pointer",
                     pathname === path ? "text-blau-100" : "text-textblack"
                   )}
                 >

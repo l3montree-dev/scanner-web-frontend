@@ -7,7 +7,7 @@ interface Props extends PropsWithChildren {
 }
 const Page: FunctionComponent<Props> = (props) => {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen text-base flex flex-col">
       <BPAHeader />
       <main className="flex flex-1">{props.children}</main>
       <Footer hideLogin={props.hideLogin} />

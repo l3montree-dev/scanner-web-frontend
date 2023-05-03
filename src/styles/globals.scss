@@ -2,10 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-
 @font-face {
     font-family: 'BundesSans';
-    src: url('../../public/assets/fonts/BundesSansWeb-Regular.woff');
+    src: url('../../public/assets/fonts/BundesSans-Web-Regular.woff');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -13,7 +12,7 @@
 
 @font-face {
     font-family: 'BundesSans';
-    src: url('../../public/assets/fonts/BundesSansWeb-Bold.woff');
+    src: url('../../public/assets/fonts/BundesSans-Web-Bold.woff');
     font-weight: bold;
     font-style: normal;
     font-display: swap;
@@ -24,7 +23,7 @@ body {
   @apply text-textblack;
   padding: 0;
   margin: 0;
-  font-size: 19px;
+  font-size: 16px;
   font-family: BundesSans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
   hyphens: auto;
@@ -125,15 +124,15 @@ th > div {
 
 
 article  {
-    @apply text-sm;
     h1 {
-        @apply font-medium font-serif text-2xl sm:text-3xl mb-4
+        @apply font-medium text-2xl sm:text-3xl mb-4
     }
     h2 {
-        @apply font-medium font-serif text-xl sm:text-2xl mb-5 mt-10
+        @apply font-medium text-xl sm:text-2xl mb-5 mt-10
     }
     p {
-        @apply mb-5 text-white/90
+        @apply mb-5;
+      
     }
     ul {
         @apply mb-5 pl-5;
@@ -336,7 +335,6 @@ article  {
     .DropdownMenuContent,
 .DropdownMenuSubContent {
   min-width: 0px!important;
- 
 }
 }
 

@@ -7,8 +7,11 @@ interface Props {
 }
 const SmallLink: FunctionComponent<Props> = (props) => {
   return (
-    <Link className="uppercase" href={props.href}>
-      <small>{props.children}</small>
+    <Link
+      className="uppercase font-bold text-sm text-dunkelgrau-100"
+      href={props.href}
+    >
+      {props.children}
     </Link>
   );
 };

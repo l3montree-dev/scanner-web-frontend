@@ -1,9 +1,8 @@
 import type { GetServerSideProps, NextPage } from "next";
-
-import DashboardPage from "../../components/DashboardPage";
-import InfoContent from "../../components/InfoContent";
-import SideNavigation from "../../components/SideNavigation";
-import { staticSecrets } from "../../utils/staticSecrets";
+import { staticSecrets } from "../utils/staticSecrets";
+import Page from "../components/Page";
+import InfoContent from "../components/InfoContent";
+import Meta from "../components/Meta";
 
 interface Props {
   displayNotAvailable: boolean;
@@ -12,16 +11,15 @@ interface Props {
 }
 const OZGSecurityChallenge2023: NextPage<Props> = ({ keycloakIssuer }) => {
   return (
-    <DashboardPage
-      keycloakIssuer={keycloakIssuer}
-      title="Die OZG-Security-Challenge 2023: Gemeinsam zu mehr IT-Sicherheit
+    <Page>
+      <Meta
+        title="Die OZG-Security-Challenge 2023: Gemeinsam zu mehr IT-Sicherheit
     "
-    >
-      <SideNavigation />
+      />
       <div className="flex-1">
         <InfoContent />
       </div>
-    </DashboardPage>
+    </Page>
   );
 };
 
