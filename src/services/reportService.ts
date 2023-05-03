@@ -151,7 +151,7 @@ const combineReport = (
     return newReport;
   }
   Object.values(InspectionTypeEnum).forEach((key) => {
-    if (newReport[key] === null) {
+    if (newReport[key] === null || newReport[key] === undefined) {
       newReport[key] = lastReport[key];
     }
   });
