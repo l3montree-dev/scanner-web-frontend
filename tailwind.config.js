@@ -17,6 +17,10 @@ module.exports = {
         "text-deepblue-900"
     ],
     theme: {
+        container: {
+            center: true,
+            padding: '2rem'
+        },
         extend: {
             fontFamily: {
                 'sans': ['OpenSans', ...defaultTheme.fontFamily.sans],
@@ -54,6 +58,7 @@ module.exports = {
                 "15/16": "93.75%",
             },
             "colors": {
+                bund: "#004F80",
                 deepblue: {
                     "50": "#383f6a",
                     "100": "#2e3560",
