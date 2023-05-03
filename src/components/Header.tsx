@@ -78,8 +78,7 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
   return (
     <div
       className={classNames(
-        "h-14 sticky top-0 z-20 transition-all duration-500 text-textblack",
-        "",
+        "h-14 sticky top-0 z-20 transition-all duration-500 text-textblack border-b-6 border-hellgrau-20",
         !scrolled ? "bg-white" : "bg-hellgrau-20"
       )}
     >
@@ -179,7 +178,7 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
 
                 <Menu
                   Button={
-                    <div className="bg-deepblue-100 text-slate-300 overflow-hidden cursor-pointer rounded-full h-9 w-9 flex items-center justify-center text-sm mr-1">
+                    <div className="bg-hellgrau-60 text-textblack overflow-hidden cursor-pointer rounded-full h-9 w-9 flex items-center justify-center text-sm mr-1">
                       <FontAwesomeIcon
                         size={"2xl"}
                         className="relative -bottom-1.5"
@@ -216,7 +215,7 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
                             </DropdownMenuItem>
                           </a>
                         ))}
-                      <div className="p-2 relative top-1 text-white text-sm border-t border-t-deepblue-200 bg-deepblue-300">
+                      <div className="p-2 relative top-1 text-sm border-t border-t-deepblue-200 bg-hellgrau-100 text-textblack">
                         Eingeloggt als:{" "}
                         {isGuestUser(session.data.user)
                           ? "Gast"
