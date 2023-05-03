@@ -12,6 +12,9 @@ import {
 import { collectionId, getHostnameFromUri } from "../utils/common";
 import { DTO, toDTO } from "../utils/server";
 import { targetCollectionService } from "./targetCollectionService";
+import { getLogger } from "./logger";
+
+const logger = getLogger(__filename);
 
 const handleNewTarget = async (
   target: { uri: string; queued?: boolean },
@@ -182,13 +185,14 @@ const getTargets2Scan = async (prisma: PrismaClient) => {
   const currentMinute =
     Math.round(Date.now() / 1000 / 60) % scanIntervalMinutes;
 
+  logger.info(
+    `selecting: MOD(number + ${currentMinute}, ${scanIntervalMinutes}) = 0`
+  );
+
   const targets = (await prisma.$queryRaw(Prisma.sql`
   SELECT * from targets where ("lastScan" < ${new Date(
-    new Date().getTime() -
-      +(process.env.SCAN_INTERVAL_DAYS ?? 1) * 24 * 60 * 60 * 1000
-  ).getTime()} OR "lastScan" IS NULL) AND "queued" = false AND "errorCount" < 5 AND MOD(number, ${
-    scanIntervalMinutes - currentMinute
-  }) = 0`)) as Array<Target>;
+    new Date().getTime() - scanIntervalMinutes * 60 * 1000
+  ).getTime()} OR "lastScan" IS NULL) AND "queued" = false AND "errorCount" < 5 AND MOD(number + ${currentMinute}, ${scanIntervalMinutes}) = 0`)) as Array<Target>;
 
   await prisma.target.updateMany({
     where: {

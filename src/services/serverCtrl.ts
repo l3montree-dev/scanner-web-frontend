@@ -1,6 +1,5 @@
 import { randomUUID } from "crypto";
 import PQueue from "p-queue";
-import { config } from "../config";
 import { prisma } from "../db/connection";
 
 import { once } from "../decorators/once";
@@ -17,7 +16,15 @@ import { statService } from "./statService";
 
 const logger = getLogger(__filename);
 
-const startLookupResponseLoop = once(() => {
+const bootstrap = once(() => {
+  // start the response loops.
+  startLookupResponseLoop();
+  startScanResponseLoop();
+  statLoop();
+  startScanLoop();
+});
+
+const startLookupResponseLoop = () => {
   logger.info("connected to database - starting lookup response loop");
   rabbitMQClient.subscribe(
     "ip-lookup-response",
@@ -34,9 +41,9 @@ const startLookupResponseLoop = once(() => {
     },
     { durable: true, maxPriority: 10 }
   );
-});
+};
 
-const startScanResponseLoop = once(() => {
+const startScanResponseLoop = () => {
   logger.info("starting scan response loop");
   rabbitMQClient.subscribe("scan-response", async (msg) => {
     const content = JSON.parse(msg.content.toString()).data as IScanResponse;
@@ -57,9 +64,9 @@ const startScanResponseLoop = once(() => {
       logger.error(e);
     }
   });
-});
+};
 
-const statLoop = once(() => {
+const statLoop = () => {
   let running = false;
   const promiseQueue = new PQueue({
     concurrency: 2,
@@ -98,9 +105,9 @@ const statLoop = once(() => {
       }
     }
   }, 10 * 1000);
-});
+};
 
-const startScanLoop = once(() => {
+const startScanLoop = () => {
   let running = false;
 
   const promiseQueue = new PQueue({
@@ -146,11 +153,8 @@ const startScanLoop = once(() => {
     }
     // does a lookup each minute
   }, 60 * 1000);
-});
+};
 
 export const serverCtrl = {
-  startLookupResponseLoop,
-  startScanResponseLoop,
-  startScanLoop,
-  statLoop,
+  bootstrap,
 };
