@@ -2,10 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-
 @font-face {
     font-family: 'BundesSans';
-    src: url('../../public/assets/fonts/BundesSansWeb-Regular.woff');
+    src: url('../../public/assets/fonts/BundesSans-Web-Regular.woff');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -13,7 +12,7 @@
 
 @font-face {
     font-family: 'BundesSans';
-    src: url('../../public/assets/fonts/BundesSansWeb-Bold.woff');
+    src: url('../../public/assets/fonts/BundesSans-Web-Bold.woff');
     font-weight: bold;
     font-style: normal;
     font-display: swap;
@@ -352,4 +351,8 @@ article  {
 
 .border-t-10 {
     border-top-width: 10px;
+}
+
+.border-r-6 {
+    border-right-width: 6px;
 }

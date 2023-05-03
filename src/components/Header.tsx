@@ -78,9 +78,9 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
   return (
     <div
       className={classNames(
-        "h-14 sticky top-0 z-20 transition-all duration-500 text-black ",
+        "h-14 sticky top-0 z-20 transition-all duration-500 text-textblack",
         "",
-        !scrolled ? "bg-deepblue-600" : "bg-deepblue-300 shadow-lg"
+        !scrolled ? "bg-white" : "bg-hellgrau-20"
       )}
     >
       {session.status === "authenticated" && session.data && (
@@ -88,7 +88,7 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
           <div className="flex flex-1 px-3 max-w-screen-xl mx-auto flex-row justify-between items-center">
             <h2
               className={classNames(
-                "text-white text-2xl font-bold transition duration-500",
+                "text-textblack text-2xl font-bold transition duration-500",
                 title === "" ? "opacity-0" : "opacity-100"
               )}
             >
@@ -172,7 +172,7 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
                     </div>
                   }
                 >
-                  <div className="flex cursor-pointer text-slate-300 flex-row gap-2">
+                  <div className="flex cursor-pointer text-textblack flex-row gap-2">
                     <FontAwesomeIcon size="xl" icon={faHeadset} />
                   </div>
                 </Tooltip>
