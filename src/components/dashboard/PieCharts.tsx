@@ -70,7 +70,7 @@ const PieCharts: FunctionComponent<Props> = ({
 }) => {
   const router = useRouter();
   return (
-    <div className="mt-5 justify-start gap-2 flex-wrap grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 grid 2xl:grid-cols-4">
+    <div className="mt-5 justify-start gap-8 flex-wrap grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 grid 2xl:grid-cols-3">
       {displayInspections.map((key) => {
         const percentage = currentStat.data[key] * 100;
         let padAngle = 0;
@@ -99,10 +99,7 @@ const PieCharts: FunctionComponent<Props> = ({
           .filter((r): r is RefData => r !== null);
 
         return (
-          <div
-            className="bg-deepblue-300 pb-5 rounded-md flex-col flex"
-            key={key}
-          >
+          <div className="bg-hellgrau-20 pb-5 flex-col flex" key={key}>
             <div className="flex-1 z-0">
               <VictoryChart prependDefaultAxes={false} width={300} height={300}>
                 <VictoryAxis
@@ -187,18 +184,18 @@ const PieCharts: FunctionComponent<Props> = ({
                         constrainToVisibleArea
                         cornerRadius={0}
                         style={{
-                          fill: "white",
-                          fontSize: 14,
+                          fill: "textblack",
+                          fontSize: 16,
                         }}
                         flyoutStyle={{
                           stroke: "none",
-                          fill: tailwindColors.deepblue["500"],
+                          fill: tailwindColors.hellgrau["100"],
                         }}
                         dx={0}
                         pointerLength={0}
                       />
                     }
-                    colorScale={[r.color, tailwindColors.deepblue["100"]]}
+                    colorScale={[r.color, tailwindColors.blau["20"]]}
                     data={[
                       {
                         key: "implemented",
@@ -223,7 +220,7 @@ const PieCharts: FunctionComponent<Props> = ({
             <div className="flex flex-1 items-center px-6 flex-row">
               <h2
                 title={titleMapper[key]}
-                className="text-left text-white break-normal text-lg font-bold bg-deepblue-300 border-deepblue-50 mt-1"
+                className="text-left break-normal text-lg font-bold mt-1"
               >
                 {titleMapper[key]}{" "}
                 <Tooltip
@@ -235,7 +232,7 @@ const PieCharts: FunctionComponent<Props> = ({
                           download
                           target={"_blank"}
                           href={linkMapper[key]}
-                          className="text-lightning-500"
+                          className=""
                           rel="noreferrer"
                         >
                           &quot;{titleMapper[key]}&quot; One-Pager herunterladen
@@ -249,15 +246,15 @@ const PieCharts: FunctionComponent<Props> = ({
                     </>
                   }
                 >
-                  <div className="text-slate-400 inline ml-2">
+                  <div className="inline ml-2">
                     <FontAwesomeIcon fontSize={18} icon={faQuestionCircle} />
                   </div>
                 </Tooltip>
               </h2>
             </div>
             <div className="flex-1">
-              <p className="text-sm px-6">
-                <span className="text-slate-300">Gesamt</span>
+              <p className="px-6">
+                <span className="text-textblack">Gesamt</span>
                 <br />
                 <Link href={`/dashboard/targets?${key}=1`}>
                   <span className="">

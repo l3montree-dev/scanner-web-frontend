@@ -130,7 +130,7 @@ export const localizeDefaultCollection = <
   if (collection.id === defaultCollectionId) {
     return {
       ...collection,
-      color: tailwindColors.lightning["500"],
+      color: tailwindColors.blau["100"],
       title: username,
     };
   }

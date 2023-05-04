@@ -80,7 +80,7 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
     <div
       className={classNames(
         "h-20 sticky top-0 z-20 transition-all duration-500 text-textblack border-b-6 border-hellgrau-40",
-        !scrolled ? "bg-white" : "bg-hellgrau-20"
+        "bg-white"
       )}
     >
       {session.status === "authenticated" && session.data && (
@@ -88,7 +88,7 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
           <div className="flex flex-1 px-3 max-w-screen-xl mx-auto flex-row justify-between items-center">
             <h2
               className={classNames(
-                "text-textblack text-2xl font-bold transition duration-500",
+                "text-textblack text-xl font-bold transition duration-500",
                 title === "" ? "opacity-0" : "opacity-100"
               )}
             >

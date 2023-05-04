@@ -114,17 +114,17 @@ const Dashboard: FunctionComponent<Props> = (props) => {
   return (
     <>
       <Meta title="Dashboard" />
-      <div className="flex-row min-h-screen flex w-full flex-1">
+      <div className="flex-row text-base min-h-screen flex w-full flex-1">
         <div className="hidden lg:block">
           <SideNavigation />
         </div>
         <div className="flex-1 flex flex-col">
           <Header keycloakIssuer={props.keycloakIssuer} />
-          <main className="bg-deepblue-600 flex-col flex flex-1">
+          <main className="flex-col flex flex-1">
             <div className="max-w-screen-xl w-full mb-5 pt-10 mx-auto">
-              <div className="text-white mb-0 px-3 gap-2 flex flex-row items-center">
+              <div className=" mb-0 px-3 gap-2 flex flex-row items-center">
                 <PageTitle
-                  className="text-4xl text-white font-bold"
+                  className="text-2xl  font-bold"
                   stringRep="Dashboard"
                 >
                   Dashboard
@@ -141,7 +141,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
             </div>
 
             {!isGuest && (
-              <div className="text-white sticky z-20 shadow-lg beneath-header py-2 bg-deepblue-300 flex flex-row mb-4 items-center">
+              <div className=" sticky z-20 bg-white border-b-6 border-hellgrau-40 beneath-header py-2 flex flex-row mb-4 items-center">
                 <div className="max-w-screen-xl px-3 text-lg gap-1 flex flex-col flex-1 mx-auto">
                   <span className="font-semibold">
                     Domain-Gruppe (Anzahl der Domains)
@@ -186,7 +186,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
             >
               <div
                 className={classNames(
-                  "max-w-screen-xl pb-10 mx-auto px-3 flex-1 text-white",
+                  "max-w-screen-xl pb-10 mx-auto px-3 flex-1 ",
                   noDomains && "blur-sm"
                 )}
               >

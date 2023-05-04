@@ -100,7 +100,7 @@ const SideNavigation = () => {
   return (
     <div
       className={classNames(
-        "bg-white transition-all relative border-r-6 border-hellgrau-40 lg:h-full",
+        "bg-white transition-all relative border-r-6 text-base border-hellgrau-40 lg:h-full",
         store.sideMenuCollapsed ? "w-16" : "w-72"
       )}
     >
