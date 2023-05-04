@@ -48,7 +48,7 @@ const ResultBox: FunctionComponent<Props> = (props) => {
           <a
             target={"_blank"}
             href={props.link as string}
-            className="text-small w-full inline-block  text-right top-1 underline right-0 mt-2"
+            className="text-small w-full text-blau-100 inline-block text-right top-1 right-0 mt-2"
             rel="noreferrer"
           >
             {props.checkResult === CheckResult.Passed

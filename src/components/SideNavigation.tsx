@@ -108,12 +108,14 @@ const SideNavigation = () => {
       <div className="md:sticky top-5">
         <div className="pt-5 m-2 flex text-center items-start mb-5 text-white">
           {!store.sideMenuCollapsed && (
-            <Image
-              src={"/assets/BMI_de_v3__BSI_de_v1__Web_farbig.svg"}
-              width={280}
-              height={120}
-              alt="Logo BMI und BSI"
-            />
+            <Link href={"/dashboard"}>
+              <Image
+                src={"/assets/BMI_de_v3__BSI_de_v1__Web_farbig.svg"}
+                width={280}
+                height={120}
+                alt="Logo BMI und BSI"
+              />
+            </Link>
           )}
         </div>
 

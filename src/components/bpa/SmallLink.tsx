@@ -8,7 +8,7 @@ interface Props {
 const SmallLink: FunctionComponent<Props> = (props) => {
   return (
     <Link
-      className="uppercase font-bold text-sm text-dunkelgrau-100"
+      className="uppercase font-bold text-xs text-dunkelgrau-100"
       href={props.href}
     >
       {props.children}
