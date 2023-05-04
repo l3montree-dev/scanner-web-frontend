@@ -1,41 +1,131 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="79" failures="1" errors="0" time="1.349">
-  <testsuite name="time.ts test suite" errors="0" failures="0" skipped="0" timestamp="2023-05-04T11:02:20" time="0.381" tests="3">
-    <testcase classname="time.ts test suite should iterate over each week between start and end day" name="time.ts test suite should iterate over each week between start and end day" time="0.001">
+<testsuites name="jest tests" tests="79" failures="0" errors="0" time="1.604">
+  <testsuite name="view test suite" errors="0" failures="0" skipped="0" timestamp="2023-05-04T11:06:02" time="0.22" tests="12">
+    <testcase classname="view test suite should correctly transform a didPass value to a check result managed by the frontend" name="view test suite should correctly transform a didPass value to a check result managed by the frontend" time="0.001">
     </testcase>
-    <testcase classname="time.ts test suite should not include the start and end date, if they are the same" name="time.ts test suite should not include the start and end date, if they are the same" time="0">
+    <testcase classname="view test suite should correctly transform a didPass value to a check result managed by the frontend" name="view test suite should correctly transform a didPass value to a check result managed by the frontend" time="0">
     </testcase>
-    <testcase classname="time.ts test suite should iterate over each day between start and end day" name="time.ts test suite should iterate over each day between start and end day" time="0">
+    <testcase classname="view test suite should correctly transform a didPass value to a check result managed by the frontend" name="view test suite should correctly transform a didPass value to a check result managed by the frontend" time="0">
+    </testcase>
+    <testcase classname="view test suite should correctly transform a didPass value to a check result managed by the frontend" name="view test suite should correctly transform a didPass value to a check result managed by the frontend" time="0">
+    </testcase>
+    <testcase classname="view test suite should transform a checkResult to the correct tailwind classname" name="view test suite should transform a checkResult to the correct tailwind classname" time="0">
+    </testcase>
+    <testcase classname="view test suite should transform a checkResult to the correct tailwind classname" name="view test suite should transform a checkResult to the correct tailwind classname" time="0">
+    </testcase>
+    <testcase classname="view test suite should transform a checkResult to the correct tailwind classname" name="view test suite should transform a checkResult to the correct tailwind classname" time="0">
+    </testcase>
+    <testcase classname="view test suite should transform a checkResult to the correct tailwind classname" name="view test suite should transform a checkResult to the correct tailwind classname" time="0">
+    </testcase>
+    <testcase classname="view test suite should transform a checkResult to the correct icon" name="view test suite should transform a checkResult to the correct icon" time="0.001">
+    </testcase>
+    <testcase classname="view test suite should transform a checkResult to the correct icon" name="view test suite should transform a checkResult to the correct icon" time="0">
+    </testcase>
+    <testcase classname="view test suite should transform a checkResult to the correct icon" name="view test suite should transform a checkResult to the correct icon" time="0">
+    </testcase>
+    <testcase classname="view test suite should transform a checkResult to the correct icon" name="view test suite should transform a checkResult to the correct icon" time="0">
     </testcase>
   </testsuite>
-  <testsuite name="validator test suite" errors="0" failures="0" skipped="0" timestamp="2023-05-04T11:02:20" time="0.387" tests="7">
-    <testcase classname="validator test suite should correctly verify a uri" name="validator test suite should correctly verify a uri" time="0.001">
+  <testsuite name="Quicktest Test" errors="0" failures="0" skipped="0" timestamp="2023-05-04T11:06:03" time="0.468" tests="4">
+    <testcase classname="Quicktest Test renders the quicktest page" name="Quicktest Test renders the quicktest page" time="0.029">
     </testcase>
-    <testcase classname="validator test suite should deny a uri with a port" name="validator test suite should deny a uri with a port" time="0.001">
+    <testcase classname="Quicktest Test should render the not available page" name="Quicktest Test should render the not available page" time="0.007">
     </testcase>
-    <testcase classname="validator test suite should deny a uri with a path" name="validator test suite should deny a uri with a path" time="0">
+    <testcase classname="Quicktest Test should call the scan api automatically if a site query parameter is found" name="Quicktest Test should call the scan api automatically if a site query parameter is found" time="0.043">
     </testcase>
-    <testcase classname="validator test suite should deny a uri with a query parameter" name="validator test suite should deny a uri with a query parameter" time="0">
-    </testcase>
-    <testcase classname="validator test suite should accept a uri that is a subdomain" name="validator test suite should accept a uri that is a subdomain" time="0">
-    </testcase>
-    <testcase classname="validator test suite should accept a uri with a 2 place tld" name="validator test suite should accept a uri with a 2 place tld" time="0">
-    </testcase>
-    <testcase classname="validator test suite should allow domain names with 7 characters as tld" name="validator test suite should allow domain names with 7 characters as tld" time="0">
+    <testcase classname="Quicktest Test should include the correct canonical url" name="Quicktest Test should include the correct canonical url" time="0.007">
     </testcase>
   </testsuite>
-  <testsuite name="common test suite" errors="0" failures="0" skipped="0" timestamp="2023-05-04T11:02:20" time="0.395" tests="24">
+  <testsuite name="Scan API Test Suite" errors="0" failures="0" skipped="0" timestamp="2023-05-04T11:06:03" time="0.191" tests="11">
+    <testcase classname="Scan API Test Suite should return a 403 error if the secret is invalid and the user is not logged in" name="Scan API Test Suite should return a 403 error if the secret is invalid and the user is not logged in" time="0.002">
+    </testcase>
+    <testcase classname="Scan API Test Suite should not require a secret if the user is logged in" name="Scan API Test Suite should not require a secret if the user is logged in" time="0.001">
+    </testcase>
+    <testcase classname="Scan API Test Suite should return a 400 error if the site is not provided" name="Scan API Test Suite should return a 400 error if the site is not provided" time="0">
+    </testcase>
+    <testcase classname="Scan API Test Suite should return a 400 error if the site is not valid" name="Scan API Test Suite should return a 400 error if the site is not valid" time="0">
+    </testcase>
+    <testcase classname="Scan API Test Suite should check in the database if there is a scan already existing" name="Scan API Test Suite should check in the database if there is a scan already existing" time="0.001">
+    </testcase>
+    <testcase classname="Scan API Test Suite after scan should issue a scan if the site is valid and there is no scan already existing" name="Scan API Test Suite after scan should issue a scan if the site is valid and there is no scan already existing" time="0.001">
+    </testcase>
+    <testcase classname="Scan API Test Suite after scan should issue a scan if the refresh query parameter is set to true" name="Scan API Test Suite after scan should issue a scan if the refresh query parameter is set to true" time="0.001">
+    </testcase>
+    <testcase classname="Scan API Test Suite after scan should save the new scan report inside the database if the scan was successful" name="Scan API Test Suite after scan should save the new scan report inside the database if the scan was successful" time="0">
+    </testcase>
+    <testcase classname="Scan API Test Suite after scan should return the new scan report if the scan was successful" name="Scan API Test Suite after scan should return the new scan report if the scan was successful" time="0.001">
+    </testcase>
+    <testcase classname="Scan API Test Suite after scan should return the scan report, even if there is an error during the database handling" name="Scan API Test Suite after scan should return the scan report, even if there is an error during the database handling" time="0.014">
+    </testcase>
+    <testcase classname="Scan API Test Suite after scan should return a 422 status code, if the scan was not successful -&gt; the dns failed" name="Scan API Test Suite after scan should return a 422 status code, if the scan was not successful -&gt; the dns failed" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="Target Service Test Suite" errors="0" failures="0" skipped="0" timestamp="2023-05-04T11:06:03" time="0.1" tests="10">
+    <testcase classname="Target Service Test Suite should upsert the target if handleNewTarget is called" name="Target Service Test Suite should upsert the target if handleNewTarget is called" time="0.001">
+    </testcase>
+    <testcase classname="Target Service Test Suite should create a user target relation if a user is provided" name="Target Service Test Suite should create a user target relation if a user is provided" time="0.007">
+    </testcase>
+    <testcase classname="Target Service Test Suite should delete the statistics of a collection if a target is added" name="Target Service Test Suite should delete the statistics of a collection if a target is added" time="0">
+    </testcase>
+    <testcase classname="Target Service Test Suite should create a target even if the scan failed" name="Target Service Test Suite should create a target even if the scan failed" time="0">
+    </testcase>
+    <testcase classname="Target Service Test Suite should not be possible to inject arbitrary data to the sql statement when fetching the targets with their latest network results: { actual: [Object], expected: &apos;&apos; }" name="Target Service Test Suite should not be possible to inject arbitrary data to the sql statement when fetching the targets with their latest network results: { actual: [Object], expected: &apos;&apos; }" time="0">
+    </testcase>
+    <testcase classname="Target Service Test Suite should not be possible to inject arbitrary data to the sql statement when fetching the targets with their latest network results: {
+  actual: [Object],
+  expected: &apos;&quot;responsibleDisclosure&quot; = true AND &quot;dnsSec&quot; = false AND &quot;tlsv1_3&quot; IS NULL AND&apos;
+}" name="Target Service Test Suite should not be possible to inject arbitrary data to the sql statement when fetching the targets with their latest network results: {
+  actual: [Object],
+  expected: &apos;&quot;responsibleDisclosure&quot; = true AND &quot;dnsSec&quot; = false AND &quot;tlsv1_3&quot; IS NULL AND&apos;
+}" time="0">
+    </testcase>
+    <testcase classname="Target Service Test Suite should not be possible to inject arbitrary data to the sql statement when fetching the targets with their latest network results: {
+  actual: [Object],
+  expected: &apos;&quot;dnsSec&quot; = false AND &quot;tlsv1_3&quot; IS NULL AND&apos;
+}" name="Target Service Test Suite should not be possible to inject arbitrary data to the sql statement when fetching the targets with their latest network results: {
+  actual: [Object],
+  expected: &apos;&quot;dnsSec&quot; = false AND &quot;tlsv1_3&quot; IS NULL AND&apos;
+}" time="0">
+    </testcase>
+    <testcase classname="Target Service Test Suite should not be possible to inject arbitrary data to the sql statement when fetching the targets with their latest network results: { sort: &apos;48164615564319324&apos;, expected: &apos;t.uri&apos; }" name="Target Service Test Suite should not be possible to inject arbitrary data to the sql statement when fetching the targets with their latest network results: { sort: &apos;48164615564319324&apos;, expected: &apos;t.uri&apos; }" time="0.001">
+    </testcase>
+    <testcase classname="Target Service Test Suite should not be possible to inject arbitrary data to the sql statement when fetching the targets with their latest network results: { sort: undefined, expected: &apos;t.uri&apos; }" name="Target Service Test Suite should not be possible to inject arbitrary data to the sql statement when fetching the targets with their latest network results: { sort: undefined, expected: &apos;t.uri&apos; }" time="0">
+    </testcase>
+    <testcase classname="Target Service Test Suite should mark the targets as queued after retrieving them from the database for scanning" name="Target Service Test Suite should mark the targets as queued after retrieving them from the database for scanning" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="CircuitBreaker test suite" errors="0" failures="0" skipped="0" timestamp="2023-05-04T11:06:03" time="0.07" tests="3">
+    <testcase classname="CircuitBreaker test suite should return the result if the function resolves" name="CircuitBreaker test suite should return the result if the function resolves" time="0.001">
+    </testcase>
+    <testcase classname="CircuitBreaker test suite should throw an error, if the circuit breaker is already in open state" name="CircuitBreaker test suite should throw an error, if the circuit breaker is already in open state" time="0.003">
+    </testcase>
+    <testcase classname="CircuitBreaker test suite should retry the request after the reset timeout interval" name="CircuitBreaker test suite should retry the request after the reset timeout interval" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="Report Service Test Suite" errors="0" failures="0" skipped="0" timestamp="2023-05-04T11:06:04" time="0.069" tests="5">
+    <testcase classname="Report Service Test Suite should not create a new scan report if the reports did not change" name="Report Service Test Suite should not create a new scan report if the reports did not change" time="0.002">
+    </testcase>
+    <testcase classname="Report Service Test Suite should create a new scan report if the reports did { event: &apos;change&apos;, reports: [Array] }" name="Report Service Test Suite should create a new scan report if the reports did { event: &apos;change&apos;, reports: [Array] }" time="0">
+    </testcase>
+    <testcase classname="Report Service Test Suite should create a new scan report if the reports did { event: &apos;not exist&apos;, reports: [] }" name="Report Service Test Suite should create a new scan report if the reports did { event: &apos;not exist&apos;, reports: [] }" time="0.001">
+    </testcase>
+    <testcase classname="Report Service Test Suite should reduce null values by using the last scan report to fill in the gaps" name="Report Service Test Suite should reduce null values by using the last scan report to fill in the gaps" time="0">
+    </testcase>
+    <testcase classname="Report Service Test Suite should not return that a scan report did change, if one of the values is null and the other one is undefined" name="Report Service Test Suite should not return that a scan report did change, if one of the values is null and the other one is undefined" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="common test suite" errors="0" failures="0" skipped="0" timestamp="2023-05-04T11:06:04" time="0.067" tests="24">
     <testcase classname="common test suite should respect windows line breaks inside a csv file" name="common test suite should respect windows line breaks inside a csv file" time="0.001">
     </testcase>
-    <testcase classname="common test suite should respect unix line breaks inside a csv file" name="common test suite should respect unix line breaks inside a csv file" time="0">
+    <testcase classname="common test suite should respect unix line breaks inside a csv file" name="common test suite should respect unix line breaks inside a csv file" time="0.001">
     </testcase>
-    <testcase classname="common test suite should respect /r line breaks inside a csv file" name="common test suite should respect /r line breaks inside a csv file" time="0.001">
+    <testcase classname="common test suite should respect /r line breaks inside a csv file" name="common test suite should respect /r line breaks inside a csv file" time="0">
     </testcase>
     <testcase classname="common test suite should remove leading and trailing white spaces" name="common test suite should remove leading and trailing white spaces" time="0">
     </testcase>
     <testcase classname="common test suite should correctly identify a progress message" name="common test suite should correctly identify a progress message" time="0">
     </testcase>
-    <testcase classname="common test suite should limit the string values of an object to the specified character length should work with null" name="common test suite should limit the string values of an object to the specified character length should work with null" time="0.001">
+    <testcase classname="common test suite should limit the string values of an object to the specified character length should work with null" name="common test suite should limit the string values of an object to the specified character length should work with null" time="0">
     </testcase>
     <testcase classname="common test suite should limit the string values of an object to the specified character length should work with undefined" name="common test suite should limit the string values of an object to the specified character length should work with undefined" time="0">
     </testcase>
@@ -57,7 +147,7 @@
     </testcase>
     <testcase classname="common test suite it should correctly identify users as admin based on the provided session should return true, if the resource_access realm management contains the role realm-admin" name="common test suite it should correctly identify users as admin based on the provided session should return true, if the resource_access realm management contains the role realm-admin" time="0">
     </testcase>
-    <testcase classname="common test suite sanitize test suite should throw an error, if the input is not a string" name="common test suite sanitize test suite should throw an error, if the input is not a string" time="0.001">
+    <testcase classname="common test suite sanitize test suite should throw an error, if the input is not a string" name="common test suite sanitize test suite should throw an error, if the input is not a string" time="0">
     </testcase>
     <testcase classname="common test suite sanitize test suite should remove any protocol if provided" name="common test suite sanitize test suite should remove any protocol if provided" time="0">
     </testcase>
@@ -65,147 +155,37 @@
     </testcase>
     <testcase classname="common test suite sanitize test suite should remove any query parameters if provided" name="common test suite sanitize test suite should remove any query parameters if provided" time="0">
     </testcase>
-    <testcase classname="common test suite sanitize test suite should remove any hash if provided" name="common test suite sanitize test suite should remove any hash if provided" time="0.001">
+    <testcase classname="common test suite sanitize test suite should remove any hash if provided" name="common test suite sanitize test suite should remove any hash if provided" time="0">
     </testcase>
-    <testcase classname="common test suite sanitize test suite should remove any port if provided and reject ips" name="common test suite sanitize test suite should remove any port if provided and reject ips" time="0">
+    <testcase classname="common test suite sanitize test suite should remove any port if provided and reject ips" name="common test suite sanitize test suite should remove any port if provided and reject ips" time="0.001">
     </testcase>
-    <testcase classname="common test suite sanitize test suite should work for subdomains" name="common test suite sanitize test suite should work for subdomains" time="0.001">
+    <testcase classname="common test suite sanitize test suite should work for subdomains" name="common test suite sanitize test suite should work for subdomains" time="0">
     </testcase>
     <testcase classname="common test suite sanitize test suite should work if blank characters are present" name="common test suite sanitize test suite should work if blank characters are present" time="0">
     </testcase>
   </testsuite>
-  <testsuite name="Report Service Test Suite" errors="0" failures="0" skipped="0" timestamp="2023-05-04T11:02:20" time="0.414" tests="5">
-    <testcase classname="Report Service Test Suite should not create a new scan report if the reports did not change" name="Report Service Test Suite should not create a new scan report if the reports did not change" time="0.002">
+  <testsuite name="validator test suite" errors="0" failures="0" skipped="0" timestamp="2023-05-04T11:06:04" time="0.05" tests="7">
+    <testcase classname="validator test suite should correctly verify a uri" name="validator test suite should correctly verify a uri" time="0">
     </testcase>
-    <testcase classname="Report Service Test Suite should create a new scan report if the reports did { event: &apos;change&apos;, reports: [Array] }" name="Report Service Test Suite should create a new scan report if the reports did { event: &apos;change&apos;, reports: [Array] }" time="0.001">
+    <testcase classname="validator test suite should deny a uri with a port" name="validator test suite should deny a uri with a port" time="0">
     </testcase>
-    <testcase classname="Report Service Test Suite should create a new scan report if the reports did { event: &apos;not exist&apos;, reports: [] }" name="Report Service Test Suite should create a new scan report if the reports did { event: &apos;not exist&apos;, reports: [] }" time="0.001">
+    <testcase classname="validator test suite should deny a uri with a path" name="validator test suite should deny a uri with a path" time="0">
     </testcase>
-    <testcase classname="Report Service Test Suite should reduce null values by using the last scan report to fill in the gaps" name="Report Service Test Suite should reduce null values by using the last scan report to fill in the gaps" time="0.001">
+    <testcase classname="validator test suite should deny a uri with a query parameter" name="validator test suite should deny a uri with a query parameter" time="0">
     </testcase>
-    <testcase classname="Report Service Test Suite should not return that a scan report did change, if one of the values is null and the other one is undefined" name="Report Service Test Suite should not return that a scan report did change, if one of the values is null and the other one is undefined" time="0">
+    <testcase classname="validator test suite should accept a uri that is a subdomain" name="validator test suite should accept a uri that is a subdomain" time="0">
     </testcase>
-  </testsuite>
-  <testsuite name="view test suite" errors="0" failures="1" skipped="0" timestamp="2023-05-04T11:02:20" time="0.448" tests="12">
-    <testcase classname="view test suite should correctly transform a didPass value to a check result managed by the frontend" name="view test suite should correctly transform a didPass value to a check result managed by the frontend" time="0.001">
+    <testcase classname="validator test suite should accept a uri with a 2 place tld" name="validator test suite should accept a uri with a 2 place tld" time="0">
     </testcase>
-    <testcase classname="view test suite should correctly transform a didPass value to a check result managed by the frontend" name="view test suite should correctly transform a didPass value to a check result managed by the frontend" time="0">
-    </testcase>
-    <testcase classname="view test suite should correctly transform a didPass value to a check result managed by the frontend" name="view test suite should correctly transform a didPass value to a check result managed by the frontend" time="0">
-    </testcase>
-    <testcase classname="view test suite should correctly transform a didPass value to a check result managed by the frontend" name="view test suite should correctly transform a didPass value to a check result managed by the frontend" time="0">
-    </testcase>
-    <testcase classname="view test suite should transform a checkResult to the correct tailwind classname" name="view test suite should transform a checkResult to the correct tailwind classname" time="0.001">
-    </testcase>
-    <testcase classname="view test suite should transform a checkResult to the correct tailwind classname" name="view test suite should transform a checkResult to the correct tailwind classname" time="0">
-    </testcase>
-    <testcase classname="view test suite should transform a checkResult to the correct tailwind classname" name="view test suite should transform a checkResult to the correct tailwind classname" time="0">
-    </testcase>
-    <testcase classname="view test suite should transform a checkResult to the correct tailwind classname" name="view test suite should transform a checkResult to the correct tailwind classname" time="0">
-    </testcase>
-    <testcase classname="view test suite should transform a checkResult to the correct icon" name="view test suite should transform a checkResult to the correct icon" time="0">
-    </testcase>
-    <testcase classname="view test suite should transform a checkResult to the correct icon" name="view test suite should transform a checkResult to the correct icon" time="0.001">
-    </testcase>
-    <testcase classname="view test suite should transform a checkResult to the correct icon" name="view test suite should transform a checkResult to the correct icon" time="0">
-    </testcase>
-    <testcase classname="view test suite should transform a checkResult to the correct icon" name="view test suite should transform a checkResult to the correct icon" time="0.001">
-      <failure>Error: expect(received).toEqual(expected) // deep equality
-
-Expected: &quot;circle-xmark&quot;
-Received: &quot;circle-question&quot;
-    at toEqual (/Users/sebastiankw/Documents/Source_Codes/ozgsec/quick-test/ozgsec-security-quick-test/src/utils/view.spec.ts:44:31)
-    at Object.&lt;anonymous&gt; (/Users/sebastiankw/Documents/Source_Codes/ozgsec/quick-test/ozgsec-security-quick-test/node_modules/jest-each/build/bind.js:79:13)
-    at Promise.then.completed (/Users/sebastiankw/Documents/Source_Codes/ozgsec/quick-test/ozgsec-security-quick-test/node_modules/jest-circus/build/utils.js:293:28)
-    at new Promise (&lt;anonymous&gt;)
-    at callAsyncCircusFn (/Users/sebastiankw/Documents/Source_Codes/ozgsec/quick-test/ozgsec-security-quick-test/node_modules/jest-circus/build/utils.js:226:10)
-    at _callCircusTest (/Users/sebastiankw/Documents/Source_Codes/ozgsec/quick-test/ozgsec-security-quick-test/node_modules/jest-circus/build/run.js:248:40)
-    at processTicksAndRejections (node:internal/process/task_queues:95:5)
-    at _runTest (/Users/sebastiankw/Documents/Source_Codes/ozgsec/quick-test/ozgsec-security-quick-test/node_modules/jest-circus/build/run.js:184:3)
-    at _runTestsForDescribeBlock (/Users/sebastiankw/Documents/Source_Codes/ozgsec/quick-test/ozgsec-security-quick-test/node_modules/jest-circus/build/run.js:86:9)
-    at _runTestsForDescribeBlock (/Users/sebastiankw/Documents/Source_Codes/ozgsec/quick-test/ozgsec-security-quick-test/node_modules/jest-circus/build/run.js:81:9)
-    at run (/Users/sebastiankw/Documents/Source_Codes/ozgsec/quick-test/ozgsec-security-quick-test/node_modules/jest-circus/build/run.js:26:3)
-    at runAndTransformResultsToJestFormat (/Users/sebastiankw/Documents/Source_Codes/ozgsec/quick-test/ozgsec-security-quick-test/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:120:21)
-    at jestAdapter (/Users/sebastiankw/Documents/Source_Codes/ozgsec/quick-test/ozgsec-security-quick-test/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
-    at runTestInternal (/Users/sebastiankw/Documents/Source_Codes/ozgsec/quick-test/ozgsec-security-quick-test/node_modules/jest-runner/build/runTest.js:367:16)
-    at runTest (/Users/sebastiankw/Documents/Source_Codes/ozgsec/quick-test/ozgsec-security-quick-test/node_modules/jest-runner/build/runTest.js:444:34)
-    at Object.worker (/Users/sebastiankw/Documents/Source_Codes/ozgsec/quick-test/ozgsec-security-quick-test/node_modules/jest-runner/build/testWorker.js:106:12)</failure>
+    <testcase classname="validator test suite should allow domain names with 7 characters as tld" name="validator test suite should allow domain names with 7 characters as tld" time="0.001">
     </testcase>
   </testsuite>
-  <testsuite name="CircuitBreaker test suite" errors="0" failures="0" skipped="0" timestamp="2023-05-04T11:02:20" time="0.466" tests="3">
-    <testcase classname="CircuitBreaker test suite should return the result if the function resolves" name="CircuitBreaker test suite should return the result if the function resolves" time="0.001">
+  <testsuite name="time.ts test suite" errors="0" failures="0" skipped="0" timestamp="2023-05-04T11:06:04" time="0.048" tests="3">
+    <testcase classname="time.ts test suite should iterate over each week between start and end day" name="time.ts test suite should iterate over each week between start and end day" time="0.001">
     </testcase>
-    <testcase classname="CircuitBreaker test suite should throw an error, if the circuit breaker is already in open state" name="CircuitBreaker test suite should throw an error, if the circuit breaker is already in open state" time="0.005">
+    <testcase classname="time.ts test suite should not include the start and end date, if they are the same" name="time.ts test suite should not include the start and end date, if they are the same" time="0.001">
     </testcase>
-    <testcase classname="CircuitBreaker test suite should retry the request after the reset timeout interval" name="CircuitBreaker test suite should retry the request after the reset timeout interval" time="0">
-    </testcase>
-  </testsuite>
-  <testsuite name="Target Service Test Suite" errors="0" failures="0" skipped="0" timestamp="2023-05-04T11:02:20" time="0.487" tests="10">
-    <testcase classname="Target Service Test Suite should upsert the target if handleNewTarget is called" name="Target Service Test Suite should upsert the target if handleNewTarget is called" time="0.002">
-    </testcase>
-    <testcase classname="Target Service Test Suite should create a user target relation if a user is provided" name="Target Service Test Suite should create a user target relation if a user is provided" time="0.012">
-    </testcase>
-    <testcase classname="Target Service Test Suite should delete the statistics of a collection if a target is added" name="Target Service Test Suite should delete the statistics of a collection if a target is added" time="0">
-    </testcase>
-    <testcase classname="Target Service Test Suite should create a target even if the scan failed" name="Target Service Test Suite should create a target even if the scan failed" time="0.001">
-    </testcase>
-    <testcase classname="Target Service Test Suite should not be possible to inject arbitrary data to the sql statement when fetching the targets with their latest network results: { actual: [Object], expected: &apos;&apos; }" name="Target Service Test Suite should not be possible to inject arbitrary data to the sql statement when fetching the targets with their latest network results: { actual: [Object], expected: &apos;&apos; }" time="0.001">
-    </testcase>
-    <testcase classname="Target Service Test Suite should not be possible to inject arbitrary data to the sql statement when fetching the targets with their latest network results: {
-  actual: [Object],
-  expected: &apos;&quot;responsibleDisclosure&quot; = true AND &quot;dnsSec&quot; = false AND &quot;tlsv1_3&quot; IS NULL AND&apos;
-}" name="Target Service Test Suite should not be possible to inject arbitrary data to the sql statement when fetching the targets with their latest network results: {
-  actual: [Object],
-  expected: &apos;&quot;responsibleDisclosure&quot; = true AND &quot;dnsSec&quot; = false AND &quot;tlsv1_3&quot; IS NULL AND&apos;
-}" time="0">
-    </testcase>
-    <testcase classname="Target Service Test Suite should not be possible to inject arbitrary data to the sql statement when fetching the targets with their latest network results: {
-  actual: [Object],
-  expected: &apos;&quot;dnsSec&quot; = false AND &quot;tlsv1_3&quot; IS NULL AND&apos;
-}" name="Target Service Test Suite should not be possible to inject arbitrary data to the sql statement when fetching the targets with their latest network results: {
-  actual: [Object],
-  expected: &apos;&quot;dnsSec&quot; = false AND &quot;tlsv1_3&quot; IS NULL AND&apos;
-}" time="0">
-    </testcase>
-    <testcase classname="Target Service Test Suite should not be possible to inject arbitrary data to the sql statement when fetching the targets with their latest network results: { sort: &apos;6360381421714629&apos;, expected: &apos;t.uri&apos; }" name="Target Service Test Suite should not be possible to inject arbitrary data to the sql statement when fetching the targets with their latest network results: { sort: &apos;6360381421714629&apos;, expected: &apos;t.uri&apos; }" time="0.001">
-    </testcase>
-    <testcase classname="Target Service Test Suite should not be possible to inject arbitrary data to the sql statement when fetching the targets with their latest network results: { sort: undefined, expected: &apos;t.uri&apos; }" name="Target Service Test Suite should not be possible to inject arbitrary data to the sql statement when fetching the targets with their latest network results: { sort: undefined, expected: &apos;t.uri&apos; }" time="0">
-    </testcase>
-    <testcase classname="Target Service Test Suite should mark the targets as queued after retrieving them from the database for scanning" name="Target Service Test Suite should mark the targets as queued after retrieving them from the database for scanning" time="0">
-    </testcase>
-  </testsuite>
-  <testsuite name="Scan API Test Suite" errors="0" failures="0" skipped="0" timestamp="2023-05-04T11:02:20" time="0.522" tests="11">
-    <testcase classname="Scan API Test Suite should return a 403 error if the secret is invalid and the user is not logged in" name="Scan API Test Suite should return a 403 error if the secret is invalid and the user is not logged in" time="0.002">
-    </testcase>
-    <testcase classname="Scan API Test Suite should not require a secret if the user is logged in" name="Scan API Test Suite should not require a secret if the user is logged in" time="0.001">
-    </testcase>
-    <testcase classname="Scan API Test Suite should return a 400 error if the site is not provided" name="Scan API Test Suite should return a 400 error if the site is not provided" time="0">
-    </testcase>
-    <testcase classname="Scan API Test Suite should return a 400 error if the site is not valid" name="Scan API Test Suite should return a 400 error if the site is not valid" time="0.001">
-    </testcase>
-    <testcase classname="Scan API Test Suite should check in the database if there is a scan already existing" name="Scan API Test Suite should check in the database if there is a scan already existing" time="0.001">
-    </testcase>
-    <testcase classname="Scan API Test Suite after scan should issue a scan if the site is valid and there is no scan already existing" name="Scan API Test Suite after scan should issue a scan if the site is valid and there is no scan already existing" time="0.001">
-    </testcase>
-    <testcase classname="Scan API Test Suite after scan should issue a scan if the refresh query parameter is set to true" name="Scan API Test Suite after scan should issue a scan if the refresh query parameter is set to true" time="0">
-    </testcase>
-    <testcase classname="Scan API Test Suite after scan should save the new scan report inside the database if the scan was successful" name="Scan API Test Suite after scan should save the new scan report inside the database if the scan was successful" time="0.001">
-    </testcase>
-    <testcase classname="Scan API Test Suite after scan should return the new scan report if the scan was successful" name="Scan API Test Suite after scan should return the new scan report if the scan was successful" time="0.001">
-    </testcase>
-    <testcase classname="Scan API Test Suite after scan should return the scan report, even if there is an error during the database handling" name="Scan API Test Suite after scan should return the scan report, even if there is an error during the database handling" time="0.009">
-    </testcase>
-    <testcase classname="Scan API Test Suite after scan should return a 422 status code, if the scan was not successful -&gt; the dns failed" name="Scan API Test Suite after scan should return a 422 status code, if the scan was not successful -&gt; the dns failed" time="0.001">
-    </testcase>
-  </testsuite>
-  <testsuite name="Quicktest Test" errors="0" failures="0" skipped="0" timestamp="2023-05-04T11:02:20" time="0.861" tests="4">
-    <testcase classname="Quicktest Test renders the quicktest page" name="Quicktest Test renders the quicktest page" time="0.031">
-    </testcase>
-    <testcase classname="Quicktest Test should render the not available page" name="Quicktest Test should render the not available page" time="0.007">
-    </testcase>
-    <testcase classname="Quicktest Test should call the scan api automatically if a site query parameter is found" name="Quicktest Test should call the scan api automatically if a site query parameter is found" time="0.039">
-    </testcase>
-    <testcase classname="Quicktest Test should include the correct canonical url" name="Quicktest Test should include the correct canonical url" time="0.007">
+    <testcase classname="time.ts test suite should iterate over each day between start and end day" name="time.ts test suite should iterate over each day between start and end day" time="0">
     </testcase>
   </testsuite>
 </testsuites>

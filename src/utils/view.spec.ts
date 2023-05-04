@@ -36,7 +36,7 @@ describe("view test suite", () => {
     [CheckResult.Passed, "circle-check"],
     [CheckResult.Failed, "circle-exclamation"],
     [CheckResult.Critical, "circle-xmark"],
-    [CheckResult.Unknown, "circle-xmark"],
+    [CheckResult.Unknown, "circle-question"],
   ])(
     "should transform a checkResult to the correct icon",
     (param, expected) => {
