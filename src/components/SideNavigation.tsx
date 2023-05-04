@@ -44,13 +44,13 @@ const defaultLinks = [
 const getLinks = (isGuest: boolean, isAdmin: boolean) => {
   if (isGuest) {
     return defaultLinks;
-  } else if (!isAdmin) {
+  } /*else if (!isAdmin) {
     return defaultLinks.concat({
       icon: faTag,
       name: "Gruppen",
       path: "/dashboard/collections",
     });
-  }
+  }*/
 
   return defaultLinks.concat([
     /*{
