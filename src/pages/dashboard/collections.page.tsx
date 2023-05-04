@@ -1,4 +1,5 @@
 import {
+  faArrowRight,
   faEllipsisVertical,
   faPen,
   faQuestionCircle,
@@ -197,9 +198,9 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
         <div className="flex-1">
           <div className="lg:flex lg:flex-row w-full flex-wrap  items-start justfy-between mb-12 lg:mb-0">
             <div className="flex-1">
-              <div className="text-white mb-10 gap-2 flex flex-row items-center">
+              <div className=" mb-10 gap-2 flex flex-row items-center">
                 <PageTitle
-                  className="text-4xl text-white mb-0 font-bold"
+                  className="text-2xl  mb-0 font-bold"
                   stringRep="Gruppen"
                 >
                   Gruppen
@@ -222,15 +223,15 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
             </Button>
           </div>
 
-          <table className="w-full text-left overflow-hidden text-white border-deepblue-50 rounded-md">
+          <table className="w-full text-left overflow-hidden  border-deepblue-50 border-separate border-spacing-2">
             <thead className="hidden lg:table-header-group">
-              <tr className="bg-deepblue-200  text-sm rounded-t-md border-b-deepblue-50 text-left">
+              <tr className="text-sm rounded-t-md border-b-deepblue-50 bg-blau-100 text-left text-white">
                 <th className="p-2 py-4">Titel</th>
                 <th className="p-2 py-4">Domains</th>
                 <th className="p-2 py-4">
-                  Links für externen readonly-zugriff ohne Account
+                  Link für externen, lesenden Zugriff ohne Account
                 </th>
-                <th className="p-2 text-right py-4">Aktionen</th>
+                <th className="p-2 py-4">Aktionen</th>
               </tr>
             </thead>
             <tbody>
@@ -242,7 +243,7 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
                       " group/collection-item",
                       i !== arr.length - 1 && "border-b",
                       "border-b-deepblue-300 transition-all",
-                      i % 2 !== 0 ? "bg-deepblue-200" : "bg-deepblue-300"
+                      i % 2 !== 0 ? "bg-blau-20/40" : "bg-dunkelblau-20/20"
                     )}
                     key={collection.id}
                   >
@@ -252,11 +253,12 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
                       </div>
                     </td>
 
-                    <td className="p-2 underline">
+                    <td className="p-2 text-blau-100">
                       <Link
                         href={`/dashboard/targets?collectionIds=${collection.id}`}
                       >
-                        Zu Domains der Gruppe
+                        Domains der Gruppe ansehen
+                        <FontAwesomeIcon className="ml-2" icon={faArrowRight} />
                       </Link>
                     </td>
                     <td
