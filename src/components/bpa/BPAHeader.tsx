@@ -49,8 +49,8 @@ const BPAHeader: FunctionComponent<Props> = ({ hideLogin }) => {
             <nav className="text-gray-600 pt-2 flex flex-row justify-end gap-10">
               <Link
                 className={classNames(
-                  activeLink === "/" && "text-bund",
-                  "hover:text-bund hover:underline"
+                  activeLink === "/" ? "text-bund" : "text-textblack",
+                  "hover:text-bund"
                 )}
                 href="/"
               >
@@ -58,8 +58,8 @@ const BPAHeader: FunctionComponent<Props> = ({ hideLogin }) => {
               </Link>
               <Link
                 className={classNames(
-                  activeLink === "/info" && "text-bund",
-                  "hover:text-bund hover:underline"
+                  activeLink === "/info" ? "text-bund" : "text-textblack",
+                  "hover:text-bund"
                 )}
                 href="/info"
               >

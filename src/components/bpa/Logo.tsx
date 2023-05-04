@@ -20,7 +20,7 @@ const Logo = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
   return (
-    <Link href="/">
+    <Link className="hover:border-none" href="/">
       <div
         style={{
           height: scrolled ? 36 : 95,

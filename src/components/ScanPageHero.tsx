@@ -60,6 +60,7 @@ const ScanPageHero: FunctionComponent<Props> = ({
               label="Website"
               onChange={(e) => setWebsite(e)}
               value={website}
+              inputClassNames="border-b-white"
             />
           </div>
           <Button
