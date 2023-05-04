@@ -570,7 +570,7 @@ const Targets: FunctionComponent<Props> = (props) => {
                 )}
               </div>
 
-              <table className="w-full border-separate border-spacing-2 ">
+              <table className="w-full border-separate border-spacing-2">
                 <thead className="sticky hidden lg:table-header-group table-header z-20">
                   <tr className="text-sm border-b-deepblue-50 text-left bg-blau-100">
                     <th className="p-2 pr-0 text-center">

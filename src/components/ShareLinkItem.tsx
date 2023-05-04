@@ -14,7 +14,7 @@ interface Props {
 const ShareLinkItem: FunctionComponent<Props> = ({ shareLink, onDelete }) => {
   return (
     <div
-      className="text-white text-sm flex-row flex justify-between items-center  bg-deepblue-50 rounded-sm shadow-md p-2 px-3"
+      className="text-textblack text-sm flex-row flex justify-between items-center p-2 px-3"
       key={shareLink.secret}
     >
       <Link href={secretToShareLink(shareLink.secret)}>
@@ -33,6 +33,7 @@ const ShareLinkItem: FunctionComponent<Props> = ({ shareLink, onDelete }) => {
           }}
           title="Link kopieren"
           type="button"
+          className="mr-2"
         >
           <FontAwesomeIcon icon={faCopy} />
         </button>
