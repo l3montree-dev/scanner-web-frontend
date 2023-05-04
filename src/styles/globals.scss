@@ -159,7 +159,7 @@ article  {
 }
 
 a {
-    @apply hover:border-b hover:text-blau-100 font-medium hover:no-underline hover:border-b-blau-100 border-b border-transparent
+    @apply hover:border-b hover:text-blau-100 font-medium hover:underline border-b border-transparent
 }
 
 #toast-container {

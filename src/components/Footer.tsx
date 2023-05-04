@@ -44,7 +44,7 @@ const Footer: FunctionComponent = () => {
               <Link
                 aria-label="Impressum öffnen"
                 href={"/impressum"}
-                className="cursor-pointer text-white uppercase font-medium hover:border-white p-2 hover:text-white"
+                className="cursor-pointer text-white uppercase font-medium p-2 hover:text-white"
                 type="button"
               >
                 Impressum
@@ -54,7 +54,7 @@ const Footer: FunctionComponent = () => {
               <Link
                 aria-label="Datenschutzerklärung öffnen"
                 href="/datenschutz"
-                className="cursor-pointer uppercase font-medium hover:border-b hover:border-b-white text-white p-2 hover:text-white"
+                className="cursor-pointer uppercase font-medium text-white p-2 hover:text-white"
                 type="button"
               >
                 Datenschutz
@@ -64,7 +64,7 @@ const Footer: FunctionComponent = () => {
               <a
                 href="https://www.onlinezugangsgesetz.de/"
                 rel="noopener noreferrer"
-                className="p-2 uppercase font-medium hover:border-b-white text-white block hover:text-white"
+                className="p-2 uppercase font-medium text-white block hover:text-white"
                 target={"_blank"}
               >
                 Onlinezugangsgesetz.de

@@ -46,7 +46,7 @@ const ResultEnvelope: FunctionComponent<Props> = ({
             Testergebnisse für{" "}
             <a
               target={"_blank"}
-              className="underline text-blau-100"
+              className="text-blau-100"
               rel="noopener noreferrer"
               href={`//${toUnicode(target.uri)}`}
             >

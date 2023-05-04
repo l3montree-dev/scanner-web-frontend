@@ -15,9 +15,9 @@ export const SortButton: FunctionComponent<{
         onSort(key);
       }}
       className={classNames(
-        "hover:bg-deepblue-200 ml-2 transition-all w-8 h-8 hover:text-white",
-        !active && "text-gray-500",
-        active && "text-white"
+        "hover:bg-dunkelblau-100 ml-2 border border-hellgrau-100 bg-white rounded-sm transition-all w-8 h-8 hover:text-white",
+        !active && "",
+        active && "text-blau-100"
       )}
     >
       <FontAwesomeIcon icon={getIcon()} />

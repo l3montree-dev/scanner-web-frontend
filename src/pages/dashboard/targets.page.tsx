@@ -396,9 +396,9 @@ const Targets: FunctionComponent<Props> = (props) => {
         <div className="flex-1">
           <div className="lg:flex lg:flex-row w-full flex-wrap  items-start justfy-between mb-12 lg:mb-0">
             <div className="flex-1">
-              <div className="text-white mb-10 gap-2 flex flex-row items-center">
+              <div className=" mb-10 gap-2 flex flex-row items-center">
                 <PageTitle
-                  className="text-4xl text-white mb-0 font-bold"
+                  className="text-2xl  mb-0 font-bold"
                   stringRep="Domainübersicht"
                 >
                   Domainübersicht
@@ -410,7 +410,7 @@ const Targets: FunctionComponent<Props> = (props) => {
                   vergleichen, wie gut die verschiedenen Domains in Bezug auf die
                   verschiedenen ausgeführten Sicherheitstest abschneiden.`}
                 >
-                  <div className="text-slate-400">
+                  <div className="">
                     <FontAwesomeIcon icon={faQuestionCircle} />
                   </div>
                 </Tooltip>
@@ -426,15 +426,15 @@ const Targets: FunctionComponent<Props> = (props) => {
               </Button>
             )}
           </div>
-          <div className="text-white">
+          <div className="">
             <div className="w-full">
-              <div className="bg-deepblue-300 lg:rounded-t-md lg:rounded-b-none rounded-md">
-                <div className="p-5">
-                  <div className="text-black">
+              <div className="">
+                <div className="">
+                  <div className="text-black mb-8">
                     <TargetOverviewForm onSearch={handleSearch} />
                   </div>
                 </div>
-                <div className="flex flex-wrap py-2 mx-2 gap-2 flex-row border-deepblue-50">
+                <div className="flex flex-wrap py-2 gap-2 mb-6 flex-row border-deepblue-50">
                   {!isGuest && (
                     <>
                       <Menu
@@ -572,7 +572,7 @@ const Targets: FunctionComponent<Props> = (props) => {
 
               <table className="w-full">
                 <thead className="sticky hidden lg:table-header-group table-header z-20">
-                  <tr className="bg-deepblue-200 text-sm border-b-deepblue-50 text-left">
+                  <tr className="text-sm border-b-deepblue-50 text-left">
                     <th className="p-2 pr-0">
                       {!isGuest && (
                         <Checkbox
@@ -714,7 +714,7 @@ const Targets: FunctionComponent<Props> = (props) => {
                     <h2 className="text-3xl font-bold">
                       Keine Domains gefunden
                     </h2>
-                    <p className="mx-auto mt-6 max-w-xl text-sm text-white/75">
+                    <p className="mx-auto mt-6 max-w-xl text-sm /75">
                       Ihre Such- bzw. Filtereinstellungen haben keine Treffer
                       erzielt oder Sie haben noch keine Domains hinterlegt.
                     </p>
