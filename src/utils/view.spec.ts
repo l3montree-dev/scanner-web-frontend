@@ -34,8 +34,8 @@ describe("view test suite", () => {
 
   it.each([
     [CheckResult.Passed, "circle-check"],
-    [CheckResult.Failed, "circle-exclamation"],
-    [CheckResult.Critical, "circle-xmark"],
+    [CheckResult.Failed, "circle-xmark"],
+    [CheckResult.Critical, "circle-exclamation"],
     [CheckResult.Unknown, "circle-question"],
   ])(
     "should transform a checkResult to the correct icon",
