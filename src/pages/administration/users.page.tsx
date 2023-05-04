@@ -163,7 +163,7 @@ const Users: FunctionComponent<Props> = (props) => {
             </Button>
           </div>
 
-          <table className="w-full text-left overflow-hidden  border-separate border-spacing-2">
+          <table className="w-full text-left overflow-hidden border-separate border-spacing-2">
             <thead className="hidden lg:table-header-group">
               <tr className="bg-blau-100  text-sm text-white text-left">
                 <th className="p-2 px-4 py-4">Nutzername</th>
@@ -177,7 +177,7 @@ const Users: FunctionComponent<Props> = (props) => {
               {users.map((user, i) => (
                 <tr
                   className={classNames(
-                    "flex flex-col lg:table-row relative mt-3 rounded-md",
+                    "flex flex-col lg:table-row relative mt-3",
                     i % 2 !== 0 ? "bg-blau-20/40" : "bg-dunkelblau-20/20"
                   )}
                   key={user.id}

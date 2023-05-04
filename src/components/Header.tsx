@@ -115,10 +115,10 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
                       <div className="pb-2 flex flex-col gap-4">
                         <div
                           key="sprechstunde"
-                          className="flex items-center gap-x-3"
+                          className="flex items-start gap-x-3"
                         >
                           <FontAwesomeIcon
-                            className="h-7 w-7 flex-none"
+                            className="h-7 w-7 pt-2 flex-none"
                             icon={faPhone}
                           />
                           <span>
@@ -135,10 +135,10 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
                         </div>
                         <div
                           key="one-pager"
-                          className="flex items-center gap-x-3"
+                          className="flex items-start gap-x-3"
                         >
                           <FontAwesomeIcon
-                            className="h-7 w-7 flex-none"
+                            className="h-7 w-7 pt-2 flex-none"
                             icon={faEnvelope}
                           />
                           <span>
