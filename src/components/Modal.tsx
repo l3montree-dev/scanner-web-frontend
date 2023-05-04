@@ -20,9 +20,9 @@ const Modal: FunctionComponent<Props> = (props) => {
     >
       <Dialog.Portal>
         <Dialog.Overlay className="DialogOverlay z-20 bg-black/50" />
-        <Dialog.Content className="DialogContent z-30 bg-deepblue-200 rounded-md text-white">
+        <Dialog.Content className="DialogContent z-30 bg-white rounded-sm text-textblack">
           <div className="flex flex-row mb-5 justify-between">
-            <Dialog.Title className="DialogTitle text-xl font-bold">
+            <Dialog.Title className="DialogTitle text-xl font-bold mb-2">
               {props.title}
             </Dialog.Title>
             <Dialog.Close asChild>
@@ -33,7 +33,7 @@ const Modal: FunctionComponent<Props> = (props) => {
               </Button>
             </Dialog.Close>
           </div>
-          {props.children}
+          <div className="py-4">{props.children}</div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

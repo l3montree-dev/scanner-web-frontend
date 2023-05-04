@@ -60,8 +60,8 @@ export const DragAndDrop: FunctionComponent<PropsWithChildren<Props>> = ({
       onDragEnter={handleDragEnter}
       onClick={() => fileSelector.current?.click()}
       className={classNames(
-        "draganddrop hover:bg-deepblue-300 rounded-md cursor-pointer transition-all w-full relative border-2 border-dashed border-gray-400 flex flex-col justify-center items-center",
-        drag && "bg-deepblue-200"
+        "draganddrop hover:bg-hellgrau-60 rounded-md cursor-pointer transition-all w-full relative border-2 border-dashed border-dunkelgrau-100 flex flex-col justify-center items-center",
+        drag && "bg-hellgrau-60"
       )}
     >
       <input

@@ -22,9 +22,10 @@ const OutlineButton = forwardRef<
   return (
     <Button
       className={classNames(
-        "transition-all flex flex-row items-center gap-3 rounded-sm text-white border border-deepblue-50 shadow-md p-2 px-3 focus:bg-deepblue-50 hover:bg-deepblue-50/30",
-        props.disabled && "opacity-50 cursor-not-allowed hover:bg-deepblue-100",
-        props.active && "bg-deepblue-50",
+        "transition-all flex flex-row items-center gap-3 rounded-sm text-textblack border border-hellgrau-80 p-2 px-3 focus:bg-deepblue-50 hover:bg-dunkelblau-100 hover:text-white bg-white",
+        props.disabled &&
+          "opacity-50 cursor-not-allowed hover:bg-dunkelblau-100",
+        props.active && "bg-dunkelblau-100",
 
         props.className
       )}

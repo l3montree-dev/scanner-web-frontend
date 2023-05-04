@@ -47,7 +47,10 @@ const EditCollectionForm: FunctionComponent<Props> = (props) => {
   }, [props.collection]);
 
   return (
-    <form className="justify-between  items-end" onSubmit={handleSubmit}>
+    <form
+      className="justify-between text-base items-end"
+      onSubmit={handleSubmit}
+    >
       <div className="flex gap-2 flex-1 z-30 flex-col">
         <div className="flex-1">
           <FormInput
@@ -71,13 +74,13 @@ const EditCollectionForm: FunctionComponent<Props> = (props) => {
               </Button>
             }
             Menu={
-              <div className="grid grid-cols-3 flex-wrap gap-1 px-1 justify-around items-center">
+              <div className="grid grid-cols-3 last:flex-wrap gap-1 px-1 justify-around items-center">
                 {colors.map((color) => (
                   <div
                     data-closemenu
                     onClick={() => setColor(color)}
                     key={color}
-                    className="rounded-sm border-t border-t-white/30 cursor-pointer hover:opacity-50 transition-all"
+                    className="rounded-sm h-16 w-16 border-t border-t-white/30 cursor-pointer hover:opacity-50 transition-all"
                     style={{ backgroundColor: color }}
                   />
                 ))}
@@ -89,15 +92,15 @@ const EditCollectionForm: FunctionComponent<Props> = (props) => {
             Speichern
           </Button>
         </div>
-        <div className="mt-5 text-white">
-          <div className="text-white">
+        <div className="mt-5 ">
+          <div className="">
             Links für externen readonly-zugriff ohne Account
           </div>
 
           <div className="flex flex-col flex-wrap mt-1 mb-3 gap-2">
             {props.collection.shareLinks.length === 0 && (
               <div className="border border-deepblue-50 p-5 text-center flex-1">
-                <span className="text-white">Keine Links erstellt</span>
+                <span className="">Keine Links erstellt</span>
               </div>
             )}
             {props.collection.shareLinks.map((shareLink) => {
@@ -120,7 +123,7 @@ const EditCollectionForm: FunctionComponent<Props> = (props) => {
               loading={generateLinkRequest.isLoading}
               type="button"
             >
-              <span className="text-white">Link erstellen</span>
+              <span className="">Link erstellen</span>
             </Button>
           </div>
         </div>

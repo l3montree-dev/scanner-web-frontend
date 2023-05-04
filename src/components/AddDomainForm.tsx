@@ -52,7 +52,7 @@ const AddDomainForm: FunctionComponent<{
     <>
       <form
         onSubmit={handleAddRecord}
-        className="flex flex-col md:flex-row gap-2 b pt-2 border-t-deepblue-200 items-end mt-5"
+        className="flex flex-col md:flex-row gap-2 text-base pt-2 border-t-deepblue-200 items-end mt-5"
       >
         <div className="flex-1 w-full">
           <FormInput
@@ -85,10 +85,13 @@ const AddDomainForm: FunctionComponent<{
       )}
 
       <div>
-        <form onSubmit={handleFileFormSubmit} className="pt-8 hidden md:flex">
+        <form
+          onSubmit={handleFileFormSubmit}
+          className="pt-8 hidden md:flex text-base"
+        >
           <div className="flex flex-col flex-1">
             <div className="flex-col flex">
-              <span className="text-white/80 mb-1">Liste importieren</span>
+              <span className="mb-1">Liste importieren</span>
               <DragAndDrop onDrop={handleDrop}>
                 {f.length > 0 ? (
                   <div className="flex flex-col justify-start items-start flex-1 w-full p-2">
@@ -97,7 +100,7 @@ const AddDomainForm: FunctionComponent<{
                         key={file.name}
                         className="flex text-sm mb-2 flex-row w-full justify-between items-center"
                       >
-                        <span className="text-white ">{file.name}</span>
+                        <span className="">{file.name}</span>
                         <OutlineButton
                           onClick={(e) => {
                             e.stopPropagation();
@@ -106,17 +109,17 @@ const AddDomainForm: FunctionComponent<{
                             );
                           }}
                         >
-                          <FontAwesomeIcon icon={faTrash} />
+                          <FontAwesomeIcon className="" icon={faTrash} />
                         </OutlineButton>
                       </div>
                     ))}
                   </div>
                 ) : (
                   <div className="flex flex-col">
-                    <span className="text-white text-sm px-4 mb-2 font-bold">
+                    <span className="text-sm px-4 mb-2 font-bold">
                       Datei hierher ziehen oder klicken zum hochladen.
                     </span>
-                    <span className="text-white text-sm px-4">
+                    <span className="text-sm px-4">
                       Die CSV-Datei muss eine Domain pro Zeile enthalten.
                     </span>
                   </div>

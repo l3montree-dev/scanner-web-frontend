@@ -70,9 +70,9 @@ export const checkResult2Icon = (checkResult: CheckResult) => {
     case CheckResult.Passed:
       return faCheckCircle;
     case CheckResult.Failed:
-      return faCircleExclamation;
-    case CheckResult.Critical:
       return faCircleXmark;
+    case CheckResult.Critical:
+      return faCircleExclamation;
     default:
       return faCircleQuestion;
   }

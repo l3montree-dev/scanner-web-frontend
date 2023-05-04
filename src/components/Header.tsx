@@ -122,7 +122,10 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
                             icon={faPhone}
                           />
                           <span>
-                            <a href="tel:020878012422" className="">
+                            <a
+                              href="tel:020878012422"
+                              className="text-blau-100"
+                            >
                               0208 78012422
                             </a>
                             <br />
@@ -139,7 +142,10 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
                             icon={faEnvelope}
                           />
                           <span>
-                            <a href="mailto:ozgsec@bmi.bund.de" className="">
+                            <a
+                              href="mailto:ozgsec@bmi.bund.de"
+                              className="text-blau-100"
+                            >
                               ozgsec@bmi.bund.de
                             </a>
                           </span>
