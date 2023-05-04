@@ -32,9 +32,9 @@ const BPAHeader: FunctionComponent<Props> = ({ hideLogin }) => {
   }, []);
 
   return (
-    <header className="pt-4 border-t-10 z-50 bg-white sticky top-0 border-b-6 border-b-hellgrau-40  border-t-bund">
+    <header className="border-t-10 z-50 bg-white sticky top-0 border-b-6 border-b-hellgrau-40  border-t-bund">
       <div className="container">
-        <div className="flex flex-row pb-4 justify-between items-center">
+        <div className="flex flex-row justify-between items-center">
           <Logo />
           <div>
             <nav className="flex flex-row justify-end">

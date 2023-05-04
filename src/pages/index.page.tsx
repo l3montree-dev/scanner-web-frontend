@@ -39,7 +39,14 @@ const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
   return (
     <Page>
       <Meta />
-      <div className="flex md:py-10 flex-col w-full justify-center">
+      <div className="flex relative overflow-hidden md:py-10 flex-col w-full justify-center">
+        <Image
+          className="absolute -z-10 top-20 right-0"
+          width={500}
+          height={225}
+          src={"/assets/Adler_Ausschnitt_1.svg"}
+          alt="OZG-Logo"
+        />
         <div className="container">
           <ScanPageHero
             onSubmit={onSubmit}

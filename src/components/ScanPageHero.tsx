@@ -62,7 +62,11 @@ const ScanPageHero: FunctionComponent<Props> = ({
               value={website}
             />
           </div>
-          <Button loading={scanRequest.isLoading} type="submit">
+          <Button
+            additionalClasses="border-white"
+            loading={scanRequest.isLoading}
+            type="submit"
+          >
             Scan starten
           </Button>
         </form>

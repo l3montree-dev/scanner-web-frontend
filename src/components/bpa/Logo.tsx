@@ -6,7 +6,11 @@ const Logo = () => {
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
     const onScroll = () => {
-      if (window.scrollY > 0) {
+      if (
+        window.scrollY > 0 &&
+        // only animate if it wont end up in an infinite loop
+        document.documentElement.scrollHeight - window.innerHeight > 95 - 36
+      ) {
         setScrolled(true);
       } else {
         setScrolled(false);
@@ -18,7 +22,12 @@ const Logo = () => {
   return (
     <Link href="/">
       <div
-        style={{ height: scrolled ? 36 : 95, width: 341.5 }}
+        style={{
+          height: scrolled ? 36 : 95,
+          width: 341.5,
+          marginTop: 37,
+          marginBottom: 37,
+        }}
         className="flex relative flex-row transition-bund items-start"
       >
         <Image
