@@ -14,11 +14,7 @@ export const SortButton: FunctionComponent<{
       onClick={() => {
         onSort(key);
       }}
-      className={classNames(
-        "hover:bg-dunkelblau-100 ml-2 border border-hellgrau-100 bg-white rounded-sm transition-all w-8 h-8 hover:text-white",
-        !active && "",
-        active && "text-blau-100"
-      )}
+      className={classNames("ml-2 transition-all w-8 h-8 text-white")}
     >
       <FontAwesomeIcon icon={getIcon()} />
     </button>

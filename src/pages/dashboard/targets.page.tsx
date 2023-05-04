@@ -570,10 +570,10 @@ const Targets: FunctionComponent<Props> = (props) => {
                 )}
               </div>
 
-              <table className="w-full">
+              <table className="w-full border-separate border-spacing-2 ">
                 <thead className="sticky hidden lg:table-header-group table-header z-20">
-                  <tr className="text-sm border-b-deepblue-50 text-left">
-                    <th className="p-2 pr-0">
+                  <tr className="text-sm border-b-deepblue-50 text-left bg-blau-100">
+                    <th className="p-2 pr-0 text-center">
                       {!isGuest && (
                         <Checkbox
                           checked={
@@ -593,7 +593,7 @@ const Targets: FunctionComponent<Props> = (props) => {
                     </th>
                     <th className="p-2">
                       <div>
-                        <span>Domain</span>
+                        <span className="text-white">Domain</span>
                         <SortButton
                           sortKey="uri"
                           onSort={handleSort}
@@ -654,7 +654,9 @@ const Targets: FunctionComponent<Props> = (props) => {
                     </th>
                     <th className="p-2">
                       <div>
-                        <span className="whitespace-nowrap">Aktionen</span>
+                        <span className="whitespace-nowrap text-white">
+                          Aktionen
+                        </span>
                       </div>
                     </th>
                   </tr>
@@ -685,10 +687,10 @@ const Targets: FunctionComponent<Props> = (props) => {
                         classNames={classNames(
                           "transition-all",
                           selection[target.uri]
-                            ? "bg-deepblue-100"
+                            ? "bg-blau-20/10"
                             : i % 2 !== 0
-                            ? "bg-deepblue-200"
-                            : "bg-deepblue-300"
+                            ? "bg-blau-20/40"
+                            : "bg-dunkelblau-20/20"
                         )}
                         onSelect={(target) => {
                           setSelection((prev) => {

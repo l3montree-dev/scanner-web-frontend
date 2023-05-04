@@ -101,6 +101,12 @@ const TargetTableItem: FunctionComponent<Props> = ({
               </Tooltip>
             </div>
           </div>
+          <div className="flex flex-row gap-2">
+            {target.collections?.map((c) => {
+              const col = collections[c.toString()];
+              return <CollectionPill selected={true} key={col.id} {...col} />;
+            })}
+          </div>
         </td>
         <td className="px-4 py-2 lg:p-2 col-span-8 flex lg:table-cell flex-row justify-between items-center">
           <span className="lg:hidden text-sm opacity-75">
@@ -250,27 +256,6 @@ const TargetTableItem: FunctionComponent<Props> = ({
           </div>
         </td>
       </tr>
-      {target.collections !== undefined && target.collections.length > 0 && (
-        <tr
-          onClick={() => onSelect(target)}
-          className={classNames(
-            clNames,
-            "cursor-pointer rounded-b-md lg:rounded-none pointer-events-none"
-          )}
-        >
-          <td colSpan={9} className="py-2 lg:pb-2 lg:pt-0">
-            <div
-              onClick={(e) => e.stopPropagation()}
-              className="flex flex-row gap-2 lg:p-2 lg:px-5 px-2 -mt-2 lg:pl-10 justify-start"
-            >
-              {target.collections.map((c) => {
-                const col = collections[c.toString()];
-                return <CollectionPill selected={true} key={col.id} {...col} />;
-              })}
-            </div>
-          </td>
-        </tr>
-      )}
     </>
   );
 };

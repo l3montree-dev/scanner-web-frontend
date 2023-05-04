@@ -16,9 +16,9 @@ const Checkbox: FunctionComponent<Props> = (props) => {
         props.onChange();
       }}
       className={classNames(
-        "w-5 h-5 flex flex-row cursor-pointer items-center rounded-sm justify-center",
-        props.checked ? "bg-lightning-500" : "bg-deepblue-100",
-        focused ? "outline outline-lightning-500" : ""
+        "w-5 h-5 flex flex-row cursor-pointer items-center border border-dunkelgrau-80 justify-center",
+        props.checked ? "bg-blau-100" : "bg-white",
+        focused ? "outline outline-blau-100" : ""
       )}
     >
       <input
@@ -30,7 +30,7 @@ const Checkbox: FunctionComponent<Props> = (props) => {
         className={"opacity-0 absolute pointer-events-none"}
       />
       {props.checked && (
-        <FontAwesomeIcon className="text-deepblue-500" icon={faCheck} />
+        <FontAwesomeIcon className="text-white h-3 w-3" icon={faCheck} />
       )}
     </div>
   );
