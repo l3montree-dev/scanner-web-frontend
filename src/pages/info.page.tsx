@@ -35,12 +35,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
   }
+
   return {
-    props: {
-      keycloakIssuer: process.env.KEYCLOAK_ISSUER as string,
-      displayNotAvailable: true,
-      code: !!code ? code : null,
+    redirect: {
+      destination: "/",
+      permanent: false,
     },
+    props: {},
   };
 };
 

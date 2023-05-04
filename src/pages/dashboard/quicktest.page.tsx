@@ -54,7 +54,7 @@ const QuicktestPage: FunctionComponent<Props> = (props) => {
               </div>
             </div>
           </div>
-          <div className=" bg-dunkelblau-100 p-2 lg:p-5">
+          <div className="">
             <form
               onSubmit={onSubmit}
               className="flex items-end gap-2 justify-between"
@@ -76,7 +76,6 @@ const QuicktestPage: FunctionComponent<Props> = (props) => {
                 Scan starten
               </Button>
             </form>
-
             {scanRequest.errored && (
               <small className="text-rot-100 mt-3 -mb-5 flex">
                 {scanRequest.errorMessage}
@@ -84,7 +83,7 @@ const QuicktestPage: FunctionComponent<Props> = (props) => {
             )}
           </div>
           {target !== null && (
-            <div className="lg:p-5 p-0 mt-2">
+            <div className="pt-5 p-0 mt-2">
               <ResultEnvelope
                 target={target}
                 dateString={dateString}
