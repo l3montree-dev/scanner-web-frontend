@@ -711,12 +711,12 @@ const Targets: FunctionComponent<Props> = (props) => {
               </table>
 
               {targets.length === 0 && (
-                <div className="px-6 bg-deepblue-300 rounded-b-md py-24">
+                <div className="px-6 bg-hellgrau-20 rounded-b-md py-24">
                   <div className="mx-auto max-w-2xl text-center">
-                    <h2 className="text-3xl font-bold">
+                    <h2 className="text-xl font-bold">
                       Keine Domains gefunden
                     </h2>
-                    <p className="mx-auto mt-6 max-w-xl text-sm /75">
+                    <p className="mx-auto mt-6 max-w-xl">
                       Ihre Such- bzw. Filtereinstellungen haben keine Treffer
                       erzielt oder Sie haben noch keine Domains hinterlegt.
                     </p>
