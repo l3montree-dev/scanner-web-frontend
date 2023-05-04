@@ -113,7 +113,7 @@ const Network: FunctionComponent<Props> = (props) => {
                 Hinzugefügte Netzwerke werden automatisch
                 gescanned. So lassen sich Scans von Rechenzentren erstellen.`}
                 >
-                  <div className="text-slate-400">
+                  <div className="text-dunkelgrau-100">
                     <FontAwesomeIcon icon={faQuestionCircle} />
                   </div>
                 </Tooltip>

@@ -353,7 +353,7 @@ const LineChart: FunctionComponent<Props> = ({
             </>
           }
         >
-          <div className="text-slate-400 inline ml-2">
+          <div className="text-dunkelgrau-100 inline ml-2">
             <FontAwesomeIcon fontSize={18} icon={faQuestionCircle} />
           </div>
         </Tooltip>

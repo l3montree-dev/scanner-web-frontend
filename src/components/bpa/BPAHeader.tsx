@@ -39,7 +39,7 @@ const BPAHeader: FunctionComponent<Props> = ({ hideLogin }) => {
                     <div className="flex flex-row gap-5">
                       <SmallLink href="/dashboard">Dashboard</SmallLink>
                       <span
-                        className="uppercase hover:border-b border-b-transparent hover:border-b-blau-100 cursor-pointer font-bold text-sm hover:text-blau-100 text-dunkelgrau-100"
+                        className="uppercase hover:border-b border-b-transparent hover:border-b-blau-100 cursor-pointer font-bold text-xs hover:text-blau-100 text-dunkelgrau-100"
                         onClick={() => {
                           return signOut();
                         }}

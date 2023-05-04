@@ -17,6 +17,7 @@ import { useSession } from "../hooks/useSession";
 import { classNames, isAdmin, isGuestUser } from "../utils/common";
 import { useGlobalStore } from "../zustand/global";
 import useWindowSize from "../hooks/useWindowSize";
+import Logo from "./bpa/Logo";
 
 const defaultLinks = [
   {
@@ -101,25 +102,24 @@ const SideNavigation = () => {
     <div
       className={classNames(
         "bg-white transition-all relative border-r-6 text-base border-hellgrau-40 lg:h-full",
-        store.sideMenuCollapsed ? "w-16" : "w-72"
+        store.sideMenuCollapsed ? "w-16" : "w-80"
       )}
     >
       <div className="md:sticky top-5">
-        <div className="pt-5 flex text-center items-start mb-5 text-white">
-          <Link href="/dashboard" className="flex mx-auto items-center">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              width={width <= 768 ? 100 : store.sideMenuCollapsed ? 55 : 130}
-              height={45}
-              className={store.sideMenuCollapsed ? "flex-1 mt-8" : "flex-1"}
-              src={"/assets/sticker_challenge_black.svg"}
-              alt="Logo OZG"
+        <div className="pt-5 m-2 flex text-center items-start mb-5 text-white">
+          {!store.sideMenuCollapsed && (
+            <Image
+              src={"/assets/BMI_de_v3__BSI_de_v1__Web_farbig.svg"}
+              width={280}
+              height={120}
+              alt="Logo BMI und BSI"
             />
-          </Link>
+          )}
         </div>
+
         <div
           className={classNames(
-            "flex transition-all ml-1 pt-5 border-deepblue-300 lg:h-full items-center",
+            "flex transition-all ml-1 pt-5 lg:h-full items-center",
             store.sideMenuCollapsed ? "w-16" : "w-72"
           )}
         ></div>
@@ -129,7 +129,7 @@ const SideNavigation = () => {
               <Link key={name} className="hover:no-underline" href={path}>
                 <div
                   className={classNames(
-                    "py-3 px-3 m-2 flex flex-row items-center hover:bg-hellgrau-20 hover:no-underline transition-all border-b cursor-pointer",
+                    "py-5 px-5  flex flex-row items-center hover:bg-hellgrau-20 hover:no-underline transition-all border-b cursor-pointer",
                     pathname === path ? "text-blau-100" : "text-textblack"
                   )}
                 >
@@ -150,22 +150,12 @@ const SideNavigation = () => {
         <button
           onClick={handleCollapseToggle}
           className={classNames(
-            "fixed hidden lg:flex top-5 right-0 bg-deepblue-100 left-4 bottom-5 p-2 rounded-full w-8 h-8 flex-row items-center justify-center text-white transition-all hover:bg-deepblue-50",
+            "fixed hidden lg:flex left-3 bottom-5 p-2 rounded-full w-8 h-8 flex-row items-center justify-center  transition-all",
             store.sideMenuCollapsed ? "rotate-180" : ""
           )}
         >
           <FontAwesomeIcon icon={faArrowLeftLong} />
         </button>
-        {!store.sideMenuCollapsed && (
-          <div className="p-2 md:fixed bottom-0 w-56 right-0 left-0 ">
-            <Image
-              width={210}
-              height={50}
-              alt="Logo BMI"
-              src={"/assets/bmi_logo_weiss.svg"}
-            />
-          </div>
-        )}
       </div>
     </div>
   );

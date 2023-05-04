@@ -148,14 +148,14 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
                     </div>
                   }
                 >
-                  <div className="flex cursor-pointer text-textblack flex-row gap-2">
+                  <div className="flex cursor-pointer text-sm text-textblack flex-row gap-2">
                     <FontAwesomeIcon size="xl" icon={faHeadset} />
                   </div>
                 </Tooltip>
 
                 <Menu
                   Button={
-                    <div className="bg-hellgrau-60 text-textblack overflow-hidden cursor-pointer rounded-full h-9 w-9 flex items-center justify-center text-sm mr-1">
+                    <div className="bg-hellgrau-60 text-textblack overflow-hidden cursor-pointer rounded-full h-9 w-9 flex items-center justify-center text-xs mr-1">
                       <FontAwesomeIcon
                         size={"2xl"}
                         className="relative -bottom-1.5"
@@ -188,7 +188,7 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
                             </DropdownMenuItem>
                           </a>
                         ))}
-                      <div className="p-2 relative top-1 text-sm border-t border-t-deepblue-200 bg-hellgrau-100 text-textblack">
+                      <div className="p-2 relative top-1 border-t border-t-deepblue-200 bg-hellgrau-100 text-textblack">
                         Eingeloggt als:{" "}
                         {isGuestUser(session.data.user)
                           ? "Gast"

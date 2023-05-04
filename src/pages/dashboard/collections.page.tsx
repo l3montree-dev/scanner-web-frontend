@@ -207,7 +207,7 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
                 <Tooltip
                   tooltip={`Gruppen dienen der Sortierung einzelner Domains. Es ist möglich Gruppen direkt miteinander zu vergleichen.`}
                 >
-                  <div className="text-slate-400">
+                  <div className="text-dunkelgrau-100">
                     <FontAwesomeIcon icon={faQuestionCircle} />
                   </div>
                 </Tooltip>

@@ -1,14 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import useWindowSize from "../../hooks/useWindowSize";
 import dynamic from "next/dynamic";
 
-const Logo = () => {
+interface Props {
+  scale?: number;
+  href?: string;
+}
+const Logo: FunctionComponent<Props> = (props) => {
   const [scrolled, setScrolled] = useState(false);
 
   const { width } = useWindowSize();
-  const factor = width > 768 ? 1 : 0.8;
+  const factor =
+    props.scale !== undefined ? props.scale : width > 768 ? 1 : 0.8;
+
   useEffect(() => {
     const onScroll = () => {
       if (
@@ -29,7 +35,7 @@ const Logo = () => {
     return null;
   }
   return (
-    <Link className="hover:border-none" href="/">
+    <Link className="hover:border-none" href={props.href ?? "/"}>
       <div
         style={{
           height: (scrolled ? 36 : 95) * factor,

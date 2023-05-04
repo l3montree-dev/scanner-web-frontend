@@ -21,10 +21,8 @@ const CollectionPill: FunctionComponent<Props> = ({
         onClick?.(id);
       }}
       className={classNames(
-        "flex bg-deepblue-300 cursor-pointer  flex-row items-center rounded-full text-sm px-2 py-1",
-        selected
-          ? adaptiveTextColorBasedOnContrast(color)
-          : "border-2 border-slate-400"
+        "flex bg-hellgrau-40 cursor-pointer  flex-row items-center rounded-full text-sm px-2 py-1",
+        selected && adaptiveTextColorBasedOnContrast(color)
       )}
       style={{ backgroundColor: selected ? color : undefined }}
     >

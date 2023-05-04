@@ -133,14 +133,14 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                   tooltip={`         
                     Das Dashboard bietet eine Übersicht über den Sicherheitszustand von Domain-Gruppen.`}
                 >
-                  <div className="text-slate-400">
+                  <div className="text-dunkelgrau-100">
                     <FontAwesomeIcon size="xl" icon={faQuestionCircle} />
                   </div>
                 </Tooltip>
               </div>
             </div>
 
-            {!isGuest && (
+            {/*!isGuest && (
               <div className=" sticky z-20 bg-white border-b-6 border-hellgrau-40 beneath-header py-2 flex flex-row mb-4 items-center">
                 <div className="max-w-screen-xl px-3 text-lg gap-1 flex flex-col flex-1 mx-auto">
                   <span className="font-semibold">
@@ -168,7 +168,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                           }
                           color={
                             col.id === props.defaultCollectionId
-                              ? tailwindColors.lightning["500"]
+                              ? tailwindColors.blau["100"]
                               : col.color
                           }
                         />
@@ -177,7 +177,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                   </div>
                 </div>
               </div>
-            )}
+                )*/}
 
             <div
               className={classNames(

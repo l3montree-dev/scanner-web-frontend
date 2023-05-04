@@ -230,7 +230,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                   100.000 .de Domains sowie der globalen Top 100.000 Domains dar. Die
                   Daten werden täglich aktualisiert.`}
                 >
-                  <div className="text-slate-400">
+                  <div className="text-dunkelgrau-100">
                     <FontAwesomeIcon size="xl" icon={faQuestionCircle} />
                   </div>
                 </Tooltip>

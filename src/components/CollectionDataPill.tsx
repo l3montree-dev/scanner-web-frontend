@@ -12,10 +12,10 @@ const CollectionDataPill: FunctionComponent<PropsWithChildren<Props>> = (
   return (
     <div
       style={{
-        backgroundColor: props.color,
+        borderColor: props.color,
       }}
       className={classNames(
-        "flex items-center rounded-full px-2 py-1",
+        "flex items-center border bg-white px-2 py-1",
         adaptiveTextColorBasedOnContrast(props.color)
       )}
     >

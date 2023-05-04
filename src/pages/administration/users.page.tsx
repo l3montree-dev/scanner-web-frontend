@@ -148,7 +148,7 @@ const Users: FunctionComponent<Props> = (props) => {
             In der Nutzerverwaltung lassen sich die Nutzer des Systems
             einsehen, verwalten und löschen.`}
                 >
-                  <div className="text-slate-400">
+                  <div className="text-dunkelgrau-100">
                     <FontAwesomeIcon icon={faQuestionCircle} />
                   </div>
                 </Tooltip>

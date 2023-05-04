@@ -37,7 +37,7 @@ const Footer: FunctionComponent = () => {
           alt="OZG Logo"
         />
       </div>
-      <div className="container pt-10 text-sm">
+      <div className="container pt-10 text-xs">
         <div className="lg:flex text-white pt-10 border-t justify-between">
           <div className="flex flex-wrap gap-2  flex-row">
             <span>
