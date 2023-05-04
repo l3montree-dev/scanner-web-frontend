@@ -15,7 +15,7 @@ const clNames = (primary: boolean = false) => {
   if (primary) {
     return "bg-lightning-500 focus:bg-lightning-300 hover:bg-lightning-300 font-bold text-deepblue-900";
   }
-  return "text-blau-100 bg-white focus:bg-dunkelblau-50 hover:bg-dunkelblau-100 hover:text-white border border-hellgrau-80";
+  return "bg-white focus:bg-dunkelblau-50 hover:bg-dunkelblau-100 hover:text-white border border-hellgrau-80";
 };
 const Button =
   // eslint-disable-next-line react/display-name
@@ -41,7 +41,7 @@ const Button =
       <button
         ref={ref}
         className={classNames(
-          "transition-all flex justify-between flex-row items-center gap-3 rounded-md p-2 px-5 ",
+          "transition-all flex justify-between flex-row items-center gap-3 rounded-sm p-2 px-5 ",
           clNames(primary),
           props.disabled && "opacity-50 cursor-not-allowed",
           additionalClasses
@@ -61,12 +61,12 @@ const Button =
             <Spinner size={35} />
           </div>
         ) : (
-          props.LeftIcon && <div className="">{props.LeftIcon}</div>
+          props.LeftIcon && <div>{props.LeftIcon}</div>
         )}
         <div className={classNames(loading && "hidden sm:block")}>
           {props.children}
         </div>
-        {props.RightIcon && <div className="">{props.RightIcon}</div>}
+        {props.RightIcon && <div>{props.RightIcon}</div>}
       </button>
     );
   });

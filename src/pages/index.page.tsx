@@ -40,7 +40,7 @@ const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
     <Page>
       <Meta />
       <div className="flex md:py-10 flex-col w-full justify-center">
-        <div className="max-w-screen-lg w-full md:p-5 mx-auto">
+        <div className="container">
           <ScanPageHero
             onSubmit={onSubmit}
             setWebsite={setWebsite}

@@ -34,7 +34,7 @@ const BPAHeader: FunctionComponent<Props> = ({ hideLogin }) => {
   return (
     <header className="pt-4 border-t-10 z-50 bg-white sticky top-0 border-b-6 border-b-hellgrau-40  border-t-bund">
       <div className="container">
-        <div className="flex flex-row pb-4 justify-between items-start">
+        <div className="flex flex-row pb-4 justify-between items-center">
           <Logo />
           <div>
             <nav className="flex flex-row justify-end">
@@ -44,7 +44,7 @@ const BPAHeader: FunctionComponent<Props> = ({ hideLogin }) => {
                     <div className="flex flex-row gap-5">
                       <SmallLink href="/dashboard">Dashboard</SmallLink>
                       <span
-                        className="uppercase font-bold text-sm text-dunkelgrau-100"
+                        className="uppercase hover:underline cursor-pointer font-bold text-sm text-dunkelgrau-100"
                         onClick={() => {
                           return signOut();
                         }}
@@ -60,13 +60,19 @@ const BPAHeader: FunctionComponent<Props> = ({ hideLogin }) => {
             </nav>
             <nav className="text-gray-600 pt-2 flex flex-row justify-end gap-10">
               <Link
-                className={classNames(activeLink === "/" && "text-bund")}
+                className={classNames(
+                  activeLink === "/" && "text-bund",
+                  "hover:text-bund hover:underline"
+                )}
                 href="/"
               >
                 Schnelltest
               </Link>
               <Link
-                className={classNames(activeLink === "/info" && "text-bund")}
+                className={classNames(
+                  activeLink === "/info" && "text-bund",
+                  "hover:text-bund hover:underline"
+                )}
                 href="/info"
               >
                 Informationen zur Challenge
