@@ -44,7 +44,7 @@ const baseLabelStyles = {
   fontSize,
   letterSpacing,
   padding,
-  fill: tailwindColors.deepblue["50"],
+  fill: tailwindColors.textblack,
   stroke: "transparent",
   strokeWidth: 0,
 };
@@ -75,7 +75,6 @@ export const theme = {
         axis: {
           fill: "transparent",
           stroke: tailwindColors.deepblue["50"],
-          strokeWidth: 2,
           strokeLinecap,
           strokeLinejoin,
         },
@@ -85,8 +84,8 @@ export const theme = {
         }),
         grid: {
           fill: "none",
-          stroke: "rgba(255,255,255,0.1)",
-          strokeDasharray,
+          stroke: tailwindColors.dunkelgrau["20"],
+          strokeWidth: 2,
           strokeLinecap,
           strokeLinejoin,
           pointerEvents: "painted",
@@ -94,13 +93,13 @@ export const theme = {
         ticks: {
           fill: "transparent",
           size: 5,
-          stroke: tailwindColors.slate["300"],
+          stroke: tailwindColors.textblack,
           strokeWidth: 1,
           strokeLinecap,
           strokeLinejoin,
         },
         tickLabels: assign({}, baseLabelStyles, {
-          fill: tailwindColors.slate["300"],
+          fill: tailwindColors.textblack,
         }),
       },
     },

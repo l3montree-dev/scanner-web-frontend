@@ -238,11 +238,11 @@ const LineChart: FunctionComponent<Props> = ({
   };
 
   return (
-    <div className="group/chart pb-5 bg-deepblue-300 rounded-md shadow-xl historical-chart flex-col flex">
+    <div className="group/chart pb-5 text-textblack bg-hellgrau-20 historical-chart flex-col flex">
       <div className="flex-1 pt-5 relative">
         <button
           onClick={exportToPng}
-          className="group-hover/chart:opacity-100 cursor-pointer z-10 opacity-0 rounded-full bg-deepblue-100/50 h-9 absolute top-3 right-3 w-9 text-sm transition-all"
+          className="group-hover/chart:opacity-100 cursor-pointer z-10 opacity-0 rounded-full text-textblack h-9 absolute top-3 right-3 w-9 text-sm transition-all"
         >
           <FontAwesomeIcon className="opacity-100" icon={faDownload} />
         </button>
@@ -280,7 +280,7 @@ const LineChart: FunctionComponent<Props> = ({
             if (!d) return null;
             const color =
               +collectionId === defaultCollectionId
-                ? tailwindColors.lightning["500"]
+                ? tailwindColors.blau["100"]
                 : d.color;
 
             return (
@@ -292,7 +292,7 @@ const LineChart: FunctionComponent<Props> = ({
                     stroke: color,
                   },
                 }}
-                interpolation={"basis"}
+                //  interpolation={"basis"}
                 labels={(label) => {
                   if (+label.index === d.series.length - 1) {
                     return `${label.datum.y.toFixed(1)}%`;
@@ -310,23 +310,11 @@ const LineChart: FunctionComponent<Props> = ({
               />
             );
           })}
-          {displayCollections.includes(defaultCollectionId) &&
-            defaultCollectionId in data.data && (
-              <VictoryArea
-                interpolation={"basis"}
-                style={{
-                  data: {
-                    fill: "url(#serviceGradient)",
-                  },
-                }}
-                data={data.data[defaultCollectionId]!.series}
-              />
-            )}
         </VictoryChart>
       </div>
       <h2
         title={titleMapper[inspectionType]}
-        className="text-left text-white px-6 text-lg text-ellipsis font-bold bg-deepblue-300 border-deepblue-50 mt-1"
+        className="text-left px-6 text-lg text-ellipsis font-bold mt-1"
       >
         {titleMapper[inspectionType]}{" "}
         <Tooltip
@@ -338,7 +326,6 @@ const LineChart: FunctionComponent<Props> = ({
                   download
                   target={"_blank"}
                   href={linkMapper[inspectionType]}
-                  className="text-lightning-500"
                   rel="noreferrer"
                 >
                   &quot;{titleMapper[inspectionType]}&quot; One-Pager
@@ -359,7 +346,7 @@ const LineChart: FunctionComponent<Props> = ({
         </Tooltip>
       </h2>
       <div>
-        <div className="opacity-75 px-6">
+        <div className="opacity-75 text-sm px-6">
           {visibleDomain[0]} - {visibleDomain[1]}
         </div>
       </div>

@@ -1,8 +1,7 @@
 import { Collection } from "@prisma/client";
 import { FunctionComponent } from "react";
-import { DTO } from "../utils/server";
 import { classNames } from "../utils/common";
-import { adaptiveTextColorBasedOnContrast } from "../utils/view";
+import { DTO } from "../utils/server";
 
 interface Props extends DTO<Collection> {
   onClick?: (id: number) => void;
@@ -21,10 +20,9 @@ const CollectionPill: FunctionComponent<Props> = ({
         onClick?.(id);
       }}
       className={classNames(
-        "flex bg-hellgrau-40 cursor-pointer  flex-row items-center rounded-full text-sm px-2 py-1",
-        selected && adaptiveTextColorBasedOnContrast(color)
+        "flex bg-white border-2 cursor-pointer  flex-row items-center  text-sm px-2 py-1"
       )}
-      style={{ backgroundColor: selected ? color : undefined }}
+      style={{ borderColor: selected ? color : undefined }}
     >
       {title}
     </div>

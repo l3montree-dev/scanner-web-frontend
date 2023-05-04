@@ -65,7 +65,7 @@ const localizeDefaultCollection = <
   if (collection.id === defaultCollectionId) {
     return {
       ...collection,
-      color: tailwindColors.lightning["500"],
+      color: tailwindColors.blau["100"],
       title: username,
     };
   }
@@ -213,11 +213,11 @@ const Dashboard: FunctionComponent<Props> = (props) => {
         </div>
         <div className="flex-1 flex flex-col">
           <Header keycloakIssuer={props.keycloakIssuer} />
-          <main className="bg-deepblue-600 flex-col flex flex-1">
+          <main className=" flex-col flex flex-1">
             <div className="max-w-screen-xl w-full mb-5 pt-10 mx-auto">
-              <div className="text-white mb-0 px-3 gap-2 flex flex-row items-center">
+              <div className=" mb-0 px-3 gap-2 flex flex-row items-center">
                 <PageTitle
-                  className="text-4xl text-white font-bold"
+                  className="text-2xl font-bold"
                   stringRep="Trendanalyse"
                 >
                   Trendanalyse
@@ -238,14 +238,14 @@ const Dashboard: FunctionComponent<Props> = (props) => {
             </div>
 
             {!isGuest && (
-              <div className="text-white sticky z-20 shadow-lg beneath-header py-2 bg-deepblue-300 flex flex-row mb-4 items-center">
+              <div className="sticky z-20 border-b-6 border-b-hellgrau-40 beneath-header py-2 bg-white flex flex-row mb-4 items-center">
                 <div className="max-w-screen-xl px-3 text-lg gap-1 flex flex-col flex-1 mx-auto">
                   <div className="flex flex-row justify-between">
                     <span className="font-semibold">
                       Domain-Gruppe (Anzahl der Domains)
                     </span>
                     <div className="flex-row hidden md:flex justify-end sticky pointer-events-none zoom-button z-20">
-                      <div className="pointer-events-auto overflow-hidden rounded-sm">
+                      <div className="pointer-events-auto overflow-hidden">
                         <ToggleGroup.Root
                           className="ToggleGroup"
                           type="single"
@@ -262,14 +262,21 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                           >
                             <div
                               className={classNames(
-                                "grid grid-cols-1 gap-0.5 p-3 hover:bg-deepblue-50",
+                                "border hover:bg-dunkelblau-100",
                                 zoomLevel === 2
-                                  ? "bg-deepblue-50"
-                                  : "bg-deepblue-100"
+                                  ? "bg-dunkelblau-100"
+                                  : "bg-white"
                               )}
                             >
-                              <div className="w-3 h-1 bg-white" />
-                              <div className="w-3 h-1 bg-white" />
+                              <div
+                                className={classNames(
+                                  "grid grid-cols-1 hover:invert gap-0.5 p-3",
+                                  zoomLevel === 2 && "invert"
+                                )}
+                              >
+                                <div className="w-5 h-2 bg-textblack" />
+                                <div className="w-5 h-2 bg-textblack" />
+                              </div>
                             </div>
                           </ToggleGroup.Item>
                           <ToggleGroup.Item
@@ -279,16 +286,23 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                           >
                             <div
                               className={classNames(
-                                "grid hover:bg-deepblue-50 grid-cols-2 gap-0.5 p-3",
+                                "hover:bg-dunkelblau-100 border transition-all",
                                 zoomLevel === 1
-                                  ? "bg-deepblue-50"
-                                  : "bg-deepblue-100"
+                                  ? "bg-dunkelblau-100"
+                                  : "bg-white"
                               )}
                             >
-                              <div className="w-1 h-1 bg-white" />
-                              <div className="w-1 h-1 bg-white" />
-                              <div className="w-1 h-1 bg-white" />
-                              <div className="w-1 h-1 bg-white" />
+                              <div
+                                className={classNames(
+                                  "grid hover:invert  transition-all grid-cols-2 gap-0.5 p-3",
+                                  zoomLevel === 1 && "invert"
+                                )}
+                              >
+                                <div className="w-2 h-2 bg-textblack" />
+                                <div className="w-2 h-2 bg-textblack" />
+                                <div className="w-2 h-2 bg-textblack" />
+                                <div className="w-2 h-2 bg-textblack" />
+                              </div>
                             </div>
                           </ToggleGroup.Item>
 
@@ -299,18 +313,25 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                           >
                             <div
                               className={classNames(
-                                "grid grid-cols-3 gap-0.5 p-3 hover:bg-deepblue-50",
+                                " hover:bg-dunkelblau-100 border transition-all",
                                 zoomLevel === 0
-                                  ? "bg-deepblue-50"
-                                  : "bg-deepblue-100"
+                                  ? "bg-dunkelblau-100"
+                                  : "bg-white"
                               )}
                             >
-                              <div className="w-0.5 h-1 bg-white" />
-                              <div className="w-0.5 h-1 bg-white" />
-                              <div className="w-0.5 h-1 bg-white" />
-                              <div className="w-0.5 h-1 bg-white" />
-                              <div className="w-0.5 h-1 bg-white" />
-                              <div className="w-0.5 h-1 bg-white" />
+                              <div
+                                className={classNames(
+                                  "grid hover:invert grid-cols-3 gap-0.5 p-3",
+                                  zoomLevel === 0 && "invert"
+                                )}
+                              >
+                                <div className="w-1 h-2 bg-textblack" />
+                                <div className="w-1 h-2 bg-textblack" />
+                                <div className="w-1 h-2 bg-textblack" />
+                                <div className="w-1 h-2 bg-textblack" />
+                                <div className="w-1 h-2 bg-textblack" />
+                                <div className="w-1 h-2 bg-textblack" />
+                              </div>
                             </div>
                           </ToggleGroup.Item>
                         </ToggleGroup.Root>
@@ -339,7 +360,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                           }
                           color={
                             col.id === props.defaultCollectionId
-                              ? tailwindColors.lightning["500"]
+                              ? tailwindColors.blau["100"]
                               : col.color
                           }
                         />

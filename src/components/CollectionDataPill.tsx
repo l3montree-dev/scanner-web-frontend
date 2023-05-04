@@ -1,6 +1,5 @@
 import { FunctionComponent, PropsWithChildren } from "react";
 import { classNames } from "../utils/common";
-import { adaptiveTextColorBasedOnContrast } from "../utils/view";
 
 interface Props {
   color: string;
@@ -15,8 +14,7 @@ const CollectionDataPill: FunctionComponent<PropsWithChildren<Props>> = (
         borderColor: props.color,
       }}
       className={classNames(
-        "flex items-center border bg-white px-2 py-1",
-        adaptiveTextColorBasedOnContrast(props.color)
+        "flex items-center border-2 bg-white text-textblack px-2 py-1"
       )}
     >
       {props.children}
