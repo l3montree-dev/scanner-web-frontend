@@ -138,7 +138,7 @@ trivy:scan:main:
 
 trivy:scan:ci:
     extends: .trivy:scan
-    needs: [docker:build:main]
+    needs: [docker:build:ci]
     dependencies:
       - docker:build:ci
     variables:
