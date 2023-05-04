@@ -40,30 +40,31 @@ const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
     <Page>
       <Meta />
       <div className="flex relative overflow-hidden md:py-10 flex-col w-full justify-center">
-        <Image
-          className="absolute -z-10 top-20 right-0"
-          width={500}
-          height={225}
-          src={"/assets/Adler_Ausschnitt_1.svg"}
-          alt="OZG-Logo"
-        />
-        <div className="container">
-          <ScanPageHero
-            onSubmit={onSubmit}
-            setWebsite={setWebsite}
-            website={website}
-            scanRequest={scanRequest}
+        <div className="relative">
+          <Image
+            className="absolute hidden lg:inline -z-10 top-0 right-0"
+            width={500}
+            height={225}
+            src={"/assets/Adler_Ausschnitt_1.svg"}
+            alt="OZG-Logo"
           />
-          <div className="mt-10">
-            <ResultEnvelope
-              target={target}
-              dateString={dateString}
-              handleRefresh={handleRefresh}
-              refreshRequest={refreshRequest}
-              amountPassed={amountPassed}
+          <div className="container">
+            <ScanPageHero
+              onSubmit={onSubmit}
+              setWebsite={setWebsite}
+              website={website}
+              scanRequest={scanRequest}
             />
-          </div>
-          {/*<div className="bg-deepblue-400 justify-center mx-5 md:mx-0 mb-5 flex flex-col md:flex-row md:justify-between items-center text-white mt-5 p-4">
+            <div className="my-10">
+              <ResultEnvelope
+                target={target}
+                dateString={dateString}
+                handleRefresh={handleRefresh}
+                refreshRequest={refreshRequest}
+                amountPassed={amountPassed}
+              />
+            </div>
+            {/*<div className="bg-deepblue-400 justify-center mx-5 md:mx-0 mb-5 flex flex-col md:flex-row md:justify-between items-center text-white mt-5 p-4">
             <p>Die OZG-Security-Challenge: Hintergrundinfos und Vieles mehr.</p>
             <a
               title="Mehr Informationen zur OZG-Security-Challenge 2023"
@@ -75,6 +76,7 @@ const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
               Mehr erfahren
             </a>
   </div>*/}
+          </div>
         </div>
       </div>
     </Page>

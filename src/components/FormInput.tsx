@@ -63,7 +63,7 @@ const FormInput: FunctionComponent<Props> = ({
         }}
         onFocus={() => setFocus(true)}
         className={classNames(
-          `sm:py-1 py-1 bg-transparent text-sm sm:text-base flex-1 transition-colors border-b-dunkelgrau-100 border-b focus:outline-none focus:border-b-${focusColor}`,
+          `sm:py-1 py-1 bg-transparent flex-1 transition-colors border-b-dunkelgrau-100 border-b focus:outline-none focus:border-b-${focusColor}`,
           inputClassNames
         )}
       />

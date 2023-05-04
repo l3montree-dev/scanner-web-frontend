@@ -26,13 +26,13 @@ const ScanPageHero: FunctionComponent<Props> = ({
   scanRequest,
 }) => {
   return (
-    <div className="md:bg-bund md:mt-0 mt-10 p-10">
-      <div className="flex flex-wrap sm:flex-nowrap flex-row items-start justify-between">
-        <div className="sm:order-1 flex-1 order-2">
+    <div className="bg-bund -mx-4 md:mx-0 md:mt-10 p-4 md:p-10">
+      <div className="flex flex-wrap sm:flex-nowrap flex-col sm:flex-row items-start justify-between">
+        <div className="sm:order-1 w-full flex-1 order-2">
           <h1 className="text-2xl hidden sm:block mb-5 sm:mb-5 text-white font-bold">
             OZG-Security-Challenge 2023
           </h1>
-          <div className="flex-row w-full items-center justify-between sm:justify-start mt-0 md:-mt-5 flex">
+          <div className="flex-row items-center justify-between sm:justify-start mt-0 md:-mt-5 flex">
             <h2 className="text-white text-xl font-bold">Schnelltest</h2>
             <div className="px-2 py-1 flex flex-row justify-center items-center ml-5 order-1 bg-hellgrau-100">
               <span className="whitespace-nowrap">BETA</span>
@@ -40,7 +40,7 @@ const ScanPageHero: FunctionComponent<Props> = ({
           </div>
         </div>
 
-        <div className="sm:order-1 flex flex-row justify-center sm:justify-end mb-10 sm:mb-0">
+        <div className="sm:order-1 sm:w-auto w-full flex flex-row justify-center sm:justify-end mb-10 sm:mb-0">
           <Image
             width={200}
             height={200}
@@ -52,7 +52,10 @@ const ScanPageHero: FunctionComponent<Props> = ({
       </div>
 
       <div className="py-10">
-        <form onSubmit={onSubmit} className="flex flex-row items-end gap-5">
+        <form
+          onSubmit={onSubmit}
+          className="flex flex-row flex-wrap justify-end items-end gap-5"
+        >
           <div className="text-white flex-1">
             <FormInput
               focusColor="white"
@@ -64,6 +67,14 @@ const ScanPageHero: FunctionComponent<Props> = ({
             />
           </div>
           <Button
+            LeftIcon={
+              <Image
+                src={"/assets/icons/icon-arrow-right.svg"}
+                alt="Scan starten"
+                width={20}
+                height={20}
+              />
+            }
             additionalClasses="border-white"
             loading={scanRequest.isLoading}
             type="submit"

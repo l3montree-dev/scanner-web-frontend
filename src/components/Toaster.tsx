@@ -76,7 +76,7 @@ const Toaster = () => {
     };
   }, []);
   return (
-    <div id="toast-container" className="relative">
+    <div id="toast-container" className="relative pointer-events-none">
       <div
         className={classNames(
           "fixed top-16 right-5 flex gap-2 items-center flex-row z-20 shadow-lg px-4 py-2 transition-all",

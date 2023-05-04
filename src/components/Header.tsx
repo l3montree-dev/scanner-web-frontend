@@ -21,6 +21,7 @@ import DropdownMenuItem from "./common/DropdownMenuItem";
 import Menu from "./common/Menu";
 import SideNavigation from "./SideNavigation";
 import Tooltip from "./Tooltip";
+import SideMenu from "./SideMenu";
 
 export const pageTitleNotVisibleEmitter = new EventEmitter();
 
@@ -98,32 +99,9 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
               <button className="p-3" onClick={openMenu}>
                 <FontAwesomeIcon icon={faBars} />
               </button>
-              <Portal.Root>
-                <div
-                  className={classNames(
-                    "fixed bottom-0 left-0 right-0 transition-all bg-black/50 z-100 top-0",
-                    mobileMenuIsOpen
-                      ? "pointer-events-auto opacity-100"
-                      : "pointer-events-none opacity-0"
-                  )}
-                >
-                  <div
-                    className={classNames(
-                      "bg-deepblue-400 absolute flex flex-col right-0 top-0 bottom-0 transition-all",
-                      mobileMenuIsOpen ? "translate-x-0" : "translate-x-full"
-                    )}
-                  >
-                    <div className="px-4 py-1 flex right-0 z-10 top-0 flex-row justify-end">
-                      <button className="p-3" onClick={closeMenu}>
-                        <FontAwesomeIcon icon={faTimes} />
-                      </button>
-                    </div>
-                    <div className="overflow-y-auto overflow-x-hidden flex-1">
-                      <SideNavigation />
-                    </div>
-                  </div>
-                </div>
-              </Portal.Root>
+              <SideMenu isOpen={mobileMenuIsOpen} onClose={closeMenu}>
+                <SideNavigation />
+              </SideMenu>
             </div>
             <div className="ml-2 text-sm absolute z-200 hidden lg:block right-2 text-white">
               <div className="flex flex-row gap-5 items-center">

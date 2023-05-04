@@ -7,7 +7,7 @@ const Footer: FunctionComponent = () => {
   const router = useRouter();
 
   return (
-    <footer className="bg-bund relative px-2 md:px-10 pb-10">
+    <footer className="bg-bund relative pb-10">
       <div className="flex flex-row justify-center pt-10">
         <div
           role="button"
@@ -39,7 +39,7 @@ const Footer: FunctionComponent = () => {
       </div>
       <div className="container pt-10 text-sm">
         <div className="lg:flex text-white pt-10 border-t justify-between">
-          <div className="flex gap-2  flex-row">
+          <div className="flex flex-wrap gap-2  flex-row">
             <span>
               <Link
                 aria-label="Impressum öffnen"

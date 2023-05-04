@@ -39,7 +39,7 @@ const ResultEnvelope: FunctionComponent<Props> = ({
   amountPassed,
 }) => {
   return target !== null ? (
-    <div className="p-5 md:p-0 text-textblack">
+    <div className="md:p-0 text-textblack">
       <div className="md:flex block mb-5 gap-5 flex-row justify-between">
         <div className="md:w-2/3">
           <h2 id="test-results" className="text-xl">
@@ -85,7 +85,7 @@ const ResultEnvelope: FunctionComponent<Props> = ({
           </div>
         </div>
 
-        <div className="md:w-1/3 px-4 text-textblack">
+        <div className="md:w-1/3 md:px-4 text-textblack">
           <div className="flex-row flex items-center">
             <FontAwesomeIcon
               className={`text-${checkResult2BorderClassName(

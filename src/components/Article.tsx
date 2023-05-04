@@ -19,7 +19,7 @@ const Article: FunctionComponent<PropsWithChildren<Props>> = ({
         </div>
       </div>
       <div className="container pb-20">
-        <div className="mx-20">{children}</div>
+        <div className="md:mx-20 mx-0">{children}</div>
       </div>
     </article>
   );
