@@ -192,7 +192,7 @@ const LineChart: FunctionComponent<Props> = ({
 
         const rects = clonedNode.querySelectorAll("rect");
         rects.forEach((rect) => {
-          if (rect.style.fill === "rgb(26, 33, 76)") {
+          if (rect.style.fill === "rgb(242, 243, 244)") {
             rect.style.fill = "rgb(255,255,255)";
           }
         });
