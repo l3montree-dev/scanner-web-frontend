@@ -42,23 +42,23 @@ const EmptyDashboardNotice = () => {
   return (
     <>
       <div>
-        <div className="grid rounded-md grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid text-base grid-cols-1 md:grid-cols-2 gap-8">
           <div className="text-left col-span-2">
-            <h2 className="max-w-2xl text-xl font-bold ">
+            <h2 className="text-xl font-bold ">
               Es sind noch keine Domains für Ihr Dashboard hinterlegt
             </h2>
-            <p className="mt-6 text-sm opacity-75">
+            <p className="mt-6 opacity-75">
               Herzlich willkommen auf Ihrem Dashboard. Hier sehen Sie täglich
               erstellte Statistiken zu Ihren Domains. Ihnen werden standardmäßig
               die Ergebnisse der Top 100.000 .de sowie globalen Domains als
               Referenz angezeigt.
             </p>
-            <p className="mt-6 text-sm opacity-75">
+            <p className="mt-6  opacity-75">
               Bei Fragen wenden Sie sich gerne an unseren E-Mail-Support oder
               besuchen Sie unsere Sprechstunde.
             </p>
           </div>
-          <div className="grid gap-x-8 gap-y-3 text-sm">
+          <div className="grid gap-x-8 gap-y-3">
             <div key="sprechstunde" className="flex gap-x-3">
               <FontAwesomeIcon
                 className="h-7 w-7 flex-none mt-2"
@@ -78,7 +78,10 @@ const EmptyDashboardNotice = () => {
                 icon={faEnvelope}
               />
               <span>
-                <a href="mailto:ozgsec@bmi.bund.de" className="underline">
+                <a
+                  href="mailto:ozgsec@bmi.bund.de"
+                  className="underline whitespace-nowrap"
+                >
                   ozgsec@bmi.bund.de
                 </a>
                 <br />
@@ -87,13 +90,8 @@ const EmptyDashboardNotice = () => {
             </div>
           </div>
         </div>
-        <div className="mt-5 flex flex-col md:flex-row gap-8 md:items-center">
-          <Button
-            additionalClasses="bg-deepblue-300 hover:bg-deepblue-400 focus:bg-deepblue-400"
-            type="button"
-            loading={false}
-            onClick={() => setIsOpen(true)}
-          >
+        <div className="mt-5 text-base flex flex-col md:flex-row gap-8 md:items-center">
+          <Button type="button" loading={false} onClick={() => setIsOpen(true)}>
             Domains hinzufügen
           </Button>
         </div>
