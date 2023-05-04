@@ -111,7 +111,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
             <div key={key} className="">
               <div
                 className={classNames(
-                  "bg-hellgrau-40 rounded-md h-full p-5",
+                  "bg-white h-full p-5 border-2",
                   `border-${checkResult2BorderClassName(
                     didPass2CheckResult(
                       report.details !== null

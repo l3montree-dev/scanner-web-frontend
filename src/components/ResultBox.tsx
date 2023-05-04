@@ -21,7 +21,7 @@ const ResultBox: FunctionComponent<Props> = (props) => {
       <div className="flex flex-1 flex-row">
         <FontAwesomeIcon
           className={classNames(
-            "md:text-2xl text-3xl",
+            "text-xl mt-1",
             `text-${checkResult2TextClassName(props.checkResult)}`
           )}
           icon={checkResult2Icon(props.checkResult)}
@@ -30,7 +30,7 @@ const ResultBox: FunctionComponent<Props> = (props) => {
           <div>
             <h5
               className={classNames(
-                "md:text-lg md:leading-5 block leading-6 scroll-mt-11 font-bold",
+                "md:text-lg block leading-8  scroll-mt-11 font-bold",
                 `text-${checkResult2TextClassName(props.checkResult)}`
               )}
             >

@@ -42,11 +42,11 @@ const ResultEnvelope: FunctionComponent<Props> = ({
     <div className="p-5 md:p-0 text-textblack">
       <div className="md:flex block mb-5 gap-5 flex-row justify-between">
         <div className="md:w-2/3">
-          <h2 id="test-results" className="text-textblack">
+          <h2 id="test-results" className="text-xl">
             Testergebnisse für{" "}
             <a
               target={"_blank"}
-              className="underline"
+              className="underline text-blau-100"
               rel="noopener noreferrer"
               href={`//${toUnicode(target.uri)}`}
             >
@@ -54,17 +54,17 @@ const ResultEnvelope: FunctionComponent<Props> = ({
             </a>
           </h2>
           {target.uri !== target.details?.sut && (
-            <>
+            <h2 className="text-xl">
               Weiterleitung auf:{" "}
               <a
                 target={"_blank"}
-                className="underline"
+                className="underline text-blau-100"
                 rel="noopener noreferrer"
                 href={`//${toUnicode(target.details?.sut ?? "")}`}
               >
                 {toUnicode(target.details?.sut ?? "")}
               </a>
-            </>
+            </h2>
           )}
           <div className="flex-wrap mt-4 justify-between flex-row">
             <div className="flex-1">
@@ -85,31 +85,31 @@ const ResultEnvelope: FunctionComponent<Props> = ({
           </div>
         </div>
 
-        <div className="md:w-1/3 mt-5 md:mt-0 p-4 text-textblack">
+        <div className="md:w-1/3 px-4 text-textblack">
           <div className="flex-row flex items-center">
             <FontAwesomeIcon
               className={`text-${checkResult2BorderClassName(
                 CheckResult.Passed
-              )} text-2xl w-6`}
+              )} text-2xl w-8`}
               icon={checkResult2Icon(CheckResult.Passed)}
             />
             <span className="ml-4">{legendMessages(CheckResult.Passed)}</span>
           </div>
-          <div className="flex-row flex mt-2 items-center">
+          <div className="flex-row flex items-center">
             <FontAwesomeIcon
               className={`text-${checkResult2BorderClassName(
                 CheckResult.Failed
-              )} text-2xl w-6`}
+              )} text-2xl w-8`}
               icon={checkResult2Icon(CheckResult.Failed)}
             />
             <span className="ml-4">{legendMessages(CheckResult.Failed)}</span>
           </div>
-          <div className="flex-row flex mt-2 items-center">
-            <div className="w-6 flex flex-row items-center">
+          <div className="flex-row flex items-center">
+            <div className="w-8 flex flex-row items-center">
               <FontAwesomeIcon
                 className={`text-${checkResult2BorderClassName(
                   CheckResult.Critical
-                )} text-2xl w-6`}
+                )} text-2xl w-8`}
                 icon={checkResult2Icon(CheckResult.Critical)}
               />
             </div>

@@ -48,7 +48,7 @@ export const checkResult2BorderClassName = (checkResult: CheckResult) => {
     case CheckResult.Critical:
       return "rot-100";
     default:
-      return "gray-500";
+      return "dunkelgrau-100";
   }
 };
 
@@ -61,7 +61,7 @@ export const checkResult2TextClassName = (checkResult: CheckResult) => {
     case CheckResult.Critical:
       return checkResult2BorderClassName(checkResult);
     default:
-      return "hellgrau-100";
+      return "dunkelgrau-100";
   }
 };
 

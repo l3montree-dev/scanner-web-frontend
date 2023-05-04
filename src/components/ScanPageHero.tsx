@@ -72,7 +72,7 @@ const ScanPageHero: FunctionComponent<Props> = ({
         </form>
 
         {scanRequest.errored && (
-          <small className="text-red-600 mt-3 -mb-5 flex">
+          <small className="text-rot-40 mt-3 -mb-5 flex">
             {scanRequest.errorMessage}
           </small>
         )}

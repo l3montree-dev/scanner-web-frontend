@@ -15,21 +15,9 @@ interface Props {
 const BPAHeader: FunctionComponent<Props> = ({ hideLogin }) => {
   const activeLink = useRouter().pathname;
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [isPrivacyOpen, setPrivacyIsOpen] = useState(false);
-
   const session = useSession();
   const router = useRouter();
   const signOut = useSignOut();
-
-  useEffect(() => {
-    if (router.query["action"] === "openImprintModal") {
-      setIsOpen(true);
-    }
-    if (router.query["action"] === "openPrivacyModal") {
-      setPrivacyIsOpen(true);
-    }
-  }, []);
 
   return (
     <header className="border-t-10 z-50 bg-white sticky top-0 border-b-6 border-b-hellgrau-40  border-t-bund">
