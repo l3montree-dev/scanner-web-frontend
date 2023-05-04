@@ -44,13 +44,13 @@ const defaultLinks = [
 const getLinks = (isGuest: boolean, isAdmin: boolean) => {
   if (isGuest) {
     return defaultLinks;
-  } /*else if (!isAdmin) {
+  } else if (!isAdmin) {
     return defaultLinks.concat({
-      icon: faTag,
-      name: "Gruppen",
-      path: "/dashboard/collections",
+      icon: faInfo,
+      name: "Informationen zur OZG-Security-Challenge",
+      path: "/dashboard/info",
     });
-  }*/
+  }
 
   return defaultLinks.concat([
     /*{
