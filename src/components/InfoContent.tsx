@@ -126,13 +126,22 @@ const InfoContent = () => {
           Implementierung und Abschluss der Challenge erhalten die Teilnehmenden
           auf Anfrage zudem den goldenen Sticker.
         </p>
-        <Image
-          src={"/assets/sticker_challenge.svg"}
-          width={250}
-          height={250}
-          className="py-5"
-          alt="Sticker"
-        />
+        <div className="flex flex-wrap sm:gap-2 md:gap-8">
+          <Image
+            src={"/assets/challenge_sticker.svg"}
+            width={250}
+            height={250}
+            className="py-5"
+            alt="Sticker"
+          />
+          <Image
+            src={"/assets/challenge_sticker_gold.svg"}
+            width={250}
+            height={250}
+            className="py-5"
+            alt="Sticker"
+          />
+        </div>
         <p>
           Die Challenge gilt dann als erfolgreich umgesetzt, wenn alle sechs
           IT-Sicherheitsmaßnahmen in den jeweiligen OZG-Onlinediensten
