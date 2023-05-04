@@ -191,7 +191,6 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                 )}
               >
                 <PieCharts
-                  username={user.data?.user.name || "Meine"}
                   displayCollections={_displayCollections}
                   historicalData={dashboard.historicalData}
                   defaultCollectionId={props.defaultCollectionId}
@@ -199,9 +198,9 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                 />
               </div>
               {noDomains && (
-                <div className="absolute mt-10 top-0 lg:left-1/2 right-0 lg:-translate-x-1/2 mb-10 px-3 flex-1">
-                  <div className="border-blue-500/20 p-5 flex flex-row rounded-md bg-slate-300 text-deepblue-500">
-                    <div className="pr-3">
+                <div className="absolute pointer-events-auto z-90 mt-10 top-0 flex flex-row justify-center left-0 right-0 mb-10 px-3 flex-1">
+                  <div className="border-blue-500/20 p-5 flex flex-row bg-hellorange-100 max-w-screen-lg text-deepblue-500">
+                    <div className="pr-3 pt-1">
                       <FontAwesomeIcon size={"lg"} icon={faCircleInfo} />
                     </div>
                     <EmptyDashboardNotice />

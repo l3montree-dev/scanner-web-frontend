@@ -163,14 +163,14 @@ const Users: FunctionComponent<Props> = (props) => {
             </Button>
           </div>
 
-          <table className="w-full text-left overflow-hidden  border-deepblue-50 rounded-md ">
+          <table className="w-full text-left overflow-hidden  border-separate border-spacing-2">
             <thead className="hidden lg:table-header-group">
-              <tr className="bg-deepblue-200  text-sm rounded-t-md border-b-deepblue-50 text-left">
+              <tr className="bg-blau-100  text-sm text-white text-left">
                 <th className="p-2 px-4 py-4">Nutzername</th>
                 <th className="p-2 px-4 py-4">Vorname</th>
                 <th className="p-2 px-4 py-4">Nachname</th>
                 <th className="p-2 px-4 py-4">Rolle</th>
-                <th className="p-2 py-4">Aktionen</th>
+                <th className="p-2 whitespace-nowrap py-4">Aktionen</th>
               </tr>
             </thead>
             <tbody>
@@ -178,9 +178,7 @@ const Users: FunctionComponent<Props> = (props) => {
                 <tr
                   className={classNames(
                     "flex flex-col lg:table-row relative mt-3 rounded-md",
-                    i % 2 !== 0 ? "bg-deepblue-200" : "bg-deepblue-300",
-                    i + 1 !== users.length ? "border-b" : "",
-                    " border-b-deepblue-400 transition-all"
+                    i % 2 !== 0 ? "bg-blau-20/40" : "bg-dunkelblau-20/20"
                   )}
                   key={user.id}
                 >

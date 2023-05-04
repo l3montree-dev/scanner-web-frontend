@@ -371,15 +371,11 @@ const Dashboard: FunctionComponent<Props> = (props) => {
               </div>
             )}
 
-            <div
-              className={classNames(
-                noDomains && "relative pointer-events-none"
-              )}
-            >
+            <div className={classNames(noDomains && "relative")}>
               <div
                 className={classNames(
                   "max-w-screen-xl gap-4 pb-10 flex flex-row mx-auto px-3 flex-1 text-white",
-                  noDomains && "blur-sm"
+                  noDomains && "blur-sm pointer-events-none"
                 )}
               >
                 <div className="flex-1">
@@ -393,9 +389,9 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                 </div>
               </div>
               {noDomains && (
-                <div className="absolute mt-10 top-0 lg:left-1/2 right-0 lg:-translate-x-1/2 mb-10 px-3 flex-1">
-                  <div className="border-blue-500/20 p-5 flex flex-row rounded-md bg-slate-300 text-deepblue-500">
-                    <div className="pr-3">
+                <div className="absolute pointer-events-auto top-20  text-base flex left-0 flex-row w-full justify-center right-0 mb-10 px-3 flex-1">
+                  <div className="p-5 flex max-w-screen-lg flex-row bg-hellorange-100 text-textblack">
+                    <div className="pr-3 pt-1">
                       <FontAwesomeIcon size={"lg"} icon={faCircleInfo} />
                     </div>
                     <EmptyDashboardNotice />

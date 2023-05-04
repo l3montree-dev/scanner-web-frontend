@@ -31,7 +31,7 @@ const bgColor = (type: Toast["type"]) => {
     case "warning":
       return "bg-yellow-900 border border-yellow-500";
     default:
-      return "bg-deepblue-100 border border-deepblue-50";
+      return "bg-dunkelblau-100 border border-deepblue-50";
   }
 };
 
@@ -76,10 +76,10 @@ const Toaster = () => {
     };
   }, []);
   return (
-    <div id="toast-container" className="relative pointer-events-none">
+    <div id="toast-container" className="relative text-sm pointer-events-none">
       <div
         className={classNames(
-          "fixed top-16 right-5 flex gap-2 items-center flex-row z-20 shadow-lg px-4 py-2 transition-all",
+          "fixed top-16 right-5 flex gap-2 items-center flex-row z-20 px-4 py-2 transition-all",
           "toast",
           Boolean(toast) ? "opacity-100" : "opacity-0",
           bgColor(toast?.type ?? delayedToast?.type ?? "info"),

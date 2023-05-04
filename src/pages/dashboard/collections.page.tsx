@@ -223,9 +223,9 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
             </Button>
           </div>
 
-          <table className="w-full text-left overflow-hidden  border-deepblue-50 border-separate border-spacing-2">
+          <table className="w-full text-left overflow-hidden border-separate border-spacing-2">
             <thead className="hidden lg:table-header-group">
-              <tr className="text-sm rounded-t-md border-b-deepblue-50 bg-blau-100 text-left text-white">
+              <tr className="text-sm rounded-t-md bg-blau-100 text-left text-white">
                 <th className="p-2 py-4">Titel</th>
                 <th className="p-2 py-4">Domains</th>
                 <th className="p-2 py-4">
@@ -253,7 +253,7 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
                       </div>
                     </td>
 
-                    <td className="p-2 text-blau-100">
+                    <td className="p-2 text-sm text-blau-100">
                       <Link
                         href={`/dashboard/targets?collectionIds=${collection.id}`}
                       >
@@ -263,7 +263,7 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
                     </td>
                     <td
                       className={classNames(
-                        "order-2 md:w-auto w-full",
+                        "order-2 md:w-auto px-2 w-full",
                         collection.shareLinks.length > 0
                           ? "px-2 "
                           : "hidden md:table-cell"
@@ -298,7 +298,7 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
                       <div className="flex flex-row justify-end">
                         <Menu
                           Button={
-                            <Button className="w-5 h-5">
+                            <Button className="w-10 h-10">
                               <FontAwesomeIcon icon={faEllipsisVertical} />
                             </Button>
                           }
