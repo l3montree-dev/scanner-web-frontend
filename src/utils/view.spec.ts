@@ -20,10 +20,10 @@ describe("view test suite", () => {
   );
 
   it.each([
-    [CheckResult.Passed, "lightning-500"],
-    [CheckResult.Failed, "yellow-500"],
-    [CheckResult.Critical, "red-500"],
-    [CheckResult.Unknown, "gray-500"],
+    [CheckResult.Passed, "dunkelgruen-80"],
+    [CheckResult.Failed, "hellorange-100"],
+    [CheckResult.Critical, "rot-100"],
+    [CheckResult.Unknown, "dunkelgrau-100"],
   ])(
     "should transform a checkResult to the correct tailwind classname",
     (param, expected) => {
@@ -33,10 +33,10 @@ describe("view test suite", () => {
   );
 
   it.each([
-    [CheckResult.Passed, "check"],
-    [CheckResult.Failed, "triangle-exclamation"],
-    [CheckResult.Critical, "xmark"],
-    [CheckResult.Unknown, "question"],
+    [CheckResult.Passed, "circle-check"],
+    [CheckResult.Failed, "circle-exclamation"],
+    [CheckResult.Critical, "circle-xmark"],
+    [CheckResult.Unknown, "circle-question"],
   ])(
     "should transform a checkResult to the correct icon",
     (param, expected) => {
