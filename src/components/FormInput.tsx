@@ -60,7 +60,7 @@ const FormInput: FunctionComponent<Props> = ({
           validate();
         }}
         onFocus={() => setFocus(true)}
-        className={`sm:py-1 py-1 bg-transparent text-sm sm:text-base flex-1 transition-colors border-b focus:outline-none focus:border-${focusColor}`}
+        className={`sm:py-1 py-1 bg-transparent text-sm sm:text-base flex-1 transition-colors border-b-dunkelgrau-100 border-b focus:outline-none focus:border-b-${focusColor}`}
       />
       {err !== null && <span className="text-red-500 text-sm mt-1">{err}</span>}
     </div>

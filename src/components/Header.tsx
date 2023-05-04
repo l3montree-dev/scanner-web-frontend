@@ -6,6 +6,7 @@ import {
   faPhone,
   faTimes,
   faUser,
+  faKey,
   faUserAstronaut,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -78,7 +79,7 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
   return (
     <div
       className={classNames(
-        "h-14 sticky top-0 z-20 transition-all duration-500 text-textblack border-b-6 border-hellgrau-40",
+        "h-20 sticky top-0 z-20 transition-all duration-500 text-textblack border-b-6 border-hellgrau-40",
         !scrolled ? "bg-white" : "bg-hellgrau-20"
       )}
     >
@@ -143,11 +144,12 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
                             icon={faPhone}
                           />
                           <span>
-                            <a href="tel:020878012422" className="underline">
+                            <a href="tel:020878012422" className="">
                               0208 78012422
                             </a>
                             <br />
-                            Sprechstunde (Mi. 10:00 - 12:00 Uhr)
+                            Sprechstunde
+                            <br /> (Mi. 10:00 - 12:00 Uhr)
                           </span>
                         </div>
                         <div
@@ -159,10 +161,7 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
                             icon={faEnvelope}
                           />
                           <span>
-                            <a
-                              href="mailto:ozgsec@bmi.bund.de"
-                              className="underline"
-                            >
+                            <a href="mailto:ozgsec@bmi.bund.de" className="">
                               ozgsec@bmi.bund.de
                             </a>
                           </span>
@@ -205,11 +204,7 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
                             )}&response_type=code&scope=openid&kc_action=UPDATE_PASSWORD`}
                           >
                             <DropdownMenuItem
-                              Icon={
-                                <FontAwesomeIcon
-                                  icon={faArrowRightFromBracket}
-                                />
-                              }
+                              Icon={<FontAwesomeIcon icon={faKey} />}
                             >
                               Passwort ändern
                             </DropdownMenuItem>
