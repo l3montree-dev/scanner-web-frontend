@@ -10,11 +10,7 @@ const InfoContent = () => {
 
   return (
     <Article
-      teaser="Das Bundesministerium des Innern und für Heimat (BMI) möchte die
-  Steigerung der IT-Sicherheit in der öffentlichen Verwaltung weiter
-  vorantreiben und in Form einer Challenge begegnen. Was es mit der
-  OZG-Security-Challenge auf sich hat und wie Sie daran teilnehmen
-  können, erfahren Sie hier."
+      teaser="Das Bundesministerium des Innern und für Heimat (BMI) möchte zur Stärkung der IT-Sicherheit bei der OZG-Umsetzung in Form einer Challenge beitragen. Bis zum 31. Oktober 2023 haben OZG-Dienstverantwortliche im Rahmen der „OZG-Security-Challenge 2023“ die Möglichkeit, die IT-Sicherheit der OZG-Onlinedienste mithilfe eines zugangsgeschützten Schnelltests sowie unterstützt durch Workshops und Sprechstunden weiter zu steigern."
       title="Die OZG-Security-Challenge 2023: Gemeinsam zu mehr IT-Sicherheit"
     >
       <div
@@ -46,130 +42,134 @@ const InfoContent = () => {
           die Bedeutung der zugrundeliegenden Informationssicherheit.
           Bürgerinnen, Bürger und Unternehmen erwarten, dass der Staat
           vertrauensvoll mit ihren persönlichen Daten umgeht und diese durch ein
-          besonderes Maß an IT-Sicherheit schützt. Das Bundesministerium des
-          Innern und für Heimat (BMI) möchte daher die Steigerung der
-          IT-Sicherheit in der öffentlichen Verwaltung weiter vorantreiben und
-          hat in Zusammenarbeit mit dem Bundesamt für Sicherheit in der
-          Informationstechnik (BSI) die „OZG-Security-Challenge“ ins Leben
-          gerufen.
+          hohes Maß an IT-Sicherheit schützt. Das Bundesministerium des Innern
+          und für Heimat (BMI) möchte daher die Steigerung der IT-Sicherheit bei
+          der OZG-Umsetzung weiter vorantreiben und hat in Zusammenarbeit mit
+          dem Bundesamt für Sicherheit in der Informationstechnik (BSI) die
+          „OZG-Security-Challenge 2023“ ins Leben gerufen.
         </p>
 
         <h2>Die Challenge im Überblick</h2>
-        <div className="desc sm:float-right rounded-sm font-bold sm:mx-2 mb-2 text-right bg-hellgrau-20 p-5">
-          <b>Sprechstunde:</b> Infos folgen demnächst
+        <div className="desc sm:float-right rounded-sm sm:mx-2 mb-2 text-left bg-hellgrau-20 p-5">
+          <b>Sprechstunde:</b>
           <br />
-          <b>Workshops:</b> Infos folgen demnächst
+          <a href="tel:020878012422" className="font-normal">
+            0208 78012422
+          </a>{" "}
+          (Mi. 10-12 Uhr)
+          <br />
+          <br />
+          <b>Workshops:</b>
+          <br />
+          Infos folgen demnächst
         </div>
         <p>
-          Im Rahmen der OZG-Security-Challenge sollen OZG-Dienstverantwortliche
-          des BMI über einen Zeitraum von sechs Monaten – bis zum 1. Oktober
-          2023 – mit leicht zugänglichen Angeboten in Form von Workshops und
-          Sprechstunden bei der Umsetzung von sechs besonders relevanten
-          IT-Sicherheitsmaßnahmen unterstützt und begleitet werden. Die
-          Challenge gilt dann von den Personen als erfolgreich umgesetzt, wenn
-          alle sechs IT-Sicherheitsmaßnahmen in den jeweiligen
-          OZG-Onlinediensten implementiert wurden.
+          An „OZG-Security-Challenge 2023“ können OZG-Dienstverantwortliche bis
+          zum 31. Oktober 2023 teilnehmen. Herzstück der Challenge ist der
+          OZG-Security-Challenge-Schnelltest, welcher den Umsetzungsgrad von
+          sechs ausgewählten IT-Sicherheitsmaßnahmen auf den eingegebenen
+          Webseiten darstellt, Potenziale zur weiteren Stärkung der
+          IT-Sicherheit aufzeigt und Hilfestellung bei deren Umsetzung gibt.
         </p>
         <p>
-          Das Herzstück der Challenge bildet der Das Herzstück der Challenge
-          bildet der{" "}
-          <Link href={`/${queryString ? `?${queryString}` : ""}`}>
-            OZG-Security-Challenge-Schnelltest
-          </Link>
-          . Der Schnelltest stellt den Umsetzungsgrad der sechs
-          IT-Sicherheitsmaßnahmen auf den eingegebenen Webseiten dar, zeigt
-          Potenziale zur weiteren Stärkung der IT-Sicherheit auf und gibt
-          Hilfestellung bei deren Umsetzung. Zum jetzigen Zeitpunkt ist der
-          Schnelltest exklusiv für OZG-Dienstverantwortliche zugänglich.
+          Der Schnelltest ist in einem geschützten Bereich exklusiv für die
+          OZG-Umsetzungsverantwortlichen in Bund, Ländern und Kommunen
+          zugänglich. Alle teilnehmenden Behörden erhalten einen individuellen,
+          tokenbasierten Zugang zum Schnellstet, um ihre Onlinedienste auf die
+          ausgewählten IT-Sicherheitsmaßnahmen zu prüfen.
         </p>
         <p>
           Im Schnelltest wird die Umsetzung folgender sechs
-          IT-Sicherheitsmaßnahmen überprüft:
+          IT-Sicherheitsmaßnahmen angezeigt:
         </p>
         <ul>
           <li>
-            Responsible Disclosure: Responsible Disclosure ist ein Verfahren zur
-            Sichtbarmachung und Meldung von erkannten Sicherheitslücken bzw.
-            Schwachstellen in der Informationstechnik. bzw. Schwachstellen in
-            der Informationstechnik.
+            Responsible Disclosure: Meldung von Schwachstellen vor
+            Veröffentlichung
           </li>
           <li>
-            Transport Layer Security (TLS) 1.1 Durch die Deaktivierung von
-            veralteten TLS bzw. SSL-Versionen wird sichergestellt, dass
-            ausschließlich moderne Transportverschlüsselungsverfahren verwendet
-            werden können.
+            Transport Layer Security (TLS) 1.3: Aktuelle Verschlüsselung der
+            Kommunikation zwischen Bürgerinnen, Bürgern und OZG-Dienst
           </li>
           <li>
-            Transport Layer Security (TLS) 1.3: Die Transport Layer Security
-            stellt ein Sicherheitsprotokoll zur Verschlüsselung von Daten für
-            eine sichere Datenübertragung im Internet dar.
+            TLS 1.0 & 1.1 deaktivieren: Veraltete Verschlüsselung deaktivieren
           </li>
           <li>
-            HTTP Strict Transport Security (HSTS): HSTS lässt für einen
-            angegebenen Zeitraum ausschließlich verschlüsselte und damit sichere
-            Verbindungen zwischen Bürgerinnen, Bürger und Ihrem OZG Dienst zu.
+            HTTP Strict Transport Security (HSTS): Sicherstellung
+            verschlüsselter Kommunikation zwischen Bürgerinnen, Bürgern und
+            OZG-Dienst
           </li>
           <li>
-            Resource Public Key Infrastructure (RPKI): Die Resource Public Key
-            Infrastructure verhindert, dass Nutzerinnen und Nutzer auf falsche
-            Server gelangen. Dies geschieht durch die Zuordnung von spezifischen
-            Nummern (Internetnummernressourcen wie IP-Adressen) zu dem
-            dazugehörigen Ressourceninhaber.
+            Domain Name System Security Extensions (DNSSEC): Sichere Verknüpfung
+            von Internetadresse und Serveradresse
           </li>
           <li>
-            Domain Name System Security Extensions (DNSSEC): Das Domaine Name
-            System (DNS) stellt eine Art Telefonauskunft oder Übersetzer dar,
-            indem Homepage-Namen (z.B. domain.de) in IP-Adressen (z.B.
-            183.0.3.12) übersetzt werden.
+            Resource Public Key Infrastructure (RPKI): Schutz vor nicht
+            autorisierter Umleitung von Datenverkehr
           </li>
         </ul>
         <p>
-          Die Ergebnisse des Schnelltests werden den Teilnehmenden in
-          Sekundenschnelle bereitgestellt und mit Informationen und Erklärungen
-          zur Umsetzung der IT-Sicherheitsmaßnahmen ergänzt. Darüber hinaus
-          bietet das BMI über die gesamte Laufzeit der Challenge eine
-          Sprechstunde für OZG-Dienstverantwortliche an. Für die Umsetzung der
-          beiden IT-Sicherheitsmaßnahmen RPKI und DNSSEC werden zudem Workshops
-          angeboten, in welchen die OZG-Dienstverantwortlichen praxisnah bei der
-          Umsetzung unterstützt werden.
+          Die Ergebnisse des Schnelltests werden durch Erklärungen und Hinweise
+          zur Umsetzung der IT-Sicherheitsmaßnahmen ergänzt.
         </p>
         <p>
-          Es bedarf keiner offiziellen Registrierung zur Challenge, bei
-          Interesse können sich die Teilnehmenden jedoch auf der Seite des
-          Schnelltests für die OZG-Security-Challenge anmelden, um exklusive
-          Hintergrundinformationen zur Challenge sowie Updates zu Sprechstunden
-          und Workshops zu erhalten. Die Teilnehmenden können ihre Teilnahme an
-          der Challenge zudem durch den Sticker der OZG-Security-Challenge
-          demonstrieren: Der weiße Sticker verdeutlicht die Teilnahme an der
-          Challenge, bei erfolgreicher Implementierung und Abschluss der
-          Challenge erhalten die Teilnehmenden zudem den goldenen Sticker der
-          OZG-Security-Challenge.
+          Das BMI begleitet die Teilnehmenden mit Angeboten in Form von
+          detaillierten Informationen zur Umsetzung, Workshops oder
+          Sprechstunden für eine individuelle Beratung. Zudem senden wir Ihnen
+          den Zugang zum Dashboard, welches Sie für einen Gesamtüberblick mit
+          Ihren Domains befüllen können.
+        </p>
+        <p>
+          Die Teilnehmenden können ihre Teilnahme an der Challenge durch den
+          Sticker der OZG-Security-Challenge 2023 demonstrieren: Der weiße
+          Sticker verdeutlicht die Teilnahme an der Challenge, bei erfolgreicher
+          Implementierung und Abschluss der Challenge erhalten die Teilnehmenden
+          auf Anfrage zudem den goldenen Sticker.
+        </p>
+        <Image
+          src={"/assets/sticker_challenge.svg"}
+          width={250}
+          height={250}
+          className="py-5"
+          alt="Sticker"
+        />
+        <p>
+          Die Challenge gilt dann als erfolgreich umgesetzt, wenn alle sechs
+          IT-Sicherheitsmaßnahmen in den jeweiligen OZG-Onlinediensten
+          implementiert wurden.
         </p>
         <h2>Die IT-Sicherheitsmaßnahmen im Detail</h2>
         <p>
-          Im Zuge der OZG-Security-Challenge werden die Umsetzungsstände von
-          sechs spezifischen IT-Sicherheitsmaßnahmen dargestellt. Diese wurden
-          ausgewählt, da sie den gültigen IT-Sicherheitsstandards der
-          öffentlichen Verwaltung entsprechen und einen wichtigen Beitrag zur
-          sicheren OZG-Umsetzung leisten. Mit der Erfüllung der sechs
-          IT-Sicherheitskriterien kann das Sicherheitspotenzial der Portale und
+          Im Zuge der OZG-Security-Challenge werden die Umsetzungsstände von den
+          oben bereits kurz aufgeführten sechs IT-Sicherheitsmaßnahmen
+          dargestellt. Diese wurden ausgewählt, da sie einen wichtigen Beitrag
+          zur sicheren OZG-Umsetzung leisten. Mit der Erfüllung der sechs
+          IT-Sicherheitsmaßnahmen kann das Sicherheitsniveau der Portale und
           Webseiten der öffentlichen Verwaltung noch weiter gesteigert werden.
         </p>
         <p>
-          Diese sechs IT-Sicherheitsmaßnahmen sind nicht abschließend zu
-          betrachten, sondern stellen einen ersten Ansatz zur Prüfung der
-          IT-Sicherheit im OZG-Kontext dar. Die Umsetzung von IT-Sicherheit ist
-          ein Prozess, der kontinuierlich erweitert wird. So ist auch geplant,
-          den Schnelltest weiter auszubauen und sukzessive, um weitere Kriterien
-          zu erweitern. Der Schnelltest wird daher auch nach der Challenge
-          weiterhin zur Verfügung stehen.
+          Diese sechs IT-Sicherheitsmaßnahmen sind aber nicht abschließend zu
+          betrachten, sondern stellen einen ersten Ansatz zur Standardisierung
+          der IT-Sicherheit im OZG-Kontext dar. Die Umsetzung von IT-Sicherheit
+          ist ein Prozess, der kontinuierlich fortgeführt werden muss. So ist
+          auch geplant, den Schnelltest weiter auszubauen und sukzessive um
+          weitere Kriterien zu erweitern. Der Schnelltest wird daher auch nach
+          der Challenge weiterhin zur Verfügung stehen.
         </p>
         <h2>
           Hintergrund: Die Bedeutung der IT-Sicherheit in der öffentlichen
           Verwaltung steigt
         </h2>
         <p>
-          Die Relevanz der Informationssicherheit wird durch den Bund im{" "}
+          Schon zu Beginn der Umsetzung des Onlinezugangsgesetzes (OZG) war
+          klar, dass die Verwaltungsdigitalisierung nur erfolgreich sein kann,
+          wenn sie eine wirkliche Verbesserung für Alle mit sich bringt und die
+          konzipierten Onlinedienste auch akzeptiert und genutzt werden. Daher
+          gilt es, das Vertrauen der Bürgerinnen, Bürger und Unternehmen in die
+          Onlinedienste zu stärken.
+        </p>
+        <p>
+          Die Relevanz der Informationssicherheit wird daher auch im{" "}
           <Link
             rel="noopener noreferrer"
             target={"_blank"}
@@ -189,30 +189,13 @@ const InfoContent = () => {
           >
             Digitalstrategie der Bundesregierung
           </Link>{" "}
-          betont. Entsprechend verpflichtet sich der Staat im Kapitel Digitale
-          Innovation und Infrastruktur des Koalitionsvertrags, die Möglichkeit
-          echter verschlüsselter Kommunikation anzubieten. Zudem werden alle
-          staatlichen Stellen verpflichtet, ihnen bekannte Sicherheitslücken
-          beim BSI zu melden und sich regelmäßig einer externen Überprüfung
-          ihrer IT-Systeme zu unterziehen.
-        </p>
-        <p>
-          Aufgrund der Schnelllebigkeit und Komplexität des Themas wird die
-          IT-Sicherheit der öffentlichen Verwaltung fortlaufend an externe
+          betont. Aufgrund der Schnelllebigkeit und Komplexität des Themas wird
+          die IT-Sicherheit der öffentlichen Verwaltung fortlaufend an externe
           Gegebenheiten angepasst, beispielsweise durch die Aufnahme von
           „Responsible Disclosure“ in die „Einer für Alle“
           (EfA)-Mindestanforderungen 2.0 (Stand November 2022). Eine
           flächendeckende Anwendung der neuesten IT-Sicherheitsmaßnahmen ist
-          derzeit noch nicht gegeben, diese soll daher durch die Challenge
-          weiter gesteigert werden.
-        </p>
-        <p>
-          Schon zu Beginn der Umsetzung des Onlinezugangsgesetzes (OZG) war
-          klar, dass die Verwaltungsdigitalisierung nur erfolgreich sein kann,
-          wenn sie eine wirkliche Verbesserung für Alle mit sich bringt und die
-          konzipierten Onlinedienste auch akzeptiert und genutzt werden. Daher
-          gilt es, das Vertrauen der Bürgerinnen, Bürger und Unternehmen in die
-          Onlinedienste zu stärken.
+          derzeit noch nicht überall gegeben.
         </p>
         <p>
           Die OZG-Security-Challenge setzt hier an und regt zur Steigerung der
