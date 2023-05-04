@@ -76,7 +76,6 @@ const BPAHeader: FunctionComponent<Props> = ({ hideLogin }) => {
                 <button
                   className="w-6 text-blau-100 flex flex-row justify-center items-center fill-current"
                   onClick={() => {
-                    console.log("HELLO");
                     setMenuOpen((prev) => !prev);
                   }}
                 >

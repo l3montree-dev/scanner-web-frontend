@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import useWindowSize from "../../hooks/useWindowSize";
+import dynamic from "next/dynamic";
 
 const Logo = () => {
   const [scrolled, setScrolled] = useState(false);
+
   const { width } = useWindowSize();
   const factor = width > 768 ? 1 : 0.8;
   useEffect(() => {
@@ -22,6 +24,10 @@ const Logo = () => {
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  if (width === 0) {
+    return null;
+  }
   return (
     <Link className="hover:border-none" href="/">
       <div
