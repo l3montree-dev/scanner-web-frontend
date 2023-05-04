@@ -73,7 +73,7 @@ const PieCharts: FunctionComponent<Props> = ({
     <div className="mt-5 justify-start gap-8 flex-wrap grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 grid 2xl:grid-cols-3">
       {displayInspections.map((key) => {
         const percentage = currentStat.data[key] * 100;
-        let padAngle = 0;
+        let padAngle = 3;
         // If the percentage is too small, don't show the padAngle
         if (100 - percentage < 1.5 || percentage < 1.5) {
           padAngle = 0;
