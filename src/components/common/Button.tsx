@@ -41,7 +41,7 @@ const Button =
       <button
         ref={ref}
         className={classNames(
-          "transition-all flex justify-between flex-row items-center gap-3 rounded-sm p-2 px-5 ",
+          "transition-all rounded-sm flex justify-between flex-row items-center gap-3 p-2 px-5",
           clNames(primary),
           props.disabled && "opacity-50 cursor-not-allowed",
           additionalClasses

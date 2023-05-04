@@ -43,9 +43,9 @@ const FormInput: FunctionComponent<Props> = ({
         htmlFor={id}
         className={classNames(
           "transition-all transition-bund absolute pointer-events-none",
-          focus
+          focus || value !== ""
             ? `text-sm -translate-y-4 text-${focusColor}`
-            : "translate-y-2 text-base"
+            : "translate-y-1 text-base"
         )}
       >
         <span>{label}</span>
