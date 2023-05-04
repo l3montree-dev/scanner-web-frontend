@@ -24,9 +24,9 @@ interface Props {
 const selectedToClassName = (selected: number) => {
   switch (selected) {
     case 1:
-      return "text-lightning-500";
+      return "text-gruen-60";
     case -1:
-      return "text-yellow-500";
+      return "text-hellorange-100";
     case 0:
       return "text-gray-300";
     default:

@@ -53,11 +53,11 @@ const getLinks = (isGuest: boolean, isAdmin: boolean) => {
   }
 
   return defaultLinks.concat([
-    {
+    /*{
       icon: faTag,
       name: "Domain-Gruppen",
       path: "/dashboard/collections",
-    },
+    },*/
     {
       icon: faUsers,
       name: "Nutzerverwaltung",

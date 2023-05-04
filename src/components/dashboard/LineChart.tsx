@@ -362,8 +362,11 @@ const LineChart: FunctionComponent<Props> = ({
               color={col.color}
               title={col.title}
             >
-              <div className="text-sm">{col.title}</div>
-              <span className="ml-2 text-sm">{trend.distance.toFixed(1)}%</span>
+              <div className="text-sm mr-2">{col.title}</div>
+              <span className="text-sm">
+                {trend.distance === 0 ? "" : trend.distance > 0 ? "+" : ""}
+              </span>
+              <span className="text-sm">{trend.distance.toFixed(1)}%</span>
               <FontAwesomeIcon
                 className="text-sm ml-2"
                 icon={

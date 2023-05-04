@@ -468,7 +468,7 @@ const Targets: FunctionComponent<Props> = (props) => {
                             <DropdownMenuItem onClick={deleteSelection}>
                               <div>Löschen</div>
                             </DropdownMenuItem>
-                            <SubMenu
+                            {/*<SubMenu
                               Menu={
                                 <CollectionMenuContent
                                   collections={props.collections}
@@ -481,7 +481,7 @@ const Targets: FunctionComponent<Props> = (props) => {
                                 />
                               }
                               Button={<>Zu Gruppe hinzufügen</>}
-                            />
+                            />*/}
                           </>
                         }
                       />
@@ -516,7 +516,7 @@ const Targets: FunctionComponent<Props> = (props) => {
                     }
                   />
 
-                  {Object.keys(props.collections).length > 0 && (
+                  {/*Object.keys(props.collections).length > 0 && (
                     <Menu
                       Button={
                         <Button
@@ -536,7 +536,7 @@ const Targets: FunctionComponent<Props> = (props) => {
                         />
                       }
                     ></Menu>
-                  )}
+                    )*/}
 
                   {Object.keys(router.query).length > 0 && (
                     <Button

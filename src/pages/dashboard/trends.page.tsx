@@ -237,7 +237,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
               </div>
             </div>
 
-            {!isGuest && (
+            {/*!isGuest && (
               <div className="sticky z-20 border-b-6 border-b-hellgrau-40 beneath-header py-2 bg-white flex flex-row mb-4 items-center">
                 <div className="max-w-screen-xl px-3 text-lg gap-1 flex flex-col flex-1 mx-auto">
                   <div className="flex flex-row justify-between">
@@ -369,7 +369,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                   </div>
                 </div>
               </div>
-            )}
+                  )*/}
 
             <div className={classNames(noDomains && "relative")}>
               <div
