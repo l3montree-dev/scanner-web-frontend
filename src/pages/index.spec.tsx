@@ -1,14 +1,18 @@
-import { act, fireEvent, render, screen } from "@testing-library/react";
-import Home from "./index.page";
 import "@testing-library/jest-dom";
+import { act, render, screen } from "@testing-library/react";
 import mockRouter from "next-router-mock";
+import Home from "./index.page";
+import * as withSession from "../decorators/withSession";
 
 import * as Head from "next/head";
-import { mockFetch, buildJSONResponse } from "../test-utils/factories";
+import { buildJSONResponse, mockFetch } from "../test-utils/factories";
 
 jest.mock("next-auth/react", () => ({
   useSession: () => [null, false],
 }));
+jest.mock("next-auth", () => {
+  return () => {};
+});
 
 describe("Quicktest Test", () => {
   it("renders the quicktest page", () => {

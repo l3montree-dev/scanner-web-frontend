@@ -166,7 +166,7 @@ const combineResults = (
     return newResult;
   }
   Object.values(InspectionTypeEnum).forEach((key) => {
-    if (newResult.result[key]) {
+    if (newResult.result[key] && newResult.result[key]?.didPass === null) {
       newResult.result[key]!.didPass = lastReport[key];
     }
   });

@@ -1,20 +1,16 @@
-import type { GetServerSideProps, NextPage } from "next";
+import type { NextPage } from "next";
+import Image from "next/image";
 import Meta from "../components/Meta";
 import Page from "../components/Page";
-import Image from "next/image";
 
 import ReleasePlaceHolder from "../components/ReleasePlaceholder";
 import ResultEnvelope from "../components/ResultEnvelope";
 import ScanPageHero from "../components/ScanPageHero";
+import { decorateServerSideProps } from "../decorators/decorateServerSideProps";
+import { withSessionServerSideProps } from "../decorators/withSession";
 import { useQuicktest } from "../hooks/useQuicktest";
 import { monitoringService } from "../services/monitoringService";
 import { staticSecrets } from "../utils/staticSecrets";
-import { decorate } from "../decorators/decorate";
-import {
-  withSession,
-  withSessionServerSideProps,
-} from "../decorators/withSession";
-import { decorateServerSideProps } from "../decorators/decorateServerSideProps";
 
 interface Props {
   displayNotAvailable: boolean;

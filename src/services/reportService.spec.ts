@@ -177,16 +177,14 @@ describe("Report Service Test Suite", () => {
       prismaMock as any
     );
 
-    // it should NOT replace the values inside the last scan details
-    // otherwise we would not only fake the aggregated statistics but also the quicktest itself.
-    const lastScanDetails = {
+    const replacedLastScanDetails = {
       details: {
         sut: "example.com/test",
         dnsSec: {
           didPass: false,
         },
         responsibleDisclosure: {
-          didPass: null, // keep the null value
+          didPass: true, // expect the value from the last report
         },
       },
     };
@@ -203,7 +201,7 @@ describe("Report Service Test Suite", () => {
       create: {
         ...target,
         lastScanDetails: {
-          create: lastScanDetails,
+          create: replacedLastScanDetails, // expect replacements from last report
         },
       },
       update: {
@@ -212,8 +210,8 @@ describe("Report Service Test Suite", () => {
         errorCount: 0,
         lastScanDetails: {
           upsert: {
-            create: lastScanDetails,
-            update: lastScanDetails,
+            create: replacedLastScanDetails,
+            update: replacedLastScanDetails,
           },
         },
       },
