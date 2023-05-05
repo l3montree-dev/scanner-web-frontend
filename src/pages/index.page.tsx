@@ -9,6 +9,12 @@ import ScanPageHero from "../components/ScanPageHero";
 import { useQuicktest } from "../hooks/useQuicktest";
 import { monitoringService } from "../services/monitoringService";
 import { staticSecrets } from "../utils/staticSecrets";
+import { decorate } from "../decorators/decorate";
+import {
+  withSession,
+  withSessionServerSideProps,
+} from "../decorators/withSession";
+import { decorateServerSideProps } from "../decorators/decorateServerSideProps";
 
 interface Props {
   displayNotAvailable: boolean;
@@ -84,25 +90,28 @@ const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { query } = context;
-  // check if the user does provide a valid query parameter
-  const code = query["s"];
-  if (code && staticSecrets[code as string]) {
-    monitoringService.trackSecret(code as string);
+export const getServerSideProps = decorateServerSideProps(
+  async (context, [session]) => {
+    const { query } = context;
+    // check if the user does provide a valid query parameter
+    const code = query["s"];
+    if (session !== null || (code && staticSecrets[code as string])) {
+      monitoringService.trackSecret(code as string);
+      return {
+        props: {
+          displayNotAvailable: false,
+          code: code ?? "",
+        },
+      };
+    }
     return {
       props: {
-        displayNotAvailable: false,
-        code: code,
+        displayNotAvailable: true,
+        code: !!code ? code : null,
       },
     };
-  }
-  return {
-    props: {
-      displayNotAvailable: true,
-      code: !!code ? code : null,
-    },
-  };
-};
+  },
+  withSessionServerSideProps
+);
 
 export default Home;
