@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useId, useState } from "react";
+import { FunctionComponent, useId, useState } from "react";
 import Textarea from "./Textarea";
 
 interface Props {

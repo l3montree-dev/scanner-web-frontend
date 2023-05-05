@@ -1,25 +1,20 @@
 import {
-  faCheck,
-  faQuestion,
-  faTimes,
-  faWarning,
   faCheckCircle,
   faCircleExclamation,
-  faCircleXmark,
   faCircleQuestion,
+  faCircleXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import resolveConfig from "tailwindcss/resolveConfig";
+import tinycolor from "tinycolor2";
 import tailwindConfig from "../../tailwind.config";
 import {
   DomainInspectionType,
   HeaderInspectionType,
   InspectionType,
-  InspectionTypeEnum,
   NetworkInspectionType,
   OrganizationalInspectionType,
   TLSInspectionType,
 } from "../inspection/scans";
-import tinycolor from "tinycolor2";
 
 export enum CheckResult {
   Passed = "passed",

@@ -1,9 +1,9 @@
-import React, { FormEvent, FunctionComponent, useState } from "react";
+import { FormEvent, FunctionComponent, useState } from "react";
 import useLoading from "../hooks/useLoading";
 import { parseNetworkString } from "../utils/common";
 import { isValidIp, isValidMask } from "../utils/validator";
-import Button from "./common/Button";
 import FormTextarea from "./FormTextarea";
+import Button from "./common/Button";
 
 interface Props {
   onSubmit: (networks: string[]) => Promise<void>;

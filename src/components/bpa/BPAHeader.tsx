@@ -1,13 +1,12 @@
-import Image from "next/image";
-import Link from "next/link";
-import React, { FunctionComponent, useEffect, useState } from "react";
-import SmallLink from "./SmallLink";
-import { useRouter } from "next/router";
-import { classNames } from "../../utils/common";
-import Logo from "./Logo";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { FunctionComponent, useState } from "react";
 import { useSignOut } from "../../hooks/useSignOut";
+import { classNames } from "../../utils/common";
 import SideMenu from "../SideMenu";
+import Logo from "./Logo";
+import SmallLink from "./SmallLink";
 
 interface Props {
   hideLogin?: boolean;

@@ -1,8 +1,4 @@
-import {
-  faCheck,
-  faCheckCircle,
-  faTimes,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCheckCircle, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { FunctionComponent } from "react";
 import { classNames } from "../utils/common";

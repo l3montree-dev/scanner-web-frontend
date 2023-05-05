@@ -1,11 +1,10 @@
-import { faPhone, faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import { faEnvelope, faPhone } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Button from "./common/Button";
-import React from "react";
 import { useState } from "react";
-import Modal from "../components/Modal";
 import AddDomainForm from "../components/AddDomainForm";
+import Modal from "../components/Modal";
 import { clientHttpClient } from "../services/clientHttpClient";
+import Button from "./common/Button";
 
 const EmptyDashboardNotice = () => {
   const [isOpen, setIsOpen] = useState(false);

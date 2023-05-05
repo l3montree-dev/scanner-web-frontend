@@ -11,8 +11,8 @@ import React, { FunctionComponent, useCallback, useState } from "react";
 
 import { Canvg } from "canvg";
 import { debounce } from "lodash";
+import { useRouter } from "next/router";
 import {
-  VictoryArea,
   VictoryAxis,
   VictoryChart,
   VictoryLine,
@@ -22,14 +22,12 @@ import useWindowSize from "../../hooks/useWindowSize";
 import { InspectionType } from "../../inspection/scans";
 import { descriptionMapper, titleMapper } from "../../messages";
 import { theme } from "../../styles/victory-theme";
-import { isAdmin, linkMapper } from "../../utils/common";
+import { linkMapper } from "../../utils/common";
 import { tailwindColors } from "../../utils/view";
 import CollectionDataPill from "../CollectionDataPill";
 import Tooltip from "../Tooltip";
 import { RefLabelComponent } from "./RefLabelComponent";
 import TrendDiff from "./TrendDiff";
-import { config } from "../../config";
-import { useRouter } from "next/router";
 
 interface Props {
   displayCollections: number[];

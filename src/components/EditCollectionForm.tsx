@@ -6,9 +6,9 @@ import { colors } from "../utils/common";
 import { DTO } from "../utils/server";
 
 import FormInput from "./FormInput";
-import Menu from "./common/Menu";
 import ShareLinkItem from "./ShareLinkItem";
 import Button from "./common/Button";
+import Menu from "./common/Menu";
 
 interface Props {
   onSubmit: (collection: {

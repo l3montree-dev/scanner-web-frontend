@@ -45,6 +45,7 @@ const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
             className="absolute hidden lg:inline -z-10 top-0 right-0"
             width={500}
             height={225}
+            priority
             src={"/assets/Adler_Ausschnitt_1.svg"}
             alt="OZG-Logo"
           />

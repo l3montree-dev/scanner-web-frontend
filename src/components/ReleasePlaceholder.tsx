@@ -1,5 +1,5 @@
-import { FunctionComponent } from "react";
 import Image from "next/image";
+import { FunctionComponent } from "react";
 
 const ReleasePlaceHolder: FunctionComponent = () => {
   return (

@@ -1,4 +1,3 @@
-import React from "react";
 import Article from "../components/Article";
 import Meta from "../components/Meta";
 import Page from "../components/Page";

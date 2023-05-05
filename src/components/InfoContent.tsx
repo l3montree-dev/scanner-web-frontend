@@ -1,7 +1,6 @@
-import React from "react";
+import { useRouter } from "next-router-mock";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next-router-mock";
 import Article from "./Article";
 
 const InfoContent = () => {

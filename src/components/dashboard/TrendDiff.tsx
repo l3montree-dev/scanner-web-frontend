@@ -1,22 +1,13 @@
-import { config } from "../../config";
-import { debounce } from "lodash";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useRouter } from "next/router";
+import { FunctionComponent, useEffect, useRef, useState } from "react";
+import useLoading from "../../hooks/useLoading";
 import { clientHttpClient } from "../../services/clientHttpClient";
+import { classNames } from "../../utils/common";
 import { didPass2CheckResult } from "../../utils/view";
 import ResultIcon from "../ResultIcon";
-import Button from "../common/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
-import useLoading from "../../hooks/useLoading";
 import Spinner from "../Spinner";
-import { classNames } from "../../utils/common";
-import { useRouter } from "next/router";
 
 const parseDate = (date: string) => {
   let [day, month, year] = date.split(".");

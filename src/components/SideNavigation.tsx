@@ -5,7 +5,6 @@ import {
   faInfo,
   faListCheck,
   faSquareCheck,
-  faTag,
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,10 +13,9 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useSession } from "../hooks/useSession";
+import useWindowSize from "../hooks/useWindowSize";
 import { classNames, isAdmin, isGuestUser } from "../utils/common";
 import { useGlobalStore } from "../zustand/global";
-import useWindowSize from "../hooks/useWindowSize";
-import Logo from "./bpa/Logo";
 
 const defaultLinks = [
   {

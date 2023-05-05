@@ -6,8 +6,8 @@ import {
 } from "react";
 import useLoading from "../hooks/useLoading";
 import { colors } from "../utils/common";
-import Button from "./common/Button";
 import FormInput from "./FormInput";
+import Button from "./common/Button";
 import Menu from "./common/Menu";
 
 interface Props {

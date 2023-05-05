@@ -3,25 +3,22 @@ import {
   faBars,
   faEnvelope,
   faHeadset,
-  faPhone,
-  faTimes,
-  faUser,
   faKey,
+  faPhone,
   faUserAstronaut,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import * as Portal from "@radix-ui/react-portal";
 import EventEmitter from "events";
 import { useRouter } from "next/router";
 import { FunctionComponent, useEffect, useState } from "react";
 import { useSession } from "../hooks/useSession";
 import { useSignOut } from "../hooks/useSignOut";
 import { classNames, clientOnly, isGuestUser } from "../utils/common";
-import DropdownMenuItem from "./common/DropdownMenuItem";
-import Menu from "./common/Menu";
+import SideMenu from "./SideMenu";
 import SideNavigation from "./SideNavigation";
 import Tooltip from "./Tooltip";
-import SideMenu from "./SideMenu";
+import DropdownMenuItem from "./common/DropdownMenuItem";
+import Menu from "./common/Menu";
 
 export const pageTitleNotVisibleEmitter = new EventEmitter();
 

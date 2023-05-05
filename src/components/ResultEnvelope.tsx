@@ -11,8 +11,8 @@ import {
   checkResult2BorderClassName,
   checkResult2Icon,
 } from "../utils/view";
-import Button from "./common/Button";
 import ResultGrid from "./ResultGrid";
+import Button from "./common/Button";
 
 interface Props {
   target: DTO<DetailedTarget> | null;

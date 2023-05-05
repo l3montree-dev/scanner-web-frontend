@@ -4,7 +4,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Collection, Target } from "@prisma/client";
-import Link from "next/link";
 import { toUnicode } from "punycode";
 import { FunctionComponent } from "react";
 import { useIsGuest } from "../hooks/useIsGuest";
@@ -22,13 +21,10 @@ import { classNames, toGermanDate } from "../utils/common";
 import { DTO } from "../utils/server";
 import { didPass2CheckResult } from "../utils/view";
 import Checkbox from "./Checkbox";
-import CollectionMenuContent from "./CollectionMenuContent";
-import CollectionPill from "./CollectionPill";
-import DropdownMenuItem from "./common/DropdownMenuItem";
-import Menu from "./common/Menu";
-import SubMenu from "./common/SubMenu";
 import ResultIcon from "./ResultIcon";
 import Tooltip from "./Tooltip";
+import DropdownMenuItem from "./common/DropdownMenuItem";
+import Menu from "./common/Menu";
 
 interface Props {
   onSelect: (target: DTO<DetailedTarget>) => void;

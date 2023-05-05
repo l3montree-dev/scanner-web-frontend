@@ -1,7 +1,4 @@
-import {
-  faArrowRight,
-  faChevronRight,
-} from "@fortawesome/free-solid-svg-icons";
+import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import React, { FunctionComponent } from "react";

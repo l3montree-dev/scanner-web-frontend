@@ -1,7 +1,7 @@
-import { FormEvent, FunctionComponent, SetStateAction } from "react";
-import Button from "./common/Button";
 import Image from "next/image";
+import { FormEvent, FunctionComponent, SetStateAction } from "react";
 import FormInput from "./FormInput";
+import Button from "./common/Button";
 
 interface Props {
   onSubmit: (e: FormEvent) => void;

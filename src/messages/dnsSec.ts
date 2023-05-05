@@ -1,6 +1,5 @@
-import { toUnicode } from "punycode";
 import { DetailedTarget } from "../types";
-import { getHostnameFromUri, getUnicodeHostnameFromUri } from "../utils/common";
+import { getUnicodeHostnameFromUri } from "../utils/common";
 import { DTO } from "../utils/server";
 
 export const getDNSSecReportMessage = (report: DTO<DetailedTarget>) => {

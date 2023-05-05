@@ -1,8 +1,8 @@
 import { Network } from "@prisma/client";
 import { FormEvent, FunctionComponent, useState } from "react";
 import useLoading from "../hooks/useLoading";
-import Button from "./common/Button";
 import FormTextarea from "./FormTextarea";
+import Button from "./common/Button";
 
 interface Props extends Network {
   onSubmit: (newComment: string) => Promise<void>;

@@ -1,8 +1,7 @@
-import React, { FunctionComponent, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { FunctionComponent, useEffect, useState } from "react";
 import useWindowSize from "../../hooks/useWindowSize";
-import dynamic from "next/dynamic";
 
 interface Props {
   scale?: number;

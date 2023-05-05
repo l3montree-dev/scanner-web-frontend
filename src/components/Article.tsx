@@ -1,4 +1,3 @@
-import { useRouter } from "next-router-mock";
 import { FunctionComponent, PropsWithChildren } from "react";
 
 interface Props {

@@ -1,7 +1,7 @@
 import {
+  GetServerSideProps,
   GetServerSidePropsContext,
   GetServerSidePropsResult,
-  GetServerSideProps,
 } from "next";
 import HttpError from "../errors/HttpError";
 import { getLogger } from "../services/logger";

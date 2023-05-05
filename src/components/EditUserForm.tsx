@@ -3,8 +3,8 @@ import { User } from "@prisma/client";
 import React, { FunctionComponent, useState } from "react";
 import useLoading from "../hooks/useLoading";
 import { IUserPutDTO } from "../types";
-import Button from "./common/Button";
 import FormInput from "./FormInput";
+import Button from "./common/Button";
 
 type UserType = Omit<User, "_id"> & { id: string } & UserRepresentation;
 interface Props extends UserType {

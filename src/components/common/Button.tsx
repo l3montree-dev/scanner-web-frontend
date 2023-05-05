@@ -1,4 +1,4 @@
-import React, { forwardRef, FunctionComponent } from "react";
+import React, { forwardRef } from "react";
 import { classNames } from "../../utils/common";
 import Spinner from "../Spinner";
 

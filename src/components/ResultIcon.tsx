@@ -1,11 +1,11 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FunctionComponent } from "react";
+import { classNames } from "../utils/common";
 import {
   CheckResult,
   checkResult2BorderClassName,
   checkResult2Icon,
 } from "../utils/view";
-import { classNames } from "../utils/common";
 
 interface Props {
   checkResult: CheckResult;

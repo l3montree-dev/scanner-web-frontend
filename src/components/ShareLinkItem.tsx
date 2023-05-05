@@ -1,8 +1,8 @@
-import { faCopy, faClose } from "@fortawesome/free-solid-svg-icons";
+import { faClose, faCopy } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ShareLink } from "@prisma/client";
 import Link from "next/link";
-import React, { FunctionComponent } from "react";
+import { FunctionComponent } from "react";
 import { DTO } from "../utils/server";
 import { secretToShareLink, w } from "../utils/view";
 import { toast } from "./Toaster";

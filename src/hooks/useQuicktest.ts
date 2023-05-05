@@ -1,18 +1,19 @@
+import { useRouter } from "next/router";
 import {
-  useState,
-  useCallback,
   FormEvent,
+  useCallback,
   useEffect,
-  useRef,
   useMemo,
+  useRef,
+  useState,
 } from "react";
 import {
-  TLSInspectionType,
-  NetworkInspectionType,
   DomainInspectionType,
   HeaderInspectionType,
-  OrganizationalInspectionType,
   InspectionType,
+  NetworkInspectionType,
+  OrganizationalInspectionType,
+  TLSInspectionType,
 } from "../inspection/scans";
 import { getErrorMessage } from "../messages/http";
 import { clientHttpClient } from "../services/clientHttpClient";
@@ -20,7 +21,6 @@ import { DetailedTarget, IScanSuccessResponse } from "../types";
 import { sanitizeFQDN } from "../utils/common";
 import { DTO } from "../utils/server";
 import useLoading from "./useLoading";
-import { useRouter } from "next/router";
 
 const isInViewport = (element: HTMLElement) => {
   const rect = element.getBoundingClientRect();

@@ -8,15 +8,7 @@ import {
   OrganizationalInspectionType,
   TLSInspectionType,
 } from "../inspection/scans";
-import { getDNSSecReportMessage } from "../messages/dnsSec";
-import { getHSTSReportMessage } from "../messages/hsts";
-import { getHttpMessage, immediateActionHTTPErrors } from "../messages/http";
-import { getMatchesHostnameMessage } from "../messages/matchesHostname";
-import { getResponsibleDisclosureReportMessage } from "../messages/responsibleDisclosure";
-import getRPKIReportMessage from "../messages/rpki";
-import { getDeprecatedTLSDeactivatedReportMessage } from "../messages/deprecatedTLSDeactivated";
-import { getTLSv1_3ReportMessage } from "../messages/tlsv1_3";
-import { getValidCertificateMessage } from "../messages/validCertificate";
+import { immediateActionHTTPErrors } from "../messages/http";
 import { DetailedTarget } from "../types";
 import { classNames, devOnly, linkMapper } from "../utils/common";
 import {
@@ -25,9 +17,9 @@ import {
   didPass2CheckResult,
 } from "../utils/view";
 
-import ResultBox from "./ResultBox";
 import { getCheckDescription, titleMapper } from "../messages";
 import { DTO } from "../utils/server";
+import ResultBox from "./ResultBox";
 
 const regularChecks = [
   OrganizationalInspectionType.ResponsibleDisclosure,
