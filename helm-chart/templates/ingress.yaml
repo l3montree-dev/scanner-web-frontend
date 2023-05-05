@@ -98,35 +98,35 @@ spec:
             path: /
             backend:
               service:
-                name: keycloak
+                name: keycloak-psql
                 port:
                   number: 8080
           - pathType: Prefix
             path: /realms/
             backend:
               service:
-                name: keycloak
+                name: keycloak-psql
                 port:
                   number: 8080
           - pathType: Prefix
             path: /resources/
             backend:
               service:
-                name: keycloak
+                name: keycloak-psql
                 port:
                   number: 8080
           - pathType: Prefix
             path: /robots.txt
             backend:
               service:
-                name: keycloak
+                name: keycloak-psql
                 port:
                   number: 8080
           - pathType: Prefix
             path: /js
             backend:
               service:
-                name: keycloak
+                name: keycloak-psql
                 port:
                   number: 8080
     {{- end }}
