@@ -239,6 +239,7 @@ const LineChart: FunctionComponent<Props> = ({
     <div className="group/chart pb-5 text-textblack bg-hellgrau-20 historical-chart flex-col flex">
       <div className="flex-1 pt-5 relative">
         <button
+          aria-label="Chart als PNG herunterladen"
           onClick={exportToPng}
           className="group-hover/chart:opacity-100 cursor-pointer z-10 opacity-0 rounded-full text-textblack h-9 absolute top-3 right-3 w-9 text-sm transition-all"
         >

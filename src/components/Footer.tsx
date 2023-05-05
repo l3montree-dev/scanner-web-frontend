@@ -4,13 +4,12 @@ import { useRouter } from "next/router";
 import { FunctionComponent } from "react";
 
 const Footer: FunctionComponent = () => {
-  const router = useRouter();
-
   return (
     <footer className="bg-bund relative pb-10">
       <div className="flex flex-row justify-center pt-10">
         <div
           role="button"
+          aria-label="Zum Seitenanfang scrollen"
           onClick={() => {
             // scroll to top
             window.scrollTo({ top: 0, behavior: "smooth" });

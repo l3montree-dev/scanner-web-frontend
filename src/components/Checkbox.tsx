@@ -22,6 +22,7 @@ const Checkbox: FunctionComponent<Props> = (props) => {
       )}
     >
       <input
+        aria-label="Auswählen"
         type={"checkbox"}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}

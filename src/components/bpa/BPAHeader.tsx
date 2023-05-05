@@ -73,6 +73,8 @@ const BPAHeader: FunctionComponent<Props> = ({ hideLogin }) => {
               </div>
               <div className="block ml-auto lg:hidden">
                 <button
+                  role="button"
+                  aria-label="Menü öffnen"
                   className="w-6 text-blau-100 flex flex-row justify-center items-center fill-current"
                   onClick={() => {
                     setMenuOpen((prev) => !prev);

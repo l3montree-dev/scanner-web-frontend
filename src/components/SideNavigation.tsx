@@ -148,6 +148,7 @@ const SideNavigation = () => {
           )}
         </div>
         <button
+          aria-label="Menü aus- oder einklappen"
           onClick={handleCollapseToggle}
           className={classNames(
             "fixed hidden lg:flex left-3 bottom-5 p-2 rounded-full w-8 h-8 flex-row items-center justify-center  transition-all",
