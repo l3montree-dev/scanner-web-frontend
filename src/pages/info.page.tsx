@@ -3,6 +3,8 @@ import { staticSecrets } from "../utils/staticSecrets";
 import Page from "../components/Page";
 import InfoContent from "../components/InfoContent";
 import Meta from "../components/Meta";
+import { decorateServerSideProps } from "../decorators/decorateServerSideProps";
+import { withSessionServerSideProps } from "../decorators/withSession";
 
 interface Props {
   displayNotAvailable: boolean;
@@ -23,26 +25,29 @@ const OZGSecurityChallenge2023: NextPage<Props> = ({ keycloakIssuer }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { query } = context;
-  // check if the user does provide a valid query parameter
-  const code = query["s"];
-  if (code && staticSecrets[code as string]) {
-    return {
-      props: {
-        displayNotAvailable: false,
-        code: code,
-      },
-    };
-  }
+export const getServerSideProps: GetServerSideProps = decorateServerSideProps(
+  async (context, [session]) => {
+    const { query } = context;
+    // check if the user does provide a valid query parameter
+    const code = query["s"];
+    if (session || (code && staticSecrets[code as string])) {
+      return {
+        props: {
+          displayNotAvailable: false,
+          code: code ?? "",
+        },
+      };
+    }
 
-  return {
-    redirect: {
-      destination: "/",
-      permanent: false,
-    },
-    props: {},
-  };
-};
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+      props: {},
+    };
+  },
+  withSessionServerSideProps
+);
 
 export default OZGSecurityChallenge2023;

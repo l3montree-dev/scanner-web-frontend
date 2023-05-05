@@ -4,6 +4,8 @@ import DashboardPage from "../../components/DashboardPage";
 import InfoContent from "../../components/InfoContent";
 import SideNavigation from "../../components/SideNavigation";
 import { staticSecrets } from "../../utils/staticSecrets";
+import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
+import { withSessionServerSideProps } from "../../decorators/withSession";
 
 interface Props {
   displayNotAvailable: boolean;
@@ -25,25 +27,28 @@ const OZGSecurityChallenge2023: NextPage<Props> = ({ keycloakIssuer }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { query } = context;
-  // check if the user does provide a valid query parameter
-  const code = query["s"];
-  if (code && staticSecrets[code as string]) {
+export const getServerSideProps: GetServerSideProps = decorateServerSideProps(
+  async (context, [session]) => {
+    const { query } = context;
+    // check if the user does provide a valid query parameter
+    const code = query["s"];
+    if (session || (code && staticSecrets[code as string])) {
+      return {
+        props: {
+          displayNotAvailable: false,
+          code: code ?? "",
+        },
+      };
+    }
     return {
       props: {
-        displayNotAvailable: false,
-        code: code,
+        keycloakIssuer: process.env.KEYCLOAK_ISSUER as string,
+        displayNotAvailable: true,
+        code: !!code ? code : null,
       },
     };
-  }
-  return {
-    props: {
-      keycloakIssuer: process.env.KEYCLOAK_ISSUER as string,
-      displayNotAvailable: true,
-      code: !!code ? code : null,
-    },
-  };
-};
+  },
+  withSessionServerSideProps
+);
 
 export default OZGSecurityChallenge2023;
