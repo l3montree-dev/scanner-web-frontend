@@ -30,8 +30,8 @@ const ResultBox: FunctionComponent<Props> = (props) => {
           <div>
             <h5
               className={classNames(
-                "md:text-lg block leading-8  scroll-mt-11 font-bold",
-                `text-${checkResult2TextClassName(props.checkResult)}`
+                "md:text-lg block leading-8  scroll-mt-11 font-bold"
+                // `text-${checkResult2TextClassName(props.checkResult)}`
               )}
             >
               {props.title}
