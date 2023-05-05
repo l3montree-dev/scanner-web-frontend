@@ -1,4 +1,9 @@
-import { Prisma, PrismaClient, ScanReport } from "@prisma/client";
+import {
+  LastScanDetails,
+  Prisma,
+  PrismaClient,
+  ScanReport,
+} from "@prisma/client";
 import { config } from "../config";
 import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
 import {
@@ -160,14 +165,27 @@ const combineReport = (
 
 const combineResults = (
   lastReport: ScanReport | undefined,
+  lastResults: LastScanDetails | undefined | null,
   newResult: IScanSuccessResponse
 ) => {
-  if (lastReport === undefined) {
+  if (lastReport === undefined && lastResults === undefined) {
     return newResult;
   }
+
+  const details = lastResults?.details as
+    | IScanSuccessResponse["result"]
+    | undefined
+    | null;
+
   Object.values(InspectionTypeEnum).forEach((key) => {
     if (newResult.result[key] && newResult.result[key]?.didPass === null) {
-      newResult.result[key]!.didPass = lastReport[key];
+      // prefer the lastResults since it holds more information.
+      if (details && details[key]?.didPass !== null) {
+        newResult.result[key] = details[key];
+      } else if (lastReport && lastReport[key] !== null) {
+        // at least we have the last report.
+        newResult.result[key]!.didPass = lastReport[key];
+      }
     }
   });
   return newResult;
@@ -195,21 +213,26 @@ const handleNewScanReport = async (
   prisma: PrismaClient
 ): Promise<DTO<DetailedTarget>> => {
   // fetch the last existing report and check if we only need to update that one.
-  const lastReports = await prisma.scanReport.findMany({
-    where: {
-      uri: result.target,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    take: 1,
-  });
+  const [lastReports, lastResults] = await Promise.all([
+    prisma.scanReport.findMany({
+      where: {
+        uri: result.target,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 1,
+    }),
+    prisma.lastScanDetails.findFirst({
+      where: { uri: result.target },
+    }),
+  ]);
 
   const lastReport = lastReports.length === 1 ? lastReports[0] : undefined;
 
   const newReport = combineReport(lastReport, scanResult2ScanReport(result));
   const lastScanDetails = scanResult2TargetDetails(
-    combineResults(lastReport, result)
+    combineResults(lastReport, lastResults, result)
   );
 
   if (!lastReport || reportDidChange(lastReport, newReport)) {

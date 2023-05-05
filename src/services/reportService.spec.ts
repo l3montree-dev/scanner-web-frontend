@@ -16,6 +16,9 @@ describe("Report Service Test Suite", () => {
       target: {
         update: jest.fn(),
       },
+      lastScanDetails: {
+        findFirst: jest.fn(),
+      },
     };
     await reportService.handleNewScanReport(
       {
@@ -89,6 +92,9 @@ describe("Report Service Test Suite", () => {
         target: {
           upsert: jest.fn(() => target),
         },
+        lastScanDetails: {
+          findFirst: jest.fn(),
+        },
       };
 
       await reportService.handleNewScanReport(
@@ -159,6 +165,9 @@ describe("Report Service Test Suite", () => {
       target: {
         upsert: jest.fn(() => target),
       },
+      lastScanDetails: {
+        findFirst: jest.fn(),
+      },
     };
 
     await reportService.handleNewScanReport(
@@ -184,7 +193,7 @@ describe("Report Service Test Suite", () => {
           didPass: false,
         },
         responsibleDisclosure: {
-          didPass: true, // expect the value from the last report
+          didPass: true, // expect the value from the last report - there is nothing else added - see next test
         },
       },
     };
@@ -217,6 +226,109 @@ describe("Report Service Test Suite", () => {
       },
     });
   });
+
+  it("should prefer the lastScanDetails over the last scan report to fill null values", async () => {
+    const target = {
+      uri: "example.com/test",
+      queued: false,
+      lastScan: 4711,
+      errorCount: 0,
+      // make sure the hostname is set correctly.
+      hostname: "example.com",
+    };
+
+    const prismaMock = {
+      scanReport: {
+        create: jest.fn(),
+        findMany: jest.fn(() => [
+          {
+            dnsSec: true,
+            responsibleDisclosure: true, // there is a value inside the last report
+          },
+        ]),
+      },
+      target: {
+        upsert: jest.fn(() => target),
+      },
+      lastScanDetails: {
+        findFirst: jest.fn(() => ({
+          details: {
+            sut: "example.com/test",
+            dnsSec: {
+              didPass: false,
+              actualValue: "whatever",
+            },
+            responsibleDisclosure: {
+              didPass: true,
+              actualValue: {
+                "security.txt": "whatever",
+              },
+            },
+          },
+        })),
+      },
+    };
+
+    await reportService.handleNewScanReport(
+      {
+        target: "example.com/test",
+        timestamp: 4711,
+        result: {
+          responsibleDisclosure: {
+            didPass: null, // could not be checked
+          },
+          dnsSec: {
+            didPass: false,
+          },
+        },
+      } as any,
+      prismaMock as any
+    );
+
+    const replacedLastScanDetails = {
+      details: {
+        sut: "example.com/test",
+        dnsSec: {
+          didPass: false,
+        },
+        responsibleDisclosure: {
+          didPass: true,
+          actualValue: {
+            "security.txt": "whatever", // from the lastScanDetails NOT from the last scan report
+          },
+        },
+      },
+    };
+
+    expect(prismaMock.scanReport.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        dnsSec: false,
+        responsibleDisclosure: true, // expect the value from the last scan details
+      }),
+    });
+
+    expect(prismaMock.target.upsert).toHaveBeenCalledWith({
+      where: { uri: "example.com/test" },
+      create: {
+        ...target,
+        lastScanDetails: {
+          create: replacedLastScanDetails, // expect replacements from last report
+        },
+      },
+      update: {
+        queued: false,
+        lastScan: 4711,
+        errorCount: 0,
+        lastScanDetails: {
+          upsert: {
+            create: replacedLastScanDetails,
+            update: replacedLastScanDetails,
+          },
+        },
+      },
+    });
+  });
+
   it("should not return that a scan report did change, if one of the values is null and the other one is undefined", () => {
     let actual = reportService.reportDidChange(
       { dnsSec: null } as any,
