@@ -62,7 +62,7 @@ const PieCharts: FunctionComponent<Props> = ({
 }) => {
   const router = useRouter();
   return (
-    <div className="mt-5 justify-start gap-3 flex-wrap grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 grid 2xl:grid-cols-3">
+    <div className="mt-5 justify-start gap-3 flex-wrap grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 grid 2xl:grid-cols-4">
       {displayInspections.map((key) => {
         const percentage = currentStat.data[key] * 100;
         let padAngle = 3;

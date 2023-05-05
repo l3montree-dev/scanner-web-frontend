@@ -18,7 +18,7 @@ const DashboardPage: FunctionComponent<Props> = (props) => {
         <div className="hidden lg:block">{left}</div>
         <div className="flex-1 flex flex-col">
           <Header keycloakIssuer={props.keycloakIssuer} />
-          <main className="px-3 py-10 text-base flex-col bg-white flex flex-1">
+          <main className="py-10 text-base flex-col bg-white flex flex-1">
             <div className="max-w-screen-2xl px-8 w-full flex-1 mx-auto">
               {main}
             </div>

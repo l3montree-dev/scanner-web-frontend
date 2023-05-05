@@ -83,7 +83,7 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
     >
       {session.status === "authenticated" && session.data && (
         <div className="flex flex-row items-center h-full">
-          <div className="flex flex-1 px-3 max-w-screen-xl mx-auto flex-row justify-between items-center">
+          <div className="flex flex-1 px-8 max-w-screen-2xl mx-auto flex-row justify-between items-center">
             <h2
               className={classNames(
                 "text-textblack text-xl font-bold transition duration-500",

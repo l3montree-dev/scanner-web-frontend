@@ -121,8 +121,8 @@ const Dashboard: FunctionComponent<Props> = (props) => {
         <div className="flex-1 flex flex-col">
           <Header keycloakIssuer={props.keycloakIssuer} />
           <main className="flex-col flex flex-1">
-            <div className="max-w-screen-xl w-full mb-5 pt-10 mx-auto">
-              <div className=" mb-0 px-3 gap-2 flex flex-row items-center">
+            <div className="max-w-screen-2xl px-8 w-full mb-5 pt-10 mx-auto">
+              <div className=" mb-0 gap-2 flex flex-row items-center">
                 <PageTitle
                   className="text-2xl  font-bold"
                   stringRep="Dashboard"
@@ -186,7 +186,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
             >
               <div
                 className={classNames(
-                  "max-w-screen-xl pb-10 mx-auto px-3 flex-1 ",
+                  "max-w-screen-2xl pb-10 mx-auto px-8 flex-1 ",
                   noDomains && "blur-sm"
                 )}
               >

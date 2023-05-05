@@ -158,6 +158,21 @@ const combineReport = (
   return newReport;
 };
 
+const combineResults = (
+  lastReport: ScanReport | undefined,
+  newResult: IScanSuccessResponse
+) => {
+  if (lastReport === undefined) {
+    return newResult;
+  }
+  Object.values(InspectionTypeEnum).forEach((key) => {
+    if (newResult.result[key]) {
+      newResult.result[key]!.didPass = lastReport[key];
+    }
+  });
+  return newResult;
+};
+
 export const scanResult2ScanReport = (
   result: IScanSuccessResponse
 ): Omit<ScanReport, "createdAt" | "updatedAt" | "id"> => {
@@ -180,7 +195,7 @@ const handleNewScanReport = async (
   prisma: PrismaClient
 ): Promise<DTO<DetailedTarget>> => {
   // fetch the last existing report and check if we only need to update that one.
-  const lastReport = await prisma.scanReport.findMany({
+  const lastReports = await prisma.scanReport.findMany({
     where: {
       uri: result.target,
     },
@@ -190,13 +205,14 @@ const handleNewScanReport = async (
     take: 1,
   });
 
-  const newReport = combineReport(
-    lastReport.length === 1 ? lastReport[0] : undefined,
-    scanResult2ScanReport(result)
-  );
-  const lastScanDetails = scanResult2TargetDetails(result);
+  const lastReport = lastReports.length === 1 ? lastReports[0] : undefined;
 
-  if (lastReport.length === 0 || reportDidChange(lastReport[0], newReport)) {
+  const newReport = combineReport(lastReport, scanResult2ScanReport(result));
+  const lastScanDetails = scanResult2TargetDetails(
+    combineResults(lastReport, result)
+  );
+
+  if (!lastReport || reportDidChange(lastReport, newReport)) {
     // if the report changed, we need to create a new one.
     const target = await prisma.target.upsert({
       where: { uri: newReport.uri },
