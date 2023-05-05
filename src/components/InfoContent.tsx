@@ -53,7 +53,7 @@ const InfoContent = () => {
         <div className="desc sm:float-right rounded-sm sm:mx-2 mb-2 text-left bg-hellgrau-20 p-5">
           <b>Sprechstunde:</b>
           <br />
-          <a href="tel:020878012422" className="font-normal">
+          <a href="tel:+4920878012422" className="font-normal">
             0208 78012422
           </a>{" "}
           (Mi. 10-12 Uhr)

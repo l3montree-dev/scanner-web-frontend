@@ -123,7 +123,7 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
                           />
                           <span>
                             <a
-                              href="tel:020878012422"
+                              href="tel:+4920878012422"
                               className="text-blau-100"
                             >
                               0208 78012422

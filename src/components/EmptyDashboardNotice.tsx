@@ -65,7 +65,7 @@ const EmptyDashboardNotice = () => {
                 icon={faPhone}
               />
               <span>
-                <a href="tel:020878012422" className="underline">
+                <a href="tel:+4920878012422" className="underline">
                   0208 78012422
                 </a>
                 <br />
