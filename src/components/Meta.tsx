@@ -20,6 +20,10 @@ const Meta: FunctionComponent<Props> = ({
     <Head>
       <title>{title ?? "OZG-Security-Challenge 2023"}</title>
       <meta
+        name="google-site-verification"
+        content="gbCUbQzscU_hjpd9u6kUnKmSgZwoeDqVvhyfcbM3vmM"
+      />
+      <meta
         name="description"
         content={
           description ??
