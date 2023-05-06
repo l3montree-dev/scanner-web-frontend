@@ -3,6 +3,7 @@ export enum ResponsibleDisclosureValidationError {
   MissingContactField = "missingContactField",
   InvalidExpiresField = "invalidExpiresField",
   Expired = "expired",
+  MissingExpiresField = "missingExpiresField",
 }
 
 // invalid means either missing or twice included

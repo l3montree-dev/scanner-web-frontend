@@ -24,7 +24,10 @@ export const getResponsibleDisclosureReportMessage = (
         return `Die Datei ${uri}/.well-known/security.txt ist vorhanden, enthält aber keinen Kontakt.`;
       case inspection.errors?.includes(
         ResponsibleDisclosureValidationError.InvalidExpiresField
-      ):
+      ) ||
+        inspection.errors?.includes(
+          ResponsibleDisclosureValidationError.MissingExpiresField
+        ):
         return `Die Datei ${uri}/.well-known/security.txt ist vorhanden, enthält aber keinen gültigen Expires Eintrag.`;
       case inspection.errors?.includes(
         ResponsibleDisclosureValidationError.Expired
