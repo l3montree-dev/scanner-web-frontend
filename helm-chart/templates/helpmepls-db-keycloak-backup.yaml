@@ -1,0 +1,76 @@
+{{- if .Values.helpmepls.enabled -}}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: postgres-helpmepls-backup-keycloak
+  labels:
+    {{- include "ozgsec.labels" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.helpmepls.keycloakSchedule }}
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            owner: ozgsec
+            backup: postgres-helpmepls-backup-keycloak
+        spec:
+          containers:
+            - name: helpmepls
+              image: {{ .Values.helpmepls.image }}
+              command: 
+                [
+                  "helpmepls",
+                  "--bucket",
+                  "x-prod-ozgsec-keycloak",
+                  "--webhookUrl",
+                  "{{ .Values.helpmepls.config.webhookUrl }}",
+                  "--encp",
+                  "$(ENCRYPTION_PASS)",
+                  "database",
+                  "backup",
+                  "--host",
+                  "{{.Release.Name}}-postgresql",
+                  "--port",
+                  "5432",
+                  "--user",
+                  "postgres",
+                  "--password",
+                  "$(DB_PASS)",
+                  "--type",
+                  "postgresql",
+                  "--databases",
+                  "keycloak",
+                  "--excludeTable",
+                  "last_scan_details",
+                ]
+              env:
+                - name: ENCRYPTION_PASS
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.helpmepls.config.awsAndEncryptionSecretName }}
+                      key: encryption-passphrase
+                - name: AWS_DEFAULT_REGION
+                  value: eu-central-1
+                - name: DB_PASS
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.helpmepls.config.dbPasswordSecretName }}
+                      key: postgres-password
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.helpmepls.config.awsAndEncryptionSecretName }}
+                      key: accesskey
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.helpmepls.config.awsAndEncryptionSecretName }}
+                      key: secretkey
+              imagePullPolicy: IfNotPresent
+          imagePullSecrets:
+            - name: helpmepls-regcred
+          restartPolicy: OnFailure
+{{- end }}

@@ -5,14 +5,11 @@ dependencies:
 - name: rabbitmq
   repository: https://charts.bitnami.com/bitnami
   version: 11.1.5
-- name: mysql
-  repository: https://charts.bitnami.com/bitnami
-  version: 9.4.5
 - name: redis
   repository: https://charts.bitnami.com/bitnami
   version: 17.4.0
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 12.2.1
-digest: sha256:65c4d5349a0ac15423dfe70f2fb41203af1267fd5eafcf2754f29f5c4f587d29
-generated: "2023-02-25T14:12:00.243638+01:00"
+digest: sha256:1453ccbe1652e816c2138f8599841588d019bd24998442f1c73b529cdc6b7ef7
+generated: "2023-05-05T16:30:04.102432+02:00"
