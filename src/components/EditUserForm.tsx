@@ -36,8 +36,8 @@ const EditUserForm: FunctionComponent<Props> = (props) => {
   };
   return (
     <div>
-      <form onSubmit={onSubmit} className="pt-5  flex">
-        <div className="flex flex-col flex-1">
+      <form onSubmit={onSubmit} className="pt-5 flex">
+        <div className="flex flex-col gap-5 flex-1">
           <div className="mt-4 flex-col flex">
             <FormInput
               label="Vorname"
@@ -55,7 +55,7 @@ const EditUserForm: FunctionComponent<Props> = (props) => {
           <div className="mt-4 flex-col flex">
             <FormInput label="Rolle" onChange={setRole} value={role} />
           </div>
-          <div className="flex flex-row justify-end mt-5">
+          <div className="flex flex-row text-base justify-end mt-5">
             <Button loading={createRequest.isLoading} type="submit">
               Speichern
             </Button>

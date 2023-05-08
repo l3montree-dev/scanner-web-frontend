@@ -36,7 +36,6 @@ import { targetService } from "../../services/targetService";
 import { Collection, Target } from "@prisma/client";
 import AddDomainForm from "../../components/AddDomainForm";
 import CheckStateMenu from "../../components/CheckStateMenu";
-import CollectionMenuContent from "../../components/CollectionMenuContent";
 import CollectionPill from "../../components/CollectionPill";
 import Modal from "../../components/Modal";
 import PageTitle from "../../components/PageTitle";
@@ -45,7 +44,6 @@ import TargetTableItem from "../../components/TargetTableItem";
 import Tooltip from "../../components/Tooltip";
 import Button from "../../components/common/Button";
 import DropdownMenuItem from "../../components/common/DropdownMenuItem";
-import SubMenu from "../../components/common/SubMenu";
 import { useIsGuest } from "../../hooks/useIsGuest";
 import { collectionService } from "../../services/collectionService";
 import {
@@ -410,7 +408,7 @@ const Targets: FunctionComponent<Props> = (props) => {
                   vergleichen, wie gut die verschiedenen Domains in Bezug auf die
                   verschiedenen ausgeführten Sicherheitstest abschneiden.`}
                 >
-                  <div className="">
+                  <div className="text-dunkelgrau-100">
                     <FontAwesomeIcon icon={faQuestionCircle} />
                   </div>
                 </Tooltip>

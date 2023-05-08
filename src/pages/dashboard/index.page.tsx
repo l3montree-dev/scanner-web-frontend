@@ -11,7 +11,6 @@ import {
   useState,
   useTransition,
 } from "react";
-import CollectionPill from "../../components/CollectionPill";
 import EmptyDashboardNotice from "../../components/EmptyDashboardNotice";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
@@ -37,7 +36,6 @@ import {
   replaceNullWithZero,
 } from "../../utils/common";
 import { DTO, ServerSideProps, toDTO } from "../../utils/server";
-import { tailwindColors } from "../../utils/view";
 
 interface Props {
   dashboard: IDashboard;
@@ -121,7 +119,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
         <div className="flex-1 flex flex-col">
           <Header keycloakIssuer={props.keycloakIssuer} />
           <main className="flex-col flex flex-1">
-            <div className="max-w-screen-2xl px-8 w-full mb-5 pt-10 mx-auto">
+            <div className="max-w-screen-2xl md:px-8 px-4 w-full mb-5 pt-10 mx-auto">
               <div className=" mb-0 gap-2 flex flex-row items-center">
                 <PageTitle
                   className="text-2xl  font-bold"
@@ -134,7 +132,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                     Das Dashboard bietet eine Übersicht über den Sicherheitszustand von Domain-Gruppen.`}
                 >
                   <div className="text-dunkelgrau-100">
-                    <FontAwesomeIcon size="xl" icon={faQuestionCircle} />
+                    <FontAwesomeIcon icon={faQuestionCircle} />
                   </div>
                 </Tooltip>
               </div>
@@ -186,7 +184,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
             >
               <div
                 className={classNames(
-                  "max-w-screen-2xl pb-10 mx-auto px-8 flex-1 ",
+                  "max-w-screen-2xl pb-10 mx-auto md:px-8 px-4 flex-1 ",
                   noDomains && "blur-sm"
                 )}
               >

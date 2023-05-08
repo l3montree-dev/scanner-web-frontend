@@ -67,7 +67,7 @@ const FormInput: FunctionComponent<Props> = ({
           inputClassNames
         )}
       />
-      {err !== null && <span className="text-red-500 text-sm mt-1">{err}</span>}
+      {err !== null && <span className="text-rot-100 text-sm mt-1">{err}</span>}
     </div>
   );
 };

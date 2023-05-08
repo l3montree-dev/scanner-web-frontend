@@ -7,6 +7,7 @@ import { classNames } from "../../utils/common";
 import SideMenu from "../SideMenu";
 import Logo from "./Logo";
 import SmallLink from "./SmallLink";
+import MenuButton from "../MenuButton";
 
 interface Props {
   hideLogin?: boolean;
@@ -54,7 +55,7 @@ const BPAHeader: FunctionComponent<Props> = ({ hideLogin }) => {
                   <Link
                     className={classNames(
                       activeLink === "/" ? "text-bund" : "text-textblack",
-                      "hover:text-bund"
+                      "hover:text-blau-100"
                     )}
                     href={`/?${query}`}
                   >
@@ -63,7 +64,7 @@ const BPAHeader: FunctionComponent<Props> = ({ hideLogin }) => {
                   <Link
                     className={classNames(
                       activeLink === "/info" ? "text-bund" : "text-textblack",
-                      "hover:text-bund"
+                      "hover:text-blau-100"
                     )}
                     href={`/info?${query}`}
                   >
@@ -72,67 +73,18 @@ const BPAHeader: FunctionComponent<Props> = ({ hideLogin }) => {
                 </nav>
               </div>
               <div className="block ml-auto lg:hidden">
-                <button
-                  role="button"
-                  aria-label="Menü öffnen"
-                  className="w-6 text-blau-100 flex flex-row justify-center items-center fill-current"
-                  onClick={() => {
-                    setMenuOpen((prev) => !prev);
-                  }}
-                >
-                  {menuOpen ? (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="w-5"
-                      viewBox="0 0 14 14"
-                    >
-                      <path
-                        d="m8.4 7 5.4-5.4a.2.2 0 0 0 0-.3l-1-1a.2.2 0 0 0-.4 0L7 5.5 1.6.2a.2.2 0 0 0-.3 0l-1 1a.2.2 0 0 0 0 .4L5.5 7 .2 12.4a.2.2 0 0 0 0 .3l1 1a.2.2 0 0 0 .4 0L7 8.5l5.4 5.4a.2.2 0 0 0 .3 0l1-1a.2.2 0 0 0 0-.4Z"
-                        data-name="close"
-                      />
-                    </svg>
-                  ) : (
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 14">
-                      <g data-name="menu">
-                        <rect
-                          x="1"
-                          y="1"
-                          width="18"
-                          height="2"
-                          rx=".3"
-                          ry=".3"
-                        />
-                        <rect
-                          x="1"
-                          y="6"
-                          width="18"
-                          height="2"
-                          rx=".3"
-                          ry=".3"
-                        />
-                        <rect
-                          x="1"
-                          y="11"
-                          width="18"
-                          height="2"
-                          rx=".3"
-                          ry=".3"
-                        />
-                      </g>
-                    </svg>
-                  )}
-                </button>
+                <MenuButton setMenuOpen={setMenuOpen} menuOpen={menuOpen} />
                 <SideMenu
                   isOpen={menuOpen}
                   onClose={() => setMenuOpen((prev) => !prev)}
                 >
                   <div>
-                    <nav className="flex flex-col gap-5">
+                    <nav className="flex flex-col">
                       <Link
                         className={classNames(
-                          "border-b border-b-hellgrau-100 pb-5",
+                          "py-3",
                           activeLink === "/" ? "text-bund" : "text-textblack",
-                          "hover:text-bund"
+                          "hover:text-blau-100"
                         )}
                         href={`/?${query}`}
                       >
@@ -140,7 +92,7 @@ const BPAHeader: FunctionComponent<Props> = ({ hideLogin }) => {
                       </Link>
                       <Link
                         className={classNames(
-                          "border-b border-b-hellgrau-100 py-3",
+                          "py-3",
                           activeLink === "/info"
                             ? "text-bund"
                             : "text-textblack",
@@ -150,6 +102,23 @@ const BPAHeader: FunctionComponent<Props> = ({ hideLogin }) => {
                       >
                         Informationen zur Challenge
                       </Link>
+                      {session.status === "authenticated" ? (
+                        <div className="flex flex-col">
+                          <Link className="py-3" href="/dashboard">
+                            Dashboard
+                          </Link>
+                          <span
+                            className="font-medium cursor-pointer py-3 hover:text-blau-100 hover:underline"
+                            onClick={() => {
+                              return signOut();
+                            }}
+                          >
+                            Abmelden
+                          </span>
+                        </div>
+                      ) : (
+                        <SmallLink href="/dashboard">Anmelden</SmallLink>
+                      )}
                     </nav>
                   </div>
                 </SideMenu>

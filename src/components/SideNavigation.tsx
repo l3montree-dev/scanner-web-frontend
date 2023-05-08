@@ -99,12 +99,12 @@ const SideNavigation = () => {
   return (
     <div
       className={classNames(
-        "bg-white transition-all relative border-r-6 text-base border-hellgrau-40 lg:h-full",
+        "lg:bg-white transition-all relative border-r-6 text-base border-hellgrau-40 lg:h-full",
         store.sideMenuCollapsed ? "w-16" : "w-80"
       )}
     >
       <div className="md:sticky top-5">
-        <div className="pt-5 m-2 flex text-center items-start mb-5 text-white">
+        <div className="pt-5 m-2 hidden lg:flex text-center items-start mb-5 text-white">
           {!store.sideMenuCollapsed && (
             <Link href={"/dashboard"}>
               <Image
@@ -117,20 +117,16 @@ const SideNavigation = () => {
           )}
         </div>
 
-        <div
-          className={classNames(
-            "flex transition-all ml-1 pt-5 lg:h-full items-center",
-            store.sideMenuCollapsed ? "w-16" : "w-72"
-          )}
-        ></div>
         <div>
           {getLinks(isGuestUser(session.data?.user), isAdmin(session.data)).map(
             ({ path, name, icon }) => (
               <Link key={name} className="hover:no-underline" href={path}>
                 <div
                   className={classNames(
-                    "py-5 px-5  flex flex-row items-center hover:bg-hellgrau-20 hover:no-underline transition-all border-b cursor-pointer",
-                    pathname === path ? "text-blau-100" : "text-textblack"
+                    "py-3 lg:py-5 lg:px-5  flex flex-row items-center lg:hover:bg-hellgrau-20 hover:text-bund lg:hover:text-blau-100 hover:underline lg:hover:no-underline transition-all border-b cursor-pointer",
+                    pathname === path
+                      ? "text-bund lg:text-blau-100"
+                      : "text-textblack"
                   )}
                 >
                   <div className="mr-4">

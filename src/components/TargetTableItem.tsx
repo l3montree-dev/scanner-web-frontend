@@ -68,7 +68,7 @@ const TargetTableItem: FunctionComponent<Props> = ({
       <tr
         onClick={() => onSelect(target)}
         className={classNames(
-          "cursor-pointer relative lg:static lg:rounded-t-none mt-3 grid-cols-8 lg:mt-0 grid lg:table-row flex-wrap rounded-t-md",
+          "cursor-pointer relative lg:static ´ mt-3 grid-cols-8 lg:mt-0 grid lg:table-row flex-wrap",
           target.errorCount !== null && target.errorCount >= 5
             ? "line-through"
             : "",
@@ -76,14 +76,14 @@ const TargetTableItem: FunctionComponent<Props> = ({
           Object.keys(collections).length === 0 ? "rounded-b-md" : ""
         )}
       >
-        <td className="px-4 py-2 lg:p-2 col-span-1 bg-deepblue-50 lg:bg-transparent lg:rounded-tl-none pr-0 rounded-tl-md">
+        <td className="px-4 py-2 lg:p-2 col-span-1 bg-blau-100 lg:bg-transparent pr-0">
           {!isGuest && (
-            <div className="flex flex-row  items-center">
+            <div className="flex flex-row h-full items-center">
               <Checkbox onChange={() => onSelect(target)} checked={selected} />
             </div>
           )}
         </td>
-        <td className="px-4 py-2 lg:p-2 col-span-7 bg-deepblue-50 lg:bg-transparent lg:rounded-tr-none rounded-tr-md">
+        <td className="px-4 py-2 lg:p-2 col-span-7 bg-blau-100  text-white lg:text-textblack lg:bg-transparent">
           <div className="flex flex-row">
             <span title={target.uri} className="text-ellipsis max-w-xs block">
               {toUnicode(target.uri)}
@@ -195,7 +195,7 @@ const TargetTableItem: FunctionComponent<Props> = ({
           <div className="flex flex-row justify-end">
             <Menu
               Button={
-                <div className="px-4 py-2 lg:p-2 h-8 w-8 flex flex-row items-center justify-center">
+                <div className="px-4 py-2 lg:p-2 text-white lg:text-textblack h-8 w-8 flex flex-row h-full items-center justify-center">
                   <FontAwesomeIcon icon={faEllipsisVertical} />
                 </div>
               }

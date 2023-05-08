@@ -19,7 +19,7 @@ const DashboardPage: FunctionComponent<Props> = (props) => {
         <div className="flex-1 flex flex-col">
           <Header keycloakIssuer={props.keycloakIssuer} />
           <main className="py-10 text-base flex-col bg-white flex flex-1">
-            <div className="max-w-screen-2xl px-8 w-full flex-1 mx-auto">
+            <div className="max-w-screen-2xl md:px-8 px-4 w-full flex-1 mx-auto">
               {main}
             </div>
           </main>

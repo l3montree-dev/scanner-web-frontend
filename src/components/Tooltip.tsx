@@ -14,7 +14,7 @@ const Tooltip: FunctionComponent<PropsWithChildren<Props>> = (props) => {
       </div>
       <Popover.Portal>
         <Popover.Content
-          className="TooltipContent text-sm lg:w-72 w-56 bg-hellgrau-20 border border-dunkelgrau-40 z-200 m-1 text-textblack p-2"
+          className="TooltipContent text-sm lg:w-72 w-56 bg-white border-3 border-hellgrau-40 z-200 m-1 text-textblack p-2"
           sideOffset={5}
         >
           {props.tooltip}

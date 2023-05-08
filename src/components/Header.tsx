@@ -19,6 +19,7 @@ import SideNavigation from "./SideNavigation";
 import Tooltip from "./Tooltip";
 import DropdownMenuItem from "./common/DropdownMenuItem";
 import Menu from "./common/Menu";
+import MenuButton from "./MenuButton";
 
 export const pageTitleNotVisibleEmitter = new EventEmitter();
 
@@ -83,7 +84,7 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
     >
       {session.status === "authenticated" && session.data && (
         <div className="flex flex-row items-center h-full">
-          <div className="flex flex-1 px-8 max-w-screen-2xl mx-auto flex-row justify-between items-center">
+          <div className="flex flex-1 md:px-8 px-4 max-w-screen-2xl mx-auto flex-row justify-between items-center">
             <h2
               className={classNames(
                 "text-textblack text-xl font-bold transition duration-500",
@@ -92,10 +93,8 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
             >
               {title}
             </h2>
-            <div className="block text-white lg:hidden">
-              <button className="p-3" onClick={openMenu}>
-                <FontAwesomeIcon icon={faBars} />
-              </button>
+            <div className="block lg:hidden">
+              <MenuButton setMenuOpen={openMenu} menuOpen={mobileMenuIsOpen} />
               <SideMenu isOpen={mobileMenuIsOpen} onClose={closeMenu}>
                 <SideNavigation />
               </SideMenu>
@@ -179,7 +178,7 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
                       {!isGuestUser(session.data.user) &&
                         clientOnly(() => (
                           <a
-                            className="hover:no-underline"
+                            className="hover:no-underline font-normal"
                             href={`${keycloakIssuer}/protocol/openid-connect/auth?client_id=quicktest&redirect_uri=${encodeURIComponent(
                               `${window.location.protocol}//${window.location.host}`
                             )}&response_type=code&scope=openid&kc_action=UPDATE_PASSWORD`}
@@ -191,7 +190,7 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
                             </DropdownMenuItem>
                           </a>
                         ))}
-                      <div className="p-2 relative top-1 border-t border-t-deepblue-200 bg-hellgrau-100 text-textblack">
+                      <div className="p-2 relative top-1 border-t border-t-hellgrau-40 bg-white text-textblack">
                         Eingeloggt als:{" "}
                         {isGuestUser(session.data.user)
                           ? "Gast"

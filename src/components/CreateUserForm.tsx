@@ -47,7 +47,7 @@ const CreateUserForm: FunctionComponent<Props> = ({ onCreateUser }) => {
   return (
     <div>
       <form onSubmit={onSubmit} className="pt-10  flex">
-        <div className="flex flex-col flex-1">
+        <div className="flex flex-col gap-5 flex-1">
           <FormInput
             label="Nutzername *"
             validator={(value) => {
@@ -76,8 +76,8 @@ const CreateUserForm: FunctionComponent<Props> = ({ onCreateUser }) => {
           <div className="mt-4 flex-col flex">
             <FormInput label="Rolle" onChange={setRole} value={role} />
           </div>
-          <div className="flex flex-row justify-end mt-5">
-            <Button primary loading={createRequest.isLoading} type="submit">
+          <div className="flex flex-row text-base justify-end mt-5">
+            <Button loading={createRequest.isLoading} type="submit">
               Nutzer anlegen
             </Button>
           </div>
@@ -85,12 +85,12 @@ const CreateUserForm: FunctionComponent<Props> = ({ onCreateUser }) => {
       </form>
 
       {createRequest.errored && (
-        <span className="text-red-600 absolute text-sm mt-3 block">
+        <span className="text-rot-100 absolute text-sm mt-3 block">
           {createRequest.errorMessage}
         </span>
       )}
       {userPassword && (
-        <div className="mt-5 text-right border-yellow-500 border bg-deepblue-600 p-2">
+        <div className="mt-5 text-right text-base bg-blau-100 p-2">
           <p className="text-white">
             Nutzer wurde mit folgendem initialen Password angelegt:
           </p>

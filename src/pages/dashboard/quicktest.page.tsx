@@ -57,7 +57,7 @@ const QuicktestPage: FunctionComponent<Props> = (props) => {
           <div className="">
             <form
               onSubmit={onSubmit}
-              className="flex items-end gap-2 justify-between"
+              className="flex items-end flex-wrap gap-2 justify-end"
             >
               <div className="flex-1">
                 <FormInput
