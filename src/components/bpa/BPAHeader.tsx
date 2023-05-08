@@ -117,7 +117,9 @@ const BPAHeader: FunctionComponent<Props> = ({ hideLogin }) => {
                           </span>
                         </div>
                       ) : (
-                        <SmallLink href="/dashboard">Anmelden</SmallLink>
+                        <Link className="py-3" href="/dashboard">
+                          Anmelden
+                        </Link>
                       )}
                     </nav>
                   </div>

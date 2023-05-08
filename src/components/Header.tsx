@@ -97,6 +97,11 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
               <MenuButton setMenuOpen={openMenu} menuOpen={mobileMenuIsOpen} />
               <SideMenu isOpen={mobileMenuIsOpen} onClose={closeMenu}>
                 <SideNavigation />
+                <div className="mt-5">
+                  <a onClick={signOut} role="button">
+                    Ausloggen
+                  </a>
+                </div>
               </SideMenu>
             </div>
             <div className="ml-2 text-sm absolute z-200 hidden lg:block right-2 text-white">
