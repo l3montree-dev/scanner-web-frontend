@@ -18,6 +18,7 @@ import {
   VictoryLine,
   VictoryZoomContainer,
 } from "victory";
+import useLoading from "../../hooks/useLoading";
 import useWindowSize from "../../hooks/useWindowSize";
 import { InspectionType } from "../../inspection/scans";
 import { descriptionMapper, titleMapper } from "../../messages";
@@ -241,7 +242,7 @@ const LineChart: FunctionComponent<Props> = ({
         <button
           aria-label="Chart als PNG herunterladen"
           onClick={exportToPng}
-          className="group-hover/chart:opacity-100 cursor-pointer z-10 opacity-0 rounded-full text-textblack h-9 absolute top-3 right-3 w-9 text-sm transition-all"
+          className="group-hover/chart:opacity-100 cursor-pointer z-20 opacity-0 rounded-full text-textblack h-9 absolute top-3 right-3 w-9 text-sm transition-all"
         >
           <FontAwesomeIcon className="opacity-100" icon={faDownload} />
         </button>
@@ -249,6 +250,7 @@ const LineChart: FunctionComponent<Props> = ({
         <VictoryChart
           containerComponent={
             <VictoryZoomContainer
+              portalZIndex={10}
               allowZoom={router.query.zoomable === "1"}
               onZoomDomainChange={(ev) => handleDomainChange(ev.x)}
               ref={chartRef}
