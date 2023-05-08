@@ -201,6 +201,10 @@ a {
     }
 }
 
+[data-radix-popper-content-wrapper] {
+    z-index: 110!important;
+}
+
 .DropdownMenuContent[data-side='top'],
 .DropdownMenuSubContent[data-side='top'] {
   animation-name: slideDownAndFade;

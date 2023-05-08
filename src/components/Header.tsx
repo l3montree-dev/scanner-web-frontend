@@ -78,7 +78,7 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
   return (
     <header
       className={classNames(
-        "h-20 sticky top-0 z-20 transition-all duration-500 text-textblack border-b-6 border-b-hellgrau-40",
+        "h-20 sticky top-0 transition-all z-100 duration-500 text-textblack border-b-6 border-b-hellgrau-40",
         "bg-white"
       )}
     >
