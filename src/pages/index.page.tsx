@@ -11,6 +11,7 @@ import { withSessionServerSideProps } from "../decorators/withSession";
 import { useQuicktest } from "../hooks/useQuicktest";
 import { monitoringService } from "../services/monitoringService";
 import { staticSecrets } from "../utils/staticSecrets";
+import { classNames } from "../utils/common";
 
 interface Props {
   displayNotAvailable: boolean;
@@ -58,7 +59,7 @@ const Home: NextPage<Props> = ({ displayNotAvailable, code }) => {
               website={website}
               scanRequest={scanRequest}
             />
-            <div className="my-10">
+            <div className={classNames(target && "my-10")}>
               <ResultEnvelope
                 target={target}
                 dateString={dateString}

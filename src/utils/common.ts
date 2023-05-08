@@ -193,7 +193,7 @@ export const sanitizeFQDN = (providedValue: any): string | null => {
 };
 
 export const classNames = (
-  ...args: Array<string | boolean | undefined>
+  ...args: Array<string | boolean | undefined | null>
 ): string => {
   return args.filter(Boolean).join(" ");
 };

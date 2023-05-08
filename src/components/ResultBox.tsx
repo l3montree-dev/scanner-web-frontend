@@ -16,7 +16,7 @@ interface Props {
 
 const ResultBox: FunctionComponent<Props> = (props) => {
   return (
-    <div className="flex-col h-full flex">
+    <div className="flex-col h-full text-base flex">
       <div className="flex flex-1 flex-row">
         <FontAwesomeIcon
           className={classNames(
@@ -29,14 +29,14 @@ const ResultBox: FunctionComponent<Props> = (props) => {
           <div>
             <h5
               className={classNames(
-                "md:text-lg block leading-8  scroll-mt-11 font-bold"
+                "md:text-lg block leading-8 scroll-mt-11 font-bold"
                 // `text-${checkResult2TextClassName(props.checkResult)}`
               )}
             >
               {props.title}
             </h5>
           </div>
-          <div className="mt-2 text-small mb-5 h-full">
+          <div className="mt-2 text-sm mb-5 h-full">
             <p>{props.description}</p>
           </div>
         </div>
