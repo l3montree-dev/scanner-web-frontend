@@ -250,7 +250,7 @@ const PieCharts: FunctionComponent<Props> = ({
             <div className="flex flex-1 items-center px-6 flex-row">
               <h2
                 title={titleMapper[key]}
-                className="text-left break-normal font-bold mt-1"
+                className="text-left break-normal flex flex-row items-center font-bold mt-1"
               >
                 {titleMapper[key]}{" "}
                 <Tooltip

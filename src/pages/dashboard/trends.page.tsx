@@ -375,8 +375,11 @@ const Dashboard: FunctionComponent<Props> = (props) => {
               <div
                 className={classNames(
                   "max-w-screen-2xl gap-4 pb-10 flex flex-row mx-auto md:px-8 px-4 flex-1 text-white",
-                  noDomains && "blur-sm pointer-events-none"
+                  noDomains && "blur-sm pointer-events-none overflow-hidden"
                 )}
+                style={{
+                  maxHeight: noDomains ? "calc(100vh)" : "auto",
+                }}
               >
                 <div className="flex-1">
                   <LineCharts

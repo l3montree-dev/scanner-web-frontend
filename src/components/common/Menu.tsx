@@ -1,5 +1,5 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useEffect } from "react";
 import DropdownMenuContent from "./DropdownMenuContent";
 
 interface Props {
@@ -10,6 +10,12 @@ interface Props {
 
 const Menu: FunctionComponent<Props> = ({ Button, Menu, disabled }) => {
   const buttonRef = React.useRef<HTMLButtonElement>(null);
+  const [width, setWidth] = React.useState(0);
+  useEffect(() => {
+    if (buttonRef.current) {
+      setWidth(buttonRef.current.clientWidth);
+    }
+  }, []);
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger ref={buttonRef} asChild disabled={disabled}>
@@ -19,7 +25,7 @@ const Menu: FunctionComponent<Props> = ({ Button, Menu, disabled }) => {
         <DropdownMenuContent>
           <div
             style={{
-              minWidth: buttonRef.current?.clientWidth,
+              minWidth: width,
             }}
           >
             {Menu}

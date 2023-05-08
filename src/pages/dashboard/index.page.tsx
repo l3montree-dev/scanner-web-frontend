@@ -23,7 +23,6 @@ import { config } from "../../config";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
 import { withCurrentUserOrGuestServerSideProps } from "../../decorators/withCurrentUser";
 import { withDB } from "../../decorators/withDB";
-import { useIsGuest } from "../../hooks/useIsGuest";
 import { useSession } from "../../hooks/useSession";
 import { collectionService } from "../../services/collectionService";
 import { statService } from "../../services/statService";
@@ -83,7 +82,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
   useEffect(() => {
     setData(currentStat);
   }, [currentStat]);
-
+  /*
   const handleDisplayCollectionToggle = (collectionId: number) => {
     if (displayCollections.includes(collectionId)) {
       // check if there is at least one collection left
@@ -107,7 +106,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
       });
     }
   };
-  const isGuest = useIsGuest();
+  const isGuest = useIsGuest();*/
 
   return (
     <>
@@ -185,8 +184,11 @@ const Dashboard: FunctionComponent<Props> = (props) => {
               <div
                 className={classNames(
                   "max-w-screen-2xl pb-10 mx-auto md:px-8 px-4 flex-1 ",
-                  noDomains && "blur-sm"
+                  noDomains && "blur-sm overflow-hidden"
                 )}
+                style={{
+                  maxHeight: noDomains ? "calc(100vh)" : "auto",
+                }}
               >
                 <PieCharts
                   displayCollections={_displayCollections}
