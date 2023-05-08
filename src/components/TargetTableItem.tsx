@@ -58,8 +58,6 @@ const TargetTableItem: FunctionComponent<Props> = ({
   selected,
   scanRequest,
   scan,
-  destroy,
-  onToggleCollection,
   collections,
 }) => {
   const isGuest = useIsGuest();

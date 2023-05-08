@@ -9,13 +9,22 @@ interface Props {
 }
 
 const Menu: FunctionComponent<Props> = ({ Button, Menu, disabled }) => {
+  const buttonRef = React.useRef<HTMLButtonElement>(null);
   return (
     <DropdownMenu.Root>
-      <DropdownMenu.Trigger asChild disabled={disabled}>
+      <DropdownMenu.Trigger ref={buttonRef} asChild disabled={disabled}>
         {Button}
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
-        <DropdownMenuContent>{Menu}</DropdownMenuContent>
+        <DropdownMenuContent>
+          <div
+            style={{
+              minWidth: buttonRef.current?.clientWidth,
+            }}
+          >
+            {Menu}
+          </div>
+        </DropdownMenuContent>
       </DropdownMenu.Portal>
     </DropdownMenu.Root>
   );

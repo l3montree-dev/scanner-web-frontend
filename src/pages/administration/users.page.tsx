@@ -165,7 +165,7 @@ const Users: FunctionComponent<Props> = (props) => {
 
           <table className="w-full text-left overflow-hidden border-separate border-spacing-2">
             <thead className="hidden lg:table-header-group">
-              <tr className="bg-blau-100  text-sm text-white text-left">
+              <tr className="bg-dunkelblau-100  text-sm text-white text-left">
                 <th className="p-2 px-4 py-4">Nutzername</th>
                 <th className="p-2 px-4 py-4">Vorname</th>
                 <th className="p-2 px-4 py-4">Nachname</th>

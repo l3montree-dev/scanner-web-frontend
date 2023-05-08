@@ -249,6 +249,7 @@ const LineChart: FunctionComponent<Props> = ({
         <VictoryChart
           containerComponent={
             <VictoryZoomContainer
+              allowZoom={router.query.zoomable === "1"}
               onZoomDomainChange={(ev) => handleDomainChange(ev.x)}
               ref={chartRef}
             />
@@ -313,7 +314,7 @@ const LineChart: FunctionComponent<Props> = ({
       </div>
       <h2
         title={titleMapper[inspectionType]}
-        className="text-left px-6 text-lg text-ellipsis font-bold mt-1"
+        className="text-left px-6 text-lg flex flex-row items-center text-ellipsis font-bold mt-1"
       >
         {titleMapper[inspectionType]}{" "}
         <Tooltip

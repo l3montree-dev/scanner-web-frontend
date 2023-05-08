@@ -96,10 +96,10 @@ const PieCharts: FunctionComponent<Props> = ({
                   }}
                 />
                 <VictoryPie
-                  standalone={false}
                   width={300}
                   height={300}
                   padAngle={padAngle}
+                  animate
                   eventKey="key"
                   events={[
                     {

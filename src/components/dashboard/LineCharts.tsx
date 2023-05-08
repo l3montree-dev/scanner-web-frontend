@@ -40,7 +40,7 @@ const LineCharts: FunctionComponent<Props> = ({
           style={{
             gridTemplateColumns: `repeat(${3 - zoomLevel}, 1fr)`,
           }}
-          className={classNames("grid gap-2 justify-start")}
+          className={classNames("grid gap-3 justify-start")}
         >
           {displayInspections.map((key) => {
             return (

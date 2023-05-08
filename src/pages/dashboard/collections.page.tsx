@@ -225,7 +225,7 @@ const LabelsPage: FunctionComponent<Props> = (props) => {
 
           <table className="w-full text-left overflow-hidden border-separate border-spacing-2">
             <thead className="hidden lg:table-header-group">
-              <tr className="text-sm rounded-t-md bg-blau-100 text-left text-white">
+              <tr className="text-sm rounded-t-md bg-dunkelblau-100 text-left text-white">
                 <th className="p-2 py-4">Titel</th>
                 <th className="p-2 py-4">Domains</th>
                 <th className="p-2 py-4">

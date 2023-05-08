@@ -570,7 +570,7 @@ const Targets: FunctionComponent<Props> = (props) => {
 
               <table className="w-full border-separate border-spacing-2">
                 <thead className="sticky hidden lg:table-header-group table-header z-20">
-                  <tr className="text-sm border-b-deepblue-50 text-left bg-blau-100">
+                  <tr className="text-sm border-b-deepblue-50 text-left bg-dunkelblau-100">
                     <th className="p-2 pr-0 text-center">
                       {!isGuest && (
                         <Checkbox
@@ -685,7 +685,7 @@ const Targets: FunctionComponent<Props> = (props) => {
                         classNames={classNames(
                           "transition-all",
                           selection[target.uri]
-                            ? "bg-blau-20/10"
+                            ? "bg-dunkelblau-20"
                             : i % 2 !== 0
                             ? "bg-blau-20/40"
                             : "bg-dunkelblau-20/20"
