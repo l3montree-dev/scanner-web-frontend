@@ -7,7 +7,10 @@ interface Props {
 const Tooltip: FunctionComponent<PropsWithChildren<Props>> = (props) => {
   return (
     <Popover.Root>
-      <div onClick={(e) => e.stopPropagation()}>
+      <div
+        className="flex flex-row items-center justify-center"
+        onClick={(e) => e.stopPropagation()}
+      >
         <Popover.Trigger aria-label="Hilfe öffnen">
           {props.children}
         </Popover.Trigger>
