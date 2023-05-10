@@ -2,29 +2,21 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import HttpError from "../errors/HttpError";
 import { getLogger } from "../services/logger";
+import { NextRequest, NextResponse } from "next/server";
 
 export type DecoratedHandler<T> = (
-  req: NextApiRequest,
-  res: NextApiResponse,
+  req: NextRequest,
   additionalData: T
-) => void | Promise<void> | Promise<Record<string, any> | null>;
+) => void | NextResponse | Promise<void> | Promise<Record<string, any> | null>;
 
-type Extract<
-  T extends ReadonlyArray<
-    (req: NextApiRequest, res: NextApiResponse) => Promise<any>
-  >
-> = {
-  [Index in keyof T]: T[Index] extends (
-    req: NextApiRequest,
-    res: NextApiResponse
-  ) => Promise<infer V>
+type Extract<T extends ReadonlyArray<(req: NextRequest) => Promise<any>>> = {
+  [Index in keyof T]: T[Index] extends (req: NextRequest) => Promise<infer V>
     ? V
     : never;
 };
 
 export type Decorator<T extends Record<string, any>> = (
-  req: NextApiRequest,
-  res: NextApiResponse
+  req: NextRequest
 ) => Promise<T>;
 
 const logger = getLogger(__filename);
@@ -33,21 +25,31 @@ export const decorate = <Decorators extends Decorator<any>[]>(
   handler: DecoratedHandler<Extract<Decorators>>,
   ...decorators: Decorators
 ) => {
-  return async (req: NextApiRequest, res: NextApiResponse) => {
+  return async (req: NextRequest): Promise<NextResponse> => {
     try {
       const obj = (await Promise.all(
-        decorators.map((fn) => fn(req, res))
+        decorators.map((fn) => fn(req))
       )) as Extract<Decorators>;
-      const returnValue = await handler(req, res, obj);
-      if (returnValue) {
-        return res.status(200).json(returnValue);
+      const returnValue = await handler(req, obj);
+      if (returnValue instanceof NextResponse) {
+        return returnValue;
       }
+
+      if (returnValue) {
+        return NextResponse.json(returnValue, { status: 200 });
+      }
+      return NextResponse.json({ message: "OK" }, { status: 200 });
     } catch (e: any) {
       logger.error({ err: e.message }, "decorate error");
       if (e instanceof HttpError) {
-        return res.status(e.status).json({ message: e.message });
+        return NextResponse.json({ message: e.message }, { status: e.status });
       }
-      return res.status(500).json({ message: "Internal Server Error" });
+      return NextResponse.json(
+        { message: "Internal Server Error" },
+        {
+          status: 500,
+        }
+      );
     }
   };
 };

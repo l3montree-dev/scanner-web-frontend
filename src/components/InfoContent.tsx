@@ -1,12 +1,8 @@
-import { useRouter } from "next-router-mock";
 import Image from "next/image";
 import Link from "next/link";
 import Article from "./Article";
 
 const InfoContent = () => {
-  const router = useRouter();
-  const queryString = new URLSearchParams(router.query as any).toString();
-
   return (
     <Article
       teaser="Das Bundesministerium des Innern und für Heimat (BMI) möchte zur Stärkung der IT-Sicherheit bei der OZG-Umsetzung in Form einer Challenge beitragen. Bis zum 31. Oktober 2023 haben OZG-Dienstverantwortliche im Rahmen der „OZG-Security-Challenge 2023“ die Möglichkeit, die IT-Sicherheit der OZG-Onlinedienste mithilfe eines zugangsgeschützten Schnelltests sowie unterstützt durch Workshops und Sprechstunden weiter zu steigern."

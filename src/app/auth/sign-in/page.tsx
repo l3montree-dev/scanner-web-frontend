@@ -1,17 +1,21 @@
+"use client";
 import { signIn, useSession } from "next-auth/react";
-import { useRouter } from "next/router";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef } from "react";
+import { withAuthProvider } from "../../../providers/AuthProvider";
 
-export default function SignIn() {
+const SignIn = () => {
   const { status, data } = useSession();
+  const query = useSearchParams();
   const router = useRouter();
   const ref = useRef<"idle" | "redirecting">("idle");
 
   useEffect(() => {
     // check the query
-    if (router.query.secret) {
+    const secret = query.get("secret");
+    if (secret) {
       void signIn("credentials", {
-        shareLinkSecret: router.query.secret as string,
+        shareLinkSecret: secret,
         callbackUrl: "/dashboard",
       });
       return;
@@ -24,7 +28,9 @@ export default function SignIn() {
         void router.push("/dashboard");
       }
     }
-  }, [router, status, data]);
+  }, [query, status, router, data]);
 
   return null;
-}
+};
+
+export default withAuthProvider(SignIn);

@@ -1,37 +1,35 @@
+"use client";
+
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { usePathname, useSearchParams } from "next/navigation";
 import { FunctionComponent, useState } from "react";
 import { useSignOut } from "../../hooks/useSignOut";
+import { withAuthProvider } from "../../providers/AuthProvider";
 import { classNames } from "../../utils/common";
+import { useGlobalStore } from "../../zustand/global";
+import MenuButton from "../MenuButton";
 import SideMenu from "../SideMenu";
 import Logo from "./Logo";
 import SmallLink from "./SmallLink";
-import MenuButton from "../MenuButton";
 
-interface Props {
-  hideLogin?: boolean;
-}
-
-const BPAHeader: FunctionComponent<Props> = ({ hideLogin }) => {
-  const activeLink = useRouter().pathname;
+const BPAHeader: FunctionComponent = () => {
+  const activeLink = usePathname();
 
   const session = useSession();
-  const router = useRouter();
   const signOut = useSignOut();
 
+  const store = useGlobalStore();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const query = new URLSearchParams(
-    router.query as Record<string, string>
-  ).toString();
+  const query = useSearchParams();
 
   return (
     <header className="border-t-10 z-50 bg-white sticky top-0 border-b-6 border-b-hellgrau-40  border-t-bund">
       <div className="container">
         <div className="flex flex-row flex-wrap justify-between items-center">
           <Logo />
-          {!Boolean(hideLogin) && (
+          {!store.hideLogin && (
             <>
               <div className="hidden lg:block">
                 <nav className="flex flex-row justify-end">
@@ -133,4 +131,4 @@ const BPAHeader: FunctionComponent<Props> = ({ hideLogin }) => {
   );
 };
 
-export default BPAHeader;
+export default withAuthProvider(BPAHeader);

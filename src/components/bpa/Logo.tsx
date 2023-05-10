@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { FunctionComponent, useEffect, useState } from "react";
@@ -33,6 +35,7 @@ const Logo: FunctionComponent<Props> = (props) => {
   if (width === 0) {
     return null;
   }
+
   return (
     <Link className="hover:border-none" href={props.href ?? "/"}>
       <div
@@ -46,6 +49,7 @@ const Logo: FunctionComponent<Props> = (props) => {
         className="flex relative flex-row transition-bund items-start"
       >
         <Image
+          priority
           alt="Logo Adler"
           width={37 * factor}
           height={50 * factor}
@@ -53,6 +57,7 @@ const Logo: FunctionComponent<Props> = (props) => {
         />
         <div className="transition-bund ml-2 relative">
           <Image
+            priority
             className="transition-bund origin-top"
             alt="Logo Flagge"
             width={5.5 * factor}
@@ -63,6 +68,7 @@ const Logo: FunctionComponent<Props> = (props) => {
         </div>
         <div style={{ width: 280 * factor }} className="absolute right-0">
           <Image
+            priority
             alt="Logo Text"
             className="transition-bund"
             style={{ opacity: scrolled ? 0 : 1 }}

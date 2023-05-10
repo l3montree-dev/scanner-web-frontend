@@ -4,7 +4,7 @@ import {
   NextApiRequest,
   NextApiResponse,
 } from "next";
-import { authOptions } from "../pages/api/auth/[...nextauth].api";
+import { authOptions } from "../_pages/api/auth/[...nextauth].api";
 import { Guest } from "../types";
 import { isGuestUser } from "../utils/common";
 

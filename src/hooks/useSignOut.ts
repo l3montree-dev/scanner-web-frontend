@@ -1,5 +1,5 @@
 import { signOut } from "next-auth/react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { isGuestUser } from "../utils/common";
 import { useSession } from "./useSession";
 

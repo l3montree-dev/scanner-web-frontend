@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import ForbiddenException from "../errors/ForbiddenException";
-import { authOptions } from "../pages/api/auth/[...nextauth].api";
+import { authOptions } from "../_pages/api/auth/[...nextauth].api";
 import { ISession } from "../types";
 import { isAdmin } from "../utils/common";
 import { getServerSession } from "../utils/server";

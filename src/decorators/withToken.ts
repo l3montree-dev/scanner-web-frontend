@@ -5,11 +5,9 @@ import {
 } from "next";
 import { getToken } from "next-auth/jwt";
 import { IToken } from "../types";
+import { NextRequest } from "next/server";
 
-export const withToken = async (
-  req: NextApiRequest,
-  res: NextApiResponse
-): Promise<IToken> => {
+export const withToken = async (req: NextRequest): Promise<IToken> => {
   return ((await getToken({
     req,
   })) ?? null) as unknown as IToken;

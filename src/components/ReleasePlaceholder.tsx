@@ -8,6 +8,7 @@ const ReleasePlaceHolder: FunctionComponent = () => {
         <div className="flex justify-center my-5">
           <Image
             width={225}
+            priority
             height={225}
             src={"/assets/sticker_challenge_black.svg"}
             alt="OZG-Logo"
