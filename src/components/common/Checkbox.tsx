@@ -1,7 +1,7 @@
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FunctionComponent, useState } from "react";
-import { classNames } from "../utils/common";
+import { classNames } from "../../utils/common";
 
 interface Props {
   checked: boolean;

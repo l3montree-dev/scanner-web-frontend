@@ -8,7 +8,7 @@ import { useSignOut } from "../../hooks/useSignOut";
 import { withAuthProvider } from "../../providers/AuthProvider";
 import { classNames } from "../../utils/common";
 import { useGlobalStore } from "../../zustand/global";
-import MenuButton from "../MenuButton";
+import MenuButton from "../common/MenuButton";
 import SideMenu from "../SideMenu";
 import Logo from "./Logo";
 import SmallLink from "./SmallLink";

@@ -26,7 +26,7 @@ import { theme } from "../../styles/victory-theme";
 import { linkMapper } from "../../utils/common";
 import { tailwindColors } from "../../utils/view";
 import CollectionDataPill from "../CollectionDataPill";
-import Tooltip from "../Tooltip";
+import Tooltip from "../common/Tooltip";
 import { RefLabelComponent } from "./RefLabelComponent";
 import TrendDiff from "./TrendDiff";
 

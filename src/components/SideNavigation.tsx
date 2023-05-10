@@ -1,3 +1,4 @@
+"use client";
 import {
   faArrowLeftLong,
   faChartLine,
@@ -10,10 +11,9 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
-import { useSession } from "../hooks/useSession";
-import useWindowSize from "../hooks/useWindowSize";
+import { usePathname, useRouter } from "next/navigation";
+import { FunctionComponent, useEffect } from "react";
+import { ISession } from "../types";
 import { classNames, isAdmin, isGuestUser } from "../utils/common";
 import { useGlobalStore } from "../zustand/global";
 
@@ -69,11 +69,10 @@ const getLinks = (isGuest: boolean, isAdmin: boolean) => {
   ]);
 };
 
-const SideNavigation = () => {
-  const session = useSession();
-
+const SideNavigation: FunctionComponent<{
+  session: ISession;
+}> = ({ session }) => {
   const store = useGlobalStore();
-  const { width } = useWindowSize();
 
   const handleCollapseToggle = () => {
     // save it inside local storage
@@ -90,7 +89,7 @@ const SideNavigation = () => {
     }
   }, []);
 
-  const { pathname } = useRouter();
+  const pathname = usePathname();
 
   if (store.sideMenuCollapsed === null) {
     return null;
@@ -118,7 +117,7 @@ const SideNavigation = () => {
         </div>
 
         <div>
-          {getLinks(isGuestUser(session.data?.user), isAdmin(session.data)).map(
+          {getLinks(isGuestUser(session?.user), isAdmin(session)).map(
             ({ path, name, icon }) => (
               <Link key={name} className="hover:no-underline" href={path}>
                 <div

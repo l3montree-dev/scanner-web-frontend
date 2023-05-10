@@ -1,5 +1,5 @@
 import { FunctionComponent, useId, useState } from "react";
-import { classNames } from "../utils/common";
+import { classNames } from "../../utils/common";
 
 interface Props {
   onChange: (newString: string) => void;

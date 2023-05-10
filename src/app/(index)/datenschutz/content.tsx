@@ -1,7 +1,7 @@
 "use client";
 
 import React, { FunctionComponent, useEffect } from "react";
-import Article from "../../../components/Article";
+import Article from "../../../components/common/Article";
 import { useGlobalStore } from "../../../zustand/global";
 
 interface Props {

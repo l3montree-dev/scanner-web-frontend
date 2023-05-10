@@ -1,6 +1,4 @@
 import {
-  faArrowRightFromBracket,
-  faBars,
   faEnvelope,
   faHeadset,
   faKey,
@@ -8,73 +6,17 @@ import {
   faUserAstronaut,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import EventEmitter from "events";
-import { useRouter } from "next/router";
-import { FunctionComponent, useEffect, useState } from "react";
-import { useSession } from "../hooks/useSession";
-import { useSignOut } from "../hooks/useSignOut";
+import { authOptions } from "../nextAuthOptions";
 import { classNames, clientOnly, isGuestUser } from "../utils/common";
-import SideMenu from "./SideMenu";
-import SideNavigation from "./SideNavigation";
-import Tooltip from "./Tooltip";
+import { getServerSession } from "../utils/server";
+import HeaderTitle from "./HeaderTitle";
 import DropdownMenuItem from "./common/DropdownMenuItem";
+import LogoutMenuItem from "./common/LogoutMenuItem";
 import Menu from "./common/Menu";
-import MenuButton from "./MenuButton";
+import Tooltip from "./common/Tooltip";
 
-export const pageTitleNotVisibleEmitter = new EventEmitter();
-
-const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
-  keycloakIssuer,
-}) => {
-  const session = useSession();
-
-  const [title, setTitle] = useState("");
-
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileMenuIsOpen, setMobileMenuIsOpen] = useState(false);
-
-  const router = useRouter();
-
-  const signOut = useSignOut();
-
-  useEffect(() => {
-    pageTitleNotVisibleEmitter.on("set-content", (args) => {
-      setTitle(args);
-    });
-    const listener = () => {
-      if (window.scrollY > 0 && !scrolled) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
-    };
-    listener();
-    // add scroll listener
-    window.addEventListener("scroll", listener);
-
-    return () => {
-      pageTitleNotVisibleEmitter.removeAllListeners("set-content");
-      // remove scroll listener
-      window.removeEventListener("scroll", listener);
-    };
-  }, []);
-
-  const openMenu = () => {
-    setMobileMenuIsOpen(true);
-    // stop scrolling
-    document.body.style.overflow = "hidden";
-  };
-
-  const closeMenu = () => {
-    setMobileMenuIsOpen(false);
-    // allow scrolling
-    document.body.style.overflow = "auto";
-  };
-
-  useEffect(() => {
-    document.body.style.overflow = "auto";
-  }, [router.pathname]);
-
+const Header: any = async () => {
+  const session = await getServerSession(authOptions);
   return (
     <header
       className={classNames(
@@ -82,28 +24,11 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
         "bg-white"
       )}
     >
-      {session.status === "authenticated" && session.data && (
+      {session !== null && (
         <div className="flex flex-row items-center h-full">
           <div className="flex flex-1 md:px-8 px-4 max-w-screen-2xl mx-auto flex-row justify-between items-center">
-            <h2
-              className={classNames(
-                "text-textblack text-xl font-bold transition duration-500",
-                title === "" ? "opacity-0" : "opacity-100"
-              )}
-            >
-              {title}
-            </h2>
-            <div className="block lg:hidden">
-              <MenuButton setMenuOpen={openMenu} menuOpen={mobileMenuIsOpen} />
-              <SideMenu isOpen={mobileMenuIsOpen} onClose={closeMenu}>
-                <SideNavigation />
-                <div className="mt-5">
-                  <a onClick={signOut} role="button">
-                    Ausloggen
-                  </a>
-                </div>
-              </SideMenu>
-            </div>
+            <HeaderTitle />
+            <div className="block lg:hidden"></div>
             <div className="ml-2 text-sm absolute z-200 hidden lg:block right-2 text-white">
               <div className="flex flex-row gap-5 items-center">
                 <Tooltip
@@ -172,19 +97,14 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
                   }
                   Menu={
                     <>
-                      <DropdownMenuItem
-                        Icon={
-                          <FontAwesomeIcon icon={faArrowRightFromBracket} />
-                        }
-                        onClick={signOut}
-                      >
-                        Ausloggen
-                      </DropdownMenuItem>
-                      {!isGuestUser(session.data.user) &&
+                      <LogoutMenuItem />
+                      {!isGuestUser(session.user) &&
                         clientOnly(() => (
                           <a
                             className="hover:no-underline font-normal"
-                            href={`${keycloakIssuer}/protocol/openid-connect/auth?client_id=quicktest&redirect_uri=${encodeURIComponent(
+                            href={`${
+                              process.env.NEXT_PUBLIC_KEYCLOAK_ISSUER
+                            }/protocol/openid-connect/auth?client_id=quicktest&redirect_uri=${encodeURIComponent(
                               `${window.location.protocol}//${window.location.host}`
                             )}&response_type=code&scope=openid&kc_action=UPDATE_PASSWORD`}
                           >
@@ -197,9 +117,7 @@ const Header: FunctionComponent<{ keycloakIssuer: string }> = ({
                         ))}
                       <div className="p-2 relative top-1 border-t border-t-hellgrau-40 bg-white text-textblack">
                         Eingeloggt als:{" "}
-                        {isGuestUser(session.data.user)
-                          ? "Gast"
-                          : session.data.user.name}
+                        {isGuestUser(session.user) ? "Gast" : session.user.name}
                       </div>
                     </>
                   }

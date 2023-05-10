@@ -2,7 +2,7 @@ import { FormEvent, FunctionComponent, useState } from "react";
 import useLoading from "../hooks/useLoading";
 import { parseNetworkString } from "../utils/common";
 import { isValidIp, isValidMask } from "../utils/validator";
-import FormTextarea from "./FormTextarea";
+import FormTextarea from "./common/FormTextarea";
 import Button from "./common/Button";
 
 interface Props {

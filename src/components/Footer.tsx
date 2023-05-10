@@ -1,9 +1,7 @@
 import Image from "next/image";
-import Link from "next/link";
 import { FunctionComponent } from "react";
+import LinkWithQuery from "./common/LinkWithQuery";
 import ScrollUpButton from "./ScrollUpButton";
-import { useSearchParams } from "next/navigation";
-import LinkWithQuery from "./LinkWithQuery";
 
 const Footer: FunctionComponent = () => {
   return (

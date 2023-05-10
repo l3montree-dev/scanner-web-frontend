@@ -17,7 +17,7 @@ import Menu from "../../components/common/Menu";
 import DashboardPage from "../../components/DashboardPage";
 import EditCollectionForm from "../../components/EditCollectionForm";
 
-import Modal from "../../components/Modal";
+import Modal from "../../components/common/Modal";
 import PageTitle from "../../components/PageTitle";
 import ShareLinkItem from "../../components/ShareLinkItem";
 import SideNavigation from "../../components/SideNavigation";
@@ -29,7 +29,7 @@ import { collectionService } from "../../services/collectionService";
 import { shareLinkService } from "../../services/shareLinkService";
 import { classNames } from "../../utils/common";
 import { DTO, ServerSideProps, toDTO } from "../../utils/server";
-import Tooltip from "../../components/Tooltip";
+import Tooltip from "../../components/common/Tooltip";
 
 interface Props {
   keycloakIssuer: string;

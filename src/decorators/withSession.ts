@@ -5,7 +5,6 @@ import {
 } from "next";
 import { authOptions } from "../_pages/api/auth/[...nextauth].api";
 import { ISession } from "../types";
-import { getServerSession } from "../utils/server";
 
 export const withSession = async (
   req: NextApiRequest,

@@ -18,7 +18,7 @@ import { ChartData, CollectionStatMap } from "../../types";
 import { linkMapper } from "../../utils/common";
 import { displayInspections, tailwindColors } from "../../utils/view";
 import CollectionDataPill from "../CollectionDataPill";
-import Tooltip from "../Tooltip";
+import Tooltip from "../common/Tooltip";
 
 interface Props {
   displayCollections: number[];

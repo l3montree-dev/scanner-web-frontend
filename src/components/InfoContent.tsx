@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import Article from "./Article";
+import Article from "./common/Article";
 
 const InfoContent = () => {
   return (

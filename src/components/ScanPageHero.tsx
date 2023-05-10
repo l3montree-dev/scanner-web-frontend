@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { FormEvent, FunctionComponent, SetStateAction } from "react";
-import FormInput from "./FormInput";
+import FormInput from "./common/FormInput";
 import Button from "./common/Button";
 
 interface Props {

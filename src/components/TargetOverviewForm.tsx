@@ -3,7 +3,7 @@ import { FormEvent, FunctionComponent, useState } from "react";
 import useLoading from "../hooks/useLoading";
 import Button from "./common/Button";
 
-import FormInput from "./FormInput";
+import FormInput from "./common/FormInput";
 
 const TargetOverviewForm: FunctionComponent<{
   onSearch: (search: string) => Promise<void>;

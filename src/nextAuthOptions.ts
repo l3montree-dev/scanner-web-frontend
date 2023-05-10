@@ -14,7 +14,7 @@ const logger = getLogger("nextAuthOptions");
 async function refreshAccessToken(token: IToken) {
   try {
     const response = await fetch(
-      `${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/token`,
+      `${process.env.NEXT_PUBLIC_KEYCLOAK_ISSUER}/protocol/openid-connect/token`,
       {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -88,7 +88,7 @@ export const authOptions: AuthOptions = {
     KeycloakProvider({
       clientId: process.env.KEYCLOAK_ID as string,
       clientSecret: process.env.KEYCLOAK_SECRET as string,
-      issuer: process.env.KEYCLOAK_ISSUER,
+      issuer: process.env.NEXT_PUBLIC_KEYCLOAK_ISSUER,
       profile(profile: any) {
         return {
           id: profile.sub,

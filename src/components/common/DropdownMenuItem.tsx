@@ -1,7 +1,9 @@
+"use client";
+
 import { Item } from "@radix-ui/react-dropdown-menu";
 import { ComponentProps, FunctionComponent, ReactNode } from "react";
 import { classNames } from "../../utils/common";
-import Spinner from "../Spinner";
+import Spinner from "./Spinner";
 
 const DropdownMenuItem: FunctionComponent<
   ComponentProps<typeof Item> & {

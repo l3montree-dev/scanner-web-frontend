@@ -7,7 +7,7 @@ import DashboardPage from "../../components/DashboardPage";
 import PageTitle from "../../components/PageTitle";
 import ResultEnvelope from "../../components/ResultEnvelope";
 import SideNavigation from "../../components/SideNavigation";
-import Tooltip from "../../components/Tooltip";
+import Tooltip from "../../components/common/Tooltip";
 import Button from "../../components/common/Button";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
 import { withCurrentUserServerSideProps } from "../../decorators/withCurrentUser";
@@ -16,7 +16,7 @@ import { useQuicktest } from "../../hooks/useQuicktest";
 import { collectionService } from "../../services/collectionService";
 import { shareLinkService } from "../../services/shareLinkService";
 import { DTO, ServerSideProps, toDTO } from "../../utils/server";
-import FormInput from "../../components/FormInput";
+import FormInput from "../../components/common/FormInput";
 
 interface Props {
   keycloakIssuer: string;

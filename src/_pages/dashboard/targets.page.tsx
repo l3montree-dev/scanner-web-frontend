@@ -12,7 +12,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import Checkbox from "../../components/Checkbox";
+import Checkbox from "../../components/common/Checkbox";
 import DashboardPage from "../../components/DashboardPage";
 import Pagination from "../../components/Pagination";
 import SideNavigation from "../../components/SideNavigation";
@@ -37,11 +37,11 @@ import { Collection, Target } from "@prisma/client";
 import AddDomainForm from "../../components/AddDomainForm";
 import CheckStateMenu from "../../components/CheckStateMenu";
 import CollectionPill from "../../components/CollectionPill";
-import Modal from "../../components/Modal";
+import Modal from "../../components/common/Modal";
 import PageTitle from "../../components/PageTitle";
 import { SortButton } from "../../components/SortButton";
 import TargetTableItem from "../../components/TargetTableItem";
-import Tooltip from "../../components/Tooltip";
+import Tooltip from "../../components/common/Tooltip";
 import Button from "../../components/common/Button";
 import DropdownMenuItem from "../../components/common/DropdownMenuItem";
 import { useIsGuest } from "../../hooks/useIsGuest";

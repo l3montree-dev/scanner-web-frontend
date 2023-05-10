@@ -2,7 +2,7 @@ import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as Dialog from "@radix-ui/react-dialog";
 import React, { FunctionComponent } from "react";
-import Button from "./common/Button";
+import Button from "./Button";
 
 interface Props {
   isOpen: boolean;

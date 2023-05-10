@@ -8,15 +8,9 @@ import { Stream } from "stream";
 import { ISession } from "../types";
 
 export const getServerSession = async (
-  req: GetServerSidePropsContext["req"],
-  res: GetServerSidePropsContext["res"],
   options: AuthOptions
 ): Promise<ISession | null> => {
-  return nextAuthGetServerSession(
-    req,
-    res,
-    options
-  ) as any as Promise<ISession | null>;
+  return nextAuthGetServerSession(options) as any as Promise<ISession | null>;
 };
 
 export async function stream2buffer(stream: Stream): Promise<Buffer> {

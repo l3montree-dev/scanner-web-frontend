@@ -19,7 +19,7 @@ import Header from "../../components/Header";
 import Meta from "../../components/Meta";
 import PageTitle from "../../components/PageTitle";
 import SideNavigation from "../../components/SideNavigation";
-import Tooltip from "../../components/Tooltip";
+import Tooltip from "../../components/common/Tooltip";
 import LineCharts from "../../components/dashboard/LineCharts";
 import { config } from "../../config";
 import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";

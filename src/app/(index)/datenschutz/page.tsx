@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react";
-import Article from "../../../components/Article";
+import Article from "../../../components/common/Article";
 import Content from "./content";
 import { withNotAvailable } from "../../../decorators/withNotAvailable";
 

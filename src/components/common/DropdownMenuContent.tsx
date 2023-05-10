@@ -1,6 +1,8 @@
+"use client";
+
 import { Content } from "@radix-ui/react-dropdown-menu";
 
-import { ComponentProps, forwardRef, FunctionComponent } from "react";
+import { forwardRef } from "react";
 
 // eslint-disable-next-line react/display-name
 const DropdownMenuContent = forwardRef<any, any>((props, ref) => {

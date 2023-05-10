@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { classNames } from "../utils/common";
+import { classNames } from "../../utils/common";
 
 interface Props {
   onDrop: (files: FileList) => void;

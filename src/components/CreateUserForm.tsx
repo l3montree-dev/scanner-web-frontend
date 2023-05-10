@@ -3,7 +3,7 @@ import useLoading from "../hooks/useLoading";
 import { ICreateUserDTO } from "../types";
 import Button from "./common/Button";
 
-import FormInput from "./FormInput";
+import FormInput from "./common/FormInput";
 
 interface Props {
   onCreateUser: (

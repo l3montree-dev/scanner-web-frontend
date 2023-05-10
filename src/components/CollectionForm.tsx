@@ -6,7 +6,7 @@ import {
 } from "react";
 import useLoading from "../hooks/useLoading";
 import { colors } from "../utils/common";
-import FormInput from "./FormInput";
+import FormInput from "./common/FormInput";
 import Button from "./common/Button";
 import Menu from "./common/Menu";
 

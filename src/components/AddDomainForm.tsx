@@ -2,8 +2,8 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FormEvent, FunctionComponent, useState } from "react";
 import useLoading from "../hooks/useLoading";
-import DragAndDrop from "./DragAndDrop";
-import FormInput from "./FormInput";
+import DragAndDrop from "./common/DragAndDrop";
+import FormInput from "./common/FormInput";
 import Button from "./common/Button";
 import OutlineButton from "./common/OutlineButton";
 

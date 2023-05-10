@@ -1,7 +1,7 @@
 import { Network } from "@prisma/client";
 import { FormEvent, FunctionComponent, useState } from "react";
 import useLoading from "../hooks/useLoading";
-import FormTextarea from "./FormTextarea";
+import FormTextarea from "./common/FormTextarea";
 import Button from "./common/Button";
 
 interface Props extends Network {

@@ -5,7 +5,7 @@ import useLoading from "../hooks/useLoading";
 import { colors } from "../utils/common";
 import { DTO } from "../utils/server";
 
-import FormInput from "./FormInput";
+import FormInput from "./common/FormInput";
 import ShareLinkItem from "./ShareLinkItem";
 import Button from "./common/Button";
 import Menu from "./common/Menu";
