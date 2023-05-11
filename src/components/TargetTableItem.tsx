@@ -58,6 +58,7 @@ const TargetTableItem: FunctionComponent<Props> = ({
   selected,
   scanRequest,
   scan,
+  destroy,
   collections,
 }) => {
   const isGuest = useIsGuest();
@@ -214,7 +215,9 @@ const TargetTableItem: FunctionComponent<Props> = ({
                       )}
                     </div>
                   </DropdownMenuItem>
-
+                  <DropdownMenuItem onClick={() => destroy(target.uri)}>
+                    Löschen
+                  </DropdownMenuItem>
                   {/*!isGuest && (
                     <>
                       {Object.keys(collections).length > 0 ? (
@@ -239,9 +242,7 @@ const TargetTableItem: FunctionComponent<Props> = ({
                         </Link>
                       )}
 
-                      <DropdownMenuItem onClick={() => destroy(target.uri)}>
-                        Löschen
-                      </DropdownMenuItem>
+                     
                     </>
                       )*/}
                 </>

@@ -6,7 +6,6 @@ import {
   faCaretUp,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Checkbox } from "@radix-ui/react-checkbox";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, {
@@ -51,6 +50,7 @@ import { DTO } from "../../../utils/server";
 import { optimisticUpdate } from "../../../utils/view";
 import DropdownMenuItem from "../../../components/common/DropdownMenuItem";
 import { withAuthProvider } from "../../../providers/AuthProvider";
+import Checkbox from "../../../components/common/Checkbox";
 
 const translateDomainType = (type: TargetType) => {
   switch (type) {
@@ -143,10 +143,10 @@ const Content: FunctionComponent<Props> = (props) => {
       prev.filter((d) => d.uri !== uri)
     );
     const response = await clientHttpClient(
-      `/api/targets`,
+      `/api/targets/delete`,
       crypto.randomUUID(),
       {
-        method: "DELETE",
+        method: "POST",
         body: JSON.stringify({
           targets: [uri],
         }),
@@ -167,10 +167,10 @@ const Content: FunctionComponent<Props> = (props) => {
 
   const deleteSelection = async () => {
     const response = await clientHttpClient(
-      `/api/targets`,
+      `/api/targets/delete`,
       crypto.randomUUID(),
       {
-        method: "DELETE",
+        method: "POST",
         body: JSON.stringify({
           targets: selectedTargets,
         }),
@@ -373,6 +373,7 @@ const Content: FunctionComponent<Props> = (props) => {
       | keyof IScanSuccessResponse["result"],
     direction: parseInt(searchParams.get("sortDirection") as string) as 1 | -1,
   };
+
   return (
     <>
       <div className="flex-1">
@@ -469,7 +470,6 @@ const Content: FunctionComponent<Props> = (props) => {
                     />
                   </>
                 )}
-
                 <Menu
                   Button={
                     <Button

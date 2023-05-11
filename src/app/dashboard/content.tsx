@@ -75,7 +75,7 @@ const Content: FunctionComponent<Props> = (props) => {
       <div className={classNames(noDomains && "relative pointer-events-none")}>
         <div
           className={classNames(
-            "max-w-screen-2xl pb-10 mx-auto md:px-8 px-4 flex-1 ",
+            "max-w-screen-2xl pb-10 mx-auto flex-1 ",
             noDomains && "blur-sm overflow-hidden"
           )}
           style={{

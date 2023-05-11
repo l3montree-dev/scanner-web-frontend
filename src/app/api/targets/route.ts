@@ -1,4 +1,3 @@
-import { PrismaClient, User } from "@prisma/client";
 import PQueue from "p-queue";
 import { inspectRPC } from "../../../inspection/inspect";
 import { targetService } from "../../../services/targetService";
@@ -9,7 +8,6 @@ import BadRequestException from "../../../errors/BadRequestException";
 import { authOptions } from "../../../nextAuthOptions";
 import { getLogger } from "../../../services/logger";
 import { reportService } from "../../../services/reportService";
-import { targetCollectionService } from "../../../services/targetCollectionService";
 import {
   isScanError,
   neverThrow,
@@ -21,58 +19,8 @@ import { getCurrentUser, toDTO } from "../../../utils/server";
 
 const logger = getLogger(__filename);
 
-const deleteTargetRelation = async (
-  uris: string[],
-  user: User,
-  prisma: PrismaClient
-) => {
-  if (uris.length === 0) {
-    return;
-  }
-  // delete it from all collection where this user is owner of or its his default collection.
-  const relations = await prisma.targetCollectionRelation.findMany({
-    where: {
-      OR: [
-        {
-          uri: {
-            in: uris,
-          },
-          collection: {
-            ownerId: user.id,
-          },
-        },
-        {
-          uri: {
-            in: uris,
-          },
-          collectionId: user.defaultCollectionId,
-        },
-      ],
-    },
-  });
-  return Promise.all(
-    relations.map((r) =>
-      targetCollectionService.deleteConnection(uris, r.collectionId, prisma)
-    )
-  );
-};
-
-export async function DELETE(req: NextRequest) {
-  const [{ targets }, currentUser] = await Promise.all([
-    req.json() as Promise<{ targets: string[] }>,
-    getCurrentUser(authOptions),
-  ]);
-  await deleteTargetRelation(targets, currentUser, prisma);
-  return NextResponse.json({
-    success: true,
-  });
-}
-
-export async function POST(
-  req: NextRequest,
-  currentUser: User,
-  prisma: PrismaClient
-) {
+export async function POST(req: NextRequest) {
+  const currentUser = await getCurrentUser(authOptions);
   const requestId = req.headers.get("x-request-id") as string;
   // check if the user uploads a file or only inputs a single domain.
   if (req.headers.get("content-type")?.includes("application/json")) {

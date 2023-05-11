@@ -316,7 +316,7 @@ const Content: FunctionComponent<Props> = (props) => {
       <div className={classNames(noDomains && "relative")}>
         <div
           className={classNames(
-            "max-w-screen-2xl gap-4 pb-10 mt-5 flex flex-row mx-auto md:px-8 px-4 flex-1 text-white",
+            "max-w-screen-2xl gap-4 pb-10 mt-5 flex flex-row mx-auto  flex-1 text-white",
             noDomains && "blur-sm pointer-events-none overflow-hidden"
           )}
           style={{

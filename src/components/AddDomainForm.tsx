@@ -26,6 +26,7 @@ const AddDomainForm: FunctionComponent<{
       setNewDomain("");
       createRequest.success();
     } catch (err) {
+      console.log(err);
       createRequest.error(
         "Leider ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut."
       );
@@ -74,7 +75,7 @@ const AddDomainForm: FunctionComponent<{
         </span>
       )}
       {createRequest.successed && (
-        <span className="text-lightning-500 block text-right mt-2">
+        <span className="text-gruen-100 block text-right mt-2">
           Domain erfolgreich hinzugefügt.
         </span>
       )}
