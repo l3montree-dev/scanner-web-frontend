@@ -1,4 +1,3 @@
-import { PageProps } from "../../../../.next/types/app/layout";
 import { config } from "../../../config";
 import { prisma } from "../../../db/connection";
 import { authOptions } from "../../../nextAuthOptions";
@@ -18,7 +17,7 @@ import {
 } from "../../../utils/server";
 import Content from "./content";
 
-const Page = async ({ searchParams }: PageProps) => {
+const Page = async ({ searchParams }: any) => {
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 2);
   yesterday.setHours(0, 0, 0, 0);

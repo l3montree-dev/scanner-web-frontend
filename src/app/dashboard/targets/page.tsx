@@ -1,20 +1,17 @@
-import { NextPage } from "next";
-import React from "react";
-import { PageProps } from "../../../../.next/types/app/layout";
 import { prisma } from "../../../db/connection";
+import { authOptions } from "../../../nextAuthOptions";
 import { collectionService } from "../../../services/collectionService";
 import { targetService } from "../../../services/targetService";
 import { TargetType } from "../../../types";
 import {
+  collectionId,
   isGuestUser,
   normalizeToMap,
-  collectionId,
 } from "../../../utils/common";
 import { getCurrentUserOrGuestUser, toDTO } from "../../../utils/server";
-import { authOptions } from "../../../nextAuthOptions";
 import Content from "./content";
 
-const Page = async ({ searchParams }: PageProps) => {
+const Page = async ({ searchParams }: any) => {
   // get the query params.
   const page = +(searchParams["page"] ?? 0);
   const search = searchParams["search"] as string | undefined;
