@@ -15,7 +15,7 @@ const Page = async () => {
   } as any);
   // check if the user is an admin
   // if not, redirect him to the dashboard page.
-  if (!isAdmin(token)) {
+  if (!isAdmin(token) || !token) {
     return redirect("/dashboard");
   }
 

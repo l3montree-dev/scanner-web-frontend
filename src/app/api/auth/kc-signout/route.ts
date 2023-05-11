@@ -1,9 +1,8 @@
-import { NextResponse } from "next/server";
-import { decorate } from "../../../../decorators/decorate";
-import { withToken } from "../../../../decorators/withToken";
+import { NextRequest, NextResponse } from "next/server";
+import { getJWTToken } from "../../../../utils/server";
 
-export const GET = decorate(async (req, [token]) => {
-  console.log("CALLED");
+export async function GET(req: NextRequest) {
+  const token = await getJWTToken({ req });
   if (!token) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
@@ -19,5 +18,5 @@ export const GET = decorate(async (req, [token]) => {
     path = `${path}&client_id=${process.env.KEYCLOAK_ID}`;
   }
 
-  return { path };
-}, withToken);
+  return NextResponse.json({ path });
+}

@@ -2,7 +2,6 @@ import { randomUUID } from "crypto";
 import PQueue from "p-queue";
 import { prisma } from "../db/connection";
 
-import { once } from "../decorators/once";
 import { inspect } from "../inspection/inspect";
 import { isMaster } from "../leaderelection/leaderelection";
 import { IScanResponse } from "../types";
@@ -15,6 +14,19 @@ import { reportService } from "./reportService";
 import { statService } from "./statService";
 
 const logger = getLogger(__filename);
+// make sure to always execute a function only once.
+const once = <T extends (...args: any) => any>(fn: T): T => {
+  let executed = false;
+  let result: ReturnType<T>;
+  return (async (...args: any) => {
+    if (executed) {
+      return result;
+    }
+    executed = true;
+    result = await fn(...args);
+    return result;
+  }) as T;
+};
 
 const bootstrap = once(() => {
   // start the response loops.

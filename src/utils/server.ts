@@ -6,6 +6,7 @@ import {
 import { GetTokenParams, getToken } from "next-auth/jwt";
 import { Stream } from "stream";
 import { prisma } from "../db/connection";
+import { UnauthorizedException } from "../errors/UnauthorizedException";
 import { Guest, ISession, IToken } from "../types";
 import { isGuestUser } from "./common";
 
@@ -16,7 +17,7 @@ export const getServerSession = async (
 };
 
 export const getJWTToken = async (params: GetTokenParams) => {
-  return (await getToken(params)) as unknown as IToken;
+  return (await getToken(params)) as unknown as IToken | null;
 };
 
 export const getCurrentUserOrGuestUser = async (
@@ -24,7 +25,7 @@ export const getCurrentUserOrGuestUser = async (
 ): Promise<User | Guest> => {
   const session = await getServerSession(options);
   if (!session) {
-    throw new Error("no session");
+    throw new UnauthorizedException("no session");
   }
   // check if guest
   if (isGuestUser(session.user)) {
@@ -38,7 +39,9 @@ export const getCurrentUserOrGuestUser = async (
   });
 
   if (!currentUser) {
-    throw new Error(`currentUser with id: ${session.user.id} not found`);
+    throw new UnauthorizedException(
+      `currentUser with id: ${session.user.id} not found`
+    );
   }
 
   return currentUser;
@@ -47,7 +50,7 @@ export const getCurrentUserOrGuestUser = async (
 export const getCurrentUser = async (options: AuthOptions): Promise<User> => {
   const session = await getServerSession(options);
   if (!session) {
-    throw new Error("no session");
+    throw new UnauthorizedException("no session");
   }
   const currentUser = await prisma.user.findFirst({
     where: {
@@ -56,7 +59,9 @@ export const getCurrentUser = async (options: AuthOptions): Promise<User> => {
   });
 
   if (!currentUser) {
-    throw new Error(`currentUser with id: ${session.user.id} not found`);
+    throw new UnauthorizedException(
+      `currentUser with id: ${session.user.id} not found`
+    );
   }
 
   return currentUser;
