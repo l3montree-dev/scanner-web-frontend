@@ -18,7 +18,7 @@ const DashboardLayout = async ({ children }: Props) => {
           <SideNavigation session={session} />
         </div>
         <div className="flex-1 flex flex-col">
-          <Header />
+          <Header session={session} />
           <main className="py-10 text-base flex-col bg-white flex flex-1">
             <div className="max-w-screen-2xl md:px-8 px-4 w-full flex-1 mx-auto">
               {children}

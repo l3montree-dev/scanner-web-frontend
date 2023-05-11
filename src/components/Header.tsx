@@ -6,17 +6,18 @@ import {
   faUserAstronaut,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { authOptions } from "../nextAuthOptions";
+import { ISession } from "../types";
 import { classNames, clientOnly, isGuestUser } from "../utils/common";
-import { getServerSession } from "../utils/server";
 import HeaderTitle from "./HeaderTitle";
 import DropdownMenuItem from "./common/DropdownMenuItem";
 import LogoutMenuItem from "./common/LogoutMenuItem";
 import Menu from "./common/Menu";
 import Tooltip from "./common/Tooltip";
+import { FunctionComponent } from "react";
 
-const Header: any = async () => {
-  const session = await getServerSession(authOptions);
+const Header: FunctionComponent<{ session: ISession | null }> = ({
+  session,
+}) => {
   return (
     <header
       className={classNames(

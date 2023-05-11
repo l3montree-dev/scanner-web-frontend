@@ -1,20 +1,20 @@
 import KcAdminClient from "@keycloak/keycloak-admin-client";
 
 const getBaseUrl = () => {
-  if (!process.env.KEYCLOAK_ISSUER) {
+  if (!process.env.NEXT_PUBLIC_KEYCLOAK_ISSUER) {
     throw new Error("KEYCLOAK_ISSUER is not defined");
   }
-  const issuer = process.env.KEYCLOAK_ISSUER;
+  const issuer = process.env.NEXT_PUBLIC_KEYCLOAK_ISSUER;
   const url = new URL(issuer);
   // build the base url from the issuer
   return `${url.protocol}//${url.hostname}`;
 };
 
 const getRealmName = () => {
-  if (!process.env.KEYCLOAK_ISSUER) {
+  if (!process.env.NEXT_PUBLIC_KEYCLOAK_ISSUER) {
     throw new Error("KEYCLOAK_ISSUER is not defined");
   }
-  const issuer = process.env.KEYCLOAK_ISSUER;
+  const issuer = process.env.NEXT_PUBLIC_KEYCLOAK_ISSUER;
   return issuer.substring(issuer.lastIndexOf("/") + 1);
 };
 

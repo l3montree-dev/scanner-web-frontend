@@ -7,7 +7,7 @@ import { clientHttpClient } from "../../services/clientHttpClient";
 import { classNames } from "../../utils/common";
 import { didPass2CheckResult } from "../../utils/view";
 import ResultIcon from "../ResultIcon";
-import Spinner from "../Spinner";
+import Spinner from "../common/Spinner";
 
 const parseDate = (date: string) => {
   let [day, month, year] = date.split(".");

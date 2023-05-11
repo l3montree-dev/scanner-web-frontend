@@ -59,7 +59,7 @@ const getLinks = (isGuest: boolean, isAdmin: boolean) => {
     {
       icon: faUsers,
       name: "Nutzerverwaltung",
-      path: "/administration/users",
+      path: "/dashboard/users",
     },
     {
       icon: faInfo,

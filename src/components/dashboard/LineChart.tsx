@@ -11,14 +11,13 @@ import React, { FunctionComponent, useCallback, useState } from "react";
 
 import { Canvg } from "canvg";
 import { debounce } from "lodash";
-import { useRouter } from "next/router";
+import { useSearchParams } from "next/navigation";
 import {
   VictoryAxis,
   VictoryChart,
   VictoryLine,
   VictoryZoomContainer,
 } from "victory";
-import useLoading from "../../hooks/useLoading";
 import useWindowSize from "../../hooks/useWindowSize";
 import { InspectionType } from "../../inspection/scans";
 import { descriptionMapper, titleMapper } from "../../messages";
@@ -84,7 +83,7 @@ const LineChart: FunctionComponent<Props> = ({
   const chartRef = React.useRef<any>(null);
   const { width } = useWindowSize();
 
-  const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [visibleDomain, setVisibleDomain] = useState<
     [string | undefined, string | undefined]
@@ -251,7 +250,7 @@ const LineChart: FunctionComponent<Props> = ({
           containerComponent={
             <VictoryZoomContainer
               portalZIndex={10}
-              allowZoom={router.query.zoomable === "1"}
+              allowZoom={searchParams.get("zoomable") === "1"}
               onZoomDomainChange={(ev) => handleDomainChange(ev.x)}
               ref={chartRef}
             />
@@ -383,7 +382,7 @@ const LineChart: FunctionComponent<Props> = ({
           );
         })}
       </div>
-      {router.query.displayDiff === "1" && (
+      {searchParams.get("displayDiff") === "1" && (
         <div className="px-6 mt-5">
           <TrendDiff
             inspectionType={inspectionType}

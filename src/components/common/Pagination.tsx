@@ -1,6 +1,6 @@
 import { FunctionComponent, useMemo } from "react";
-import { PaginateResult } from "../types";
-import { classNames } from "../utils/common";
+import { PaginateResult } from "../../types";
+import { classNames } from "../../utils/common";
 
 const buildArray = (length: number, currentPage: number) => {
   if (length === 0) {

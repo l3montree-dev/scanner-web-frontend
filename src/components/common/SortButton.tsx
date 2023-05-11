@@ -1,7 +1,7 @@
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FunctionComponent } from "react";
-import { classNames } from "../utils/common";
+import { classNames } from "../../utils/common";
 
 export const SortButton: FunctionComponent<{
   sortKey: "uri";

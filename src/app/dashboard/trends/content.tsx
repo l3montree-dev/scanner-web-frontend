@@ -1,10 +1,10 @@
+"use client";
+
 import {
   faCircleInfo,
   faQuestionCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Collection } from "@prisma/client";
-import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import React, {
   FunctionComponent,
   useEffect,
@@ -12,68 +12,26 @@ import React, {
   useState,
   useTransition,
 } from "react";
-import CollectionPill from "../../components/CollectionPill";
-import EmptyDashboardNotice from "../../components/EmptyDashboardNotice";
-import Footer from "../../components/Footer";
-import Header from "../../components/Header";
-import Meta from "../../components/Meta";
-import PageTitle from "../../components/PageTitle";
-import SideNavigation from "../../components/SideNavigation";
-import Tooltip from "../../components/common/Tooltip";
-import LineCharts from "../../components/dashboard/LineCharts";
-import { config } from "../../config";
-import { decorateServerSideProps } from "../../decorators/decorateServerSideProps";
-import { withCurrentUserOrGuestServerSideProps } from "../../decorators/withCurrentUser";
-import { withDB } from "../../decorators/withDB";
-import { useIsGuest } from "../../hooks/useIsGuest";
-import { useSession } from "../../hooks/useSession";
-import useWindowSize from "../../hooks/useWindowSize";
-import { collectionService } from "../../services/collectionService";
-import { statService } from "../../services/statService";
-import { ChartData, Guest, IDashboard } from "../../types";
+import EmptyDashboardNotice from "../../../components/EmptyDashboardNotice";
+import PageTitle from "../../../components/PageTitle";
+import Tooltip from "../../../components/common/Tooltip";
+import LineCharts from "../../../components/dashboard/LineCharts";
+import useWindowSize from "../../../hooks/useWindowSize";
+import { ChartData, IDashboard } from "../../../types";
+import { classNames, dateFormat } from "../../../utils/common";
 import {
-  Normalized,
-  classNames,
-  collectionId,
-  dateFormat,
-  isAdmin,
-  normalizeToMap,
-  replaceNullWithZero,
-} from "../../utils/common";
-import { DTO, ServerSideProps, toDTO } from "../../utils/server";
-import { displayInspections, tailwindColors } from "../../utils/view";
-import {
-  withSession,
-  withSessionServerSideProps,
-} from "../../decorators/withSession";
+  displayInspections,
+  localizeDefaultCollection,
+} from "../../../utils/view";
 
 interface Props {
-  dashboard: IDashboard;
-  keycloakIssuer: string;
   defaultCollectionId: number;
-  collections: Normalized<DTO<Collection & { size: number }>>;
-  refCollections: number[]; // the collections which were defined using environment variables
+  refCollections: number[];
+  dashboard: IDashboard;
+  username?: string;
 }
 
-const localizeDefaultCollection = <
-  T extends { id: number; title: string; color: string }
->(
-  collection: T,
-  defaultCollectionId: number,
-  username: string
-): T => {
-  if (collection.id === defaultCollectionId) {
-    return {
-      ...collection,
-      color: tailwindColors.blau["100"],
-      title: username,
-    };
-  }
-
-  return collection;
-};
-
-const Dashboard: FunctionComponent<Props> = (props) => {
+const Content: FunctionComponent<Props> = (props) => {
   const [zoomLevel, setZoomLevel] = React.useState(2);
   const { width } = useWindowSize();
 
@@ -97,7 +55,6 @@ const Dashboard: FunctionComponent<Props> = (props) => {
           } as ChartData),
     [dashboard.historicalData, props.defaultCollectionId]
   );
-  const user = useSession();
 
   const [displayCollections, setDisplayCollections] = useState<number[]>(
     props.refCollections.concat(props.defaultCollectionId)
@@ -146,7 +103,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
                       }),
                     },
                     props.defaultCollectionId,
-                    user.data?.user.name || "Meine"
+                    props.username || "Meine"
                   ),
                 ];
               }
@@ -176,7 +133,7 @@ const Dashboard: FunctionComponent<Props> = (props) => {
           ];
         })
       ),
-    [dashboard.historicalData, user.data, props.defaultCollectionId]
+    [dashboard.historicalData, props.username, props.defaultCollectionId]
   );
 
   const handleDisplayCollectionToggle = (collectionId: number) => {
@@ -202,42 +159,27 @@ const Dashboard: FunctionComponent<Props> = (props) => {
       });
     }
   };
-  const isGuest = useIsGuest();
 
   return (
     <>
-      <Meta title="Trendanalyse" />
-      <div className="flex-row min-h-screen flex w-full flex-1">
-        <div className="hidden lg:block">
-          <SideNavigation />
-        </div>
-        <div className="flex-1 flex flex-col">
-          <Header keycloakIssuer={props.keycloakIssuer} />
-          <main className=" flex-col flex flex-1">
-            <div className="max-w-screen-2xl px-4 md:px-8 w-full mb-5 pt-10 mx-auto">
-              <div className=" mb-0 gap-2 flex flex-row items-center">
-                <PageTitle
-                  className="text-2xl font-bold"
-                  stringRep="Trendanalyse"
-                >
-                  Trendanalyse
-                </PageTitle>
-                <Tooltip
-                  tooltip={`         
+      <div className=" mb-0 gap-2 flex flex-row items-center">
+        <PageTitle className="text-2xl font-bold" stringRep="Trendanalyse">
+          Trendanalyse
+        </PageTitle>
+        <Tooltip
+          tooltip={`         
                   Die Trendanalyse visualisiert die Veränderung der
                   Sicherheitskriterien in Anbetracht der Zeit. Zusätzlich stellt sie
                   die Werte der verwalteten Dienste im Vergleich zu den Werten der Top
                   100.000 .de Domains sowie der globalen Top 100.000 Domains dar. Die
                   Daten werden täglich aktualisiert.`}
-                >
-                  <div className="text-dunkelgrau-100">
-                    <FontAwesomeIcon size="xl" icon={faQuestionCircle} />
-                  </div>
-                </Tooltip>
-              </div>
-            </div>
-
-            {/*!isGuest && (
+        >
+          <div className="text-dunkelgrau-100">
+            <FontAwesomeIcon icon={faQuestionCircle} />
+          </div>
+        </Tooltip>
+      </div>
+      {/*!isGuest && (
               <div className="sticky z-20 border-b-6 border-b-hellgrau-40 beneath-header py-2 bg-white flex flex-row mb-4 items-center">
                 <div className="max-w-screen-xl px-3 text-lg gap-1 flex flex-col flex-1 mx-auto">
                   <div className="flex flex-row justify-between">
@@ -371,93 +313,39 @@ const Dashboard: FunctionComponent<Props> = (props) => {
               </div>
                   )*/}
 
-            <div className={classNames(noDomains && "relative")}>
-              <div
-                className={classNames(
-                  "max-w-screen-2xl gap-4 pb-10 flex flex-row mx-auto md:px-8 px-4 flex-1 text-white",
-                  noDomains && "blur-sm pointer-events-none overflow-hidden"
-                )}
-                style={{
-                  maxHeight: noDomains ? "calc(100vh)" : "auto",
-                }}
-              >
-                <div className="flex-1">
-                  <LineCharts
-                    zoomLevel={zoomLevel}
-                    displayCollections={_displayCollections}
-                    displayInspections={displayInspections}
-                    dataPerInspection={dataPerInspection}
-                    defaultCollectionId={props.defaultCollectionId}
-                  />
-                </div>
-              </div>
-              {noDomains && (
-                <div className="absolute pointer-events-auto top-20  text-base flex left-0 flex-row w-full justify-center right-0 mb-10 px-3 flex-1">
-                  <div className="p-5 flex max-w-screen-lg flex-row bg-hellorange-100 text-textblack">
-                    <div className="pr-3 pt-1">
-                      <FontAwesomeIcon size={"lg"} icon={faCircleInfo} />
-                    </div>
-                    <EmptyDashboardNotice />
-                  </div>
-                </div>
-              )}
-            </div>
-          </main>
+      <div className={classNames(noDomains && "relative")}>
+        <div
+          className={classNames(
+            "max-w-screen-2xl gap-4 pb-10 mt-5 flex flex-row mx-auto md:px-8 px-4 flex-1 text-white",
+            noDomains && "blur-sm pointer-events-none overflow-hidden"
+          )}
+          style={{
+            maxHeight: noDomains ? "calc(100vh)" : "auto",
+          }}
+        >
+          <div className="flex-1">
+            <LineCharts
+              zoomLevel={zoomLevel}
+              displayCollections={_displayCollections}
+              displayInspections={displayInspections}
+              dataPerInspection={dataPerInspection}
+              defaultCollectionId={props.defaultCollectionId}
+            />
+          </div>
         </div>
+        {noDomains && (
+          <div className="absolute pointer-events-auto top-20  text-base flex left-0 flex-row w-full justify-center right-0 mb-10 px-3 flex-1">
+            <div className="p-5 flex max-w-screen-lg flex-row bg-hellorange-100 text-textblack">
+              <div className="pr-3 pt-1">
+                <FontAwesomeIcon size={"lg"} icon={faCircleInfo} />
+              </div>
+              <EmptyDashboardNotice />
+            </div>
+          </div>
+        )}
       </div>
-      <Footer />
     </>
   );
 };
 
-export const getServerSideProps = decorateServerSideProps(
-  async (
-    context,
-    [currentUser, session, prisma]
-  ): Promise<ServerSideProps<Props>> => {
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 2);
-    yesterday.setHours(0, 0, 0, 0);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const forceCollection = context.query.forceCollection as string | undefined;
-    if (forceCollection && isAdmin(session)) {
-      currentUser = {
-        id: "admin",
-        defaultCollectionId: +forceCollection,
-        collectionId: +forceCollection,
-      } as Guest;
-    }
-
-    const [dashboard, referenceChartData, collections] = await Promise.all([
-      statService.getDashboardForUser(currentUser, prisma),
-      statService.getReferenceChartData(prisma),
-      collectionService.getAllCollectionsOfUser(currentUser, prisma, true),
-    ]);
-
-    return {
-      props: {
-        dashboard: replaceNullWithZero({
-          ...dashboard,
-          historicalData: {
-            ...dashboard.historicalData,
-            ...referenceChartData,
-          },
-        }),
-        keycloakIssuer: process.env.KEYCLOAK_ISSUER as string,
-        defaultCollectionId: collectionId(currentUser),
-        refCollections: config.generateStatsForCollections,
-        collections: normalizeToMap(
-          toDTO(collections).map((c) => ({ ...c, size: c._count.targets })),
-          "id"
-        ),
-      },
-    };
-  },
-  withCurrentUserOrGuestServerSideProps,
-  withSessionServerSideProps,
-  withDB
-);
-
-export default Dashboard;
+export default Content;

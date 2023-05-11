@@ -19,8 +19,8 @@ const Modal: FunctionComponent<Props> = (props) => {
       }}
     >
       <Dialog.Portal>
-        <Dialog.Overlay className="DialogOverlay z-20 bg-black/50" />
-        <Dialog.Content className="DialogContent z-30 bg-white rounded-sm text-textblack">
+        <Dialog.Overlay className="DialogOverlay z-100 bg-black/50" />
+        <Dialog.Content className="DialogContent z-300 bg-white rounded-sm text-textblack">
           <div className="flex flex-row mb-5 justify-between">
             <Dialog.Title className="DialogTitle text-xl font-bold mb-2">
               {props.title}
