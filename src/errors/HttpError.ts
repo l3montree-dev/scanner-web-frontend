@@ -1,3 +1,5 @@
+import { NextResponse } from "next/server";
+
 export default class HttpError extends Error {
   public status: number;
   public message: string;
@@ -9,5 +11,15 @@ export default class HttpError extends Error {
     this.status = status;
     this.message = message;
     this.name = name;
+  }
+
+  toNextResponse(): NextResponse {
+    return NextResponse.json(
+      {
+        name: this.name,
+        message: this.message,
+      },
+      { status: this.status }
+    );
   }
 }

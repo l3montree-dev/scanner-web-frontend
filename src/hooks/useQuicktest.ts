@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   FormEvent,
   useCallback,
@@ -33,12 +33,14 @@ const isInViewport = (element: HTMLElement) => {
   );
 };
 
-export function useQuicktest(code?: string) {
+export function useQuicktest(code?: string | null) {
   const [website, setWebsite] = useState("");
   const scanRequest = useLoading();
   const refreshRequest = useLoading();
   const [target, setTarget] = useState<null | DTO<DetailedTarget>>(null);
   const router = useRouter();
+  const query = useSearchParams();
+  const pathname = usePathname();
 
   const onSubmit = useCallback(
     async (e: FormEvent, site: string) => {
@@ -97,17 +99,18 @@ export function useQuicktest(code?: string) {
   const scannedSite = useRef<null | string>(null);
 
   useEffect(() => {
-    if (router.query?.site && scannedSite.current !== router.query.site) {
-      scannedSite.current = router.query.site as string;
-      setWebsite(router.query.site as string);
+    const site = query.get("site");
+    if (site && scannedSite.current !== site) {
+      scannedSite.current = site;
+      setWebsite(site);
       onSubmit(
         {
           preventDefault: () => {},
         } as FormEvent,
-        router.query.site as string
+        query.get("site") as string
       );
     }
-  }, [router.query.site, onSubmit]);
+  }, [query, onSubmit]);
 
   const handleRefresh = async () => {
     if (!target) {
@@ -170,10 +173,11 @@ export function useQuicktest(code?: string) {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    await router.push({
-      pathname: router.pathname,
-      query: { ...router.query, site: website },
+    const searchParams = new URLSearchParams({
+      ...Object.fromEntries(query.entries()),
+      site: website,
     });
+    router.push(`${pathname}?${searchParams.toString()}`);
   };
 
   return {

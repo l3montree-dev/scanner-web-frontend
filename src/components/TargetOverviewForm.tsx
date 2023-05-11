@@ -1,16 +1,18 @@
-import { useRouter } from "next/router";
+import { useSearchParams } from "next/navigation";
 import { FormEvent, FunctionComponent, useState } from "react";
 import useLoading from "../hooks/useLoading";
 import Button from "./common/Button";
 
-import FormInput from "./FormInput";
+import FormInput from "./common/FormInput";
 
 const TargetOverviewForm: FunctionComponent<{
   onSearch: (search: string) => Promise<void>;
 }> = ({ onSearch }) => {
-  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const [search, setSearch] = useState((router.query.search as string) ?? "");
+  const [search, setSearch] = useState(
+    (searchParams.get("search")?.toString() as string) ?? ""
+  );
   const searchRequest = useLoading();
 
   const handleSearch = async (e: FormEvent) => {

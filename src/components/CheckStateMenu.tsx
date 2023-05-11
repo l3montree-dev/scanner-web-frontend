@@ -5,13 +5,14 @@ import {
   faWarning,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useRouter } from "next/router";
+
 import { FunctionComponent } from "react";
 import { InspectionType } from "../inspection/scans";
 import { titleMapper } from "../messages";
 import { classNames } from "../utils/common";
 import DropdownMenuItem from "./common/DropdownMenuItem";
 import Menu from "./common/Menu";
+import { useSearchParams } from "next/navigation";
 
 interface Props {
   onChange: (
@@ -37,9 +38,9 @@ const CheckStateMenu: FunctionComponent<Props> = ({
   inspectionType,
   onChange,
 }) => {
-  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const selected = router.query[inspectionType] ?? -2;
+  const selected = searchParams.get(inspectionType) ?? -2;
 
   const handleClick = (value: 1 | 0 | -1) => {
     if (value === +selected) {

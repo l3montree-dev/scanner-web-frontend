@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { FormEvent, FunctionComponent, SetStateAction } from "react";
-import FormInput from "./FormInput";
+import FormInput from "./common/FormInput";
 import Button from "./common/Button";
 
 interface Props {
@@ -44,6 +44,7 @@ const ScanPageHero: FunctionComponent<Props> = ({
           <Image
             width={200}
             height={200}
+            priority
             src={"/assets/sticker_challenge_white.svg"}
             alt="OZG-Logo"
             className="block sm:inline-block sm:mx-0 mx-auto"

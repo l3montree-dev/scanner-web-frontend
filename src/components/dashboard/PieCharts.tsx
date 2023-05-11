@@ -4,7 +4,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { FunctionComponent } from "react";
 import {
   VictoryAxis,
@@ -18,7 +18,7 @@ import { ChartData, CollectionStatMap } from "../../types";
 import { linkMapper } from "../../utils/common";
 import { displayInspections, tailwindColors } from "../../utils/view";
 import CollectionDataPill from "../CollectionDataPill";
-import Tooltip from "../Tooltip";
+import Tooltip from "../common/Tooltip";
 
 interface Props {
   displayCollections: number[];

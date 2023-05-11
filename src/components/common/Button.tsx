@@ -1,6 +1,6 @@
 import React, { forwardRef } from "react";
 import { classNames } from "../../utils/common";
-import Spinner from "../Spinner";
+import Spinner from "./Spinner";
 
 interface Props {
   loading?: boolean;

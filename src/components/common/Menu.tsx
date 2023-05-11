@@ -1,3 +1,5 @@
+"use client";
+
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import React, { FunctionComponent, useEffect } from "react";
 import DropdownMenuContent from "./DropdownMenuContent";

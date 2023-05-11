@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useEffect, useRef } from "react";
 import { classNames } from "../utils/common";
-import { pageTitleNotVisibleEmitter } from "./Header";
+import { pageTitleNotVisibleEmitter } from "./HeaderTitle";
 
 interface Props {
   className?: string;

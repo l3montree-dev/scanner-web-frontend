@@ -2,7 +2,7 @@ import { faEnvelope, faPhone } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import AddDomainForm from "../components/AddDomainForm";
-import Modal from "../components/Modal";
+import Modal from "./common/Modal";
 import { clientHttpClient } from "../services/clientHttpClient";
 import Button from "./common/Button";
 

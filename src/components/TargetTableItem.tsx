@@ -20,9 +20,9 @@ import { DetailedTarget } from "../types";
 import { classNames, toGermanDate } from "../utils/common";
 import { DTO } from "../utils/server";
 import { didPass2CheckResult } from "../utils/view";
-import Checkbox from "./Checkbox";
+import Checkbox from "./common/Checkbox";
 import ResultIcon from "./ResultIcon";
-import Tooltip from "./Tooltip";
+import Tooltip from "./common/Tooltip";
 import DropdownMenuItem from "./common/DropdownMenuItem";
 import Menu from "./common/Menu";
 
@@ -58,6 +58,7 @@ const TargetTableItem: FunctionComponent<Props> = ({
   selected,
   scanRequest,
   scan,
+  destroy,
   collections,
 }) => {
   const isGuest = useIsGuest();
@@ -214,7 +215,9 @@ const TargetTableItem: FunctionComponent<Props> = ({
                       )}
                     </div>
                   </DropdownMenuItem>
-
+                  <DropdownMenuItem onClick={() => destroy(target.uri)}>
+                    Löschen
+                  </DropdownMenuItem>
                   {/*!isGuest && (
                     <>
                       {Object.keys(collections).length > 0 ? (
@@ -239,9 +242,7 @@ const TargetTableItem: FunctionComponent<Props> = ({
                         </Link>
                       )}
 
-                      <DropdownMenuItem onClick={() => destroy(target.uri)}>
-                        Löschen
-                      </DropdownMenuItem>
+                     
                     </>
                       )*/}
                 </>

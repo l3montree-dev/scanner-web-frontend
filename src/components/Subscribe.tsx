@@ -4,8 +4,8 @@ import useInput from "../hooks/useInput";
 import useRequest from "../hooks/useRequest";
 import { clientHttpClient } from "../services/clientHttpClient";
 import { emailRegex } from "../utils/common";
-import Checkbox from "./Checkbox";
-import FormInput from "./FormInput";
+import Checkbox from "./common/Checkbox";
+import FormInput from "./common/FormInput";
 import Button from "./common/Button";
 
 const Subscribe = () => {
