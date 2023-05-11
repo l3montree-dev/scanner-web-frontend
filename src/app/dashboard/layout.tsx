@@ -1,8 +1,11 @@
-import React, { FunctionComponent, PropsWithChildren } from "react";
+import { PropsWithChildren } from "react";
 import Header from "../../components/Header";
 import SideNavigation from "../../components/SideNavigation";
-import { getServerSession } from "../../utils/server";
 import { authOptions } from "../../nextAuthOptions";
+import { getServerSession } from "../../utils/server";
+
+// disable static evaluation
+export const dynamic = "force-dynamic";
 
 type Props = PropsWithChildren;
 const DashboardLayout = async ({ children }: Props) => {

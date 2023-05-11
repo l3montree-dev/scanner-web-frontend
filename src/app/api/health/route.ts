@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { serverCtrl } from "../../../services/serverCtrl";
 
+// disable static evaluation
+export const dynamic = "force-dynamic";
+
 export function GET() {
   // use the health route handler as initial setup as well.
   // otherwise we have to create a custom server for NextJS, which in turn would
