@@ -1,7 +1,8 @@
-import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
+import { InspectionType } from "../inspection/scans";
 import { targetService } from "./targetService";
 
 jest.mock("next-auth", () => ({}));
+jest.mock("next-auth/jwt", () => ({}));
 
 describe("Target Service Test Suite", () => {
   it("should upsert the target if handleNewTarget is called", async () => {

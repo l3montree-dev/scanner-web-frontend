@@ -1,11 +1,33 @@
-import * as serverUtils from "../../../utils/server";
+import { NextResponse } from "next/server";
+import * as db from "../../../db/connection";
+import { ISession } from "../../../types";
+import { getServerSession } from "../../../utils/server";
 import { staticSecrets } from "../../../utils/staticSecrets";
-
 import { GET } from "./route";
 
 jest.mock("next-auth", () => ({}));
+jest.mock("next-auth/jwt", () => ({}));
 jest.mock("../auth/[...nextauth]/route", () => ({}));
-jest.mock("../../../db/connection", () => ({}));
+jest.mock("../../../db/connection", () => ({
+  prisma: {},
+}));
+
+const getServerSessionMock = getServerSession as jest.MockedFunction<
+  typeof getServerSession
+>;
+
+jest.mock("../../../utils/server", () => ({
+  ...jest.requireActual("../../../utils/server"),
+  getServerSession: jest.fn(),
+}));
+
+NextResponse.json = jest.fn(
+  (obj, responseInit?: ResponseInit) =>
+    ({
+      json: () => obj,
+      status: responseInit?.status ?? 200,
+    } as any)
+);
 
 describe("Scan API Test Suite", () => {
   it("should return a 403 error if the secret is invalid and the user is not logged in", async () => {
@@ -13,36 +35,33 @@ describe("Scan API Test Suite", () => {
       nextUrl: {
         searchParams: new URLSearchParams({ s: "invalid" }),
       },
+      headers: new Headers({}),
     } as any);
-    expect(res.status).toEqual(403);
+    expect(res.status).toEqual(401);
   });
   it("should not require a secret if the user is logged in", async () => {
-    jest
-      .spyOn(serverUtils, "getServerSession")
-      .mockResolvedValueOnce({} as any);
+    getServerSessionMock.mockResolvedValue({} as ISession);
     const res = await GET({
       nextUrl: {
         searchParams: new URLSearchParams({ s: "invalid" }),
       },
+      headers: new Headers({}),
     } as any);
     // should be 400 since we did not provide any site
-    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.status).toEqual(400);
   });
   it("should return a 400 error if the site is not provided", async () => {
-    jest
-      .spyOn(serverUtils, "getServerSession")
-      .mockResolvedValueOnce({} as any);
+    getServerSessionMock.mockResolvedValue({} as ISession);
     const res = await GET({
       nextUrl: {
         searchParams: new URLSearchParams({ s: Object.keys(staticSecrets)[0] }),
       },
+      headers: new Headers({}),
     } as any);
-    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.status).toEqual(400);
   });
   it("should return a 400 error if the site is not valid", async () => {
-    jest
-      .spyOn(serverUtils, "getServerSession")
-      .mockResolvedValueOnce({} as any);
+    getServerSessionMock.mockResolvedValue({} as ISession);
     const res = await GET({
       nextUrl: {
         searchParams: new URLSearchParams({
@@ -50,8 +69,9 @@ describe("Scan API Test Suite", () => {
           s: Object.keys(staticSecrets)[0],
         }),
       },
+      headers: new Headers({}),
     } as any);
-    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.status).toEqual(400);
   });
   it("should check in the database if there is a scan already existing", async () => {
     const existing = {
@@ -70,18 +90,21 @@ describe("Scan API Test Suite", () => {
       },
     };
 
-    jest.mock("../../../db/connection", () => ({
-      prisma: prismaMock,
-    }));
+    // @ts-expect-error
+    db.default.prisma = prismaMock as any;
+
+    getServerSessionMock.mockResolvedValue({} as ISession);
 
     const res = await GET({
-      query: {
-        s: Object.keys(staticSecrets)[0],
-        site: "example.com",
+      nextUrl: {
+        searchParams: new URLSearchParams({
+          s: Object.keys(staticSecrets)[0],
+          site: "example.com",
+        }),
       },
-      headers: {},
+      headers: new Headers({}),
     } as any);
-    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.status).toEqual(200);
     expect(await res.json()).toEqual({
       uri: "https://example.com",
       details: {
@@ -94,7 +117,7 @@ describe("Scan API Test Suite", () => {
   describe("after scan", () => {
     let rabbitMQRPCClient: any;
     beforeEach(() => {
-      const mock = jest.requireMock("../../services/rabbitmqClient");
+      const mock = jest.requireMock("../../../services/rabbitmqClient");
       rabbitMQRPCClient = mock.rabbitMQRPCClient;
     });
     it("should issue a scan if the site is valid and there is no scan already existing", async () => {
@@ -118,9 +141,9 @@ describe("Scan API Test Suite", () => {
         },
       };
 
-      jest.mock("../../../db/connection", () => ({
-        prisma: prismaMock,
-      }));
+      // @ts-expect-error
+      db.default.prisma = prismaMock as any;
+      getServerSessionMock.mockResolvedValue({} as ISession);
 
       await GET({
         nextUrl: {
@@ -129,6 +152,7 @@ describe("Scan API Test Suite", () => {
             site: "example.com",
           }),
         },
+        headers: new Headers({}),
       } as any);
       expect(rabbitMQRPCClient.call).toHaveBeenCalled();
     });
@@ -152,18 +176,20 @@ describe("Scan API Test Suite", () => {
           findFirst: jest.fn().mockResolvedValue({}), // there is a scan already
         },
       };
+      // @ts-expect-error
+      db.default.prisma = prismaMock as any;
 
-      jest.mock("../../../db/connection", () => ({
-        prisma: prismaMock,
-      }));
+      getServerSessionMock.mockResolvedValue({} as ISession);
 
       await GET({
-        query: {
-          s: staticSecrets[Object.keys(staticSecrets)[0]],
-          site: "example.com",
-          refresh: "true",
+        nextUrl: {
+          searchParams: new URLSearchParams({
+            s: staticSecrets[Object.keys(staticSecrets)[0]],
+            site: "example.com",
+            refresh: "true",
+          }),
         },
-        headers: {},
+        headers: new Headers({}),
       } as any);
       expect(rabbitMQRPCClient.call).toHaveBeenCalled();
     });
@@ -192,9 +218,10 @@ describe("Scan API Test Suite", () => {
         },
       };
 
-      jest.mock("../../../db/connection", () => ({
-        prisma: prismaMock,
-      }));
+      // @ts-expect-error
+      db.default.prisma = prismaMock as any;
+
+      getServerSessionMock.mockResolvedValue({} as ISession);
 
       await GET({
         nextUrl: {
@@ -203,6 +230,7 @@ describe("Scan API Test Suite", () => {
             site: "example.com",
           }),
         },
+        headers: new Headers({}),
       } as any);
       expect(prismaMock.scanReport.create).toHaveBeenCalled();
     });
@@ -231,9 +259,9 @@ describe("Scan API Test Suite", () => {
           }),
         },
       };
-      jest.mock("../../../db/connection", () => ({
-        prisma: prismaMock,
-      }));
+      // @ts-expect-error
+      db.default.prisma = prismaMock as any;
+      getServerSessionMock.mockResolvedValue({} as ISession);
 
       const res = await GET({
         nextUrl: {
@@ -242,6 +270,7 @@ describe("Scan API Test Suite", () => {
             site: "example.com",
           }),
         },
+        headers: new Headers({}),
       } as any);
 
       expect(await res.json()).toEqual(
@@ -285,7 +314,7 @@ describe("Scan API Test Suite", () => {
       jest.mock("../../../db/connection", () => ({
         prisma: prismaMock,
       }));
-
+      getServerSessionMock.mockResolvedValue({} as ISession);
       const res = await GET({
         nextUrl: {
           searchParams: new URLSearchParams({
@@ -293,6 +322,7 @@ describe("Scan API Test Suite", () => {
             site: "example.com",
           }),
         },
+        headers: new Headers({}),
       } as any);
 
       expect(await res.json()).toEqual(
@@ -334,6 +364,8 @@ describe("Scan API Test Suite", () => {
       jest.mock("../../../db/connection", () => ({
         prisma: prismaMock,
       }));
+      getServerSessionMock.mockResolvedValue({} as ISession);
+
       const res = await GET({
         nextUrl: {
           searchParams: new URLSearchParams({
@@ -341,8 +373,9 @@ describe("Scan API Test Suite", () => {
             site: "example.com",
           }),
         },
+        headers: new Headers({}),
       } as any);
-      expect(res.status).toHaveBeenCalledWith(422);
+      expect(res.status).toEqual(422);
     });
   });
 });

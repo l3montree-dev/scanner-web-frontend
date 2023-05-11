@@ -1,6 +1,7 @@
 import { reportService } from "./reportService";
 
 jest.mock("next-auth", () => ({}));
+jest.mock("next-auth/jwt", () => ({}));
 
 describe("Report Service Test Suite", () => {
   it("should not create a new scan report if the reports did not change", async () => {
@@ -20,6 +21,10 @@ describe("Report Service Test Suite", () => {
         findFirst: jest.fn(),
       },
     };
+    jest.mock("../db/connection", () => ({
+      prisma: prismaMock,
+    }));
+
     await reportService.handleNewScanReport(
       {
         target: "example.com",

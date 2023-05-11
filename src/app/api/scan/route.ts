@@ -31,6 +31,7 @@ const scanCB = new CircuitBreaker();
 
 // exporting for testing purposes
 export async function GET(req: NextRequest) {
+  console.log(NextResponse);
   const start = Date.now();
   const secret = req.nextUrl.searchParams.get("s");
   const session = await getServerSession(authOptions);
