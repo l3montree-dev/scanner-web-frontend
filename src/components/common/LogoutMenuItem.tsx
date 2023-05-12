@@ -3,11 +3,12 @@
 import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { signOut } from "next-auth/react";
-import React from "react";
+import { useSignOut } from "../../hooks/useSignOut";
 import DropdownMenuItem from "./DropdownMenuItem";
+import { withAuthProvider } from "../../providers/AuthProvider";
 
 const LogoutMenuItem = () => {
+  const signOut = useSignOut();
   return (
     <DropdownMenuItem
       Icon={<FontAwesomeIcon icon={faArrowRightFromBracket} />}
@@ -18,4 +19,4 @@ const LogoutMenuItem = () => {
   );
 };
 
-export default LogoutMenuItem;
+export default withAuthProvider(LogoutMenuItem);
