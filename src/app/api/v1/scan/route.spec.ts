@@ -7,8 +7,8 @@ import { GET } from "./route";
 
 jest.mock("next-auth", () => ({}));
 jest.mock("next-auth/jwt", () => ({}));
-jest.mock("../auth/[...nextauth]/route", () => ({}));
-jest.mock("../../../db/connection", () => ({
+jest.mock("../../auth/[...nextauth]/route", () => ({}));
+jest.mock("../../../../db/connection", () => ({
   prisma: {},
 }));
 
@@ -16,8 +16,8 @@ const getServerSessionMock = getServerSession as jest.MockedFunction<
   typeof getServerSession
 >;
 
-jest.mock("../../../utils/server", () => ({
-  ...jest.requireActual("../../../utils/server"),
+jest.mock("../../../../utils/server", () => ({
+  ...jest.requireActual("../../../../utils/server"),
   getServerSession: jest.fn(),
 }));
 
@@ -117,7 +117,7 @@ describe("Scan API Test Suite", () => {
   describe("after scan", () => {
     let rabbitMQRPCClient: any;
     beforeEach(() => {
-      const mock = jest.requireMock("../../../services/rabbitmqClient");
+      const mock = jest.requireMock("../../../../services/rabbitmqClient");
       rabbitMQRPCClient = mock.rabbitMQRPCClient;
     });
     it("should issue a scan if the site is valid and there is no scan already existing", async () => {
@@ -311,7 +311,7 @@ describe("Scan API Test Suite", () => {
           }),
         },
       };
-      jest.mock("../../../db/connection", () => ({
+      jest.mock("../../../../db/connection", () => ({
         prisma: prismaMock,
       }));
       getServerSessionMock.mockResolvedValue({} as ISession);
@@ -361,7 +361,7 @@ describe("Scan API Test Suite", () => {
           }),
         },
       };
-      jest.mock("../../../db/connection", () => ({
+      jest.mock("../../../../db/connection", () => ({
         prisma: prismaMock,
       }));
       getServerSessionMock.mockResolvedValue({} as ISession);
