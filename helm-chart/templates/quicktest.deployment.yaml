@@ -131,13 +131,13 @@ spec:
             initialDelaySeconds: 10
             periodSeconds: 10
             httpGet:
-              path: /api/health
+              path: /api/v1/health
               port: http
           readinessProbe:
             initialDelaySeconds: 10
             periodSeconds: 10
             httpGet:
-              path: /api/health
+              path: /api/v1/health
               port: http
           resources:
             {{- toYaml .Values.quicktest.resources | nindent 12 }}

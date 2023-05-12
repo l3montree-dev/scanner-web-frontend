@@ -14,7 +14,7 @@ export function useSignOut() {
       router.push("/");
     } else {
       const res: { path: string } = await (
-        await fetch("/api/v1/auth/kc-signout")
+        await fetch("/api/auth/kc-signout")
       ).json();
       await signOut({
         redirect: false,
