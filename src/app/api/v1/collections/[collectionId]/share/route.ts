@@ -1,13 +1,13 @@
 import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "../../../../../db/connection";
-import ForbiddenException from "../../../../../errors/ForbiddenException";
-import MethodNotAllowed from "../../../../../errors/MethodNotAllowed";
-import { getCurrentUser, toDTO } from "../../../../../utils/server";
+import { prisma } from "../../../../../../db/connection";
+import ForbiddenException from "../../../../../../errors/ForbiddenException";
+import MethodNotAllowed from "../../../../../../errors/MethodNotAllowed";
+import NotFoundException from "../../../../../../errors/NotFoundException";
+import { authOptions } from "../../../../../../nextAuthOptions";
+import { collectionService } from "../../../../../../services/collectionService";
+import { getCurrentUser } from "../../../../../../utils/server";
 import { Params } from "../params";
-import { collectionService } from "../../../../../services/collectionService";
-import { authOptions } from "../../../../../nextAuthOptions";
-import NotFoundException from "../../../../../errors/NotFoundException";
 
 export async function POST(_req: NextRequest, { params }: Params) {
   const collectionId = parseInt(params.collectionId as string);

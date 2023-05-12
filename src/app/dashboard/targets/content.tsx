@@ -143,7 +143,7 @@ const Content: FunctionComponent<Props> = (props) => {
       prev.filter((d) => d.uri !== uri)
     );
     const response = await clientHttpClient(
-      `/api/targets/delete`,
+      `/api/v1/targets/delete`,
       crypto.randomUUID(),
       {
         method: "POST",
@@ -167,7 +167,7 @@ const Content: FunctionComponent<Props> = (props) => {
 
   const deleteSelection = async () => {
     const response = await clientHttpClient(
-      `/api/targets/delete`,
+      `/api/v1/targets/delete`,
       crypto.randomUUID(),
       {
         method: "POST",
@@ -195,7 +195,7 @@ const Content: FunctionComponent<Props> = (props) => {
     scanRequest.loading(uri);
 
     const response = await clientHttpClient(
-      `/api/scan?site=${uri}&refresh=true`,
+      `/api/v1/scan?site=${uri}&refresh=true`,
       crypto.randomUUID()
     );
 
@@ -235,7 +235,7 @@ const Content: FunctionComponent<Props> = (props) => {
   };
 
   const handleAddRecord = async (target: string) => {
-    const res = await clientHttpClient(`/api/targets`, crypto.randomUUID(), {
+    const res = await clientHttpClient(`/api/v1/targets`, crypto.randomUUID(), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -269,7 +269,7 @@ const Content: FunctionComponent<Props> = (props) => {
     });
 
     const res = await clientHttpClient(
-      `/api/collections/${collectionId}/targets`,
+      `/api/v1/collections/${collectionId}/targets`,
       crypto.randomUUID(),
       {
         method: "POST",
@@ -308,7 +308,7 @@ const Content: FunctionComponent<Props> = (props) => {
     });
 
     const res = await clientHttpClient(
-      `/api/collections/${collectionId}/targets`,
+      `/api/v1/collections/${collectionId}/targets`,
       crypto.randomUUID(),
       {
         method: "DELETE",
@@ -331,7 +331,7 @@ const Content: FunctionComponent<Props> = (props) => {
       formData.append("files", file);
     });
 
-    const res = await clientHttpClient("/api/targets", crypto.randomUUID(), {
+    const res = await clientHttpClient("/api/v1/targets", crypto.randomUUID(), {
       method: "POST",
       body: formData,
     });

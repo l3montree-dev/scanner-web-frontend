@@ -32,7 +32,7 @@ const Subscribe = () => {
 
     try {
       await submitRequest.run(
-        clientHttpClient("/api/subscribe", crypto.randomUUID(), {
+        clientHttpClient("/api/v1/subscribe", crypto.randomUUID(), {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

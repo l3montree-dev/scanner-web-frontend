@@ -1,14 +1,11 @@
-import { Collection } from "@prisma/client";
-import { NextApiRequest, NextApiResponse } from "next";
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "../../../../db/connection";
+import { prisma } from "../../../../../db/connection";
 
-import ForbiddenException from "../../../../errors/ForbiddenException";
-import MethodNotAllowed from "../../../../errors/MethodNotAllowed";
-import NotFoundException from "../../../../errors/NotFoundException";
-import { authOptions } from "../../../../nextAuthOptions";
-import { collectionService } from "../../../../services/collectionService";
-import { getCurrentUser } from "../../../../utils/server";
+import ForbiddenException from "../../../../../errors/ForbiddenException";
+import NotFoundException from "../../../../../errors/NotFoundException";
+import { authOptions } from "../../../../../nextAuthOptions";
+import { collectionService } from "../../../../../services/collectionService";
+import { getCurrentUser } from "../../../../../utils/server";
 import { Params } from "./params";
 
 const getCollection = async (collectionId: number) => {

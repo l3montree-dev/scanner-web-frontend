@@ -1,12 +1,12 @@
 import { Target } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "../../../../../db/connection";
-import ForbiddenException from "../../../../../errors/ForbiddenException";
-import NotFoundException from "../../../../../errors/NotFoundException";
-import { authOptions } from "../../../../../nextAuthOptions";
-import { collectionService } from "../../../../../services/collectionService";
-import { targetCollectionService } from "../../../../../services/targetCollectionService";
-import { getCurrentUser } from "../../../../../utils/server";
+import { prisma } from "../../../../../../db/connection";
+import ForbiddenException from "../../../../../../errors/ForbiddenException";
+import NotFoundException from "../../../../../../errors/NotFoundException";
+import { authOptions } from "../../../../../../nextAuthOptions";
+import { collectionService } from "../../../../../../services/collectionService";
+import { targetCollectionService } from "../../../../../../services/targetCollectionService";
+import { getCurrentUser } from "../../../../../../utils/server";
 import { Params } from "../params";
 
 export async function POST(req: NextRequest, { params }: Params) {

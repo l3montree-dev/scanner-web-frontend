@@ -1,18 +1,18 @@
 import { groupBy } from "lodash";
 import { NextRequest, NextResponse } from "next/server";
-import { config } from "../../../config";
-import { prisma } from "../../../db/connection";
-import ForbiddenException from "../../../errors/ForbiddenException";
-import { InspectionType } from "../../../inspection/scans";
-import { authOptions } from "../../../nextAuthOptions";
-import { collectionService } from "../../../services/collectionService";
-import { reportService } from "../../../services/reportService";
-import { Guest } from "../../../types";
-import { isAdmin } from "../../../utils/common";
+import { config } from "../../../../config";
+import { prisma } from "../../../../db/connection";
+import ForbiddenException from "../../../../errors/ForbiddenException";
+import { InspectionType } from "../../../../inspection/scans";
+import { authOptions } from "../../../../nextAuthOptions";
+import { collectionService } from "../../../../services/collectionService";
+import { reportService } from "../../../../services/reportService";
+import { Guest } from "../../../../types";
+import { isAdmin } from "../../../../utils/common";
 import {
   getCurrentUserOrGuestUser,
   getServerSession,
-} from "../../../utils/server";
+} from "../../../../utils/server";
 
 export async function GET(req: NextRequest) {
   const inspection = req.nextUrl.searchParams.get(

@@ -1,13 +1,12 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { keycloak } from "../../../services/keycloak";
-import { getLogger } from "../../../services/logger";
-import { userService } from "../../../services/userService";
+import { keycloak } from "../../../../services/keycloak";
+import { getLogger } from "../../../../services/logger";
+import { userService } from "../../../../services/userService";
 
-import { ICreateUserDTO } from "../../../types";
 import { NextRequest, NextResponse } from "next/server";
-import { UnauthorizedException } from "../../../errors/UnauthorizedException";
-import { getJWTToken } from "../../../utils/server";
-import { prisma } from "../../../db/connection";
+import { prisma } from "../../../../db/connection";
+import { UnauthorizedException } from "../../../../errors/UnauthorizedException";
+import { ICreateUserDTO } from "../../../../types";
+import { getJWTToken } from "../../../../utils/server";
 
 const logger = getLogger(__filename);
 export async function POST(req: NextRequest) {

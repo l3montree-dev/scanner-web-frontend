@@ -10,7 +10,7 @@ const EmptyDashboardNotice = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleAddRecord = async (target: string) => {
-    const res = await clientHttpClient(`/api/targets`, crypto.randomUUID(), {
+    const res = await clientHttpClient(`/api/v1/targets`, crypto.randomUUID(), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -29,7 +29,7 @@ const EmptyDashboardNotice = () => {
       formData.append("files", file);
     });
 
-    const res = await clientHttpClient("/api/targets", crypto.randomUUID(), {
+    const res = await clientHttpClient("/api/v1/targets", crypto.randomUUID(), {
       method: "POST",
       body: formData,
     });

@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "../../../../db/connection";
-import ForbiddenException from "../../../../errors/ForbiddenException";
-import NotFoundException from "../../../../errors/NotFoundException";
-import { authOptions } from "../../../../nextAuthOptions";
-import { collectionService } from "../../../../services/collectionService";
-import { getCurrentUser } from "../../../../utils/server";
+import { prisma } from "../../../../../db/connection";
+import ForbiddenException from "../../../../../errors/ForbiddenException";
+import NotFoundException from "../../../../../errors/NotFoundException";
+import { authOptions } from "../../../../../nextAuthOptions";
+import { collectionService } from "../../../../../services/collectionService";
+import { getCurrentUser } from "../../../../../utils/server";
 
 export async function DELETE(
   _: NextRequest,

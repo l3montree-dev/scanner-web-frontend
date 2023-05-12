@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "../../../db/connection";
-import { authOptions } from "../../../nextAuthOptions";
-import { getCurrentUserOrGuestUser } from "../../../utils/server";
+import { prisma } from "../../../../db/connection";
+import { authOptions } from "../../../../nextAuthOptions";
+import { getCurrentUserOrGuestUser } from "../../../../utils/server";
 
 export async function POST(req: NextRequest) {
   const currentUser = await getCurrentUserOrGuestUser(authOptions);

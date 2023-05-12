@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { serverCtrl } from "../../../services/serverCtrl";
+import { serverCtrl } from "../../../../services/serverCtrl";
 
 // disable static evaluation
 export const dynamic = "force-dynamic";

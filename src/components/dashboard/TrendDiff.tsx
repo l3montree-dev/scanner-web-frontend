@@ -84,7 +84,10 @@ const TrendDiff: FunctionComponent<Props> = ({
       forceCollection:
         (router.query["forceCollection"] as string | undefined) ?? "",
     }).toString();
-    const res = await clientHttpClient(`/api/diff?${url}`, crypto.randomUUID());
+    const res = await clientHttpClient(
+      `/api/v1/diff?${url}`,
+      crypto.randomUUID()
+    );
     const diff: {
       false: Array<{ uri: string; was: boolean; now: boolean }>;
       true: Array<{ uri: string; was: boolean; now: boolean }>;

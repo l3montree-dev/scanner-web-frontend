@@ -15,7 +15,7 @@ if (!isDev && SENTRY_DSN) {
         dsn: SENTRY_DSN,
         // Adjust this value in production, or use tracesSampler for greater control
         enableTracing: false,
-        tunnel: '/api/tunnel',
+        tunnel: '/api/v1/tunnel',
         // ...
         // Note: if you want to override the automatic release value, do not set a
         // `release` value here - use the environment variable `SENTRY_RELEASE`, so

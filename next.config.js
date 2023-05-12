@@ -7,7 +7,7 @@ const { withSentryConfig } = require('@sentry/nextjs');
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     sentry: {
-        tunnelRoute: "/api/tunnel",
+        tunnelRoute: "/api/v1/tunnel",
     },
     reactStrictMode: true,
     swcMinify: true,

@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "../../../../db/connection";
-import ForbiddenException from "../../../../errors/ForbiddenException";
-import NotFoundException from "../../../../errors/NotFoundException";
-import { UnauthorizedException } from "../../../../errors/UnauthorizedException";
-import { authOptions } from "../../../../nextAuthOptions";
-import { keycloak } from "../../../../services/keycloak";
-import { userService } from "../../../../services/userService";
-import { IUserPutDTO } from "../../../../types";
-import { isAdmin } from "../../../../utils/common";
-import { getJWTToken, getServerSession } from "../../../../utils/server";
+import { prisma } from "../../../../../db/connection";
+import ForbiddenException from "../../../../../errors/ForbiddenException";
+import NotFoundException from "../../../../../errors/NotFoundException";
+import { UnauthorizedException } from "../../../../../errors/UnauthorizedException";
+import { authOptions } from "../../../../../nextAuthOptions";
+import { keycloak } from "../../../../../services/keycloak";
+import { userService } from "../../../../../services/userService";
+import { IUserPutDTO } from "../../../../../types";
+import { isAdmin } from "../../../../../utils/common";
+import { getJWTToken, getServerSession } from "../../../../../utils/server";
 
 interface Params {
   params: {

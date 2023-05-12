@@ -65,7 +65,7 @@ const Content: FunctionComponent<Props> = (props) => {
       role,
     });
 
-    const res = await clientHttpClient("/api/users", crypto.randomUUID(), {
+    const res = await clientHttpClient("/api/v1/users", crypto.randomUUID(), {
       method: "POST",
       body: JSON.stringify(createUserDTO),
     });
@@ -87,7 +87,7 @@ const Content: FunctionComponent<Props> = (props) => {
 
   const handleDelete = async (id: string) => {
     const res = await clientHttpClient(
-      `/api/users/${id}`,
+      `/api/v1/users/${id}`,
       crypto.randomUUID(),
       {
         method: "DELETE",
@@ -102,7 +102,7 @@ const Content: FunctionComponent<Props> = (props) => {
 
   const handleUpdateUser = async (user: Omit<User, "defaultCollectionId">) => {
     const res = await clientHttpClient(
-      `/api/users/${user.id}`,
+      `/api/v1/users/${user.id}`,
       crypto.randomUUID(),
       {
         method: "PUT",

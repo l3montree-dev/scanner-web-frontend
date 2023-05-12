@@ -2,36 +2,55 @@ import { randomUUID } from "crypto";
 
 import { Target } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "../../../db/connection";
-import { authOptions } from "../../../nextAuthOptions";
-import { getLogger } from "../../../services/logger";
-import CircuitBreaker from "../../../utils/CircuitBreaker";
+import { prisma } from "../../../../db/connection";
+import { authOptions } from "../../../../nextAuthOptions";
+import { getLogger } from "../../../../services/logger";
+import CircuitBreaker from "../../../../utils/CircuitBreaker";
 
-import { inspectRPC } from "../../../inspection/inspect";
-import { monitoringService } from "../../../services/monitoringService";
+import { inspectRPC } from "../../../../inspection/inspect";
+import { monitoringService } from "../../../../services/monitoringService";
 import {
   reportService,
   scanResult2TargetDetails,
-} from "../../../services/reportService";
-import { targetService } from "../../../services/targetService";
-import { DetailsJSON } from "../../../types";
+} from "../../../../services/reportService";
+import { targetService } from "../../../../services/targetService";
+import { DetailsJSON } from "../../../../types";
 import {
   defaultOnError,
   isScanError,
   neverThrow,
   sanitizeFQDN,
   timeout,
-} from "../../../utils/common";
-import { DTO, getServerSession, toDTO } from "../../../utils/server";
-import { staticSecrets } from "../../../utils/staticSecrets";
+} from "../../../../utils/common";
+import { DTO, getServerSession, toDTO } from "../../../../utils/server";
+import { staticSecrets } from "../../../../utils/staticSecrets";
+import { displayInspections } from "../../../../utils/view";
+import { InspectionType } from "../../../../inspection/scans";
 
 const logger = getLogger(__filename);
 
 const scanCB = new CircuitBreaker();
 
+const limitToDisplayedInspections = <
+  T extends { details: Record<string, any> | null }
+>(
+  obj: T
+): T => {
+  const { details, ...rest } = obj;
+  const displayedInspections = Object.fromEntries(
+    Object.entries(details || {}).filter(
+      ([key]) =>
+        key === "sut" || displayInspections.includes(key as InspectionType)
+    )
+  );
+  return {
+    ...rest,
+    details: displayedInspections,
+  } as T;
+};
+
 // exporting for testing purposes
 export async function GET(req: NextRequest) {
-  console.log(NextResponse);
   const start = Date.now();
   const secret = req.nextUrl.searchParams.get("s");
   const session = await getServerSession(authOptions);
@@ -107,10 +126,12 @@ export async function GET(req: NextRequest) {
 
       const { target, ...rest } = details;
 
-      return NextResponse.json({
-        ...target,
-        details: rest.details,
-      });
+      return NextResponse.json(
+        limitToDisplayedInspections({
+          ...target,
+          details: rest.details,
+        })
+      );
     }
   }
 
@@ -159,6 +180,6 @@ export async function GET(req: NextRequest) {
         details: scanResult2TargetDetails(result),
       }
     );
-    return NextResponse.json(target);
+    return NextResponse.json(limitToDisplayedInspections(target));
   }
 }

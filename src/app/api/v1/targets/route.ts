@@ -1,21 +1,21 @@
 import PQueue from "p-queue";
-import { inspectRPC } from "../../../inspection/inspect";
-import { targetService } from "../../../services/targetService";
+import { inspectRPC } from "../../../../inspection/inspect";
+import { targetService } from "../../../../services/targetService";
 
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "../../../db/connection";
-import BadRequestException from "../../../errors/BadRequestException";
-import { authOptions } from "../../../nextAuthOptions";
-import { getLogger } from "../../../services/logger";
-import { reportService } from "../../../services/reportService";
+import { prisma } from "../../../../db/connection";
+import BadRequestException from "../../../../errors/BadRequestException";
+import { authOptions } from "../../../../nextAuthOptions";
+import { getLogger } from "../../../../services/logger";
+import { reportService } from "../../../../services/reportService";
 import {
   isScanError,
   neverThrow,
   sanitizeFQDN,
   splitLineBreak,
   timeout,
-} from "../../../utils/common";
-import { getCurrentUser, toDTO } from "../../../utils/server";
+} from "../../../../utils/common";
+import { getCurrentUser, toDTO } from "../../../../utils/server";
 
 const logger = getLogger(__filename);
 

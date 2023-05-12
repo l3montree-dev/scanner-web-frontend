@@ -1,10 +1,10 @@
 import { PrismaClient, User } from "@prisma/client";
 
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "../../../../db/connection";
-import { authOptions } from "../../../../nextAuthOptions";
-import { targetCollectionService } from "../../../../services/targetCollectionService";
-import { getCurrentUser } from "../../../../utils/server";
+import { prisma } from "../../../../../db/connection";
+import { authOptions } from "../../../../../nextAuthOptions";
+import { targetCollectionService } from "../../../../../services/targetCollectionService";
+import { getCurrentUser } from "../../../../../utils/server";
 
 const deleteTargetRelation = async (
   uris: string[],

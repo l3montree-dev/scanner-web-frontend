@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import * as db from "../../../db/connection";
-import { ISession } from "../../../types";
-import { getServerSession } from "../../../utils/server";
-import { staticSecrets } from "../../../utils/staticSecrets";
+import * as db from "../../../../db/connection";
+import { ISession } from "../../../../types";
+import { getServerSession } from "../../../../utils/server";
+import { staticSecrets } from "../../../../utils/staticSecrets";
 import { GET } from "./route";
 
 jest.mock("next-auth", () => ({}));
