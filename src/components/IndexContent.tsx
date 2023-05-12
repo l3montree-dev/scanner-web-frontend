@@ -25,7 +25,7 @@ const IndexContent: FunctionComponent<Props> = ({ displayNotAvailable }) => {
     amountPassed,
     handleRefresh,
     onSubmit,
-  } = useQuicktest(searchParams.get("code"));
+  } = useQuicktest(searchParams.get("s"));
 
   const store = useGlobalStore();
 
