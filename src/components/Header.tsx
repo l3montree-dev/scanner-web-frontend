@@ -99,23 +99,18 @@ const Header: FunctionComponent<{ session: ISession | null }> = ({
                   Menu={
                     <>
                       <LogoutMenuItem />
-                      {!isGuestUser(session.user) &&
-                        clientOnly(() => (
-                          <a
-                            className="hover:no-underline font-normal"
-                            href={`${
-                              process.env.NEXT_PUBLIC_KEYCLOAK_ISSUER
-                            }/protocol/openid-connect/auth?client_id=quicktest&redirect_uri=${encodeURIComponent(
-                              `${window.location.protocol}//${window.location.host}`
-                            )}&response_type=code&scope=openid&kc_action=UPDATE_PASSWORD`}
+                      {!isGuestUser(session.user) && (
+                        <a
+                          className="hover:no-underline font-normal"
+                          href={`/auth/change-password`}
+                        >
+                          <DropdownMenuItem
+                            Icon={<FontAwesomeIcon icon={faKey} />}
                           >
-                            <DropdownMenuItem
-                              Icon={<FontAwesomeIcon icon={faKey} />}
-                            >
-                              Passwort ändern
-                            </DropdownMenuItem>
-                          </a>
-                        ))}
+                            Passwort ändern
+                          </DropdownMenuItem>
+                        </a>
+                      )}
                       <div className="p-2 relative top-1 border-t border-t-hellgrau-40 bg-white text-textblack">
                         Eingeloggt als:{" "}
                         {isGuestUser(session.user) ? "Gast" : session.user.name}

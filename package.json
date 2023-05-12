@@ -33,7 +33,6 @@
         "@sentry/nextjs": "^7.51.2",
         "amqplib": "^0.10.3",
         "canvg": "^4.0.1",
-        "dotenv": "^16.0.3",
         "formidable": "^2.1.1",
         "ip": "^2.0.0",
         "lodash": "^4.17.21",
