@@ -14,6 +14,11 @@ import LogoutMenuItem from "./common/LogoutMenuItem";
 import Menu from "./common/Menu";
 import Tooltip from "./common/Tooltip";
 import { FunctionComponent } from "react";
+import { signOut } from "next-auth/react";
+import Link from "next/link";
+import SideMenu from "./SideMenu";
+import MenuButton from "./common/MenuButton";
+import MobileMenu from "./MobileMenu";
 
 const Header: FunctionComponent<{ session: ISession | null }> = ({
   session,
@@ -29,7 +34,11 @@ const Header: FunctionComponent<{ session: ISession | null }> = ({
         <div className="flex flex-row items-center h-full">
           <div className="flex flex-1 md:px-8 px-4 max-w-screen-2xl mx-auto flex-row justify-between items-center">
             <HeaderTitle />
-            <div className="block lg:hidden"></div>
+            <div className="block lg:hidden">
+              <div className="block ml-auto lg:hidden">
+                <MobileMenu />
+              </div>
+            </div>
             <div className="ml-2 text-sm absolute z-200 hidden lg:block right-2 text-white">
               <div className="flex flex-row gap-5 items-center">
                 <Tooltip

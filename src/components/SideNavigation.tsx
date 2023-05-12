@@ -16,58 +16,7 @@ import { FunctionComponent, useEffect } from "react";
 import { ISession } from "../types";
 import { classNames, isAdmin, isGuestUser } from "../utils/common";
 import { useGlobalStore } from "../zustand/global";
-
-const defaultLinks = [
-  {
-    icon: faSquareCheck,
-    name: "Schnelltest",
-    path: "/dashboard/quicktest",
-  },
-  {
-    icon: faGaugeHigh,
-    name: "Dashboard",
-    path: "/dashboard",
-  },
-  {
-    icon: faChartLine,
-    name: "Trendanalyse",
-    path: "/dashboard/trends",
-  },
-  {
-    icon: faListCheck,
-    name: "Domainübersicht",
-    path: "/dashboard/targets",
-  },
-];
-const getLinks = (isGuest: boolean, isAdmin: boolean) => {
-  if (isGuest) {
-    return defaultLinks;
-  } else if (!isAdmin) {
-    return defaultLinks.concat({
-      icon: faInfo,
-      name: "Informationen zur OZG-Security-Challenge",
-      path: "/dashboard/info",
-    });
-  }
-
-  return defaultLinks.concat([
-    /*{
-      icon: faTag,
-      name: "Domain-Gruppen",
-      path: "/dashboard/collections",
-    },*/
-    {
-      icon: faUsers,
-      name: "Nutzerverwaltung",
-      path: "/dashboard/users",
-    },
-    {
-      icon: faInfo,
-      name: "Informationen zur OZG-Security-Challenge",
-      path: "/dashboard/info",
-    },
-  ]);
-};
+import { getLinks } from "./links";
 
 const SideNavigation: FunctionComponent<{
   session: ISession;
