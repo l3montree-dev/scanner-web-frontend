@@ -7,6 +7,20 @@ import { getServerSession } from "../../utils/server";
 // disable static evaluation
 export const dynamic = "force-dynamic";
 
+const title = "Dashboard - OZG-Security-Challenge 2023";
+const description =
+  "OZG Security Schnelltest einer Webseite in Bezug auf IT-Sicherheitsmaßnahmen und Best-Practices";
+
+export const metadata = {
+  title,
+  description,
+  openGraph: {
+    title,
+    description,
+    type: "website",
+  },
+};
+
 type Props = PropsWithChildren;
 const DashboardLayout = async ({ children }: Props) => {
   const session = await getServerSession(authOptions);

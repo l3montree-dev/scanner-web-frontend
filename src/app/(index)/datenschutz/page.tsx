@@ -1,7 +1,18 @@
 import { FunctionComponent } from "react";
-import Article from "../../../components/common/Article";
-import Content from "./content";
 import { withNotAvailable } from "../../../decorators/withNotAvailable";
+import Content from "./content";
+
+const title = "Datenschutz - OZG-Security-Challenge 2023";
+const description = "Datenschutzhinweise des Auftritts";
+export const metadata = {
+  title,
+  description,
+  openGraph: {
+    title,
+    description,
+    type: "website",
+  },
+};
 
 interface Props {
   displayNotAvailable: boolean;
