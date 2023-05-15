@@ -109,6 +109,7 @@ const Content: FunctionComponent<Props> = (props) => {
     }
     patchQuery({
       [key]: value.toString(),
+      page: "0",
     });
   };
 
