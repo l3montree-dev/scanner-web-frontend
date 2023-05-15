@@ -1,7 +1,9 @@
 import {
   faCaretDown,
   faCheck,
+  faCross,
   faQuestion,
+  faTimesCircle,
   faWarning,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -76,7 +78,7 @@ const CheckStateMenu: FunctionComponent<Props> = ({
               Erfüllt
             </DropdownMenuItem>
             <DropdownMenuItem
-              Icon={<FontAwesomeIcon icon={faWarning} />}
+              Icon={<FontAwesomeIcon icon={faTimesCircle} />}
               active={+selected === -1}
               onClick={() => handleClick(-1)}
             >

@@ -22,7 +22,7 @@ const DropdownMenuItem: FunctionComponent<
       {...rest}
     >
       {loading ? (
-        <div className="absolute left-0 top-0.5">
+        <div className="left-0 top-0.5">
           <Spinner size={30} />
         </div>
       ) : (
