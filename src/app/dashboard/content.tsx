@@ -91,7 +91,7 @@ const Content: FunctionComponent<Props> = (props) => {
         </div>
         {noDomains && (
           <div className="absolute pointer-events-auto z-90 mt-10 top-0 flex flex-row justify-center left-0 right-0 mb-10 px-3 flex-1">
-            <div className="border-blue-500/20 p-5 flex flex-row bg-hellorange-100 max-w-screen-lg text-deepblue-500">
+            <div className="p-5 flex flex-row bg-hellgrau-60 max-w-screen-lg text-textblack">
               <div className="pr-3 pt-1">
                 <FontAwesomeIcon size={"lg"} icon={faCircleInfo} />
               </div>

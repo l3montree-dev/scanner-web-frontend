@@ -7,16 +7,9 @@ interface Props {
   disabled?: boolean;
   RightIcon?: React.ReactNode;
   LeftIcon?: React.ReactNode;
-  primary?: boolean;
   additionalClasses?: string;
 }
 
-const clNames = (primary: boolean = false) => {
-  if (primary) {
-    return "bg-lightning-500 focus:bg-lightning-300 hover:bg-lightning-300 font-bold text-deepblue-900";
-  }
-  return "bg-white focus:bg-dunkelblau-50 hover:bg-dunkelblau-100 hover:text-white border border-hellgrau-80";
-};
 const Button =
   // eslint-disable-next-line react/display-name
   forwardRef<
@@ -32,7 +25,6 @@ const Button =
       disabled,
       RightIcon,
       LeftIcon,
-      primary,
       additionalClasses,
       ...rest
     } = props;
@@ -42,7 +34,7 @@ const Button =
         ref={ref}
         className={classNames(
           "transition-all rounded-sm flex justify-between flex-row items-center gap-3 p-2 px-5",
-          clNames(primary),
+          "bg-white focus:bg-dunkelblau-50 hover:bg-dunkelblau-100 hover:text-white border border-hellgrau-80 hover:border-dunkelblau-100",
           props.disabled && "opacity-50 cursor-not-allowed",
           additionalClasses
         )}

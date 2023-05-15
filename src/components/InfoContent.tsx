@@ -53,6 +53,8 @@ const InfoContent = () => {
           </a>{" "}
           (Mi. 10-12 Uhr)
           <br />
+          <a href="mailto:ozgsec@bmi.bund.de">ozgsec@bmi.bund.de</a>
+          <br />
           <br />
           <b>Workshops:</b>
           <br />
