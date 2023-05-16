@@ -33,7 +33,7 @@ const AddDomainForm: FunctionComponent<{
       createRequest.success();
     } catch (err) {
       createRequest.error(
-        "Leider ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut."
+        "Leider ist ein Fehler aufgetreten. Bitte überprüfen Sie den Domainnamen."
       );
     }
   };
@@ -85,7 +85,7 @@ const AddDomainForm: FunctionComponent<{
         </span>
       )}
       {createRequest.errored && (
-        <span className="text-red-500 block text-right mt-2">
+        <span className="text-rot-100 block text-right mt-2">
           {createRequest.errorMessage}
         </span>
       )}

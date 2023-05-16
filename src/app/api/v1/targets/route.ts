@@ -33,24 +33,24 @@ export async function POST(req: NextRequest) {
       throw new BadRequestException();
     }
 
-    const d = await targetService.handleNewTarget(
-      { uri: sanitized, queued: true },
-      prisma,
-      currentUser
-    );
-
-    const result = await inspectRPC(requestId, d.uri);
+    const result = await inspectRPC(requestId, sanitized);
     if (isScanError(result)) {
       logger.error(
         { requestId, userId: currentUser.id },
-        `target import - error while scanning domain: ${d.uri}`
+        `target import - error while scanning domain: ${sanitized}`
       );
       await neverThrow(
         timeout(targetService.handleTargetScanError(result, prisma))
       );
 
-      return NextResponse.json(toDTO(d), { status: 201 });
+      throw new BadRequestException();
     }
+
+    await targetService.handleNewTarget(
+      { uri: sanitized, queued: true },
+      prisma,
+      currentUser
+    );
 
     const res = await reportService.handleNewScanReport(result, prisma);
 
