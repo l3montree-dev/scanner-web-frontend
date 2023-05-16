@@ -146,6 +146,10 @@ const Content: FunctionComponent<Props> = (props) => {
     const revert = optimisticUpdate(targets, setTargets, (prev) =>
       prev.filter((d) => d.uri !== uri)
     );
+    setSelection((prev) => ({
+      ...prev,
+      [uri]: false,
+    }));
     setCurrentDomainChangeCount((prev) => prev - 1);
     const response = await clientHttpClient(
       `/api/v1/targets/delete`,
