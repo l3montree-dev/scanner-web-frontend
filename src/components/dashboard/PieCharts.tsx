@@ -91,7 +91,7 @@ const PieCharts: FunctionComponent<Props> = ({
           <div className="bg-hellgrau-20 pb-5 flex-col flex" key={key}>
             <div className="flex-1 relative z-0">
               {isGeneratingStats && (
-                <div className="absolute top-0 text-base left-0 w-full h-full flex flex-row items-center justify-center bg-hellgrau-20 opacity-75 z-10">
+                <div className="absolute top-0 text-base left-0 w-full h-full flex flex-row items-center justify-center bg-hellgrau-20  z-10">
                   <div className="text-center">
                     <div className="flex flex-row justify-center">
                       <Spinner size={40} />

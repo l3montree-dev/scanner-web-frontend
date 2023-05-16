@@ -15,15 +15,20 @@ import useRefreshOnVisit from "../../hooks/useRefreshOnVisit";
 import { ChartData, IDashboard } from "../../types";
 import { classNames } from "../../utils/common";
 import { diffDays } from "../../utils/view";
+import { useRouter } from "next/navigation";
+import useGeneratingStatsPoll from "../../hooks/useGeneratingStatsPoll";
 
 interface Props {
   dashboard: IDashboard;
   defaultCollectionId: number;
   refCollections: number[];
 }
+
+let pollInterval: any;
 const Content: FunctionComponent<Props> = (props) => {
   useRefreshOnVisit("dashboard");
 
+  const router = useRouter();
   const dashboard = props.dashboard;
   const currentStat = useMemo(
     () =>
@@ -52,9 +57,8 @@ const Content: FunctionComponent<Props> = (props) => {
 
   const noDomains = dashboard.totals.uniqueTargets === 0;
 
-  const expectedSeriesLength = useMemo(
-    () => diffDays(new Date(2023, 0, 15), new Date()),
-    []
+  const isGeneratingStats = useGeneratingStatsPoll(
+    dashboard.historicalData[props.defaultCollectionId]?.series.length
   );
 
   useEffect(() => {
@@ -86,11 +90,7 @@ const Content: FunctionComponent<Props> = (props) => {
           }}
         >
           <PieCharts
-            isGeneratingStats={
-              expectedSeriesLength >
-              (dashboard.historicalData[props.defaultCollectionId]?.series
-                .length ?? 0)
-            }
+            isGeneratingStats={isGeneratingStats}
             displayCollections={displayCollections}
             historicalData={dashboard.historicalData}
             defaultCollectionId={props.defaultCollectionId}

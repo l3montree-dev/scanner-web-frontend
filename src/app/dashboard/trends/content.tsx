@@ -25,6 +25,7 @@ import {
   localizeDefaultCollection,
 } from "../../../utils/view";
 import useRefreshOnVisit from "../../../hooks/useRefreshOnVisit";
+import useGeneratingStatsPoll from "../../../hooks/useGeneratingStatsPoll";
 
 interface Props {
   defaultCollectionId: number;
@@ -56,6 +57,9 @@ const Content: FunctionComponent<Props> = (props) => {
     props.refCollections.concat(props.defaultCollectionId)
   );
 
+  const isGeneratingStats = useGeneratingStatsPoll(
+    dashboard.historicalData[props.defaultCollectionId]?.series.length
+  );
   // if the expected series length is not matched, we display a loading indicator
   const expectedSeriesLength = useMemo(
     () => diffDays(new Date(2023, 0, 15), new Date()),
@@ -311,11 +315,7 @@ const Content: FunctionComponent<Props> = (props) => {
         >
           <div className="flex-1">
             <LineCharts
-              isGeneratingStats={
-                expectedSeriesLength >
-                (dashboard.historicalData[props.defaultCollectionId]?.series
-                  .length ?? 0)
-              }
+              isGeneratingStats={isGeneratingStats}
               zoomLevel={zoomLevel}
               displayCollections={_displayCollections}
               displayInspections={displayInspections}
