@@ -126,7 +126,7 @@ const getUserTargetsWithLatestTestResult = async (
   ];
 
   if (paginateRequest.search !== undefined && paginateRequest.search !== "") {
-    sqlValues.push(toASCII(paginateRequest.search));
+    sqlValues.push(toASCII(paginateRequest.search.toLowerCase()));
   }
 
   // subject to sql injection!!!
