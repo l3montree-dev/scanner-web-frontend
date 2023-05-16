@@ -31,7 +31,7 @@ const DashboardLayout = async ({ children }: Props) => {
   return (
     <div id="dashboard-layout">
       <div className="flex-row min-h-screen text-base flex w-full flex-1">
-        <div className="hidden lg:block">
+        <div className="hidden min-h-screen lg:block">
           <SideNavigation session={session} />
         </div>
         <div className="flex-1 flex flex-col">

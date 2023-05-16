@@ -12,6 +12,7 @@ import { getLinks } from "./links";
 import { useSession } from "../hooks/useSession";
 import { withAuthProvider } from "../providers/AuthProvider";
 import { useSignOut } from "../hooks/useSignOut";
+import Image from "next/image";
 
 const MobileMenu = () => {
   const [menuOpen, setMenuOpen] = React.useState(false);
@@ -56,6 +57,13 @@ const MobileMenu = () => {
           <a role="button" onClick={signOut} className="py-3 ml-9">
             Abmelden
           </a>
+          <Image
+            className="absolute bottom-5"
+            src={"/assets/BMI_de_v3__BSI_de_v1__Web_farbig.svg"}
+            width={280}
+            height={120}
+            alt="Logo BMI und BSI"
+          />
         </div>
       </SideMenu>
     </>

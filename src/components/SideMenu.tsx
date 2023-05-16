@@ -21,7 +21,7 @@ const SideMenu: FunctionComponent<Props> = ({ isOpen, children, onClose }) => {
     <Portal.Root>
       <div
         className={classNames(
-          "fixed bottom-0 text-base left-0 right-0 transition-all z-100 top-0",
+          "fixed bottom-0 text-base left-0 right-0 transition-all z-100 top-0 border-t-6 border-t-bund",
           isOpen
             ? "pointer-events-auto opacity-100"
             : "pointer-events-none opacity-0"

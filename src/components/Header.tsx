@@ -6,19 +6,15 @@ import {
   faUserAstronaut,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FunctionComponent } from "react";
 import { ISession } from "../types";
-import { classNames, clientOnly, isGuestUser } from "../utils/common";
+import { classNames, isGuestUser } from "../utils/common";
 import HeaderTitle from "./HeaderTitle";
+import MobileMenu from "./MobileMenu";
 import DropdownMenuItem from "./common/DropdownMenuItem";
 import LogoutMenuItem from "./common/LogoutMenuItem";
 import Menu from "./common/Menu";
 import Tooltip from "./common/Tooltip";
-import { FunctionComponent } from "react";
-import { signOut } from "next-auth/react";
-import Link from "next/link";
-import SideMenu from "./SideMenu";
-import MenuButton from "./common/MenuButton";
-import MobileMenu from "./MobileMenu";
 
 const Header: FunctionComponent<{ session: ISession | null }> = ({
   session,
@@ -26,7 +22,7 @@ const Header: FunctionComponent<{ session: ISession | null }> = ({
   return (
     <header
       className={classNames(
-        "h-20 sticky top-0 transition-all z-100 duration-500 text-textblack border-b-6 border-b-hellgrau-40",
+        "h-20 sticky top-0 border-t-bund border-t-6 transition-all z-100 duration-500 text-textblack border-b-6 border-b-hellgrau-40",
         "bg-white"
       )}
     >

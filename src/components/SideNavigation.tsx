@@ -39,12 +39,12 @@ const SideNavigation: FunctionComponent<{
   return (
     <div
       className={classNames(
-        "lg:bg-white transition-all relative border-r-6 text-base border-hellgrau-40 lg:h-full",
+        "lg:bg-white transition-all relative border-r-6 text-base border-r-hellgrau-40  lg:h-full",
         store.sideMenuCollapsed ? "w-16" : "w-80"
       )}
     >
-      <div className="md:sticky top-5">
-        <div className="pt-5 m-2 hidden lg:flex text-center items-start mb-5 text-white">
+      <div className="md:sticky border-t-6 -mr-2 border-t-bund top-0">
+        <div className="pt-5 mx-2 hidden lg:flex text-center items-start mb-5 text-white">
           {!store.sideMenuCollapsed && (
             <Link href={"/dashboard"}>
               <Image
