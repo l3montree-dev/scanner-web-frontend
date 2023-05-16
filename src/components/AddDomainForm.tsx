@@ -142,12 +142,12 @@ const AddDomainForm: FunctionComponent<{
           </div>
         </form>
         {request.successed && (
-          <span className="text-lightning-500 text-right w-full block mt-2">
+          <span className="text-gruen-100 text-right w-full block mt-2">
             Domains werden im Hintergrund dem System hinzugefügt
           </span>
         )}
         {request.errored && (
-          <span className="text-red-600 text-right text-sm mt-3 block">
+          <span className="text-rot-100 text-right text-sm mt-3 block">
             {request.errorMessage}
           </span>
         )}

@@ -63,7 +63,7 @@ const SideNavigation: FunctionComponent<{
               <Link key={name} className="hover:no-underline" href={path}>
                 <div
                   className={classNames(
-                    "py-3 lg:py-5 lg:px-5  flex flex-row items-center lg:hover:bg-hellgrau-20 hover:text-bund lg:hover:text-blau-100 hover:underline lg:hover:no-underline transition-all border-b cursor-pointer",
+                    "py-3 lg:py-5 lg:px-5  flex flex-row items-center lg:hover:bg-hellgrau-20 hover:text-bund lg:hover:text-blau-100 hover:underline lg:hover:no-underline transition-all border-b cursor-pointer mr-2",
                     pathname === path
                       ? "text-bund lg:text-blau-100"
                       : "text-textblack"

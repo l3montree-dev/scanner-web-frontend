@@ -554,7 +554,7 @@ const Content: FunctionComponent<Props> = (props) => {
               <thead className="sticky hidden lg:table-header-group table-header z-20">
                 <tr className="text-sm border-b-deepblue-50 text-left bg-dunkelblau-100">
                   <th className="p-2 pr-0 text-center">
-                    {!isGuest && (
+                    {!isGuest && targets.length > 0 && (
                       <Checkbox
                         checked={
                           selectedTargets.length > 0 &&
