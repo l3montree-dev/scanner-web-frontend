@@ -19,12 +19,14 @@ import { linkMapper } from "../../utils/common";
 import { displayInspections, tailwindColors } from "../../utils/view";
 import CollectionDataPill from "../CollectionDataPill";
 import Tooltip from "../common/Tooltip";
+import Spinner from "../common/Spinner";
 
 interface Props {
   displayCollections: number[];
   defaultCollectionId: number;
   currentStat: ChartData;
   historicalData: CollectionStatMap;
+  isGeneratingStats: boolean;
 }
 
 const percentageToXInPieChart = (percentage: number, r = 100) => {
@@ -59,6 +61,7 @@ const PieCharts: FunctionComponent<Props> = ({
   currentStat,
   defaultCollectionId,
   historicalData,
+  isGeneratingStats,
 }) => {
   const router = useRouter();
   return (
@@ -86,7 +89,20 @@ const PieCharts: FunctionComponent<Props> = ({
           .filter((r): r is RefData => r !== null);
         return (
           <div className="bg-hellgrau-20 pb-5 flex-col flex" key={key}>
-            <div className="flex-1 z-0">
+            <div className="flex-1 relative z-0">
+              {isGeneratingStats && (
+                <div className="absolute top-0 text-base left-0 w-full h-full flex flex-row items-center justify-center bg-hellgrau-20 opacity-75 z-10">
+                  <div className="text-center">
+                    <div className="flex flex-row justify-center">
+                      <Spinner size={40} />
+                    </div>
+                    <div className="mt-2">
+                      Statistiken werden generiert. Dies kann einige Minuten
+                      dauern.
+                    </div>
+                  </div>
+                </div>
+              )}
               <VictoryChart prependDefaultAxes={false} width={300} height={300}>
                 <VictoryAxis
                   style={{

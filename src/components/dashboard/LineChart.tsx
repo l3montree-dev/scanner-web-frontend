@@ -28,6 +28,7 @@ import CollectionDataPill from "../CollectionDataPill";
 import Tooltip from "../common/Tooltip";
 import { RefLabelComponent } from "./RefLabelComponent";
 import TrendDiff from "./TrendDiff";
+import Spinner from "../common/Spinner";
 
 interface Props {
   displayCollections: number[];
@@ -45,6 +46,7 @@ interface Props {
     min: number;
     max: number;
   };
+  isGeneratingStats: boolean;
   defaultCollectionId: number;
   zoomLevel: number;
 }
@@ -78,6 +80,7 @@ const LineChart: FunctionComponent<Props> = ({
   data,
   displayCollections,
   defaultCollectionId,
+  isGeneratingStats,
   zoomLevel,
 }) => {
   const chartRef = React.useRef<any>(null);
@@ -245,6 +248,18 @@ const LineChart: FunctionComponent<Props> = ({
         >
           <FontAwesomeIcon className="opacity-100" icon={faDownload} />
         </button>
+        {isGeneratingStats && (
+          <div className="absolute top-0 text-base left-0 w-full h-full flex flex-row items-center justify-center bg-hellgrau-20 opacity-75 z-10">
+            <div className="text-center">
+              <div className="flex flex-row justify-center">
+                <Spinner size={40} />
+              </div>
+              <div className="mt-2">
+                Statistiken werden generiert. Dies kann einige Minuten dauern.
+              </div>
+            </div>
+          </div>
+        )}
 
         <VictoryChart
           containerComponent={

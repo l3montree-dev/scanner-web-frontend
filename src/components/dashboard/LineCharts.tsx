@@ -22,6 +22,7 @@ interface Props {
       max: number;
     };
   };
+  isGeneratingStats: boolean;
   defaultCollectionId: number;
   zoomLevel: number;
 }
@@ -30,6 +31,7 @@ const LineCharts: FunctionComponent<Props> = ({
   displayCollections,
   displayInspections,
   dataPerInspection,
+  isGeneratingStats,
   defaultCollectionId,
   zoomLevel,
 }) => {
@@ -46,6 +48,7 @@ const LineCharts: FunctionComponent<Props> = ({
             return (
               <LineChart
                 key={key}
+                isGeneratingStats={isGeneratingStats}
                 zoomLevel={zoomLevel}
                 inspectionType={key}
                 displayCollections={displayCollections}

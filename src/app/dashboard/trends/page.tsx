@@ -50,7 +50,7 @@ const Page = async ({ searchParams }: any) => {
         ...referenceChartData,
       },
     }),
-    username: session?.user.username,
+    username: session?.user.name,
     defaultCollectionId: collectionId(currentUser),
     refCollections: config.generateStatsForCollections,
     collections: normalizeToMap(

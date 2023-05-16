@@ -14,6 +14,7 @@ import PieCharts from "../../components/dashboard/PieCharts";
 import useRefreshOnVisit from "../../hooks/useRefreshOnVisit";
 import { ChartData, IDashboard } from "../../types";
 import { classNames } from "../../utils/common";
+import { diffDays } from "../../utils/view";
 
 interface Props {
   dashboard: IDashboard;
@@ -51,6 +52,11 @@ const Content: FunctionComponent<Props> = (props) => {
 
   const noDomains = dashboard.totals.uniqueTargets === 0;
 
+  const expectedSeriesLength = useMemo(
+    () => diffDays(new Date(2023, 0, 15), new Date()),
+    []
+  );
+
   useEffect(() => {
     setData(currentStat);
   }, [currentStat]);
@@ -80,6 +86,11 @@ const Content: FunctionComponent<Props> = (props) => {
           }}
         >
           <PieCharts
+            isGeneratingStats={
+              expectedSeriesLength >
+              (dashboard.historicalData[props.defaultCollectionId]?.series
+                .length ?? 0)
+            }
             displayCollections={displayCollections}
             historicalData={dashboard.historicalData}
             defaultCollectionId={props.defaultCollectionId}

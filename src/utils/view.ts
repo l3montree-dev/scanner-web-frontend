@@ -132,3 +132,8 @@ export const localizeDefaultCollection = <
 
   return collection;
 };
+
+const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+
+export const diffDays = (firstDate: Date, secondDate: Date) =>
+  Math.round(Math.abs((firstDate.getTime() - secondDate.getTime()) / oneDay));

@@ -20,6 +20,7 @@ import useWindowSize from "../../../hooks/useWindowSize";
 import { ChartData, IDashboard } from "../../../types";
 import { classNames, dateFormat } from "../../../utils/common";
 import {
+  diffDays,
   displayInspections,
   localizeDefaultCollection,
 } from "../../../utils/view";
@@ -45,19 +46,6 @@ const Content: FunctionComponent<Props> = (props) => {
   }, [width]);
 
   const dashboard = props.dashboard;
-  const currentStat = useMemo(
-    () =>
-      props.defaultCollectionId in dashboard.historicalData
-        ? dashboard.historicalData[props.defaultCollectionId]!.series[
-            dashboard.historicalData[props.defaultCollectionId]!.series.length -
-              1
-          ]
-        : ({
-            totalCount: 0,
-            data: {},
-          } as ChartData),
-    [dashboard.historicalData, props.defaultCollectionId]
-  );
 
   const [displayCollections, setDisplayCollections] = useState<number[]>(
     props.refCollections.concat(props.defaultCollectionId)
@@ -68,18 +56,13 @@ const Content: FunctionComponent<Props> = (props) => {
     props.refCollections.concat(props.defaultCollectionId)
   );
 
-  const [data, setData] = useState({
-    totalCount: currentStat.totalCount,
-    data: Object.fromEntries(
-      Object.keys(currentStat.data).map((key) => [key, 0])
-    ),
-  });
+  // if the expected series length is not matched, we display a loading indicator
+  const expectedSeriesLength = useMemo(
+    () => diffDays(new Date(2023, 0, 15), new Date()),
+    []
+  );
 
   const noDomains = dashboard.totals.uniqueTargets === 0;
-
-  useEffect(() => {
-    setData(currentStat);
-  }, [currentStat]);
 
   const dataPerInspection = useMemo(
     () =>
@@ -328,6 +311,11 @@ const Content: FunctionComponent<Props> = (props) => {
         >
           <div className="flex-1">
             <LineCharts
+              isGeneratingStats={
+                expectedSeriesLength >
+                (dashboard.historicalData[props.defaultCollectionId]?.series
+                  .length ?? 0)
+              }
               zoomLevel={zoomLevel}
               displayCollections={_displayCollections}
               displayInspections={displayInspections}
