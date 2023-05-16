@@ -250,35 +250,38 @@ const PieCharts: FunctionComponent<Props> = ({
             <div className="flex flex-1 items-center px-6 flex-row">
               <h2
                 title={titleMapper[key]}
-                className="text-left break-normal flex flex-row items-center font-bold mt-1"
+                className="text-left break-normal font-bold mt-1"
               >
                 {titleMapper[key]}{" "}
-                <Tooltip
-                  tooltip={
-                    <>
-                      <p className="mb-4">{descriptionMapper[key]}</p>
-                      {linkMapper[key] !== "" && (
-                        <a
-                          download
-                          target={"_blank"}
-                          href={linkMapper[key]}
-                          rel="noreferrer"
-                        >
-                          &quot;{titleMapper[key]}&quot; One-Pager herunterladen
-                          <FontAwesomeIcon
-                            fontSize={15}
-                            className="ml-2"
-                            icon={faExternalLinkAlt}
-                          />
-                        </a>
-                      )}
-                    </>
-                  }
-                >
-                  <div className="text-dunkelgrau-100 inline ml-2">
-                    <FontAwesomeIcon fontSize={18} icon={faQuestionCircle} />
-                  </div>
-                </Tooltip>
+                <div className="inline-block">
+                  <Tooltip
+                    tooltip={
+                      <>
+                        <p className="mb-4">{descriptionMapper[key]}</p>
+                        {linkMapper[key] !== "" && (
+                          <a
+                            download
+                            target={"_blank"}
+                            href={linkMapper[key]}
+                            rel="noreferrer"
+                          >
+                            &quot;{titleMapper[key]}&quot; One-Pager
+                            herunterladen
+                            <FontAwesomeIcon
+                              fontSize={15}
+                              className="ml-2"
+                              icon={faExternalLinkAlt}
+                            />
+                          </a>
+                        )}
+                      </>
+                    }
+                  >
+                    <div className="text-dunkelgrau-100 inline ml-2">
+                      <FontAwesomeIcon fontSize={18} icon={faQuestionCircle} />
+                    </div>
+                  </Tooltip>
+                </div>
               </h2>
             </div>
             <div className="flex-1">
