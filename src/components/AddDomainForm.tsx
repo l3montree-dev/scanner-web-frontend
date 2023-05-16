@@ -70,12 +70,12 @@ const AddDomainForm: FunctionComponent<{
         </div>
       </form>
       {createRequest.isLoading && (
-        <span className="text-white/70 block text-right mt-2">
+        <span className="text-gray-600 block text-right mt-2">
           Domain wird hinzugefügt & gescanned...
         </span>
       )}
       {createRequest.successed && (
-        <span className="text-gruen-100 block text-right mt-2">
+        <span className="text-gruen-100 block text-right font-bold text-lg mt-2">
           Domain erfolgreich hinzugefügt.
         </span>
       )}

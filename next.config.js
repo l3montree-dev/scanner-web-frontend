@@ -9,6 +9,9 @@ const nextConfig = {
     sentry: {
         tunnelRoute: "/api/v1/tunnel",
     },
+    experimental: {
+        appDir: true
+    },
     reactStrictMode: true,
     swcMinify: true,
     webpack: (config, { isServer }) => {
