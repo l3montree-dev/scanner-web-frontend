@@ -12,6 +12,10 @@ const logger = getLogger("nextAuthOptions");
  * returns the old token and an error property
  */
 async function refreshAccessToken(token: IToken) {
+  return {
+    ...token,
+    error: "RefreshAccessTokenError",
+  };
   try {
     const response = await fetch(
       `${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/token`,

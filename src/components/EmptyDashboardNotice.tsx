@@ -2,12 +2,14 @@ import { faEnvelope, faPhone } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import AddDomainForm from "../components/AddDomainForm";
-import Modal from "./common/Modal";
 import { clientHttpClient } from "../services/clientHttpClient";
 import Button from "./common/Button";
+import Modal from "./common/Modal";
+import { useRouter } from "next/navigation";
 
 const EmptyDashboardNotice = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
 
   const handleAddRecord = async (target: string) => {
     const res = await clientHttpClient(`/api/v1/targets`, crypto.randomUUID(), {
@@ -21,6 +23,7 @@ const EmptyDashboardNotice = () => {
     if (!res.ok) {
       throw res;
     }
+    router.refresh();
   };
 
   const handleFileFormSubmit = async (files: File[]) => {

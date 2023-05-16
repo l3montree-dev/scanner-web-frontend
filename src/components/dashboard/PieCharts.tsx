@@ -209,7 +209,7 @@ const PieCharts: FunctionComponent<Props> = ({
                   style={{ fontSize: 30, fill: tailwindColors.blau["100"] }}
                   x={150}
                   y={150}
-                  text={`${(currentStat.data[key] * 100).toFixed(1)}%`}
+                  text={`${((currentStat.data[key] ?? 0) * 100).toFixed(1)}%`}
                 />
                 {refData.map(({ title, percentage, color }, i) => {
                   return (

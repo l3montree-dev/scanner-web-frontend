@@ -23,6 +23,7 @@ import {
   displayInspections,
   localizeDefaultCollection,
 } from "../../../utils/view";
+import useRefreshOnVisit from "../../../hooks/useRefreshOnVisit";
 
 interface Props {
   defaultCollectionId: number;
@@ -32,6 +33,8 @@ interface Props {
 }
 
 const Content: FunctionComponent<Props> = (props) => {
+  useRefreshOnVisit("dashboard");
+
   const [zoomLevel, setZoomLevel] = React.useState(2);
   const { width } = useWindowSize();
 

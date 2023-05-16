@@ -6,6 +6,7 @@ import DragAndDrop from "./common/DragAndDrop";
 import FormInput from "./common/FormInput";
 import Button from "./common/Button";
 import OutlineButton from "./common/OutlineButton";
+import { sanitizeFQDN } from "../utils/common";
 
 const AddDomainForm: FunctionComponent<{
   onNewDomain: (domain: string) => Promise<void>;
@@ -20,13 +21,17 @@ const AddDomainForm: FunctionComponent<{
 
   const handleAddRecord = async (e: FormEvent) => {
     e.preventDefault();
+    const domain = sanitizeFQDN(newDomain);
+    if (!domain) {
+      createRequest.error("Bitte geben Sie eine gültige Domain ein.");
+      return;
+    }
     createRequest.loading();
     try {
       await onNewDomain(newDomain);
       setNewDomain("");
       createRequest.success();
     } catch (err) {
-      console.log(err);
       createRequest.error(
         "Leider ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut."
       );

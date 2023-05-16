@@ -10,7 +10,7 @@ const nextConfig = {
         tunnelRoute: "/api/v1/tunnel",
     },
     experimental: {
-        appDir: true
+        appDir: true,
     },
     reactStrictMode: true,
     swcMinify: true,

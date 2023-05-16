@@ -6,17 +6,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import {
-  FunctionComponent,
-  useEffect,
-  useMemo,
-  useState,
-  useTransition,
-} from "react";
+import { FunctionComponent, useEffect, useMemo, useState } from "react";
 import EmptyDashboardNotice from "../../components/EmptyDashboardNotice";
 import PageTitle from "../../components/PageTitle";
 import Tooltip from "../../components/common/Tooltip";
 import PieCharts from "../../components/dashboard/PieCharts";
+import useRefreshOnVisit from "../../hooks/useRefreshOnVisit";
 import { ChartData, IDashboard } from "../../types";
 import { classNames } from "../../utils/common";
 
@@ -26,6 +21,8 @@ interface Props {
   refCollections: number[];
 }
 const Content: FunctionComponent<Props> = (props) => {
+  useRefreshOnVisit("dashboard");
+
   const dashboard = props.dashboard;
   const currentStat = useMemo(
     () =>
