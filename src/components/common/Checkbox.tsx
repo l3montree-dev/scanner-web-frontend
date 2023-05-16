@@ -16,8 +16,10 @@ const Checkbox: FunctionComponent<Props> = (props) => {
         props.onChange();
       }}
       className={classNames(
-        "w-5 h-5 flex flex-row cursor-pointer items-center border border-dunkelgrau-80 justify-center",
-        props.checked ? "bg-blau-100" : "bg-white",
+        "w-5 h-5 flex rounded-sm flex-row cursor-pointer items-center border  justify-center",
+        props.checked
+          ? "bg-blau-100 border-blau-100"
+          : "border-dunkelgrau-80 bg-white",
         focused ? "outline outline-blau-100" : ""
       )}
     >

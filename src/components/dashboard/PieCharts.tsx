@@ -253,7 +253,7 @@ const PieCharts: FunctionComponent<Props> = ({
                 className="text-left break-normal font-bold mt-1"
               >
                 {titleMapper[key]}{" "}
-                <div className="inline-block">
+                <div className="inline-block relative bottom-0.5">
                   <Tooltip
                     tooltip={
                       <>

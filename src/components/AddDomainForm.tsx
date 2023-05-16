@@ -80,7 +80,7 @@ const AddDomainForm: FunctionComponent<{
         </span>
       )}
       {createRequest.successed && (
-        <span className="text-gruen-100 block text-right font-bold text-lg mt-2">
+        <span className="text-gruen-100 block text-right text-lg mt-2">
           Domain erfolgreich hinzugefügt.
         </span>
       )}

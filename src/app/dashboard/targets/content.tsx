@@ -77,6 +77,7 @@ const Content: FunctionComponent<Props> = (props) => {
   >(props.targets.data);
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  const [currentDomainChangeCount, setCurrentDomainChangeCount] = useState(0);
 
   const [selection, setSelection] = useState<{ [uri: string]: boolean }>({});
   const scanAllLoading = useLoading();
@@ -145,6 +146,7 @@ const Content: FunctionComponent<Props> = (props) => {
     const revert = optimisticUpdate(targets, setTargets, (prev) =>
       prev.filter((d) => d.uri !== uri)
     );
+    setCurrentDomainChangeCount((prev) => prev - 1);
     const response = await clientHttpClient(
       `/api/v1/targets/delete`,
       crypto.randomUUID(),
@@ -156,6 +158,7 @@ const Content: FunctionComponent<Props> = (props) => {
       }
     );
     if (!response.ok) {
+      setCurrentDomainChangeCount((prev) => prev + 1);
       revert();
     }
   };
@@ -183,6 +186,7 @@ const Content: FunctionComponent<Props> = (props) => {
       setTargets((prev) =>
         prev.filter((d) => !selectedTargets.includes(d.uri))
       );
+      setCurrentDomainChangeCount((prev) => prev - selectedTargets.length);
       // remove them from the selection
       setSelection((prev) => {
         const newSelection = { ...prev };
@@ -250,6 +254,7 @@ const Content: FunctionComponent<Props> = (props) => {
       throw res;
     }
     const detailedDomain = await res.json();
+    setCurrentDomainChangeCount((prev) => prev + 1);
     setTargets((prev) => [...prev, detailedDomain]);
   };
 
@@ -480,7 +485,7 @@ const Content: FunctionComponent<Props> = (props) => {
                       RightIcon={<FontAwesomeIcon icon={faCaretDown} />}
                     >
                       Zeige: {translateDomainType(viewedDomainType)} (
-                      {props.targets.total})
+                      {props.targets.total + currentDomainChangeCount})
                     </Button>
                   }
                   Menu={
