@@ -1,17 +1,9 @@
 "use client";
-import {
-  faArrowLeftLong,
-  faChartLine,
-  faGaugeHigh,
-  faInfo,
-  faListCheck,
-  faSquareCheck,
-  faUsers,
-} from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { FunctionComponent, useEffect } from "react";
 import { ISession } from "../types";
 import { classNames, isAdmin, isGuestUser } from "../utils/common";

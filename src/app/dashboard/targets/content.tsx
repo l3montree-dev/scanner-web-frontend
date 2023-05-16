@@ -51,6 +51,7 @@ import { optimisticUpdate } from "../../../utils/view";
 import DropdownMenuItem from "../../../components/common/DropdownMenuItem";
 import { withAuthProvider } from "../../../providers/AuthProvider";
 import Checkbox from "../../../components/common/Checkbox";
+import useRefreshOnVisit from "../../../hooks/useRefreshOnVisit";
 
 const translateDomainType = (type: TargetType) => {
   switch (type) {
@@ -69,6 +70,7 @@ interface Props {
   collections: { [collectionId: string]: DTO<Collection> };
 }
 const Content: FunctionComponent<Props> = (props) => {
+  useRefreshOnVisit("targets");
   const [isOpen, setIsOpen] = useState(false);
   const [targets, setTargets] = useState<
     Array<DTO<DetailedTarget> & { collections?: number[] }>

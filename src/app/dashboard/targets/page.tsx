@@ -10,7 +10,6 @@ import {
 } from "../../../utils/common";
 import { getCurrentUserOrGuestUser, toDTO } from "../../../utils/server";
 import Content from "./content";
-
 const Page = async ({ searchParams }: any) => {
   // get the query params.
   const page = +(searchParams["page"] ?? 0);

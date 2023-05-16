@@ -53,7 +53,7 @@ const EditNetworkForm: FunctionComponent<Props> = (props) => {
             <Button type="button" onClick={handleDelete} loading={false}>
               Netzwerk löschen
             </Button>
-            <Button primary loading={request.isLoading} type="submit">
+            <Button loading={request.isLoading} type="submit">
               Speichern
             </Button>
           </div>

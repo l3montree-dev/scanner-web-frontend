@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache";
 import { config } from "../../../config";
 import { prisma } from "../../../db/connection";
 import { authOptions } from "../../../nextAuthOptions";
@@ -57,6 +58,7 @@ const Page = async ({ searchParams }: any) => {
       "id"
     ),
   };
+
   return <Content {...props} />;
 };
 
