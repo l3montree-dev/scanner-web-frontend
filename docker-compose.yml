@@ -40,7 +40,7 @@ services:
     ports:
       - "5432:5432"
     env_file:
-      - .env
+      - .env.local
     volumes:
       - 'postgresql_data:/bitnami/postgresql'
 

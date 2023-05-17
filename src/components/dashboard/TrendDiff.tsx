@@ -1,6 +1,8 @@
+"use client";
+
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useRouter } from "next/router";
+
 import { FunctionComponent, useEffect, useRef, useState } from "react";
 import useLoading from "../../hooks/useLoading";
 import { clientHttpClient } from "../../services/clientHttpClient";
@@ -8,6 +10,7 @@ import { classNames } from "../../utils/common";
 import { didPass2CheckResult } from "../../utils/view";
 import ResultIcon from "../ResultIcon";
 import Spinner from "../common/Spinner";
+import { useSearchParams } from "next/navigation";
 
 const parseDate = (date: string) => {
   let [day, month, year] = date.split(".");
@@ -53,7 +56,7 @@ const TrendDiff: FunctionComponent<Props> = ({
     collectionIds: [],
   });
 
-  const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -82,7 +85,7 @@ const TrendDiff: FunctionComponent<Props> = ({
       collectionIds: collectionIds.map((id) => id.toString()).join(","),
       inspectionType,
       forceCollection:
-        (router.query["forceCollection"] as string | undefined) ?? "",
+        (searchParams.get("forceCollection") as string | undefined) ?? "",
     }).toString();
     const res = await clientHttpClient(
       `/api/v1/diff?${url}`,
