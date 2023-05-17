@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.2.1] - 2023-05-17
+
+New image-tag: `v4.2.1` with digest `sha256:efee957e35aefe543e2dd934e4f91476d133f9a21055cc8e3728212bba30bbf3`
+
+### Fixed
+
+- Fixed a bug causing an error when using the QA/ test query parameters `forceCollection` and `displayDiff`. (#112)
+
 ## [4.2.0] - 2023-05-16
 
 New image-tag: `v4.2.0` with digest `sha256:4a842290b98d7c50a6af902fec88c2c6e903f5aa07fef5c4080fcc33675ccfff`
