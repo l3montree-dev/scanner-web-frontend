@@ -191,7 +191,7 @@ const getTargets2Scan = async (prisma: PrismaClient) => {
 
   const targets = (await prisma.$queryRaw(Prisma.sql`
   SELECT * from targets where ("lastScan" < ${new Date(
-    new Date().getTime() - scanIntervalMinutes * 60 * 1000
+    new Date().getTime() - (scanIntervalMinutes * 60 * 1000) / 2 // look if the last scan is older than half the interval - otherwise since we ping each minute, it might happen, that the lastScanInterval does actually match the current minute so we loose a scan
   ).getTime()} OR "lastScan" IS NULL) AND "queued" = false AND "errorCount" < 5 AND MOD(number + ${currentMinute}, ${scanIntervalMinutes}) = 0 AND exists(SELECT 1 from target_collections tc WHERE tc.uri = targets.uri)`)) as Array<Target>;
 
   await prisma.target.updateMany({
