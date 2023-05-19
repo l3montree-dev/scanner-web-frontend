@@ -1,8 +1,19 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [4.2.2] - 2023-05-19
+
+### Fixed
+
+- Users can be deleted right after adding them (#106)
+- Scan button border fix (#115)
+- Removed role, first name and last name from users
+- added image into sidenav for mobile devices
+
 
 ## [4.2.1] - 2023-05-17
 
