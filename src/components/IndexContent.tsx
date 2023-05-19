@@ -38,7 +38,7 @@ const IndexContent: FunctionComponent<Props> = ({ displayNotAvailable }) => {
   }
 
   return (
-    <div className="flex relative overflow-hidden md:py-10 flex-col w-full justify-center">
+    <div className="flex relative md:py-10 flex-col w-full justify-center">
       <div className="relative">
         <Image
           className="absolute hidden lg:inline top-0 right-0"

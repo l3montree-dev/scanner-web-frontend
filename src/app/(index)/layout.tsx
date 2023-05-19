@@ -5,7 +5,7 @@ const Layout: FunctionComponent<PropsWithChildren> = ({ children }) => {
   return (
     <div id="index-layout">
       <BPAHeader />
-      {children}
+      <main>{children}</main>
     </div>
   );
 };

@@ -375,3 +375,7 @@ a {
 .z-300 {
     z-index: 300;
 }
+
+main {
+    min-height: calc(100vh - 550px);
+}
