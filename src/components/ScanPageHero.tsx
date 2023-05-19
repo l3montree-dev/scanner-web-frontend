@@ -80,7 +80,7 @@ const ScanPageHero: FunctionComponent<Props> = ({
                 />
               </svg>
             }
-            additionalClasses="border-white"
+            additionalClasses="border-white hover:border-white"
             loading={scanRequest.isLoading}
             type="submit"
           >
