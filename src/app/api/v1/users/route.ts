@@ -29,8 +29,8 @@ export async function POST(req: NextRequest) {
       .join("")}&`;
     const { id } = await kcClient.users.create({
       realm: keycloak.getRealmName(),
-      firstName: user.firstName,
-      lastName: user.lastName,
+      firstName: "",
+      lastName: "",
       username: user.username,
       emailVerified: true,
       enabled: true,
@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
         password,
         user: {
           ...user,
-          _id: id,
+          id,
         },
       });
     } catch (e) {

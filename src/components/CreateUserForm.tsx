@@ -14,9 +14,6 @@ const CreateUserForm: FunctionComponent<Props> = ({ onCreateUser }) => {
   const createRequest = useLoading();
 
   const [username, setUsername] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [role, setRole] = useState("");
   const [networks, setNetworks] = useState("");
   const [userPassword, setUserPassword] = useState("");
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -25,18 +22,12 @@ const CreateUserForm: FunctionComponent<Props> = ({ onCreateUser }) => {
       setUserPassword("");
       createRequest.loading();
       const password = await onCreateUser({
-        firstName,
-        lastName,
         networks,
         username,
-        role,
       });
       setUserPassword(password);
       // reset the form
       setUsername("");
-      setFirstName("");
-      setLastName("");
-      setRole("");
       setNetworks("");
 
       createRequest.success();
@@ -59,23 +50,6 @@ const CreateUserForm: FunctionComponent<Props> = ({ onCreateUser }) => {
             onChange={setUsername}
             value={username}
           />
-          <div className="mt-4 flex-col flex">
-            <FormInput
-              label="Vorname"
-              onChange={setFirstName}
-              value={firstName}
-            />
-          </div>
-          <div className="mt-4 flex-col flex">
-            <FormInput
-              label="Nachname"
-              onChange={setLastName}
-              value={lastName}
-            />
-          </div>
-          <div className="mt-4 flex-col flex">
-            <FormInput label="Rolle" onChange={setRole} value={role} />
-          </div>
           <div className="flex flex-row text-base justify-end mt-5">
             <Button loading={createRequest.isLoading} type="submit">
               Nutzer anlegen
@@ -90,11 +64,11 @@ const CreateUserForm: FunctionComponent<Props> = ({ onCreateUser }) => {
         </span>
       )}
       {userPassword && (
-        <div className="mt-5 text-right text-base bg-blau-100 p-2">
+        <div className="mt-5 text-right rounded-sm text-base bg-blau-100 px-4 py-2">
           <p className="text-white">
-            Nutzer wurde mit folgendem initialen Password angelegt:
+            Nutzer wurde mit folgendem initialen Password angelegt:{" "}
+            <span className="font-bold text-white">{userPassword}</span>
           </p>
-          <p className="font-bold text-white">{userPassword}</p>
         </div>
       )}
     </div>

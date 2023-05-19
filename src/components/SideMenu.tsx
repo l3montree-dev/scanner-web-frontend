@@ -2,6 +2,7 @@ import React, { FunctionComponent } from "react";
 import { classNames } from "../utils/common";
 import Button from "./common/Button";
 import * as Portal from "@radix-ui/react-portal";
+import Image from "next/image";
 
 interface Props {
   isOpen: boolean;
@@ -33,7 +34,15 @@ const SideMenu: FunctionComponent<Props> = ({ isOpen, children, onClose }) => {
             isOpen ? "translate-x-0" : "translate-x-full"
           )}
         >
-          <div className="p-8 flex right-0 z-10 top-0 flex-row justify-start">
+          <Image
+            className="absolute opacity-50 z-0 top-1/2 right-0 -translate-y-1/2"
+            width={350}
+            height={200}
+            priority
+            src={"/assets/Adler_Ausschnitt_1.svg"}
+            alt="Bundesadler"
+          />
+          <div className="p-8 relative z-10 flex right-0 top-0 flex-row justify-start">
             <Button
               onClick={onClose}
               LeftIcon={
@@ -52,7 +61,7 @@ const SideMenu: FunctionComponent<Props> = ({ isOpen, children, onClose }) => {
               Schließen
             </Button>
           </div>
-          <div className="overflow-y-auto p-8 pt-0 overflow-x-hidden flex-1">
+          <div className="overflow-y-auto relative z-10 p-8 pt-0 overflow-x-hidden flex-1">
             {children}
           </div>
         </div>

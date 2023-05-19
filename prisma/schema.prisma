@@ -102,7 +102,7 @@ model Target {
 
 model User {
   id   String  @id
-  role String?
+  // role String?
 
   collections         Collection[] @relation("user_collections")
   collectionCreations Collection[]

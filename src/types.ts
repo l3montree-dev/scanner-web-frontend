@@ -102,9 +102,6 @@ export interface IToken extends ISession {
 
 export interface ICreateUserDTO {
   username: string;
-  firstName: string;
-  lastName: string;
-  role: string;
 }
 
 export type IScanSuccessResponse = {

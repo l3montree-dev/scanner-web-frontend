@@ -5,8 +5,6 @@ import NotFoundException from "../../../../../errors/NotFoundException";
 import { UnauthorizedException } from "../../../../../errors/UnauthorizedException";
 import { authOptions } from "../../../../../nextAuthOptions";
 import { keycloak } from "../../../../../services/keycloak";
-import { userService } from "../../../../../services/userService";
-import { IUserPutDTO } from "../../../../../types";
 import { isAdmin } from "../../../../../utils/common";
 import { getJWTToken, getServerSession } from "../../../../../utils/server";
 
@@ -15,6 +13,7 @@ interface Params {
     userId: string;
   };
 }
+/*
 export async function PUT(req: NextRequest, { params }: Params) {
   const userId = params.userId as string;
   if (!userId) {
@@ -53,7 +52,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
     firstName: putRequest.firstName,
     lastName: putRequest.lastName,
   });
-}
+}*/
 
 export async function DELETE(req: NextRequest, { params }: Params) {
   const userId = params.userId as string;
