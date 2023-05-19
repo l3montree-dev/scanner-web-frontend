@@ -132,6 +132,7 @@ const Content: FunctionComponent<Props> = (props) => {
         }).toString()}`
       );
 
+      setCurrentDomainChangeCount(0);
       setSelection({});
     },
     [router, pathname, searchParams]
