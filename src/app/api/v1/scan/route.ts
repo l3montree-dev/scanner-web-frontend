@@ -73,9 +73,8 @@ export async function GET(req: NextRequest) {
   const requestId =
     (req.headers.get("x-request-id") as string | undefined) ?? randomUUID();
 
-  logger.debug({ requestId }, `received request to scan site: ${site}`);
   const siteToScan = sanitizeFQDN(site);
-  logger.debug({ requestId }, `sanitized site to scan: ${siteToScan}`);
+  logger.debug({ requestId }, `received request to scan site: ${siteToScan}`);
   // check if we were able to sanitize the site
   // if the requested site is not a valid uri, the function returns null
   if (!siteToScan) {
@@ -135,7 +134,7 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  const result = await inspectRPC(requestId, siteToScan);
+  const result = await inspectRPC(requestId, siteToScan, refresh === "true");
 
   if (isScanError(result)) {
     await neverThrow(

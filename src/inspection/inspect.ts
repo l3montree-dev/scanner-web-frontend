@@ -3,12 +3,14 @@ import { IScanResponse } from "../types";
 
 export const inspectRPC = async (
   requestId: string,
-  target: string
+  target: string,
+  refresh: boolean = false
 ): Promise<IScanResponse> => {
   const result = await rabbitMQRPCClient.call<IScanResponse>(
     process.env.SCAN_REQUEST_QUEUE ?? "scan-request",
     {
       target,
+      refresh, // if refresh is true, it will bypass all caching layers
     },
     { messageId: requestId }
   );
