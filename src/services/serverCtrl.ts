@@ -12,6 +12,7 @@ import { getLogger } from "./logger";
 import { rabbitMQClient } from "./rabbitmqClient";
 import { reportService } from "./reportService";
 import { statService } from "./statService";
+import { notificationServer } from "../notifications/notificationServer";
 
 const logger = getLogger(__filename);
 // make sure to always execute a function only once.

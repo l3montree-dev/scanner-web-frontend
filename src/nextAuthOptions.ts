@@ -3,9 +3,7 @@ import { prisma } from "./db/connection";
 import { IToken } from "./types";
 import CredentialsProvider from "next-auth/providers/credentials";
 import KeycloakProvider from "next-auth/providers/keycloak";
-import { getLogger } from "./services/logger";
 
-const logger = getLogger("nextAuthOptions");
 /**
  * Takes a token, and returns a new token with updated
  * `accessToken` and `accessTokenExpires`. If an error occurs,
@@ -33,7 +31,6 @@ async function refreshAccessToken(token: IToken) {
       }
     );
     if (!response.ok) {
-      logger.error(`Error refreshing access token: ${await response.text()}`);
       throw response;
     }
 

@@ -52,6 +52,7 @@ import DropdownMenuItem from "../../../components/common/DropdownMenuItem";
 import { withAuthProvider } from "../../../providers/AuthProvider";
 import Checkbox from "../../../components/common/Checkbox";
 import useRefreshOnVisit from "../../../hooks/useRefreshOnVisit";
+import dynamic from "next/dynamic";
 
 const translateDomainType = (type: TargetType) => {
   switch (type) {
@@ -76,7 +77,7 @@ const Content: FunctionComponent<Props> = (props) => {
     Array<DTO<DetailedTarget> & { collections?: number[] }>
   >(props.targets.data);
   const searchParams = useSearchParams();
-  const pathname = usePathname();
+  const pathname = usePathname() ?? "";
   const [currentDomainChangeCount, setCurrentDomainChangeCount] = useState(0);
 
   const [selection, setSelection] = useState<{ [uri: string]: boolean }>({});
@@ -87,7 +88,7 @@ const Content: FunctionComponent<Props> = (props) => {
   const router = useRouter();
 
   const viewedDomainType =
-    (searchParams.get("domainType") as TargetType | undefined) ??
+    (searchParams?.get("domainType") as TargetType | undefined) ??
     TargetType.all;
   const handleSort = (key: "uri") => {
     // check if we should reverse the order.
@@ -106,7 +107,7 @@ const Content: FunctionComponent<Props> = (props) => {
     value: 1 | 0 | -1 | undefined
   ) => {
     if (value === undefined) {
-      const { [key]: _, ...query } = Object.fromEntries(searchParams);
+      const { [key]: _, ...query } = Object.fromEntries(searchParams ?? []);
       router.push(`${pathname}?${new URLSearchParams(query).toString()}`);
       return;
     }
@@ -127,7 +128,7 @@ const Content: FunctionComponent<Props> = (props) => {
     (query: Record<string, string | string[]>) => {
       router.push(
         `${pathname}?${new URLSearchParams({
-          ...Object.fromEntries(searchParams),
+          ...Object.fromEntries(searchParams ?? []),
           ...(query as Record<string, string>),
         }).toString()}`
       );
@@ -137,6 +138,15 @@ const Content: FunctionComponent<Props> = (props) => {
     },
     [router, pathname, searchParams]
   );
+
+  useEffect(() => {
+    (async function () {
+      const { notificationClient } = await import(
+        "../../../notifications/notificationClient"
+      );
+      notificationClient.start();
+    })();
+  }, []);
 
   useEffect(() => {
     setTargets(props.targets.data);
@@ -355,7 +365,7 @@ const Content: FunctionComponent<Props> = (props) => {
 
   const collectionIds = useMemo(() => {
     const collections =
-      (searchParams.get("collectionIds") as string | string[]) ?? [];
+      (searchParams?.get("collectionIds") as string | string[]) ?? [];
     return (Array.isArray(collections) ? collections : [collections]).map(
       (c) => +c
     );
@@ -381,10 +391,10 @@ const Content: FunctionComponent<Props> = (props) => {
   );
 
   const sort = {
-    key: searchParams.get("sort") as
+    key: searchParams?.get("sort") as
       | "uri"
       | keyof IScanSuccessResponse["result"],
-    direction: parseInt(searchParams.get("sortDirection") as string) as 1 | -1,
+    direction: parseInt(searchParams?.get("sortDirection") as string) as 1 | -1,
   };
 
   return (
@@ -533,7 +543,8 @@ const Content: FunctionComponent<Props> = (props) => {
               ></Menu>
               )*/}
 
-                {Object.keys(Object.fromEntries(searchParams)).length > 0 && (
+                {Object.keys(Object.fromEntries(searchParams ?? [])).length >
+                  0 && (
                   <Button
                     additionalClasses="flex-1 whitespace-nowrap"
                     onClick={() => {

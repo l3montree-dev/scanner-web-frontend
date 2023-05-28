@@ -67,6 +67,7 @@ const Page = async ({ searchParams }: any) => {
       "id"
     ),
   };
+
   return <Content {...props} />;
 };
 
