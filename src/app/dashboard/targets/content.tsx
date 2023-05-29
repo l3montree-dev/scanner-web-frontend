@@ -1,14 +1,15 @@
 "use client";
 
 import {
-  faQuestionCircle,
   faCaretDown,
   faCaretUp,
+  faQuestionCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+import { Collection, Target } from "@prisma/client";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React, {
+import {
   FunctionComponent,
   useCallback,
   useEffect,
@@ -22,18 +23,26 @@ import PageTitle from "../../../components/PageTitle";
 import TargetOverviewForm from "../../../components/TargetOverviewForm";
 import TargetTableItem from "../../../components/TargetTableItem";
 import Button from "../../../components/common/Button";
+import Checkbox from "../../../components/common/Checkbox";
+import DropdownMenuItem from "../../../components/common/DropdownMenuItem";
 import Menu from "../../../components/common/Menu";
 import Modal from "../../../components/common/Modal";
 import Pagination from "../../../components/common/Pagination";
 import { SortButton } from "../../../components/common/SortButton";
+import Tooltip from "../../../components/common/Tooltip";
+import { useIsGuest } from "../../../hooks/useIsGuest";
+import useLoading from "../../../hooks/useLoading";
+import useRefreshOnVisit from "../../../hooks/useRefreshOnVisit";
 import {
+  DomainInspectionType,
+  HeaderInspectionType,
+  InspectionType,
+  NetworkInspectionType,
   OrganizationalInspectionType,
   TLSInspectionType,
-  HeaderInspectionType,
-  DomainInspectionType,
-  NetworkInspectionType,
-  InspectionType,
 } from "../../../inspection/scans";
+import { withAuthProvider } from "../../../providers/AuthProvider";
+import { clientHttpClient } from "../../../services/clientHttpClient";
 import {
   DetailedTarget,
   IScanSuccessResponse,
@@ -41,18 +50,13 @@ import {
   TargetType,
 } from "../../../types";
 import { classNames } from "../../../utils/common";
-import Tooltip from "../../../components/common/Tooltip";
-import { Collection, Target } from "@prisma/client";
-import { useIsGuest } from "../../../hooks/useIsGuest";
-import useLoading from "../../../hooks/useLoading";
-import { clientHttpClient } from "../../../services/clientHttpClient";
 import { DTO } from "../../../utils/server";
 import { optimisticUpdate } from "../../../utils/view";
-import DropdownMenuItem from "../../../components/common/DropdownMenuItem";
-import { withAuthProvider } from "../../../providers/AuthProvider";
-import Checkbox from "../../../components/common/Checkbox";
-import useRefreshOnVisit from "../../../hooks/useRefreshOnVisit";
-import dynamic from "next/dynamic";
+import { notificationClient } from "../../../notifications/notificationClient";
+import {
+  NotificationType,
+  isDoneNotification,
+} from "../../../notifications/notifications";
 
 const translateDomainType = (type: TargetType) => {
   switch (type) {
@@ -140,18 +144,23 @@ const Content: FunctionComponent<Props> = (props) => {
   );
 
   useEffect(() => {
-    (async function () {
-      const { notificationClient } = await import(
-        "../../../notifications/notificationClient"
-      );
-      notificationClient.start();
-    })();
-  }, []);
-
-  useEffect(() => {
     setTargets(props.targets.data);
   }, [props.targets]);
 
+  useEffect(() => {
+    const unsub = notificationClient.on(
+      NotificationType.DOMAIN_IMPORT_PROGRESS,
+      {
+        id: "target-page-refresh",
+        fn: (n) => {
+          if (isDoneNotification(n)) {
+            router.refresh();
+          }
+        },
+      }
+    );
+    return () => unsub();
+  }, [router]);
   const deleteTarget = async (uri: string) => {
     // do an optimistic update
     const revert = optimisticUpdate(targets, setTargets, (prev) =>

@@ -18,7 +18,7 @@ import {
 import { getErrorMessage } from "../messages/http";
 import { clientHttpClient } from "../services/clientHttpClient";
 import { DetailedTarget, IScanSuccessResponse } from "../types";
-import { sanitizeFQDN } from "../utils/common";
+import { sanitizeURI } from "../utils/common";
 import { DTO } from "../utils/server";
 import useLoading from "./useLoading";
 
@@ -47,7 +47,7 @@ export function useQuicktest(code?: string | null) {
       e.preventDefault();
 
       // test if valid url
-      const target = sanitizeFQDN(site);
+      const target = sanitizeURI(site);
       if (!target) {
         scanRequest.error("Bitte trage einen gültigen Domainnamen ein.");
         return;
@@ -99,7 +99,7 @@ export function useQuicktest(code?: string | null) {
   const scannedSite = useRef<null | string>(null);
 
   useEffect(() => {
-    const site = query.get("site");
+    const site = query?.get("site");
     if (site && scannedSite.current !== site) {
       scannedSite.current = site;
       setWebsite(site);
@@ -107,7 +107,7 @@ export function useQuicktest(code?: string | null) {
         {
           preventDefault: () => {},
         } as FormEvent,
-        query.get("site") as string
+        query?.get("site") as string
       );
     }
   }, [query, onSubmit]);
@@ -174,7 +174,7 @@ export function useQuicktest(code?: string | null) {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const searchParams = new URLSearchParams({
-      ...Object.fromEntries(query.entries()),
+      ...Object.fromEntries((query ?? new URLSearchParams()).entries()),
       site: website,
     });
     router.push(`${pathname}?${searchParams.toString()}`);

@@ -85,7 +85,7 @@ const TrendDiff: FunctionComponent<Props> = ({
       collectionIds: collectionIds.map((id) => id.toString()).join(","),
       inspectionType,
       forceCollection:
-        (searchParams.get("forceCollection") as string | undefined) ?? "",
+        (searchParams?.get("forceCollection") as string | undefined) ?? "",
     }).toString();
     const res = await clientHttpClient(
       `/api/v1/diff?${url}`,

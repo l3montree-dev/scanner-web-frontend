@@ -1,8 +1,13 @@
 export class GlobalRef<T> {
-  private readonly sym: symbol;
+  public readonly sym: symbol;
 
-  constructor(uniqueName: string) {
+  constructor(uniqueName: string, valueFactory?: () => T) {
     this.sym = Symbol.for(uniqueName);
+    if ((global as any)[this.sym]) {
+      // just do nothing
+    } else if (valueFactory) {
+      (global as any)[this.sym] = valueFactory();
+    }
   }
 
   get value(): T {

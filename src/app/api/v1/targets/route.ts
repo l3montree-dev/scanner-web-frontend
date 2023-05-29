@@ -6,12 +6,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../db/connection";
 import BadRequestException from "../../../../errors/BadRequestException";
 import { authOptions } from "../../../../nextAuthOptions";
+import { notificationServer } from "../../../../notifications/notificationServer";
+import { NotificationType } from "../../../../notifications/notifications";
 import { getLogger } from "../../../../services/logger";
 import { reportService } from "../../../../services/reportService";
 import {
   isScanError,
   neverThrow,
-  sanitizeFQDN,
+  sanitizeURI,
   splitLineBreak,
   timeout,
 } from "../../../../utils/common";
@@ -28,7 +30,7 @@ export async function POST(req: NextRequest) {
 
     const { target }: { target: string } = await req.json();
 
-    const sanitized = sanitizeFQDN(target);
+    const sanitized = sanitizeURI(target);
     if (!sanitized) {
       throw new BadRequestException();
     }
@@ -77,43 +79,50 @@ export async function POST(req: NextRequest) {
     { requestId, userId: currentUser.id },
     `starting import of ${entries.length} targets.`
   );
-  let count = 0;
+
   let imported = 0;
-  promiseQueue.on("active", () => {
-    count++;
-    if (count % 100 === 0) {
-      logger.info(
-        {
-          requestId,
-          userId: currentUser.id,
-        },
-        `Working on item #${count}.  Size: ${promiseQueue.size} Imported: ${imported}  Pending: ${promiseQueue.pending}`
-      );
-    }
-  });
+  const notificationId = crypto.randomUUID();
 
   promiseQueue.addAll(
     entries
-      .map((domain) => sanitizeFQDN(domain))
+      .map((domain) => sanitizeURI(domain))
       .filter(
         (domain): domain is string => domain !== null && domain.length > 0
       )
-      .map((domain) => {
+      .map((domain, _, arr) => {
         return async () => {
           try {
+            imported++;
+            notificationServer.notifyUser(currentUser.id, {
+              type: NotificationType.DOMAIN_IMPORT_PROGRESS,
+              payload: {
+                current: imported,
+                total: arr.length,
+              },
+              id: notificationId,
+            });
             await targetService.handleNewTarget(
               { uri: domain, queued: true },
               prisma,
               currentUser
             );
             await inspectRPC(requestId, domain);
-            imported++;
           } catch (err: any) {
+            console.log(err);
             return;
           }
         };
       })
   );
+
+  // check when promise queue is empty
+  promiseQueue.onIdle().then(() => {
+    notificationServer.notifyUser(currentUser.id, {
+      type: NotificationType.DOMAIN_IMPORT_PROGRESS,
+      payload: "DONE",
+      id: notificationId,
+    });
+  });
 
   return NextResponse.json({
     success: true,

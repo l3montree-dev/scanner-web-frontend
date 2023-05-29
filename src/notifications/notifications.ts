@@ -1,11 +1,18 @@
 export enum NotificationType {
   DOMAIN_IMPORT_PROGRESS = "DOMAIN_IMPORT_PROGRESS",
   AUTH = "AUTH", // used for flow control
+  HEARTBEAT = "HEARTBEAT",
 }
 
+type DONE = "DONE";
 export interface Notification<T extends Record<string, any>> {
   type: NotificationType;
-  payload: T;
+  payload: T | DONE;
+  id: string;
+}
+
+export interface HeartbeatNotification extends Notification<{}> {
+  type: NotificationType.HEARTBEAT;
 }
 
 export interface NotificationAuthMessage
@@ -26,4 +33,23 @@ export interface NotificationDomainImportProgress
 export interface NotificationMap {
   [NotificationType.AUTH]: NotificationAuthMessage;
   [NotificationType.DOMAIN_IMPORT_PROGRESS]: NotificationDomainImportProgress;
+  [NotificationType.HEARTBEAT]: HeartbeatNotification;
 }
+
+export const isDoneNotification = <
+  Payload extends Record<string, any>,
+  T extends Notification<Payload>
+>(
+  notification: T
+): notification is T & { payload: DONE } => {
+  return notification.payload === "DONE";
+};
+
+export const hasPayload = <
+  Payload extends Record<string, any>,
+  T extends Notification<Payload>
+>(
+  notification: T
+): notification is T & { payload: Payload } => {
+  return notification.payload !== "DONE";
+};

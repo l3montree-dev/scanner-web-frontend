@@ -9,6 +9,8 @@ import ResultEnvelope from "./ResultEnvelope";
 import ScanPageHero from "./ScanPageHero";
 import Image from "next/image";
 import { useGlobalStore } from "../zustand/global";
+import { notificationClient } from "../notifications/notificationClient";
+import { NotificationType } from "../notifications/notifications";
 
 interface Props {
   displayNotAvailable: boolean;
@@ -25,7 +27,7 @@ const IndexContent: FunctionComponent<Props> = ({ displayNotAvailable }) => {
     amountPassed,
     handleRefresh,
     onSubmit,
-  } = useQuicktest(searchParams.get("s"));
+  } = useQuicktest(searchParams?.get("s"));
 
   const store = useGlobalStore();
 

@@ -12,7 +12,7 @@ const SignIn = () => {
 
   useEffect(() => {
     // check the query
-    const secret = query.get("secret");
+    const secret = query?.get("secret");
     if (secret) {
       void signIn("credentials", {
         shareLinkSecret: secret,

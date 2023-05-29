@@ -69,6 +69,7 @@ export const DragAndDrop: FunctionComponent<PropsWithChildren<Props>> = ({
         className="hidden"
         type={"file"}
         multiple
+        value={[]}
       />
       {children}
     </div>

@@ -12,10 +12,72 @@ export class RabbitMQClient {
   private connection: Promise<amqp.Connection> | null = null;
   private publishChannel: Promise<amqp.Channel> | null = null;
   private subscribeChannel: Promise<amqp.Channel> | null = null;
+
   constructor(protected rabbitmqConnString: string) {}
 
   public getInstanceId() {
     return this.instanceId;
+  }
+
+  async publish(
+    exchange: string,
+    message: Record<string, any>,
+    options?: amqp.Options.Publish
+  ) {
+    const channel = await this.getPublishChannel();
+
+    await channel.assertExchange(exchange, "fanout", {
+      durable: true,
+    });
+
+    channel.publish(
+      exchange,
+      "",
+      Buffer.from(JSON.stringify({ pattern: exchange, data: message })),
+      {
+        messageId: randomUUID(),
+        ...options,
+      }
+    );
+  }
+
+  async subscribe(
+    exchange: string,
+    listener: (msg: Record<string, any>) => Promise<void> | void
+  ) {
+    const channel = await this.getSubscribeChannel();
+    await channel.assertExchange(exchange, "fanout", {
+      durable: true,
+    });
+    const queue = await channel.assertQueue("", {
+      exclusive: true,
+    });
+    await channel.bindQueue(queue.queue, exchange, "");
+    await channel.consume(queue.queue, async (msg) => {
+      if (msg) {
+        try {
+          const start = Date.now();
+          await listener(JSON.parse(msg.content.toString()).data);
+          // manual acknowledge
+          logger.info(
+            {
+              duration: Date.now() - start,
+              messageId: msg.properties.messageId,
+              queue: queue.queue,
+            },
+            `acknowledging message: ${msg.properties.messageId.toString()}`
+          );
+          channel.ack(msg);
+        } catch (e: any) {
+          if (e) {
+            console.log(e, msg);
+            logger.error({ err: e.message }, "error while processing message");
+            channel.ack(msg);
+          }
+        }
+        return;
+      }
+    });
   }
 
   private connect() {
@@ -43,7 +105,7 @@ export class RabbitMQClient {
     return this.subscribeChannel;
   }
 
-  async subscribe(
+  async listen(
     queue: string,
     listener: (msg: amqp.Message) => Promise<void> | void,
     queueOptions?: amqp.Options.AssertQueue
@@ -68,6 +130,7 @@ export class RabbitMQClient {
           channel.ack(msg);
         } catch (e: any) {
           if (e) {
+            console.log(e);
             logger.error({ err: e.message }, "error while processing message");
             channel.ack(msg);
           }
@@ -82,7 +145,7 @@ export class RabbitMQClient {
     return channel.assertQueue(queue, queueOptions);
   }
 
-  async publish(
+  async send(
     queue: string,
     message: Record<string, any>,
     queueOptions?: amqp.Options.AssertQueue,
@@ -90,7 +153,7 @@ export class RabbitMQClient {
   ): Promise<void> {
     const channel = await this.getPublishChannel();
 
-    channel.assertQueue(queue, queueOptions);
+    await channel.assertQueue(queue, queueOptions);
     channel.sendToQueue(
       queue,
       Buffer.from(JSON.stringify({ pattern: queue, data: message })),
@@ -111,7 +174,7 @@ export class RabbitMQRPCClient extends RabbitMQClient {
   }
   async listenToReplyQueue() {
     logger.info("listening to reply queue", this.instanceId);
-    this.subscribe(
+    this.listen(
       `rpc-response-${this.instanceId}`,
       (msg) => {
         if (msg) {
@@ -146,7 +209,7 @@ export class RabbitMQRPCClient extends RabbitMQClient {
         JSON.parse(buffer.toString()).data
       );
     });
-    this.publish(
+    this.send(
       queue,
       message,
       { durable: true, maxPriority: 10 },
@@ -170,7 +233,7 @@ export class RabbitMQRPCClient extends RabbitMQClient {
       this.eventEmitter.once(options.messageId, (buffer) => {
         resolve(JSON.parse(buffer.toString()).data);
       });
-      this.publish(
+      this.send(
         queue,
         message,
         { durable: true, maxPriority: 10 },
@@ -185,17 +248,11 @@ export class RabbitMQRPCClient extends RabbitMQClient {
   }
 }
 
-const rabbitmqRPCClientRef = new GlobalRef<RabbitMQRPCClient>(
-  "rabbitmqRPCClient"
-);
-const rabbitmqClientRef = new GlobalRef<RabbitMQClient>("rabbitmqClient");
-if (!rabbitmqRPCClientRef.value) {
-  rabbitmqRPCClientRef.value = new RabbitMQRPCClient(getRabbitMQConnString());
-}
-
-if (!rabbitmqClientRef.value) {
-  rabbitmqClientRef.value = new RabbitMQClient(getRabbitMQConnString());
-}
-
-export const rabbitMQRPCClient = rabbitmqRPCClientRef.value;
-export const rabbitMQClient = rabbitmqClientRef.value;
+export const rabbitMQRPCClient = new GlobalRef<RabbitMQRPCClient>(
+  "rabbitmqRPCClient",
+  () => new RabbitMQRPCClient(getRabbitMQConnString())
+).value;
+export const rabbitMQClient = new GlobalRef<RabbitMQClient>(
+  "rabbitmqClient",
+  () => new RabbitMQClient(getRabbitMQConnString())
+).value;

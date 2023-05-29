@@ -42,7 +42,7 @@ const CheckStateMenu: FunctionComponent<Props> = ({
 }) => {
   const searchParams = useSearchParams();
 
-  const selected = searchParams.get(inspectionType) ?? -2;
+  const selected = searchParams?.get(inspectionType) ?? -2;
 
   const handleClick = (value: 1 | 0 | -1) => {
     if (value === +selected) {

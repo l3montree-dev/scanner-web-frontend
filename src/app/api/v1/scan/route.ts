@@ -19,7 +19,7 @@ import {
   defaultOnError,
   isScanError,
   neverThrow,
-  sanitizeFQDN,
+  sanitizeURI,
   timeout,
 } from "../../../../utils/common";
 import { DTO, getServerSession, toDTO } from "../../../../utils/server";
@@ -73,7 +73,7 @@ export async function GET(req: NextRequest) {
   const requestId =
     (req.headers.get("x-request-id") as string | undefined) ?? randomUUID();
 
-  const siteToScan = sanitizeFQDN(site);
+  const siteToScan = sanitizeURI(site);
   logger.debug({ requestId }, `received request to scan site: ${siteToScan}`);
   // check if we were able to sanitize the site
   // if the requested site is not a valid uri, the function returns null
