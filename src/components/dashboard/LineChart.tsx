@@ -265,7 +265,7 @@ const LineChart: FunctionComponent<Props> = ({
           containerComponent={
             <VictoryZoomContainer
               portalZIndex={10}
-              allowZoom={searchParams.get("zoomable") === "1"}
+              allowZoom={searchParams?.get("zoomable") === "1"}
               onZoomDomainChange={(ev) => handleDomainChange(ev.x)}
               ref={chartRef}
             />
@@ -397,7 +397,7 @@ const LineChart: FunctionComponent<Props> = ({
           );
         })}
       </div>
-      {searchParams.get("displayDiff") === "1" && (
+      {searchParams?.get("displayDiff") === "1" && (
         <div className="px-6 mt-5">
           <TrendDiff
             inspectionType={inspectionType}

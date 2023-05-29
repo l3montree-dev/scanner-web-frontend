@@ -19,7 +19,7 @@ export const inspectRPC = async (
 };
 
 export const inspect = async (requestId: string, target: string) => {
-  const result = await rabbitMQClient.publish(
+  const result = await rabbitMQClient.send(
     process.env.SCAN_REQUEST_QUEUE ?? "scan-request",
     {
       target,

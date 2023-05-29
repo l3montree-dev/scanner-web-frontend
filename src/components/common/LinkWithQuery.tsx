@@ -1,7 +1,7 @@
 "use client";
 import Link, { LinkProps } from "next/link";
 import { useSearchParams } from "next/navigation";
-import React, { FunctionComponent, PropsWithChildren } from "react";
+import React, { FunctionComponent } from "react";
 
 const LinkWithQuery: FunctionComponent<
   Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, keyof LinkProps> &
@@ -10,11 +10,11 @@ const LinkWithQuery: FunctionComponent<
     } & React.RefAttributes<HTMLAnchorElement>
 > = (props) => {
   const query = useSearchParams();
-  if (Object.keys(Object.fromEntries(query)).length === 0) {
+  if (Object.keys(Object.fromEntries(query ?? [])).length === 0) {
     return <Link {...props} />;
   }
 
-  return <Link {...props} href={`${props.href}?${query.toString()}`} />;
+  return <Link {...props} href={`${props.href}?${query?.toString()}`} />;
 };
 
 export default LinkWithQuery;

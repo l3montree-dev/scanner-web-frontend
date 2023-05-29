@@ -28,6 +28,19 @@ import {
 import { DTO } from "./server";
 import { isValidHostname, isValidIp, isValidMask } from "./validator";
 
+export const once = <T extends (...args: any) => any>(fn: T): T => {
+  let executed = false;
+  let result: ReturnType<T>;
+  return (async (...args: any) => {
+    if (executed) {
+      return result;
+    }
+    executed = true;
+    result = await fn(...args);
+    return result;
+  }) as T;
+};
+
 export const serverOnly = <T>(fn: () => T): T | null => {
   if (typeof window === "undefined") {
     return fn();
@@ -159,7 +172,7 @@ export const timeout = async <T>(
  * @param providedValue Any value which should be sanitized as a FQDN
  * @returns The sanitized FQDN or null if the provided value is not a string
  */
-export const sanitizeFQDN = (providedValue: any): string | null => {
+export const sanitizeURI = (providedValue: any): string | null => {
   if (typeof providedValue !== "string" || !providedValue.includes(".")) {
     return null;
   }

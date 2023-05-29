@@ -5,28 +5,19 @@ import { prisma } from "../db/connection";
 import { inspect } from "../inspection/inspect";
 import { isMaster } from "../leaderelection/leaderelection";
 import { IScanResponse } from "../types";
-import { isScanError } from "../utils/common";
+import { isScanError, once } from "../utils/common";
 import { targetService } from "./targetService";
 
+import { notificationServer } from "../notifications/notificationServer";
+import { NotificationType } from "../notifications/notifications";
 import { getLogger } from "./logger";
 import { rabbitMQClient } from "./rabbitmqClient";
 import { reportService } from "./reportService";
+import { serverSentEventsService } from "./serverSentEventsService";
 import { statService } from "./statService";
 
 const logger = getLogger(__filename);
 // make sure to always execute a function only once.
-const once = <T extends (...args: any) => any>(fn: T): T => {
-  let executed = false;
-  let result: ReturnType<T>;
-  return (async (...args: any) => {
-    if (executed) {
-      return result;
-    }
-    executed = true;
-    result = await fn(...args);
-    return result;
-  }) as T;
-};
 
 const bootstrap = once(() => {
   // start the response loops.
@@ -34,11 +25,14 @@ const bootstrap = once(() => {
   startScanResponseLoop();
   statLoop();
   startScanLoop();
+  serverSentEventsService.bootstrap();
+  // start the notification server
+  notificationServer.bootstrap();
 });
 
 const startLookupResponseLoop = () => {
   logger.info("connected to database - starting lookup response loop");
-  rabbitMQClient.subscribe(
+  rabbitMQClient.listen(
     "ip-lookup-response",
     async (msg) => {
       const content = JSON.parse(msg.content.toString()).data as {
@@ -57,7 +51,7 @@ const startLookupResponseLoop = () => {
 
 const startScanResponseLoop = () => {
   logger.info("starting scan response loop");
-  rabbitMQClient.subscribe("scan-response", async (msg) => {
+  rabbitMQClient.listen("scan-response", async (msg) => {
     const content = JSON.parse(msg.content.toString()).data as IScanResponse;
 
     if (isScanError(content)) {

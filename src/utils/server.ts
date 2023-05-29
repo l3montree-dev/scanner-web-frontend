@@ -20,6 +20,34 @@ export const getJWTToken = async (params: GetTokenParams) => {
   return (await getToken(params)) as unknown as IToken | null;
 };
 
+export async function* eventListenerToAsyncGenerator<Data>(
+  listenForEvents: (fn: (ev: { val: Data; done: boolean }) => void) => void
+): AsyncGenerator<Data> {
+  const eventResolvers: Array<(ev: { val: Data; done: boolean }) => void> = [];
+  const eventPromises = [
+    new Promise<{ val: Data; done: boolean }>((resolve) => {
+      eventResolvers.push(resolve);
+    }),
+  ];
+
+  listenForEvents((event) => {
+    eventPromises.push(
+      new Promise((resolve) => {
+        eventResolvers.push(resolve);
+        eventResolvers.shift()!(event);
+      })
+    );
+  });
+
+  while (true) {
+    const el = await eventPromises.shift()!;
+    if (el.done) {
+      return;
+    }
+    yield el.val;
+  }
+}
+
 export const getCurrentUserOrGuestUser = async (
   options: AuthOptions
 ): Promise<User | Guest> => {

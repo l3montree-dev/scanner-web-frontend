@@ -15,6 +15,7 @@ import DropdownMenuItem from "./common/DropdownMenuItem";
 import LogoutMenuItem from "./common/LogoutMenuItem";
 import Menu from "./common/Menu";
 import Tooltip from "./common/Tooltip";
+import NotificationCenter from "./NotificationCenter";
 
 const Header: FunctionComponent<{ session: ISession | null }> = ({
   session,
@@ -22,12 +23,12 @@ const Header: FunctionComponent<{ session: ISession | null }> = ({
   return (
     <header
       className={classNames(
-        "h-20 sticky top-0 border-t-bund border-t-6 transition-all z-100 duration-500 text-textblack border-b-6 border-b-hellgrau-40",
+        "sticky top-0 border-t-bund border-t-6 transition-all z-100 duration-500 text-textblack border-b-6 border-b-hellgrau-40",
         "bg-white"
       )}
     >
       {session !== null && (
-        <div className="flex flex-row items-center h-full">
+        <div className="h-20 flex flex-row items-center">
           <div className="flex flex-1 md:px-8 px-4 max-w-screen-2xl mx-auto flex-row justify-between items-center">
             <HeaderTitle />
             <div className="block lg:hidden">
@@ -128,6 +129,9 @@ const Header: FunctionComponent<{ session: ISession | null }> = ({
           </div>
         </div>
       )}
+      <div>
+        <NotificationCenter />
+      </div>
     </header>
   );
 };

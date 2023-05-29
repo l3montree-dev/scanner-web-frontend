@@ -11,7 +11,7 @@ const TargetOverviewForm: FunctionComponent<{
   const searchParams = useSearchParams();
 
   const [search, setSearch] = useState(
-    (searchParams.get("search")?.toString() as string) ?? ""
+    (searchParams?.get("search")?.toString() as string) ?? ""
   );
   const searchRequest = useLoading();
 

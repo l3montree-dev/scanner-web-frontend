@@ -2,7 +2,7 @@ import {
   isAdmin,
   isProgressMessage,
   limitStringValues,
-  sanitizeFQDN,
+  sanitizeURI,
   splitLineBreak,
 } from "./common";
 
@@ -105,30 +105,30 @@ describe("common test suite", () => {
   });
   describe("sanitize test suite", () => {
     it("should throw an error, if the input is not a string", () => {
-      expect(sanitizeFQDN(123 as any)).toEqual(null);
+      expect(sanitizeURI(123 as any)).toEqual(null);
     });
     it("should remove any protocol if provided", () => {
-      expect(sanitizeFQDN("https://example.com")).toBe("example.com");
+      expect(sanitizeURI("https://example.com")).toBe("example.com");
     });
     it("should remove any path if provided", () => {
-      expect(sanitizeFQDN("example.com/path")).toBe("example.com/path");
+      expect(sanitizeURI("example.com/path")).toBe("example.com/path");
     });
     it("should remove any query parameters if provided", () => {
-      expect(sanitizeFQDN("example.com?query=param")).toBe("example.com");
+      expect(sanitizeURI("example.com?query=param")).toBe("example.com");
     });
     it("should remove any hash if provided", () => {
-      expect(sanitizeFQDN("example.com#hash")).toBe("example.com");
+      expect(sanitizeURI("example.com#hash")).toBe("example.com");
     });
     it("should remove any port if provided and reject ips", () => {
-      expect(sanitizeFQDN("192.168.0.1:8080")).toBeNull;
+      expect(sanitizeURI("192.168.0.1:8080")).toBeNull;
     });
     it("should work for subdomains", () => {
-      expect(sanitizeFQDN("subdomain.example.com")).toBe(
+      expect(sanitizeURI("subdomain.example.com")).toBe(
         "subdomain.example.com"
       );
     });
     it("should work if blank characters are present", () => {
-      expect(sanitizeFQDN(" example.com ")).toBe("example.com");
+      expect(sanitizeURI(" example.com ")).toBe("example.com");
     });
   });
 });
