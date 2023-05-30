@@ -33,21 +33,20 @@ export const getResponsibleDisclosureReportMessage = (
         ResponsibleDisclosureValidationError.Expired
       ):
         return `Die Datei ${uri}/.well-known/security.txt ist vorhanden, aber abgelaufen.`;
-
       case inspection?.errors?.includes(
         ResponsibleDisclosureValidationError.MissingResponsibleDisclosure
       ):
-      case inspection?.errors?.includes(
-        ResponsibleDisclosureValidationError.WrongMimeType
-      ):
-        return `Die Datei ${uri}/.well-known/security.txt ist vorhanden, besitzt aber nicht den korrekten Content-Type: text/plain Header.`;
-      default:
         const status = inspection.actualValue.statusCode;
         if (status !== undefined && status !== -1) {
           return `Die Datei ${uri}/.well-known/security.txt ist nicht vorhanden. (Status: ${status})`;
         } else {
           return `Die Datei ${uri}/.well-known/security.txt ist nicht vorhanden.`;
         }
+      // this check should always be AFTER the missing responsible disclosure check
+      case inspection?.errors?.includes(
+        ResponsibleDisclosureValidationError.WrongMimeType
+      ):
+        return `Die Datei ${uri}/.well-known/security.txt ist vorhanden, besitzt aber nicht den korrekten Content-Type: text/plain Header.`;
     }
   }
 };

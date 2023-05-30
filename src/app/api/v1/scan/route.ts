@@ -93,8 +93,8 @@ export async function GET(req: NextRequest) {
         limitToDisplayedInspections(detailedTarget as DTO<DetailedTarget>)
       );
     }
-  } catch (e) {
-    logger.error({ requestId }, `invalid site to scan: ${site}`);
+  } catch (e: any) {
+    logger.error({ requestId, err: e.message }, `could not scan site: ${site}`);
     return NextResponse.json(
       {
         error: `Missing site to scan or not a valid fully qualified domain name. Please provide the site you would like to scan using the site query parameter. Provided value: ?site=${site}`,
