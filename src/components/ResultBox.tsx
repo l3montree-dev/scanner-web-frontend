@@ -27,14 +27,14 @@ const ResultBox: FunctionComponent<Props> = (props) => {
         />
         <div className={classNames("flex ml-4 md:ml-2 flex-col mt-0.5")}>
           <div>
-            <h5
+            <h3
               className={classNames(
                 "md:text-lg block leading-8 scroll-mt-11 font-bold"
                 // `text-${checkResult2TextClassName(props.checkResult)}`
               )}
             >
               {props.title}
-            </h5>
+            </h3>
           </div>
           <div className="mt-2 text-sm mb-5 h-full">
             <p>{props.description}</p>
@@ -47,7 +47,7 @@ const ResultBox: FunctionComponent<Props> = (props) => {
           <a
             target={"_blank"}
             href={props.link as string}
-            className="text-small w-full text-blau-100 inline-block text-right top-1 right-0 mt-2"
+            className="text-small w-full text-dunkelblau-80 inline-block text-right top-1 right-0 mt-2"
             rel="noreferrer"
           >
             {props.checkResult === CheckResult.Passed

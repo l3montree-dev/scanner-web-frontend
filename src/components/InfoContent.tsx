@@ -1,8 +1,19 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import Article from "./common/Article";
+import React, { FunctionComponent, useEffect } from "react";
+import { useGlobalStore } from "../zustand/global";
 
-const InfoContent = () => {
+interface Props {
+  displayNotAvailable: boolean;
+}
+
+const InfoContent: FunctionComponent<Props> = ({ displayNotAvailable }) => {
+  const store = useGlobalStore();
+  useEffect(() => {
+    store.setHideLogin(displayNotAvailable);
+  }, [displayNotAvailable]);
   return (
     <Article
       teaser="Das Bundesministerium des Innern und für Heimat (BMI) möchte zur Stärkung der IT-Sicherheit bei der OZG-Umsetzung in Form einer Challenge beitragen. Bis zum 31. Oktober 2023 haben OZG-Dienstverantwortliche im Rahmen der „OZG-Security-Challenge 2023“ die Möglichkeit, die IT-Sicherheit der OZG-Onlinedienste mithilfe eines zugangsgeschützten Schnelltests sowie unterstützt durch Workshops und Sprechstunden weiter zu steigern."

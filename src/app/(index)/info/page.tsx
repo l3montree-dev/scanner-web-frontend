@@ -26,7 +26,7 @@ const page: FunctionComponent<Props> = ({ displayNotAvailable }) => {
   if (displayNotAvailable) {
     return redirect("/");
   }
-  return <InfoContent />;
+  return <InfoContent displayNotAvailable={displayNotAvailable} />;
 };
 
 export default withNotAvailable(page);

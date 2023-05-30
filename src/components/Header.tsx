@@ -94,7 +94,10 @@ const Header: FunctionComponent<{ session: ISession | null }> = ({
 
                 <Menu
                   Button={
-                    <div className="bg-hellgrau-60 text-textblack overflow-hidden cursor-pointer rounded-full h-9 w-9 flex items-center justify-center text-xs mr-1">
+                    <div
+                      aria-label="Benutzermenü öffnen"
+                      className="bg-hellgrau-60 text-textblack overflow-hidden cursor-pointer rounded-full h-9 w-9 flex items-center justify-center text-xs mr-1"
+                    >
                       <FontAwesomeIcon
                         size={"2xl"}
                         className="relative -bottom-1.5"
