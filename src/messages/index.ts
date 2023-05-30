@@ -117,5 +117,5 @@ export const getCheckDescription = (
   report: DTO<DetailedTarget>,
   key: keyof typeof messages
 ): string => {
-  return messages[key](report);
+  return messages[key](report) ?? "";
 };
