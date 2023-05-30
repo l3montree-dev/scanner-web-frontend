@@ -1,4 +1,4 @@
-import { ResponsibleDisclosureValidationError } from "../inspection/result-enums/organizational.typings";
+import { ResponsibleDisclosureValidationError } from "../scanner/result-enums/organizational.typings";
 import { DetailedTarget } from "../types";
 import { getUnicodeHostnameFromUri } from "../utils/common";
 import { DTO } from "../utils/server";
@@ -37,6 +37,10 @@ export const getResponsibleDisclosureReportMessage = (
       case inspection?.errors?.includes(
         ResponsibleDisclosureValidationError.MissingResponsibleDisclosure
       ):
+      case inspection?.errors?.includes(
+        ResponsibleDisclosureValidationError.WrongMimeType
+      ):
+        return `Die Datei ${uri}/.well-known/security.txt ist vorhanden, besitzt aber nicht den korrekten Content-Type: text/plain Header.`;
       default:
         const status = inspection.actualValue.statusCode;
         if (status !== undefined && status !== -1) {

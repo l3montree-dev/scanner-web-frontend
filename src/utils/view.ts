@@ -14,7 +14,7 @@ import {
   NetworkInspectionType,
   OrganizationalInspectionType,
   TLSInspectionType,
-} from "../inspection/scans";
+} from "../scanner/scans";
 
 export enum CheckResult {
   Passed = "passed",

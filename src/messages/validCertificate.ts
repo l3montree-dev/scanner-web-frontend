@@ -1,4 +1,4 @@
-import { CertificateInspectionType } from "../inspection/scans";
+import { CertificateInspectionType } from "../scanner/scans";
 import { DetailedTarget } from "../types";
 import { DTO } from "../utils/server";
 

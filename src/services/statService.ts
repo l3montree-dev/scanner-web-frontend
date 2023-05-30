@@ -1,7 +1,7 @@
 import { Prisma, PrismaClient, User } from "@prisma/client";
 import PQueue from "p-queue";
 import { config } from "../config";
-import { InspectionType } from "../inspection/scans";
+import { InspectionType } from "../scanner/scans";
 import { ChartData, CollectionStatMap, Guest, IDashboard } from "../types";
 import { collectionId, isGuestUser } from "../utils/common";
 import { toDTO } from "../utils/server";

@@ -24,7 +24,7 @@ import {
   NetworkInspectionType,
   OrganizationalInspectionType,
   TLSInspectionType,
-} from "../inspection/scans";
+} from "../scanner/scans";
 import { DTO } from "./server";
 import { isValidHostname, isValidIp, isValidMask } from "./validator";
 

@@ -19,7 +19,7 @@ import {
   VictoryZoomContainer,
 } from "victory";
 import useWindowSize from "../../hooks/useWindowSize";
-import { InspectionType } from "../../inspection/scans";
+import { InspectionType } from "../../scanner/scans";
 import { descriptionMapper, titleMapper } from "../../messages";
 import { theme } from "../../styles/victory-theme";
 import { linkMapper } from "../../utils/common";

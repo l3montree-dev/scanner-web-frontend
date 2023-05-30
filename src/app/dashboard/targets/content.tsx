@@ -40,7 +40,7 @@ import {
   NetworkInspectionType,
   OrganizationalInspectionType,
   TLSInspectionType,
-} from "../../../inspection/scans";
+} from "../../../scanner/scans";
 import { withAuthProvider } from "../../../providers/AuthProvider";
 import { clientHttpClient } from "../../../services/clientHttpClient";
 import {

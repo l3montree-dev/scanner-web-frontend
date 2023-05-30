@@ -4,6 +4,7 @@ export enum ResponsibleDisclosureValidationError {
   InvalidExpiresField = "invalidExpiresField",
   Expired = "expired",
   MissingExpiresField = "missingExpiresField",
+  WrongMimeType = "wrongMimeType",
 }
 
 // invalid means either missing or twice included

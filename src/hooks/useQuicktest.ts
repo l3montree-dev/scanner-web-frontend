@@ -14,7 +14,7 @@ import {
   NetworkInspectionType,
   OrganizationalInspectionType,
   TLSInspectionType,
-} from "../inspection/scans";
+} from "../scanner/scans";
 import { getErrorMessage } from "../messages/http";
 import { clientHttpClient } from "../services/clientHttpClient";
 import { DetailedTarget, IScanSuccessResponse } from "../types";

@@ -1,5 +1,5 @@
 import PQueue from "p-queue";
-import { inspectRPC } from "../../../../inspection/inspect";
+
 import { targetService } from "../../../../services/targetService";
 
 import { NextRequest, NextResponse } from "next/server";
@@ -18,6 +18,7 @@ import {
   timeout,
 } from "../../../../utils/common";
 import { getCurrentUser, toDTO } from "../../../../utils/server";
+import { scanService } from "../../../../scanner/scanService";
 
 const logger = getLogger(__filename);
 
@@ -35,28 +36,29 @@ export async function POST(req: NextRequest) {
       throw new BadRequestException();
     }
 
-    const result = await inspectRPC(requestId, sanitized);
-    if (isScanError(result)) {
-      logger.error(
-        { requestId, userId: currentUser.id },
-        `target import - error while scanning domain: ${sanitized}`
-      );
-      await neverThrow(
-        timeout(targetService.handleTargetScanError(result, prisma))
-      );
-
-      throw new BadRequestException();
-    }
-
     await targetService.handleNewTarget(
       { uri: sanitized, queued: true },
       prisma,
       currentUser
     );
 
-    const res = await reportService.handleNewScanReport(result, prisma);
+    const [result, detailedTarget] = await scanService.scanTargetRPC(
+      requestId,
+      sanitized,
+      {
+        refreshCache: true,
+      }
+    );
+    if (isScanError(result)) {
+      logger.error(
+        { requestId, userId: currentUser.id },
+        `target import - error while scanning domain: ${sanitized}`
+      );
 
-    return NextResponse.json(toDTO(res), { status: 201 });
+      throw new BadRequestException();
+    }
+
+    return NextResponse.json(toDTO(detailedTarget), { status: 201 });
   }
 
   const formData = await req.formData();
@@ -101,14 +103,31 @@ export async function POST(req: NextRequest) {
               },
               id: notificationId,
             });
-            await targetService.handleNewTarget(
-              { uri: domain, queued: true },
-              prisma,
-              currentUser
+
+            // might throw, if the relation does already exist
+            await neverThrow(
+              targetService.handleNewTarget(
+                { uri: domain, queued: true },
+                prisma,
+                currentUser
+              )
             );
-            await inspectRPC(requestId, domain);
+            const [result] = await scanService.scanTargetRPC(
+              requestId,
+              domain,
+              {
+                refreshCache: false,
+              }
+            );
+            if (isScanError(result)) {
+              logger.error(
+                { requestId, userId: currentUser.id },
+                `target import - error while scanning domain: ${domain}`
+              );
+              return;
+            }
           } catch (err: any) {
-            console.log(err);
+            logger.error(err);
             return;
           }
         };

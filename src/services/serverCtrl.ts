@@ -2,17 +2,15 @@ import { randomUUID } from "crypto";
 import PQueue from "p-queue";
 import { prisma } from "../db/connection";
 
-import { inspect } from "../inspection/inspect";
 import { isMaster } from "../leaderelection/leaderelection";
 import { IScanResponse } from "../types";
-import { isScanError, once } from "../utils/common";
+import { once } from "../utils/common";
 import { targetService } from "./targetService";
 
 import { notificationServer } from "../notifications/notificationServer";
-import { NotificationType } from "../notifications/notifications";
+import { scanService } from "../scanner/scanService";
 import { getLogger } from "./logger";
 import { rabbitMQClient } from "./rabbitmqClient";
-import { reportService } from "./reportService";
 import { serverSentEventsService } from "./serverSentEventsService";
 import { statService } from "./statService";
 
@@ -53,22 +51,7 @@ const startScanResponseLoop = () => {
   logger.info("starting scan response loop");
   rabbitMQClient.listen("scan-response", async (msg) => {
     const content = JSON.parse(msg.content.toString()).data as IScanResponse;
-
-    if (isScanError(content)) {
-      try {
-        await targetService.handleTargetScanError(content, prisma);
-      } finally {
-        logger.error({ target: content.target }, content.result.error.message);
-        return;
-      }
-    }
-
-    try {
-      await reportService.handleNewScanReport(content, prisma);
-    } catch (e) {
-      // always ack the message - catch the error.
-      logger.error(e);
-    }
+    await scanService.handleScanResponse(content);
   });
 };
 
@@ -147,7 +130,7 @@ const startScanLoop = () => {
       promiseQueue.addAll(
         targets.map((domain) => {
           return async () => {
-            inspect(requestId, domain.uri);
+            return scanService.scanTarget(requestId, domain.uri);
           };
         })
       );

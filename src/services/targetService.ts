@@ -1,6 +1,6 @@
 import { Prisma, PrismaClient, Target, User } from "@prisma/client";
 import { toASCII } from "punycode";
-import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
+import { InspectionType, InspectionTypeEnum } from "../scanner/scans";
 import {
   DetailedTarget,
   Guest,

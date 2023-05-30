@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react";
 
-import { InspectionType } from "../../inspection/scans";
+import { InspectionType } from "../../scanner/scans";
 import { classNames } from "../../utils/common";
 import LineChart from "./LineChart";
 

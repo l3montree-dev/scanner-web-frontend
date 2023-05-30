@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { config } from "../../../../config";
 import { prisma } from "../../../../db/connection";
 import ForbiddenException from "../../../../errors/ForbiddenException";
-import { InspectionType } from "../../../../inspection/scans";
+import { InspectionType } from "../../../../scanner/scans";
 import { authOptions } from "../../../../nextAuthOptions";
 import { collectionService } from "../../../../services/collectionService";
 import { reportService } from "../../../../services/reportService";

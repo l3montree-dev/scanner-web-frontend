@@ -9,7 +9,7 @@ import {
   NetworkInspectionType,
   OrganizationalInspectionType,
   TLSInspectionType,
-} from "../inspection/scans";
+} from "../scanner/scans";
 import { DetailedTarget } from "../types";
 import { DTO } from "../utils/server";
 import { getDeprecatedTLSDeactivatedReportMessage } from "./deprecatedTLSDeactivated";

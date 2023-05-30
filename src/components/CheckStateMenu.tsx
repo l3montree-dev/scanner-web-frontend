@@ -9,7 +9,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { FunctionComponent } from "react";
-import { InspectionType } from "../inspection/scans";
+import { InspectionType } from "../scanner/scans";
 import { titleMapper } from "../messages";
 import { classNames } from "../utils/common";
 import DropdownMenuItem from "./common/DropdownMenuItem";

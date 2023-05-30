@@ -7,7 +7,7 @@ import {
   NetworkInspectionType,
   OrganizationalInspectionType,
   TLSInspectionType,
-} from "../inspection/scans";
+} from "../scanner/scans";
 import { immediateActionHTTPErrors } from "../messages/http";
 import { DetailedTarget } from "../types";
 import { classNames, devOnly, linkMapper } from "../utils/common";

@@ -1,5 +1,5 @@
 import { Target } from "@prisma/client";
-import { InspectionType, InspectResultDTO } from "./inspection/scans";
+import { InspectionType, InspectResultDTO } from "./scanner/scans";
 
 export interface IDashboard {
   historicalData: CollectionStatMap;

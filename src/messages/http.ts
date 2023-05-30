@@ -1,4 +1,4 @@
-import { HttpInspectionType } from "../inspection/scans";
+import { HttpInspectionType } from "../scanner/scans";
 import { DetailedTarget, ErrorCode } from "../types";
 import { DTO } from "../utils/server";
 

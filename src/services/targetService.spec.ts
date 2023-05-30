@@ -1,4 +1,4 @@
-import { InspectionType } from "../inspection/scans";
+import { InspectionType } from "../scanner/scans";
 import { targetService } from "./targetService";
 
 jest.mock("next-auth", () => ({}));

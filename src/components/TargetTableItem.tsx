@@ -14,7 +14,7 @@ import {
   NetworkInspectionType,
   OrganizationalInspectionType,
   TLSInspectionType,
-} from "../inspection/scans";
+} from "../scanner/scans";
 import { getCheckDescription, titleMapper } from "../messages";
 import { DetailedTarget } from "../types";
 import { classNames, toGermanDate } from "../utils/common";
@@ -25,6 +25,7 @@ import ResultIcon from "./ResultIcon";
 import Tooltip from "./common/Tooltip";
 import DropdownMenuItem from "./common/DropdownMenuItem";
 import Menu from "./common/Menu";
+import Spinner from "./common/Spinner";
 
 interface Props {
   onSelect: (target: DTO<DetailedTarget>) => void;
@@ -198,7 +199,13 @@ const TargetTableItem: FunctionComponent<Props> = ({
             <Menu
               Button={
                 <div className="px-4 py-2 lg:p-2 text-white lg:text-textblack h-8 w-8 flex flex-row h-full items-center justify-center">
-                  <FontAwesomeIcon icon={faEllipsisVertical} />
+                  {scanRequest.key === target.uri && scanRequest.isLoading ? (
+                    <div className="absolute">
+                      <Spinner />
+                    </div>
+                  ) : (
+                    <FontAwesomeIcon icon={faEllipsisVertical} />
+                  )}
                 </div>
               }
               Menu={

@@ -5,7 +5,7 @@ import {
   ScanReport,
 } from "@prisma/client";
 import { config } from "../config";
-import { InspectionType, InspectionTypeEnum } from "../inspection/scans";
+import { InspectionType, InspectionTypeEnum } from "../scanner/scans";
 import {
   DetailedTarget,
   Diffs,

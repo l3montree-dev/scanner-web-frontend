@@ -1,4 +1,4 @@
-import { HSTSValidationError } from "../inspection/result-enums/header.typings";
+import { HSTSValidationError } from "../scanner/result-enums/header.typings";
 import { DetailedTarget } from "../types";
 import { DTO } from "../utils/server";
 
