@@ -67,7 +67,10 @@ export async function POST(req: NextRequest) {
   const fileText = await Promise.all(
     files
       // validate for text files.
-      .filter((file) => file.type?.includes("text"))
+      .filter(
+        (file) =>
+          file.type === "text/csv" || file.type === "application/vnd.ms-excel"
+      )
       .map(async (file) => {
         // open the file.
         return file.text();

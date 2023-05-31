@@ -126,7 +126,8 @@ const AddDomainForm: FunctionComponent<{
                       Datei hierher ziehen oder klicken zum hochladen.
                     </span>
                     <span className="text-sm px-4">
-                      Die CSV-Datei muss eine Domain pro Zeile enthalten.
+                      Die CSV-Datei darf nur eine Domain pro Zeile und keine
+                      Spaltenbeschreibung enthalten (charset=utf-8).
                     </span>
                   </div>
                 )}
