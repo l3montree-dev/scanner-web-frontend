@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.3.1] - 2023-05-31
 
-New image-tag: `v4.3.1` with digest `sha256:cd9f3870563f05aa71c5e42fb5f836f3c0ba849ffcbc6385c1bb10a4b0999803`
+New image-tag: `v4.3.1` with digest `sha256:ce38940602970fcc41a14ffb05eb5e3ce424cef348a10d39ceb3aa15b101254e`
 
 ### Fixed
 
