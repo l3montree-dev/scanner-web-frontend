@@ -5,7 +5,44 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.3.1] - 2023-05-31
+
+New image-tag: `v4.3.1` with digest `sha256:cd9f3870563f05aa71c5e42fb5f836f3c0ba849ffcbc6385c1bb10a4b0999803`
+
+### Fixed
+
+- Fixed a bug that prevented windows users from using the CSV import (896ab99fd458afd18e660660f96a071ed5d1e053)
+
+## [4.3.0] - 2023-05-31
+
+New image-tag: `v4.3.0` with digest `sha256:07863207205d1e237b90e5ba8b99ad5b02a27e3d711eb4dea3eec0acb0c63361`
+
+### Added
+
+- The CSV import has now a progress shown to the user
+- Implemented server-sent events 
+
+### Changed 
+
+- Moved to new `ScanService` in order to centralize the scan logic and database actions
+
+### Fixed 
+
+- Fixed a bug causing missing scan details in overview after csv import (reuse of the same messageId)
+- Fixed several accessibility issues
+- Added an empty string as default if no check description is present
+
+## [4.2.3] - 2023-05-25
+
+New image-tag: `v4.2.3` with digest `sha256:43dc507787ade235b16def0c15e95072ceb3f3050fe611392ace0091b3ac0c9b`
+
+### Fixed
+
+- Caching behaviour was improved. In case of refresh, caches in the scanner will be bypassed
+
 ## [4.2.2] - 2023-05-19
+
+New image-tag: `v4.2.2` with digest `sha256:3046d1aa370e6a5835e1e079d6a8359866e4c115ba0e281257047924d8ddc7ec`
 
 ### Fixed
 
