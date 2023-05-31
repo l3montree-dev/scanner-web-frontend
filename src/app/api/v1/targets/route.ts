@@ -112,16 +112,15 @@ export async function POST(req: NextRequest) {
                 currentUser
               )
             );
-            const [result] = await scanService.scanTargetRPC(
-              requestId,
-              domain,
-              {
-                refreshCache: false,
-              }
-            );
+
+            const tmpRqId = crypto.randomUUID();
+
+            const [result] = await scanService.scanTargetRPC(tmpRqId, domain, {
+              refreshCache: false,
+            });
             if (isScanError(result)) {
               logger.error(
-                { requestId, userId: currentUser.id },
+                { tmpRqId, userId: currentUser.id },
                 `target import - error while scanning domain: ${domain}`
               );
               return;
