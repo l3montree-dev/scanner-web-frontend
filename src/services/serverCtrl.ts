@@ -130,7 +130,9 @@ const startScanLoop = () => {
       promiseQueue.addAll(
         targets.map((domain) => {
           return async () => {
-            return scanService.scanTarget(requestId, domain.uri);
+            return scanService.scanTarget(requestId, domain.uri, {
+              refreshCache: false,
+            });
           };
         })
       );
