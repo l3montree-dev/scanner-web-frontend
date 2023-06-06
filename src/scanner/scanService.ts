@@ -27,6 +27,7 @@ import { DTO, toDTO } from "../utils/server";
 
 interface ScanTargetOptions {
   refreshCache: boolean; // if refresh is true, it will bypass all caching layers
+  socks5Proxy?: string; // if provided, the scan will be performed through the proxy
 }
 
 interface MessageBrokerClient {
@@ -63,7 +64,8 @@ export class ScanService {
       process.env.SCAN_REQUEST_QUEUE ?? "scan-request",
       {
         target,
-        refresh: options.refreshCache, // if refresh is true, it will bypass all caching layers
+        refresh: options.refreshCache, // if refresh is true, it will bypass all caching layers,
+        socks5Proxy: options.socks5Proxy,
       },
       { messageId: requestId }
     );
@@ -104,11 +106,17 @@ export class ScanService {
     }
   }
   // this fires an asynchronous request - it does not wait for the result
-  public async scanTarget(requestId: string, target: string) {
+  public async scanTarget(
+    requestId: string,
+    target: string,
+    options: ScanTargetOptions
+  ) {
     const result = await this.messageBrokerClient.send(
       process.env.SCAN_REQUEST_QUEUE ?? "scan-request",
       {
         target,
+        refresh: options.refreshCache, // if refresh is true, it will bypass all caching layers,
+        socks5Proxy: options.socks5Proxy,
       },
       { durable: true, maxPriority: 10 },
       { messageId: requestId, priority: 1, replyTo: "scan-response" }

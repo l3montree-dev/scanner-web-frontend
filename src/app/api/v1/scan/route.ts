@@ -1,27 +1,15 @@
 import { randomUUID } from "crypto";
 
-import { Target } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "../../../../db/connection";
 import { authOptions } from "../../../../nextAuthOptions";
 import { getLogger } from "../../../../services/logger";
 
 import { scanService } from "../../../../scanner/scanService";
 import { InspectionType } from "../../../../scanner/scans";
 import { monitoringService } from "../../../../services/monitoringService";
-import {
-  reportService,
-  scanResult2TargetDetails,
-} from "../../../../services/reportService";
-import { DetailedTarget, DetailsJSON } from "../../../../types";
-import {
-  defaultOnError,
-  isScanError,
-  neverThrow,
-  sanitizeURI,
-  timeout,
-} from "../../../../utils/common";
-import { DTO, getServerSession, toDTO } from "../../../../utils/server";
+import { DetailedTarget } from "../../../../types";
+import { isScanError } from "../../../../utils/common";
+import { DTO, getServerSession } from "../../../../utils/server";
 import { staticSecrets } from "../../../../utils/staticSecrets";
 import { displayInspections } from "../../../../utils/view";
 
@@ -74,6 +62,7 @@ export async function GET(req: NextRequest) {
       site,
       {
         refreshCache: refresh === "true",
+        socks5Proxy: req.nextUrl.searchParams.get("socks5Proxy") ?? undefined,
       }
     );
     monitoringService.trackApiCall(
