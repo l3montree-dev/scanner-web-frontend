@@ -314,7 +314,6 @@ const handleNewScanReport = async (
       }
     );
 
-    console.log(isScanSuccess(validationResult));
     if (
       isScanSuccess(validationResult) &&
       reportDidChange(
@@ -324,7 +323,6 @@ const handleNewScanReport = async (
     ) {
       // check if the validation response and the initial result are the same
       // if so, we can safely assume that the report did change.
-
       logger.debug(
         {
           target: result.target,
