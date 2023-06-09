@@ -292,9 +292,10 @@ const handleNewScanReport = async (
   );
 
   if (
-    ((lastReport && reportDidChange(lastReport, newReport)) ||
-      newReport.duration > config.scanReportDurationThresholdUntilValidation) &&
-    config.socks5Proxy
+    lastReport &&
+    config.socks5Proxy &&
+    (newReport.duration > config.scanReportDurationThresholdUntilValidation ||
+      reportDidChange(lastReport, newReport))
   ) {
     logger.debug(
       {
@@ -313,7 +314,14 @@ const handleNewScanReport = async (
       }
     );
 
-    if (isScanSuccess(validationResult)) {
+    console.log(isScanSuccess(validationResult));
+    if (
+      isScanSuccess(validationResult) &&
+      reportDidChange(
+        lastReport,
+        combineReport(lastReport, scanResult2ScanReport(validationResult))
+      )
+    ) {
       // check if the validation response and the initial result are the same
       // if so, we can safely assume that the report did change.
 
@@ -347,16 +355,6 @@ const handleNewScanReport = async (
       queued: false,
       lastScan: result.timestamp,
       errorCount: 0,
-      lastScanDetails: {
-        upsert: {
-          create: {
-            details: lastScanDetails,
-          },
-          update: {
-            details: lastScanDetails,
-          },
-        },
-      },
     },
   });
 

@@ -1,3 +1,5 @@
+import { config } from "../config";
+import { scanService } from "../scanner/scanService";
 import { reportService } from "./reportService";
 
 jest.mock("next-auth", () => ({}));
@@ -38,14 +40,6 @@ describe("Report Service Test Suite", () => {
       prismaMock as any
     );
 
-    const lastScanDetails = {
-      details: {
-        sut: "example.com",
-        dnsSec: {
-          didPass: true,
-        },
-      },
-    };
     // it should not create a new scan report.
     expect(prismaMock.scanReport.create).not.toHaveBeenCalled();
     expect(prismaMock.target.update).toHaveBeenCalledWith({
@@ -54,12 +48,68 @@ describe("Report Service Test Suite", () => {
         queued: false,
         lastScan: 4711,
         errorCount: 0,
-        lastScanDetails: {
-          upsert: {
-            create: lastScanDetails,
-            update: lastScanDetails,
+      },
+    });
+  });
+
+  it("should not create a new scan report if the change could not be validated", async () => {
+    const prismaMock = {
+      scanReport: {
+        findMany: jest.fn(() => [
+          {
+            dnsSec: true,
+          },
+        ]),
+        create: jest.fn(),
+      },
+      target: {
+        update: jest.fn(),
+      },
+      lastScanDetails: {
+        findFirst: jest.fn(),
+      },
+    };
+    jest.mock("../db/connection", () => ({
+      prisma: prismaMock,
+    }));
+
+    config.socks5Proxy = "socks5://localhost:9050";
+    const scanRPCValidation = jest
+      .spyOn(scanService, "scanRPC")
+      .mockResolvedValue({
+        target: "example.com",
+        timestamp: 11,
+        result: {
+          dnsSec: {
+            didPass: true, // we are validating a change - dnsSec did still pass
           },
         },
+      } as any);
+
+    await reportService.handleNewScanReport(
+      {
+        target: "example.com",
+        timestamp: 4711,
+        result: {
+          dnsSec: {
+            didPass: false,
+          },
+        },
+      } as any,
+      prismaMock as any
+    );
+    // remove the config again
+    config.socks5Proxy = undefined;
+
+    expect(scanRPCValidation).toHaveBeenCalled();
+    // it should not create a new scan report.
+    expect(prismaMock.scanReport.create).not.toHaveBeenCalled();
+    expect(prismaMock.target.update).toHaveBeenCalledWith({
+      where: { uri: "example.com" },
+      data: {
+        queued: false,
+        lastScan: 4711,
+        errorCount: 0,
       },
     });
   });
@@ -78,7 +128,7 @@ describe("Report Service Test Suite", () => {
       reports: [],
     },
   ])(
-    "should create a new scan report if the reports did %s",
+    "should create a new scan report if the reports did %s (no validation)",
     async ({ reports }) => {
       const target = {
         uri: "example.com/test",
@@ -147,6 +197,96 @@ describe("Report Service Test Suite", () => {
       });
     }
   );
+  it("should validate a change in a scan report", async () => {
+    const target = {
+      uri: "example.com/test",
+      queued: false,
+      lastScan: 4711,
+      errorCount: 0,
+      // make sure the hostname is set correctly.
+      hostname: "example.com",
+    };
+
+    const prismaMock = {
+      scanReport: {
+        create: jest.fn(),
+        findMany: jest.fn(() => [
+          // a last report exists
+          {
+            dnsSec: false,
+          },
+        ]),
+      },
+      target: {
+        upsert: jest.fn(() => target),
+      },
+      lastScanDetails: {
+        findFirst: jest.fn(),
+      },
+    };
+
+    // add a socks5 proxy inside the config
+    config.socks5Proxy = "socks5://localhost:9050";
+    const scanRPCValidation = jest
+      .spyOn(scanService, "scanRPC")
+      .mockResolvedValue({
+        target: "example.com",
+        timestamp: 11,
+        result: {
+          dnsSec: {
+            didPass: true, // we are validating a change - dnsSec did indeed pass
+          },
+        },
+      } as any);
+
+    await reportService.handleNewScanReport(
+      {
+        target: "example.com/test",
+        timestamp: 4711,
+        result: {
+          dnsSec: {
+            didPass: true, // there was a change - dnsSec did pass
+          },
+        },
+      } as any,
+      prismaMock as any
+    );
+    // remove the config again
+    config.socks5Proxy = undefined;
+
+    const lastScanDetails = {
+      details: {
+        sut: "example.com/test",
+        dnsSec: {
+          didPass: true,
+        },
+      },
+    };
+    expect(scanRPCValidation).toHaveBeenCalled();
+
+    expect(prismaMock.scanReport.create).toHaveBeenCalled();
+    expect(prismaMock.target.upsert).toHaveBeenCalledWith({
+      where: { uri: "example.com/test" },
+      create: {
+        ...target,
+        lastScan: 11, // expect the timestamp from the validation result
+        lastScanDetails: {
+          create: lastScanDetails,
+        },
+      },
+      update: {
+        queued: false,
+        lastScan: 11,
+        errorCount: 0,
+        lastScanDetails: {
+          upsert: {
+            create: lastScanDetails,
+            update: lastScanDetails,
+          },
+        },
+      },
+    });
+  });
   it("should reduce null values by using the last scan report to fill in the gaps", async () => {
     const target = {
       uri: "example.com/test",
