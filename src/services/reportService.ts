@@ -347,6 +347,16 @@ const handleNewScanReport = async (
       queued: false,
       lastScan: result.timestamp,
       errorCount: 0,
+      lastScanDetails: {
+        upsert: {
+          create: {
+            details: lastScanDetails,
+          },
+          update: {
+            details: lastScanDetails,
+          },
+        },
+      },
     },
   });
 
