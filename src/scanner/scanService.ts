@@ -55,7 +55,9 @@ export class ScanService {
     private db: PrismaClient
   ) {}
 
-  private async scanRPC(
+  // wont save the result to the database
+  // use scanTargetRPC instead
+  public async scanRPC(
     requestId: string,
     target: string,
     options: ScanTargetOptions
@@ -206,8 +208,9 @@ export class ScanService {
         `successfully scanned site: ${target}`
       );
       detailedTarget = await defaultOnError(
-        this.scanCB.run(async () =>
-          timeout(reportService.handleNewScanReport(result, this.db))
+        this.scanCB.run(
+          async () =>
+            timeout(reportService.handleNewScanReport(result, this.db), 20_000) // use a 20 seconds timeout - it might happen, that the reportService will verify that the reports did really change and therefore issue another scan.
         ),
         {
           uri: result.target,

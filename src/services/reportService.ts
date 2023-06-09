@@ -12,8 +12,16 @@ import {
   IScanSuccessResponse,
   PaginateRequest,
 } from "../types";
-import { getHostnameFromUri, limitStringValues } from "../utils/common";
+import {
+  getHostnameFromUri,
+  isScanSuccess,
+  limitStringValues,
+} from "../utils/common";
 import { DTO, toDTO } from "../utils/server";
+import { scanService } from "../scanner/scanService";
+import { getLogger } from "./logger";
+
+const logger = getLogger(__filename);
 
 const didPassEq = (
   didPassA: boolean | null | undefined,
@@ -31,7 +39,7 @@ const didPassEq = (
   return false;
 };
 const reportDidChange = (
-  lastReport: ScanReport,
+  lastReport: Omit<ScanReport, "createdAt" | "updatedAt" | "id">,
   newReport: Omit<ScanReport, "createdAt" | "updatedAt" | "id">
 ) => {
   const res = Object.values(InspectionTypeEnum).some((key) => {
@@ -207,6 +215,54 @@ export const scanResult2ScanReport = (
   };
 };
 
+const handleReportDidChange = async (
+  newReport: Omit<ScanReport, "createdAt" | "updatedAt" | "id">,
+  lastScanDetails: Record<string, any> & { sut: string },
+  result: IScanSuccessResponse,
+  prisma: PrismaClient
+) => {
+  // if the report changed, we need to create a new one.
+  const target = await prisma.target.upsert({
+    where: { uri: newReport.uri },
+    create: {
+      lastScanDetails: {
+        create: {
+          details: lastScanDetails,
+        },
+      },
+      uri: newReport.uri,
+      queued: false,
+      errorCount: 0,
+      lastScan: result.timestamp,
+      hostname: getHostnameFromUri(result.target),
+    },
+    update: {
+      queued: false,
+      lastScan: result.timestamp,
+      errorCount: 0,
+      lastScanDetails: {
+        upsert: {
+          create: {
+            details: lastScanDetails,
+          },
+          update: {
+            details: lastScanDetails,
+          },
+        },
+      },
+    },
+  });
+
+  await prisma.scanReport.create({
+    data: newReport,
+  });
+  return toDTO({
+    ...target,
+    lastScan: target.lastScan || 0,
+    details: lastScanDetails,
+  });
+};
+
 // only create a new report if the didPass property changed.
 const handleNewScanReport = async (
   result: IScanSuccessResponse,
@@ -235,47 +291,54 @@ const handleNewScanReport = async (
     combineResults(lastReport, lastResults, result)
   );
 
-  if (!lastReport || reportDidChange(lastReport, newReport)) {
-    // if the report changed, we need to create a new one.
-    const target = await prisma.target.upsert({
-      where: { uri: newReport.uri },
-      create: {
-        lastScanDetails: {
-          create: {
-            details: lastScanDetails,
-          },
-        },
-        uri: newReport.uri,
-        queued: false,
-        errorCount: 0,
-        lastScan: result.timestamp,
-        hostname: getHostnameFromUri(result.target),
+  if (
+    ((lastReport && reportDidChange(lastReport, newReport)) ||
+      newReport.duration > config.scanReportDurationThresholdUntilValidation) &&
+    config.socks5Proxy
+  ) {
+    logger.debug(
+      {
+        target: result.target,
       },
-      update: {
-        queued: false,
-        lastScan: result.timestamp,
-        errorCount: 0,
-        lastScanDetails: {
-          upsert: {
-            create: {
-              details: lastScanDetails,
-            },
-            update: {
-              details: lastScanDetails,
-            },
-          },
-        },
-      },
-    });
+      `report did change for ${result.target} or duration exceeds threshold of ${config.scanReportDurationThresholdUntilValidation} - verifying that the report changed`
+    );
+    // we should verify that the report changed.
+    // lets start another scan, which will use a socks5 proxy configuration
+    const validationResult = await scanService.scanRPC(
+      crypto.randomUUID(),
+      result.target,
+      {
+        refreshCache: true, // it makes no sense to use the cache here :)
+        socks5Proxy: config.socks5Proxy,
+      }
+    );
 
-    await prisma.scanReport.create({
-      data: newReport,
-    });
-    return toDTO({
-      ...target,
-      lastScan: target.lastScan || 0,
-      details: lastScanDetails,
-    });
+    if (isScanSuccess(validationResult)) {
+      // check if the validation response and the initial result are the same
+      // if so, we can safely assume that the report did change.
+
+      logger.debug(
+        {
+          target: result.target,
+        },
+        `report did change for ${result.target} - verified that the report changed`
+      );
+      return handleReportDidChange(
+        newReport,
+        lastScanDetails,
+        validationResult,
+        prisma
+      );
+    }
+    // it was a scan error OR we were not able to verify that the report changed. - lets just return the last report.
+    logger.info(
+      {
+        target: result.target,
+      },
+      `could not verify that the report changed for ${result.target} - returning last report`
+    );
+  } else if (!lastReport || reportDidChange(lastReport, newReport)) {
+    return handleReportDidChange(newReport, lastScanDetails, result, prisma);
   }
 
   const target = await prisma.target.update({
@@ -284,16 +347,6 @@ const handleNewScanReport = async (
       queued: false,
       lastScan: result.timestamp,
       errorCount: 0,
-      lastScanDetails: {
-        upsert: {
-          create: {
-            details: lastScanDetails,
-          },
-          update: {
-            details: lastScanDetails,
-          },
-        },
-      },
     },
   });
 

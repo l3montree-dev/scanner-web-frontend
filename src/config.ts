@@ -17,4 +17,6 @@ export const config = {
     org: process.env.INFLUX_ORG as string,
     bucket: process.env.INFLUX_BUCKET as string,
   },
+  socks5Proxy: process.env.SOCKS5_PROXY,
+  scanReportDurationThresholdUntilValidation: 10_000,
 };

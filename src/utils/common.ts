@@ -5,6 +5,7 @@ import {
   IIpLookupReportMsg,
   IScanErrorResponse,
   IScanResponse,
+  IScanSuccessResponse,
   ISession,
   WithoutId,
 } from "../types";
@@ -249,6 +250,12 @@ export const isScanError = (
   response: IScanResponse
 ): response is IScanErrorResponse => {
   return "error" in response.result;
+};
+
+export const isScanSuccess = (
+  response: IScanResponse
+): response is IScanSuccessResponse => {
+  return !isScanError(response);
 };
 
 export const linkMapper: { [key in InspectionType]: string } = {
