@@ -4,7 +4,7 @@ variables:
 stages:
     - test
     - build
-    #- scan
+    - scan
     - publish
   
 gitguardianscan:
@@ -124,6 +124,7 @@ docker:build:ci:
   image: aquasec/trivy
   script:
   - trivy image --exit-code 1 --severity CRITICAL --no-progress --input image.tar
+  allow_failure: true
 
 trivy:scan:main:
     extends: .trivy:scan
@@ -168,9 +169,10 @@ trivy:scan:tag:
 
 docker:push:tag:
     extends: .docker:push
-    needs: [docker:build:tag, gitguardianscan, jest]
+    needs: [docker:build:tag, trivy:scan:tag, gitguardianscan, jest]
     dependencies:
       - docker:build:tag
+      - trivy:scan:tag
       - gitguardianscan
       - jest
     variables:
@@ -181,9 +183,10 @@ docker:push:tag:
 
 docker:push:main:
     extends: .docker:push
-    needs: [docker:build:main, gitguardianscan, jest]
+    needs: [docker:build:main, trivy:scan:main, gitguardianscan, jest]
     dependencies:
       - docker:build:main
+      - trivy:scan:main
       - gitguardianscan
       - jest
     variables:
@@ -194,9 +197,10 @@ docker:push:main:
 
 docker:push:ci:
     extends: .docker:push
-    needs: [docker:build:ci, gitguardianscan, jest]
+    needs: [docker:build:ci, trivy:scan:ci, gitguardianscan, jest]
     dependencies:
       - docker:build:ci
+      - trivy:scan:ci
       - gitguardianscan
       - jest
     variables:
