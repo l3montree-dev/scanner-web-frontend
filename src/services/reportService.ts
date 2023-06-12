@@ -186,7 +186,7 @@ const combineResults = (
     | null;
 
   Object.values(InspectionTypeEnum).forEach((key) => {
-    if (newResult.result[key] && newResult.result[key]?.didPass === null) {
+    if (!newResult.result[key] || newResult.result[key]?.didPass === null) {
       // prefer the lastResults since it holds more information.
       if (details && details[key]?.didPass !== null) {
         newResult.result[key] = details[key];
