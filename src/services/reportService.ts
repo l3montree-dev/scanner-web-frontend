@@ -192,7 +192,13 @@ const combineResults = (
         newResult.result[key] = details[key];
       } else if (lastReport && lastReport[key] !== null) {
         // at least we have the last report.
-        newResult.result[key]!.didPass = lastReport[key];
+        // @ts-ignore
+        newResult.result[key] = {
+          didPass: (lastReport[key] as boolean) || null,
+          errors: [],
+          recommendations: [],
+          actualValue: {},
+        };
       }
     }
   });

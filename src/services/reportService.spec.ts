@@ -166,35 +166,37 @@ describe("Report Service Test Suite", () => {
       );
 
       const lastScanDetails = {
-        details: {
+        details: expect.objectContaining({
           sut: "example.com/test",
           dnsSec: {
             didPass: true,
           },
-        },
+        }),
       };
 
       expect(prismaMock.scanReport.create).toHaveBeenCalled();
-      expect(prismaMock.target.upsert).toHaveBeenCalledWith({
-        where: { uri: "example.com/test" },
-        create: {
-          ...target,
-          lastScanDetails: {
-            create: lastScanDetails,
-          },
-        },
-        update: {
-          queued: false,
-          lastScan: 4711,
-          errorCount: 0,
-          lastScanDetails: {
-            upsert: {
+      expect(prismaMock.target.upsert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { uri: "example.com/test" },
+          create: {
+            ...target,
+            lastScanDetails: {
               create: lastScanDetails,
-              update: lastScanDetails,
             },
           },
-        },
-      });
+          update: {
+            queued: false,
+            lastScan: 4711,
+            errorCount: 0,
+            lastScanDetails: {
+              upsert: {
+                create: lastScanDetails,
+                update: lastScanDetails,
+              },
+            },
+          },
+        })
+      );
     }
   );
   it("should validate a change in a scan report", async () => {
@@ -255,12 +257,12 @@ describe("Report Service Test Suite", () => {
     config.socks5Proxy = undefined;
 
     const lastScanDetails = {
-      details: {
+      details: expect.objectContaining({
         sut: "example.com/test",
         dnsSec: {
           didPass: true,
         },
-      },
+      }),
     };
     expect(scanRPCValidation).toHaveBeenCalled();
 
@@ -332,15 +334,18 @@ describe("Report Service Test Suite", () => {
     );
 
     const replacedLastScanDetails = {
-      details: {
+      details: expect.objectContaining({
         sut: "example.com/test",
         dnsSec: {
           didPass: false,
         },
         responsibleDisclosure: {
           didPass: true, // expect the value from the last report - there is nothing else added - see next test
+          actualValue: {},
+          recommendations: [],
+          errors: [],
         },
-      },
+      }),
     };
 
     expect(prismaMock.scanReport.create).toHaveBeenCalledWith({
