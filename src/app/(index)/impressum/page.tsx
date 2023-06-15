@@ -13,6 +13,9 @@ export const metadata = {
     description,
     type: "website",
   },
+  alternates: {
+    canonical: "/impressum",
+  },
 };
 
 interface Props {

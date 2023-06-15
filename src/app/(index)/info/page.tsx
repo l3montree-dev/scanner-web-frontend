@@ -17,6 +17,9 @@ export const metadata: Metadata = {
     description,
     type: "website",
   },
+  alternates: {
+    canonical: "/info",
+  },
 };
 
 interface Props {

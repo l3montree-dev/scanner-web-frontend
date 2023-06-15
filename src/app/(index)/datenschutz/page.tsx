@@ -12,6 +12,9 @@ export const metadata = {
     description,
     type: "website",
   },
+  alternates: {
+    canonical: "/datenschutz",
+  },
 };
 
 interface Props {

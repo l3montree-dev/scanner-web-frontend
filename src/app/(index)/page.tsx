@@ -13,6 +13,9 @@ export const metadata: Metadata = {
       "OZG Security Schnelltest einer Webseite in Bezug auf IT-Sicherheitsmaßnahmen und Best-Practices",
     type: "website",
   },
+  alternates: {
+    canonical: "/",
+  },
 };
 
 const Index: FunctionComponent<{ displayNotAvailable: boolean }> = ({
