@@ -78,7 +78,7 @@ spec:
             - name: RABBITMQ_USER
               value: ozgsec
             - name: CANONICAL_URL
-              value: {{.values.quickTest.canonicalUrl | default "" | quote}}
+              value: {{.Values.quicktest.canonicalUrl | default "" | quote}}
             - name: RABBITMQ_PASS
               valueFrom:
                 secretKeyRef:
