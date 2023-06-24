@@ -63,6 +63,7 @@ export async function GET(req: NextRequest) {
       {
         refreshCache: refresh === "true",
         socks5Proxy: req.nextUrl.searchParams.get("socks5Proxy") ?? undefined,
+        startTimeMS: Date.now(),
       }
     );
     monitoringService.trackApiCall(

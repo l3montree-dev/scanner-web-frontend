@@ -18,7 +18,7 @@ import {
   limitStringValues,
 } from "../utils/common";
 import { DTO, toDTO } from "../utils/server";
-import { scanService } from "../scanner/scanService";
+import { ScanTargetOptions, scanService } from "../scanner/scanService";
 import { getLogger } from "./logger";
 
 const logger = getLogger(__filename);
@@ -194,6 +194,7 @@ const combineResults = (
         // at least we have the last report.
         // @ts-ignore
         newResult.result[key] = {
+          // @ts-ignore
           didPass: (lastReport[key] as boolean) || null,
           errors: [],
           recommendations: [],
@@ -271,8 +272,10 @@ const handleReportDidChange = async (
 
 // only create a new report if the didPass property changed.
 const handleNewScanReport = async (
+  requestId: string,
   result: IScanSuccessResponse,
-  prisma: PrismaClient
+  prisma: PrismaClient,
+  options: ScanTargetOptions
 ): Promise<DTO<DetailedTarget>> => {
   // fetch the last existing report and check if we only need to update that one.
   const [lastReports, lastResults] = await Promise.all([
@@ -303,20 +306,34 @@ const handleNewScanReport = async (
     (newReport.duration > config.scanReportDurationThresholdUntilValidation ||
       reportDidChange(lastReport, newReport))
   ) {
-    logger.debug(
-      {
-        target: result.target,
-      },
-      `report did change for ${result.target} or duration exceeds threshold of ${config.scanReportDurationThresholdUntilValidation} - verifying that the report changed`
-    );
+    if (
+      newReport.duration > config.scanReportDurationThresholdUntilValidation
+    ) {
+      logger.debug(
+        {
+          target: result.target,
+          duration: Date.now() - options.startTimeMS,
+        },
+        `report for ${result.target} exceeds threshold of ${config.scanReportDurationThresholdUntilValidation} - verifying the report`
+      );
+    } else if (reportDidChange(lastReport, newReport)) {
+      logger.debug(
+        {
+          target: result.target,
+          duration: Date.now() - options.startTimeMS,
+        },
+        `report did change for ${result.target} - verifying that the report changed`
+      );
+    }
     // we should verify that the report changed.
     // lets start another scan, which will use a socks5 proxy configuration
     const validationResult = await scanService.scanRPC(
-      crypto.randomUUID(),
+      requestId,
       result.target,
       {
         refreshCache: true, // it makes no sense to use the cache here :)
         socks5Proxy: config.socks5Proxy,
+        startTimeMS: options.startTimeMS,
       }
     );
 
@@ -332,6 +349,7 @@ const handleNewScanReport = async (
       logger.debug(
         {
           target: result.target,
+          duration: Date.now() - options.startTimeMS,
         },
         `report did change for ${result.target} - verified that the report changed`
       );
@@ -346,6 +364,7 @@ const handleNewScanReport = async (
     logger.info(
       {
         target: result.target,
+        duration: Date.now() - options.startTimeMS,
       },
       `could not verify that the report changed for ${result.target} - returning last report`
     );
@@ -373,5 +392,3 @@ export const reportService = {
   getChangedInspectionsOfCollections,
   reportDidChange,
 };
-
-// 2406.679ms

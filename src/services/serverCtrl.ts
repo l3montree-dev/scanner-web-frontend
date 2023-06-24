@@ -51,7 +51,10 @@ const startScanResponseLoop = () => {
   logger.info("starting scan response loop");
   rabbitMQClient.listen("scan-response", async (msg) => {
     const content = JSON.parse(msg.content.toString()).data as IScanResponse;
-    await scanService.handleScanResponse(content);
+    await scanService.handleScanResponse(crypto.randomUUID(), content, {
+      refreshCache: false,
+      startTimeMS: Date.now(),
+    });
   });
 };
 
@@ -132,6 +135,7 @@ const startScanLoop = () => {
           return async () => {
             return scanService.scanTarget(requestId, domain.uri, {
               refreshCache: false,
+              startTimeMS: Date.now(),
             });
           };
         })

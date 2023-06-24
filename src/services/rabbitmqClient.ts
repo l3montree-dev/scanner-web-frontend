@@ -243,7 +243,15 @@ export class RabbitMQRPCClient extends RabbitMQClient {
           priority: 5,
           ...options,
         }
-      );
+      ).then(() => {
+        logger.debug(
+          {
+            messageId: options.messageId,
+            queue,
+          },
+          "sent message"
+        );
+      });
     });
   }
 }

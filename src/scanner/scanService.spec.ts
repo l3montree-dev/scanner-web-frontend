@@ -30,6 +30,7 @@ describe("ScanService test suite", () => {
     const sut = new ScanService({} as any, prismaMock as any);
     const [result] = await sut.scanTargetRPC("", existing.target.uri, {
       refreshCache: false,
+      startTimeMS: Date.now(),
     });
 
     expect(result.result).toEqual({
@@ -69,6 +70,7 @@ describe("ScanService test suite", () => {
     const sut = new ScanService(msgBrokerClientMock as any, prismaMock as any);
     const [res] = await sut.scanTargetRPC("", "example.com", {
       refreshCache: false,
+      startTimeMS: Date.now(),
     });
 
     expect(res.result).toEqual(
@@ -110,6 +112,7 @@ describe("ScanService test suite", () => {
     const sut = new ScanService(msgBrokerClientMock as any, prismaMock as any);
     const [res] = await sut.scanTargetRPC("", "example.com", {
       refreshCache: false,
+      startTimeMS: Date.now(),
     });
 
     expect(res.result).toEqual(
@@ -152,6 +155,7 @@ describe("ScanService test suite", () => {
       prismaMock as any
     ).scanTargetRPC("", "example.com", {
       refreshCache: false,
+      startTimeMS: Date.now(),
     });
 
     expect(prismaMock.scanReport.create).toHaveBeenCalled();
@@ -186,6 +190,7 @@ describe("ScanService test suite", () => {
         prismaMock as any
       ).scanTargetRPC("", "example.com", {
         refreshCache: false,
+        startTimeMS: Date.now(),
       });
 
       expect(msgBrokerClientMock.call).toHaveBeenCalled();
@@ -218,6 +223,7 @@ describe("ScanService test suite", () => {
         prismaMock as any
       ).scanTargetRPC("", "example.com", {
         refreshCache: true,
+        startTimeMS: Date.now(),
       });
 
       expect(msgBrokerClientMock.call).toHaveBeenCalled();

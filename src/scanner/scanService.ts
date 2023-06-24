@@ -25,9 +25,10 @@ import {
 } from "../utils/common";
 import { DTO, toDTO } from "../utils/server";
 
-interface ScanTargetOptions {
+export interface ScanTargetOptions {
   refreshCache: boolean; // if refresh is true, it will bypass all caching layers
   socks5Proxy?: string; // if provided, the scan will be performed through the proxy
+  startTimeMS: number;
 }
 
 interface MessageBrokerClient {
@@ -76,7 +77,9 @@ export class ScanService {
   }
 
   public async handleScanResponse(
-    response: IScanResponse
+    requestId: string,
+    response: IScanResponse,
+    options: ScanTargetOptions
   ): Promise<DTO<DetailedTarget> | undefined> {
     if (isScanError(response)) {
       await neverThrow(
@@ -91,7 +94,14 @@ export class ScanService {
     } else {
       return defaultOnError(
         this.scanCB.run(async () =>
-          timeout(reportService.handleNewScanReport(response, this.db))
+          timeout(
+            reportService.handleNewScanReport(
+              requestId,
+              response,
+              this.db,
+              options
+            )
+          )
         ),
         {
           uri: response.target,
@@ -190,6 +200,11 @@ export class ScanService {
           },
           { ...target, details: rest.details },
         ];
+      } else {
+        logger.info(
+          { requestId },
+          `no existing report for site: ${sanitizedURI} - starting new scan`
+        );
       }
     }
     const result = await this.scanRPC(requestId, sanitizedURI, options);
@@ -210,7 +225,15 @@ export class ScanService {
       detailedTarget = await defaultOnError(
         this.scanCB.run(
           async () =>
-            timeout(reportService.handleNewScanReport(result, this.db), 40_000) // use a 20 seconds timeout - it might happen, that the reportService will verify that the reports did really change and therefore issue another scan.
+            timeout(
+              reportService.handleNewScanReport(
+                requestId,
+                result,
+                this.db,
+                options
+              ),
+              40_000
+            ) // use a 20 seconds timeout - it might happen, that the reportService will verify that the reports did really change and therefore issue another scan.
         ),
         {
           uri: result.target,

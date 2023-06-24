@@ -28,6 +28,7 @@ describe("Report Service Test Suite", () => {
     }));
 
     await reportService.handleNewScanReport(
+      "",
       {
         target: "example.com",
         timestamp: 4711,
@@ -37,7 +38,11 @@ describe("Report Service Test Suite", () => {
           },
         },
       } as any,
-      prismaMock as any
+      prismaMock as any,
+      {
+        refreshCache: false,
+        startTimeMS: Date.now(),
+      }
     );
 
     // it should not create a new scan report.
@@ -87,6 +92,7 @@ describe("Report Service Test Suite", () => {
       } as any);
 
     await reportService.handleNewScanReport(
+      "",
       {
         target: "example.com",
         timestamp: 4711,
@@ -96,7 +102,11 @@ describe("Report Service Test Suite", () => {
           },
         },
       } as any,
-      prismaMock as any
+      prismaMock as any,
+      {
+        refreshCache: false,
+        startTimeMS: Date.now(),
+      }
     );
     // remove the config again
     config.socks5Proxy = undefined;
@@ -153,6 +163,7 @@ describe("Report Service Test Suite", () => {
       };
 
       await reportService.handleNewScanReport(
+        "",
         {
           target: "example.com/test",
           timestamp: 4711,
@@ -162,7 +173,11 @@ describe("Report Service Test Suite", () => {
             },
           },
         } as any,
-        prismaMock as any
+        prismaMock as any,
+        {
+          refreshCache: false,
+          startTimeMS: Date.now(),
+        }
       );
 
       const lastScanDetails = {
@@ -242,6 +257,7 @@ describe("Report Service Test Suite", () => {
       } as any);
 
     await reportService.handleNewScanReport(
+      "",
       {
         target: "example.com/test",
         timestamp: 4711,
@@ -251,7 +267,11 @@ describe("Report Service Test Suite", () => {
           },
         },
       } as any,
-      prismaMock as any
+      prismaMock as any,
+      {
+        refreshCache: false,
+        startTimeMS: Date.now(),
+      }
     );
     // remove the config again
     config.socks5Proxy = undefined;
@@ -318,6 +338,7 @@ describe("Report Service Test Suite", () => {
     };
 
     await reportService.handleNewScanReport(
+      "",
       {
         target: "example.com/test",
         timestamp: 4711,
@@ -330,7 +351,11 @@ describe("Report Service Test Suite", () => {
           },
         },
       } as any,
-      prismaMock as any
+      prismaMock as any,
+      {
+        refreshCache: false,
+        startTimeMS: Date.now(),
+      }
     );
 
     const replacedLastScanDetails = {
@@ -420,6 +445,7 @@ describe("Report Service Test Suite", () => {
     };
 
     await reportService.handleNewScanReport(
+      "",
       {
         target: "example.com/test",
         timestamp: 4711,
@@ -432,7 +458,11 @@ describe("Report Service Test Suite", () => {
           },
         },
       } as any,
-      prismaMock as any
+      prismaMock as any,
+      {
+        refreshCache: false,
+        startTimeMS: Date.now(),
+      }
     );
 
     const replacedLastScanDetails = {

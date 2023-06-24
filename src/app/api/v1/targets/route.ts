@@ -47,6 +47,7 @@ export async function POST(req: NextRequest) {
       sanitized,
       {
         refreshCache: true,
+        startTimeMS: Date.now(),
       }
     );
     if (isScanError(result)) {
@@ -120,6 +121,7 @@ export async function POST(req: NextRequest) {
 
             const [result] = await scanService.scanTargetRPC(tmpRqId, domain, {
               refreshCache: false,
+              startTimeMS: Date.now(),
             });
             if (isScanError(result)) {
               logger.error(
