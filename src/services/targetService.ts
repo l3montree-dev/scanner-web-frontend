@@ -165,7 +165,7 @@ const getUserTargetsWithLatestTestResult = async (
             : ""
         }
         ORDER BY ${
-          paginateRequest.reverseUriBeforeSort ? "REVERSE(t.uri)" : "t.uri"
+          paginateRequest.reverseUriBeforeSort ? "REVERSE(t.hostname)" : "t.uri"
         } ${translateSortDirection(paginateRequest.sortDirection)}
         LIMIT $2
         OFFSET $3;

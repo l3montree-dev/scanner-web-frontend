@@ -622,7 +622,7 @@ const Content: FunctionComponent<Props> = (props) => {
                         active={sort.key === "uri"}
                         getIcon={() => getIcon("uri")}
                       />
-                      <button
+                      {/*  <button
                         onClick={handleReverseUriBeforeSort}
                         className={classNames(
                           "ml-0 transition-all font-normal border px-1 border-white/20 text-white",
@@ -632,7 +632,7 @@ const Content: FunctionComponent<Props> = (props) => {
                         )}
                       >
                         Nach Subdomains sortieren
-                      </button>
+                        </button> */}
                     </div>
                   </th>
                   <th className="p-2">
