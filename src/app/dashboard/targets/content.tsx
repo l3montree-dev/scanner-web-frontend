@@ -106,7 +106,6 @@ const Content: FunctionComponent<Props> = (props) => {
     patchQuery({
       sort: instructions.key,
       sortDirection: instructions.direction.toString(),
-      reverseUriBeforeSort: reverseUriBeforeSort.toString(),
     });
   };
 
