@@ -247,6 +247,7 @@ const handleReportDidChange = async (
       queued: false,
       lastScan: result.timestamp,
       errorCount: 0,
+      hostname: getHostnameFromUri(result.target),
       lastScanDetails: {
         upsert: {
           create: {
@@ -378,6 +379,7 @@ const handleNewScanReport = async (
       queued: false,
       lastScan: result.timestamp,
       errorCount: 0,
+      hostname: getHostnameFromUri(newReport.uri),
     },
   });
 
