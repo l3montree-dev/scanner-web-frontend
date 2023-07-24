@@ -114,6 +114,7 @@ const getUserTargetsWithLatestTestResult = async (
     sortDirection?: string;
     type?: TargetType;
     collectionIds?: Array<number>;
+    reverseUriBeforeSort?: boolean;
   } & {
     [key in InspectionType]?: "0" | "1" | "-1";
   },
@@ -163,7 +164,9 @@ const getUserTargetsWithLatestTestResult = async (
             ? 'AND "errorCount" < 5'
             : ""
         }
-        ORDER BY t.uri ${translateSortDirection(paginateRequest.sortDirection)}
+        ORDER BY ${
+          paginateRequest.reverseUriBeforeSort ? "REVERSE(t.uri)" : "t.uri"
+        } ${translateSortDirection(paginateRequest.sortDirection)}
         LIMIT $2
         OFFSET $3;
 `,

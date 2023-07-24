@@ -2,6 +2,8 @@
 
 import {
   faCaretDown,
+  faCaretLeft,
+  faCaretRight,
   faCaretUp,
   faQuestionCircle,
 } from "@fortawesome/free-solid-svg-icons";
@@ -83,6 +85,7 @@ const Content: FunctionComponent<Props> = (props) => {
   const searchParams = useSearchParams();
   const pathname = usePathname() ?? "";
   const [currentDomainChangeCount, setCurrentDomainChangeCount] = useState(0);
+  const [reverseUriBeforeSort, setReverseUriBeforeSort] = useState(false);
 
   const [selection, setSelection] = useState<{ [uri: string]: boolean }>({});
   const scanAllLoading = useLoading();
@@ -103,7 +106,16 @@ const Content: FunctionComponent<Props> = (props) => {
     patchQuery({
       sort: instructions.key,
       sortDirection: instructions.direction.toString(),
+      reverseUriBeforeSort: reverseUriBeforeSort.toString(),
     });
+  };
+
+  const handleReverseUriBeforeSort = () => {
+    const prev = reverseUriBeforeSort;
+    patchQuery({
+      reverseUriBeforeSort: Number(!prev).toString(),
+    });
+    setReverseUriBeforeSort(!prev);
   };
 
   const handleFilterCheckState = (
@@ -610,6 +622,17 @@ const Content: FunctionComponent<Props> = (props) => {
                         active={sort.key === "uri"}
                         getIcon={() => getIcon("uri")}
                       />
+                      <button
+                        onClick={handleReverseUriBeforeSort}
+                        className={classNames(
+                          "ml-0 transition-all font-normal border px-1 border-white/20 text-white",
+                          reverseUriBeforeSort
+                            ? "bg-white/20 text-black"
+                            : "bg-transparent"
+                        )}
+                      >
+                        Nach Subdomains sortieren
+                      </button>
                     </div>
                   </th>
                   <th className="p-2">

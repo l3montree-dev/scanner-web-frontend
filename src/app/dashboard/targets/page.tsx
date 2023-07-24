@@ -34,6 +34,7 @@ const Page = async ({ searchParams }: any) => {
         page,
         search,
         collectionIds,
+        reverseUriBeforeSort: searchParams["reverseUriBeforeSort"] === "1",
         type:
           (searchParams["domainType"] as TargetType | undefined) ||
           TargetType.all,
