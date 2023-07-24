@@ -53,6 +53,7 @@ describe("Report Service Test Suite", () => {
         queued: false,
         lastScan: 4711,
         errorCount: 0,
+        hostname: "example.com",
       },
     });
   });
@@ -120,6 +121,7 @@ describe("Report Service Test Suite", () => {
         queued: false,
         lastScan: 4711,
         errorCount: 0,
+        hostname: "example.com",
       },
     });
   });
@@ -203,6 +205,7 @@ describe("Report Service Test Suite", () => {
             queued: false,
             lastScan: 4711,
             errorCount: 0,
+            hostname: "example.com",
             lastScanDetails: {
               upsert: {
                 create: lastScanDetails,
@@ -300,6 +303,7 @@ describe("Report Service Test Suite", () => {
         queued: false,
         lastScan: 11,
         errorCount: 0,
+        hostname: "example.com",
         lastScanDetails: {
           upsert: {
             create: lastScanDetails,
@@ -392,6 +396,7 @@ describe("Report Service Test Suite", () => {
         queued: false,
         lastScan: 4711,
         errorCount: 0,
+        hostname: "example.com",
         lastScanDetails: {
           upsert: {
             create: replacedLastScanDetails,
@@ -499,6 +504,7 @@ describe("Report Service Test Suite", () => {
         queued: false,
         lastScan: 4711,
         errorCount: 0,
+        hostname: "example.com",
         lastScanDetails: {
           upsert: {
             create: replacedLastScanDetails,
