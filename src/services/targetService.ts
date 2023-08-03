@@ -108,6 +108,7 @@ const inspectionFilter = (filter: {
     .filter((s) => s !== "")
     .join(" AND ")}  AND`;
 };
+
 const getUserTargetsWithLatestTestResult = async (
   user: User | Guest,
   paginateRequest: PaginateRequest & { search?: string } & {
@@ -164,9 +165,14 @@ const getUserTargetsWithLatestTestResult = async (
             ? 'AND "errorCount" < 5'
             : ""
         }
-        ORDER BY ${
-          paginateRequest.reverseUriBeforeSort ? "REVERSE(t.hostname)" : "t.uri"
-        } ${translateSortDirection(paginateRequest.sortDirection)}
+        ORDER BY 
+           ARRAY(
+            SELECT ord || val
+            FROM unnest(string_to_array(t.hostname, '.')) WITH ORDINALITY AS u(val, ord)
+            ORDER BY ord ${
+              paginateRequest.reverseUriBeforeSort ? "DESC" : "ASC"
+            }
+        ) ${translateSortDirection(paginateRequest.sortDirection)}
         LIMIT $2
         OFFSET $3;
 `,
