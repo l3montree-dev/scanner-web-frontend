@@ -160,7 +160,7 @@ describe("Target Service Test Suite", () => {
           SELECT 1 from scan_reports sr2 where sr.uri = sr2.uri AND sr."createdAt" < sr2."createdAt"
         )
         AND EXISTS( SELECT 1 from target_collections tc where tc.uri = t.uri AND tc."collectionId" = $1 )
-        ORDER BY t.uri ASC
+        ORDER BY ARRAY( SELECT ord || val FROM unnest(string_to_array(t.hostname, '.')) WITH ORDINALITY AS u(val, ord) ORDER BY ord ASC ) ASC
         LIMIT $2
         OFFSET $3;
 `;
@@ -184,11 +184,13 @@ describe("Target Service Test Suite", () => {
   it.each([
     {
       sort: Math.random().toString().substring(2), // any other value should default to uri.
-      expected: "t.uri",
+      expected:
+        "ARRAY( SELECT ord || val FROM unnest(string_to_array(t.hostname, '.')) WITH ORDINALITY AS u(val, ord) ORDER BY ord ASC )",
     },
     {
       sort: undefined,
-      expected: "t.uri",
+      expected:
+        "ARRAY( SELECT ord || val FROM unnest(string_to_array(t.hostname, '.')) WITH ORDINALITY AS u(val, ord) ORDER BY ord ASC )",
     },
   ])(
     "should not be possible to inject arbitrary data to the sql statement when fetching the targets with their latest network results: %s",
