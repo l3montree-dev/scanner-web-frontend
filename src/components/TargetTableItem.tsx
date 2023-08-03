@@ -26,6 +26,7 @@ import Tooltip from "./common/Tooltip";
 import DropdownMenuItem from "./common/DropdownMenuItem";
 import Menu from "./common/Menu";
 import Spinner from "./common/Spinner";
+import Link from "next/link";
 
 interface Props {
   onSelect: (target: DTO<DetailedTarget>) => void;
@@ -88,9 +89,16 @@ const TargetTableItem: FunctionComponent<Props> = ({
         </td>
         <td className="px-4 py-2 lg:p-2 col-span-8  bg-dunkelblau-100  text-white lg:text-textblack lg:bg-transparent">
           <div className="flex pl-10 lg:pl-0 flex-row">
-            <span title={target.uri} className="text-ellipsis max-w-xs block">
+            <Link
+              target={"_blank"}
+              href={`//${target.uri}`}
+              onClick={(e) => e.stopPropagation()}
+              rel="noopener"
+              title={target.uri}
+              className="text-ellipsis max-w-xs block"
+            >
               {toUnicode(target.uri)}
-            </span>
+            </Link>
             <div className="hidden lg:inline ml-2">
               <Tooltip tooltip={infoMessage(target)}>
                 <FontAwesomeIcon
