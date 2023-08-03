@@ -2,8 +2,6 @@
 
 import {
   faCaretDown,
-  faCaretLeft,
-  faCaretRight,
   faCaretUp,
   faQuestionCircle,
 } from "@fortawesome/free-solid-svg-icons";
@@ -35,6 +33,12 @@ import Tooltip from "../../../components/common/Tooltip";
 import { useIsGuest } from "../../../hooks/useIsGuest";
 import useLoading from "../../../hooks/useLoading";
 import useRefreshOnVisit from "../../../hooks/useRefreshOnVisit";
+import { notificationClient } from "../../../notifications/notificationClient";
+import {
+  NotificationType,
+  isDoneNotification,
+} from "../../../notifications/notifications";
+import { withAuthProvider } from "../../../providers/AuthProvider";
 import {
   DomainInspectionType,
   HeaderInspectionType,
@@ -43,7 +47,6 @@ import {
   OrganizationalInspectionType,
   TLSInspectionType,
 } from "../../../scanner/scans";
-import { withAuthProvider } from "../../../providers/AuthProvider";
 import { clientHttpClient } from "../../../services/clientHttpClient";
 import {
   DetailedTarget,
@@ -54,11 +57,6 @@ import {
 import { classNames } from "../../../utils/common";
 import { DTO } from "../../../utils/server";
 import { optimisticUpdate } from "../../../utils/view";
-import { notificationClient } from "../../../notifications/notificationClient";
-import {
-  NotificationType,
-  isDoneNotification,
-} from "../../../notifications/notifications";
 
 const translateDomainType = (type: TargetType) => {
   switch (type) {
@@ -460,7 +458,7 @@ const Content: FunctionComponent<Props> = (props) => {
                   <TargetOverviewForm onSearch={handleSearch} />
                 </div>
               </div>
-              <div className="flex flex-wrap py-2 gap-2 mb-6 flex-row border-deepblue-50">
+              <div className="flex flex-wrap py-2 gap-2 flex-row border-deepblue-50">
                 {!isGuest && (
                   <>
                     <Menu
@@ -590,158 +588,167 @@ const Content: FunctionComponent<Props> = (props) => {
                 </div>
               )}
             </div>
-
-            <table className="w-full border-separate border-spacing-2">
-              <thead className="sticky hidden lg:table-header-group table-header z-20">
-                <tr className="text-sm border-b-deepblue-50 text-left bg-dunkelblau-100">
-                  <th className="p-2 pr-0 text-center">
-                    {!isGuest && targets.length > 0 && (
-                      <Checkbox
-                        checked={
-                          selectedTargets.length > 0 &&
-                          selectedTargets.length === targets.length
-                        }
-                        onChange={() => {
-                          setSelection((prev) => {
-                            return targets.reduce((acc, domain) => {
-                              acc[domain.uri] = !Boolean(prev[domain.uri]);
-                              return acc;
-                            }, {} as Record<string, boolean>);
-                          });
-                        }}
-                      />
-                    )}
-                  </th>
-                  <th className="p-2">
-                    <div>
-                      <span className="text-white">Domain</span>
-                      <SortButton
-                        sortKey="uri"
-                        onSort={handleSort}
-                        active={sort.key === "uri"}
-                        getIcon={() => getIcon("uri")}
-                      />
-                      <button
-                        onClick={handleReverseUriBeforeSort}
-                        className={classNames(
-                          "ml-0 transition-all font-normal border px-1 border-white/20 text-white",
-                          reverseUriBeforeSort
-                            ? "bg-white/20 text-black"
-                            : "bg-transparent"
-                        )}
-                      >
-                        Nach Subdomains sortieren
-                      </button>
-                    </div>
-                  </th>
-                  <th className="p-2">
-                    <CheckStateMenu
-                      onChange={handleFilterCheckState}
-                      inspectionType={
-                        OrganizationalInspectionType.ResponsibleDisclosure
-                      }
-                    />
-                  </th>
-                  <th className="p-2">
-                    <div>
-                      <CheckStateMenu
-                        onChange={handleFilterCheckState}
-                        inspectionType={TLSInspectionType.TLSv1_3}
-                      />
-                    </div>
-                  </th>
-                  <th className="p-2">
-                    <div>
+            <div className="flex mb-6 flex-row justify-end">
+              <a
+                className="font-normal hover:text-white hover:no-underline"
+                download={"domain-export.csv"}
+                href={`/api/v1/targets/export?${searchParams.toString()}`}
+              >
+                <Button>Exportieren</Button>
+              </a>
+            </div>
+            <div className="-mx-1.5">
+              <table className="w-full border-separate border-spacing-1.5">
+                <thead className="sticky hidden lg:table-header-group table-header z-20">
+                  <tr className="text-sm border-b-deepblue-50 text-left bg-dunkelblau-100">
+                    <th className="p-2 pr-0 text-center">
+                      {!isGuest && targets.length > 0 && (
+                        <Checkbox
+                          checked={
+                            selectedTargets.length > 0 &&
+                            selectedTargets.length === targets.length
+                          }
+                          onChange={() => {
+                            setSelection((prev) => {
+                              return targets.reduce((acc, domain) => {
+                                acc[domain.uri] = !Boolean(prev[domain.uri]);
+                                return acc;
+                              }, {} as Record<string, boolean>);
+                            });
+                          }}
+                        />
+                      )}
+                    </th>
+                    <th className="p-2">
+                      <div>
+                        <span className="text-white">Domain</span>
+                        <SortButton
+                          sortKey="uri"
+                          onSort={handleSort}
+                          active={sort.key === "uri"}
+                          getIcon={() => getIcon("uri")}
+                        />
+                        <button
+                          onClick={handleReverseUriBeforeSort}
+                          className={classNames(
+                            "ml-0 transition-all font-normal border px-1 border-white/20 text-white",
+                            reverseUriBeforeSort
+                              ? "bg-white/20 text-black"
+                              : "bg-transparent"
+                          )}
+                        >
+                          Nach Subdomains sortieren
+                        </button>
+                      </div>
+                    </th>
+                    <th className="p-2">
                       <CheckStateMenu
                         onChange={handleFilterCheckState}
                         inspectionType={
-                          TLSInspectionType.DeprecatedTLSDeactivated
+                          OrganizationalInspectionType.ResponsibleDisclosure
                         }
                       />
-                    </div>
-                  </th>
-                  <th className="p-2">
-                    <div>
-                      <CheckStateMenu
-                        onChange={handleFilterCheckState}
-                        inspectionType={HeaderInspectionType.HSTS}
-                      />
-                    </div>
-                  </th>
-                  <th className="p-2">
-                    <div>
-                      <CheckStateMenu
-                        onChange={handleFilterCheckState}
-                        inspectionType={DomainInspectionType.DNSSec}
-                      />
-                    </div>
-                  </th>
-                  <th className="p-2">
-                    <div>
-                      <CheckStateMenu
-                        onChange={handleFilterCheckState}
-                        inspectionType={NetworkInspectionType.RPKI}
-                      />
-                    </div>
-                  </th>
-                  <th className="p-2">
-                    <div>
-                      <span className="whitespace-nowrap text-white">
-                        Aktionen
-                      </span>
-                    </div>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {targets.map((target, i) => {
-                  return (
-                    <TargetTableItem
-                      collections={props.collections}
-                      onToggleCollection={(collection) => {
-                        if (
-                          target.collections &&
-                          target.collections.includes(+collection.id)
-                        ) {
-                          return handleRemoveFromCollection(
-                            [target],
-                            collection.id
-                          );
-                        }
-                        return handleAddToCollection([target], collection.id);
-                      }}
-                      destroy={(uri) => deleteTarget(uri)}
-                      scanRequest={scanRequest}
-                      scan={(uri) => scanTarget(uri)}
-                      key={target.uri}
-                      target={target}
-                      selected={Boolean(selection[target.uri])}
-                      classNames={classNames(
-                        "transition-all",
-                        selection[target.uri]
-                          ? "bg-dunkelblau-20"
-                          : i % 2 !== 0
-                          ? "bg-blau-20/40"
-                          : "bg-dunkelblau-20/20"
-                      )}
-                      onSelect={(target) => {
-                        setSelection((prev) => {
-                          if (prev[target.uri] === undefined) {
-                            prev[target.uri] = true;
-                            return { ...prev };
+                    </th>
+                    <th className="p-2">
+                      <div>
+                        <CheckStateMenu
+                          onChange={handleFilterCheckState}
+                          inspectionType={TLSInspectionType.TLSv1_3}
+                        />
+                      </div>
+                    </th>
+                    <th className="p-2">
+                      <div>
+                        <CheckStateMenu
+                          onChange={handleFilterCheckState}
+                          inspectionType={
+                            TLSInspectionType.DeprecatedTLSDeactivated
                           }
-                          return {
-                            ...prev,
-                            [target.uri]: !prev[target.uri],
-                          };
-                        });
-                      }}
-                    />
-                  );
-                })}
-              </tbody>
-            </table>
-
+                        />
+                      </div>
+                    </th>
+                    <th className="p-2">
+                      <div>
+                        <CheckStateMenu
+                          onChange={handleFilterCheckState}
+                          inspectionType={HeaderInspectionType.HSTS}
+                        />
+                      </div>
+                    </th>
+                    <th className="p-2">
+                      <div>
+                        <CheckStateMenu
+                          onChange={handleFilterCheckState}
+                          inspectionType={DomainInspectionType.DNSSec}
+                        />
+                      </div>
+                    </th>
+                    <th className="p-2">
+                      <div>
+                        <CheckStateMenu
+                          onChange={handleFilterCheckState}
+                          inspectionType={NetworkInspectionType.RPKI}
+                        />
+                      </div>
+                    </th>
+                    <th className="p-2">
+                      <div>
+                        <span className="whitespace-nowrap text-white">
+                          Aktionen
+                        </span>
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {targets.map((target, i) => {
+                    return (
+                      <TargetTableItem
+                        collections={props.collections}
+                        onToggleCollection={(collection) => {
+                          if (
+                            target.collections &&
+                            target.collections.includes(+collection.id)
+                          ) {
+                            return handleRemoveFromCollection(
+                              [target],
+                              collection.id
+                            );
+                          }
+                          return handleAddToCollection([target], collection.id);
+                        }}
+                        destroy={(uri) => deleteTarget(uri)}
+                        scanRequest={scanRequest}
+                        scan={(uri) => scanTarget(uri)}
+                        key={target.uri}
+                        target={target}
+                        selected={Boolean(selection[target.uri])}
+                        classNames={classNames(
+                          "transition-all",
+                          selection[target.uri]
+                            ? "bg-dunkelblau-20"
+                            : i % 2 !== 0
+                            ? "bg-blau-20/40"
+                            : "bg-dunkelblau-20/20"
+                        )}
+                        onSelect={(target) => {
+                          setSelection((prev) => {
+                            if (prev[target.uri] === undefined) {
+                              prev[target.uri] = true;
+                              return { ...prev };
+                            }
+                            return {
+                              ...prev,
+                              [target.uri]: !prev[target.uri],
+                            };
+                          });
+                        }}
+                      />
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
             {targets.length === 0 && (
               <div className="px-6 bg-hellgrau-20 rounded-b-md py-24">
                 <div className="mx-auto max-w-2xl text-center">

@@ -8,17 +8,15 @@ import BadRequestException from "../../../../errors/BadRequestException";
 import { authOptions } from "../../../../nextAuthOptions";
 import { notificationServer } from "../../../../notifications/notificationServer";
 import { NotificationType } from "../../../../notifications/notifications";
+import { scanService } from "../../../../scanner/scanService";
 import { getLogger } from "../../../../services/logger";
-import { reportService } from "../../../../services/reportService";
 import {
   isScanError,
   neverThrow,
   sanitizeURI,
   splitLineBreak,
-  timeout,
 } from "../../../../utils/common";
 import { getCurrentUser, toDTO } from "../../../../utils/server";
-import { scanService } from "../../../../scanner/scanService";
 
 const logger = getLogger(__filename);
 
