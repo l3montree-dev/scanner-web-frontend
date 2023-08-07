@@ -48,6 +48,40 @@ export async function* eventListenerToAsyncGenerator<Data>(
   }
 }
 
+export const getSessionAndUser = async (
+  options: AuthOptions
+): Promise<{ session: ISession; user: User }> => {
+  const session = await getServerSession(options);
+  if (!session) {
+    throw new UnauthorizedException("no session");
+  }
+  // check if guest
+  if (isGuestUser(session.user)) {
+    return {
+      session,
+      user: {
+        id: session.user.id,
+        featureFlags: {},
+        defaultCollectionId: session.user.collectionId,
+      },
+    };
+  }
+
+  const currentUser = await prisma.user.findFirst({
+    where: {
+      id: session.user.id,
+    },
+  });
+
+  if (!currentUser) {
+    throw new UnauthorizedException(
+      `currentUser with id: ${session.user.id} not found`
+    );
+  }
+
+  return { session, user: currentUser };
+};
+
 export const getCurrentUserOrGuestUser = async (
   options: AuthOptions
 ): Promise<User | Guest> => {

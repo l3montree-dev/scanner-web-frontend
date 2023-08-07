@@ -198,6 +198,7 @@ const combineResults = (
           didPass: (lastReport[key] as boolean) || null,
           errors: [],
           recommendations: [],
+          // @ts-ignore
           actualValue: {},
         };
       }

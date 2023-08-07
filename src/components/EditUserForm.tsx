@@ -1,44 +1,45 @@
 import React, { FunctionComponent, useState } from "react";
 import useLoading from "../hooks/useLoading";
-import { FeatureFlag, ICreateUserDTO } from "../types";
+import { FeatureFlag, ICreateUserDTO, IUserPutDTO } from "../types";
 import Button from "./common/Button";
 
 import FormInput from "./common/FormInput";
 import Checkbox from "./common/Checkbox";
 import { featureFlagMapper } from "../messages";
+import UserRepresentation from "@keycloak/keycloak-admin-client/lib/defs/userRepresentation";
+import { User } from "@prisma/client";
 
 interface Props {
-  onCreateUser: (form: ICreateUserDTO) => Promise<string>; // should return the password of the user
+  onSubmit: (form: IUserPutDTO) => Promise<void>; // should return the password of the user
+  user: User & UserRepresentation;
 }
-const CreateUserForm: FunctionComponent<Props> = ({ onCreateUser }) => {
-  const createRequest = useLoading();
+const EditUserForm: FunctionComponent<Props> = (props) => {
+  const submitRequest = useLoading();
 
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState(props.user.username ?? "");
   const [featureFlags, setFeatureFlags] = useState<
     Record<FeatureFlag, boolean>
-  >({
-    [FeatureFlag.collections]: false,
-  });
-  const [userPassword, setUserPassword] = useState("");
+  >(props.user.featureFlags as Record<FeatureFlag, boolean>);
+
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      setUserPassword("");
-      createRequest.loading();
-      const password = await onCreateUser({
+      submitRequest.loading();
+      await props.onSubmit({
+        id: props.user.id,
         username,
         featureFlags,
       });
-      setUserPassword(password);
+
       // reset the form
       setUsername("");
       setFeatureFlags({
         [FeatureFlag.collections]: false,
       });
 
-      createRequest.success();
+      submitRequest.success();
     } catch (e: any) {
-      createRequest.error(e.toString());
+      submitRequest.error(e.toString());
     }
   };
   return (
@@ -76,28 +77,20 @@ const CreateUserForm: FunctionComponent<Props> = ({ onCreateUser }) => {
           })}
 
           <div className="flex flex-row text-base justify-end mt-5">
-            <Button loading={createRequest.isLoading} type="submit">
-              Nutzer anlegen
+            <Button loading={submitRequest.isLoading} type="submit">
+              Speichern
             </Button>
           </div>
         </div>
       </form>
 
-      {createRequest.errored && (
+      {submitRequest.errored && (
         <span className="text-rot-100 absolute text-sm mt-3 block">
-          {createRequest.errorMessage}
+          {submitRequest.errorMessage}
         </span>
-      )}
-      {userPassword && (
-        <div className="mt-5 text-right rounded-sm text-base bg-blau-100 px-4 py-2">
-          <p className="text-white">
-            Nutzer wurde mit folgendem initialen Password angelegt:{" "}
-            <span className="font-bold text-white">{userPassword}</span>
-          </p>
-        </div>
       )}
     </div>
   );
 };
 
-export default CreateUserForm;
+export default EditUserForm;

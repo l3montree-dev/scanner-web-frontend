@@ -16,7 +16,7 @@ import {
   TLSInspectionType,
 } from "../scanner/scans";
 import { getCheckDescription, titleMapper } from "../messages";
-import { DetailedTarget } from "../types";
+import { DetailedTarget, FeatureFlag } from "../types";
 import { classNames, toGermanDate } from "../utils/common";
 import { DTO } from "../utils/server";
 import { didPass2CheckResult } from "../utils/view";
@@ -27,6 +27,10 @@ import DropdownMenuItem from "./common/DropdownMenuItem";
 import Menu from "./common/Menu";
 import Spinner from "./common/Spinner";
 import Link from "next/link";
+import CollectionPill from "./CollectionPill";
+import { useIsFeatureEnabled } from "../hooks/useFeatureEnabled";
+import CollectionMenuContent from "./CollectionMenuContent";
+import SubMenu from "./common/SubMenu";
 
 interface Props {
   onSelect: (target: DTO<DetailedTarget>) => void;
@@ -62,8 +66,10 @@ const TargetTableItem: FunctionComponent<Props> = ({
   scan,
   destroy,
   collections,
+  onToggleCollection,
 }) => {
   const isGuest = useIsGuest();
+  const collectionEnabled = useIsFeatureEnabled(FeatureFlag.collections);
   return (
     <>
       <tr
@@ -108,12 +114,14 @@ const TargetTableItem: FunctionComponent<Props> = ({
               </Tooltip>
             </div>
           </div>
-          {/*<div className="flex flex-row gap-2">
-            {target.collections?.map((c) => {
-              const col = collections[c.toString()];
-              return <CollectionPill selected={true} key={col.id} {...col} />;
-            })}
-          </div>*/}
+          {collectionEnabled && (
+            <div className="flex flex-row gap-2">
+              {target.collections?.map((c) => {
+                const col = collections[c.toString()];
+                return <CollectionPill selected={true} key={col.id} {...col} />;
+              })}
+            </div>
+          )}
         </td>
         <td className="px-4 py-2 lg:p-2 col-span-8 flex lg:table-cell flex-row justify-between items-center">
           <span className="lg:hidden text-sm opacity-75">
@@ -233,10 +241,8 @@ const TargetTableItem: FunctionComponent<Props> = ({
                       )}
                     </div>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => destroy(target.uri)}>
-                    Löschen
-                  </DropdownMenuItem>
-                  {/*!isGuest && (
+
+                  {collectionEnabled && (
                     <>
                       {Object.keys(collections).length > 0 ? (
                         <SubMenu
@@ -259,10 +265,11 @@ const TargetTableItem: FunctionComponent<Props> = ({
                           <DropdownMenuItem>Gruppe erstellen</DropdownMenuItem>
                         </Link>
                       )}
-
-                     
                     </>
-                      )*/}
+                  )}
+                  <DropdownMenuItem onClick={() => destroy(target.uri)}>
+                    Löschen
+                  </DropdownMenuItem>
                 </>
               }
             />

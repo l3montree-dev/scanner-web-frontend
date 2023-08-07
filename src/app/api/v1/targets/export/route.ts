@@ -13,7 +13,7 @@ const csvHeader = `domain,${displayInspections
 
 export const GET = async (req: NextRequest) => {
   const searchParams = req.nextUrl.searchParams;
-  const search = searchParams.get("search") as string | undefined;
+  const search = (searchParams.get("search") as string | undefined) ?? "";
   const collectionIdsStr =
     (searchParams.get("collectionIds") as string | string[] | undefined) ?? "";
 

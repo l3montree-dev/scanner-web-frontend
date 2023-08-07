@@ -17,21 +17,29 @@ import PageTitle from "../../../components/PageTitle";
 import Tooltip from "../../../components/common/Tooltip";
 import LineCharts from "../../../components/dashboard/LineCharts";
 import useWindowSize from "../../../hooks/useWindowSize";
-import { ChartData, IDashboard } from "../../../types";
+import { ChartData, FeatureFlag, IDashboard } from "../../../types";
 import { classNames, dateFormat } from "../../../utils/common";
 import {
   diffDays,
   displayInspections,
   localizeDefaultCollection,
+  tailwindColors,
 } from "../../../utils/view";
 import useRefreshOnVisit from "../../../hooks/useRefreshOnVisit";
 import useGeneratingStatsPoll from "../../../hooks/useGeneratingStatsPoll";
+import { useIsFeatureEnabled } from "../../../hooks/useFeatureEnabled";
+import * as ToggleGroup from "@radix-ui/react-toggle-group";
+import CollectionPill from "../../../components/CollectionPill";
+import { DTO } from "../../../utils/server";
+import { Collection } from "@prisma/client";
+import { useGlobalStore } from "../../../zustand/global";
 
 interface Props {
   defaultCollectionId: number;
   refCollections: number[];
   dashboard: IDashboard;
   username?: string;
+  collections: { [id: number]: DTO<Collection> & { size: number } };
 }
 
 const Content: FunctionComponent<Props> = (props) => {
@@ -45,6 +53,9 @@ const Content: FunctionComponent<Props> = (props) => {
       setZoomLevel(2);
     }
   }, [width]);
+
+  const collectionsEnabled = useIsFeatureEnabled(FeatureFlag.collections);
+  const { session } = useGlobalStore();
 
   const dashboard = props.dashboard;
 
@@ -169,139 +180,131 @@ const Content: FunctionComponent<Props> = (props) => {
           </div>
         </Tooltip>
       </div>
-      {/*!isGuest && (
-              <div className="sticky z-20 border-b-6 border-b-hellgrau-40 beneath-header py-2 bg-white flex flex-row mb-4 items-center">
-                <div className="max-w-screen-xl px-3 text-lg gap-1 flex flex-col flex-1 mx-auto">
-                  <div className="flex flex-row justify-between">
-                    <span className="font-semibold">
-                      Domain-Gruppe (Anzahl der Domains)
-                    </span>
-                    <div className="flex-row hidden md:flex justify-end sticky pointer-events-none zoom-button z-20">
-                      <div className="pointer-events-auto overflow-hidden">
-                        <ToggleGroup.Root
-                          className="ToggleGroup"
-                          type="single"
-                          onValueChange={(value) => {
-                            setZoomLevel(parseInt(value));
-                          }}
-                          value={zoomLevel.toString()}
-                          aria-label="Text alignment"
+      {collectionsEnabled && (
+        <div className="sticky z-20 border-b-6 border-b-hellgrau-40 beneath-header py-2 bg-white flex flex-row mb-4 items-center">
+          <div className="text-lg gap-1 flex flex-col flex-1 mx-auto">
+            <div className="flex flex-row justify-between">
+              <span className="font-semibold">
+                Domain-Gruppe (Anzahl der Domains)
+              </span>
+              <div className="flex-row hidden md:flex justify-end sticky pointer-events-none zoom-button z-20">
+                <div className="pointer-events-auto overflow-hidden">
+                  <ToggleGroup.Root
+                    className="ToggleGroup"
+                    type="single"
+                    onValueChange={(value) => {
+                      setZoomLevel(parseInt(value));
+                    }}
+                    value={zoomLevel.toString()}
+                    aria-label="Text alignment"
+                  >
+                    <ToggleGroup.Item
+                      className="ToggleGroupItem"
+                      value="2"
+                      aria-label="Right aligned"
+                    >
+                      <div
+                        className={classNames(
+                          "border hover:bg-dunkelblau-100",
+                          zoomLevel === 2 ? "bg-dunkelblau-100" : "bg-white"
+                        )}
+                      >
+                        <div
+                          className={classNames(
+                            "grid grid-cols-1 hover:invert gap-0.5 p-3",
+                            zoomLevel === 2 && "invert"
+                          )}
                         >
-                          <ToggleGroup.Item
-                            className="ToggleGroupItem"
-                            value="2"
-                            aria-label="Right aligned"
-                          >
-                            <div
-                              className={classNames(
-                                "border hover:bg-dunkelblau-100",
-                                zoomLevel === 2
-                                  ? "bg-dunkelblau-100"
-                                  : "bg-white"
-                              )}
-                            >
-                              <div
-                                className={classNames(
-                                  "grid grid-cols-1 hover:invert gap-0.5 p-3",
-                                  zoomLevel === 2 && "invert"
-                                )}
-                              >
-                                <div className="w-5 h-2 bg-textblack" />
-                                <div className="w-5 h-2 bg-textblack" />
-                              </div>
-                            </div>
-                          </ToggleGroup.Item>
-                          <ToggleGroup.Item
-                            className="ToggleGroupItem"
-                            value="1"
-                            aria-label="Center aligned"
-                          >
-                            <div
-                              className={classNames(
-                                "hover:bg-dunkelblau-100 border transition-all",
-                                zoomLevel === 1
-                                  ? "bg-dunkelblau-100"
-                                  : "bg-white"
-                              )}
-                            >
-                              <div
-                                className={classNames(
-                                  "grid hover:invert  transition-all grid-cols-2 gap-0.5 p-3",
-                                  zoomLevel === 1 && "invert"
-                                )}
-                              >
-                                <div className="w-2 h-2 bg-textblack" />
-                                <div className="w-2 h-2 bg-textblack" />
-                                <div className="w-2 h-2 bg-textblack" />
-                                <div className="w-2 h-2 bg-textblack" />
-                              </div>
-                            </div>
-                          </ToggleGroup.Item>
-
-                          <ToggleGroup.Item
-                            className="ToggleGroupItem"
-                            value="0"
-                            aria-label="Left aligned"
-                          >
-                            <div
-                              className={classNames(
-                                " hover:bg-dunkelblau-100 border transition-all",
-                                zoomLevel === 0
-                                  ? "bg-dunkelblau-100"
-                                  : "bg-white"
-                              )}
-                            >
-                              <div
-                                className={classNames(
-                                  "grid hover:invert grid-cols-3 gap-0.5 p-3",
-                                  zoomLevel === 0 && "invert"
-                                )}
-                              >
-                                <div className="w-1 h-2 bg-textblack" />
-                                <div className="w-1 h-2 bg-textblack" />
-                                <div className="w-1 h-2 bg-textblack" />
-                                <div className="w-1 h-2 bg-textblack" />
-                                <div className="w-1 h-2 bg-textblack" />
-                                <div className="w-1 h-2 bg-textblack" />
-                              </div>
-                            </div>
-                          </ToggleGroup.Item>
-                        </ToggleGroup.Root>
+                          <div className="w-5 h-2 bg-textblack" />
+                          <div className="w-5 h-2 bg-textblack" />
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap flex-row gap-2 items-center justify-start">
-                    {Object.values(props.collections).map((col) => {
-                      // check if selected
-                      const selected = displayCollections.includes(col.id);
+                    </ToggleGroup.Item>
+                    <ToggleGroup.Item
+                      className="ToggleGroupItem"
+                      value="1"
+                      aria-label="Center aligned"
+                    >
+                      <div
+                        className={classNames(
+                          "hover:bg-dunkelblau-100 border transition-all",
+                          zoomLevel === 1 ? "bg-dunkelblau-100" : "bg-white"
+                        )}
+                      >
+                        <div
+                          className={classNames(
+                            "grid hover:invert  transition-all grid-cols-2 gap-0.5 p-3",
+                            zoomLevel === 1 && "invert"
+                          )}
+                        >
+                          <div className="w-2 h-2 bg-textblack" />
+                          <div className="w-2 h-2 bg-textblack" />
+                          <div className="w-2 h-2 bg-textblack" />
+                          <div className="w-2 h-2 bg-textblack" />
+                        </div>
+                      </div>
+                    </ToggleGroup.Item>
 
-                      return (
-                        <CollectionPill
-                          onClick={() => {
-                            handleDisplayCollectionToggle(col.id);
-                          }}
-                          selected={selected}
-                          key={col.id}
-                          {...col}
-                          title={
-                            col.id === props.defaultCollectionId
-                              ? `${user.data?.user.name || "Meine"} (${
-                                  col.size
-                                })`
-                              : `${col.title} (${col.size})`
-                          }
-                          color={
-                            col.id === props.defaultCollectionId
-                              ? tailwindColors.blau["100"]
-                              : col.color
-                          }
-                        />
-                      );
-                    })}
-                  </div>
+                    <ToggleGroup.Item
+                      className="ToggleGroupItem"
+                      value="0"
+                      aria-label="Left aligned"
+                    >
+                      <div
+                        className={classNames(
+                          " hover:bg-dunkelblau-100 border transition-all",
+                          zoomLevel === 0 ? "bg-dunkelblau-100" : "bg-white"
+                        )}
+                      >
+                        <div
+                          className={classNames(
+                            "grid hover:invert grid-cols-3 gap-0.5 p-3",
+                            zoomLevel === 0 && "invert"
+                          )}
+                        >
+                          <div className="w-1 h-2 bg-textblack" />
+                          <div className="w-1 h-2 bg-textblack" />
+                          <div className="w-1 h-2 bg-textblack" />
+                          <div className="w-1 h-2 bg-textblack" />
+                          <div className="w-1 h-2 bg-textblack" />
+                          <div className="w-1 h-2 bg-textblack" />
+                        </div>
+                      </div>
+                    </ToggleGroup.Item>
+                  </ToggleGroup.Root>
                 </div>
               </div>
-                  )*/}
+            </div>
+            <div className="flex flex-wrap flex-row gap-2 items-center justify-start">
+              {Object.values(props.collections).map((col) => {
+                // check if selected
+                const selected = displayCollections.includes(col.id);
+
+                return (
+                  <CollectionPill
+                    onClick={() => {
+                      handleDisplayCollectionToggle(col.id);
+                    }}
+                    selected={selected}
+                    key={col.id}
+                    {...col}
+                    title={
+                      col.id === props.defaultCollectionId
+                        ? `${session?.user.username || "Meine"} (${col.size})`
+                        : `${col.title} (${col.size})`
+                    }
+                    color={
+                      col.id === props.defaultCollectionId
+                        ? tailwindColors.blau["100"]
+                        : col.color
+                    }
+                  />
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className={classNames(noDomains && "relative")}>
         <div
@@ -326,7 +329,7 @@ const Content: FunctionComponent<Props> = (props) => {
         </div>
         {noDomains && (
           <div className="absolute pointer-events-auto top-20  text-base flex left-0 flex-row w-full justify-center right-0 mb-10 px-3 flex-1">
-            <div className="p-5 flex max-w-screen-lg flex-row bg-hellgrau-60 text-textblack">
+            <div className="p-5 pb-12 flex max-w-screen-lg rounded-sm flex-row bg-hellgrau-60 text-textblack">
               <div className="pr-3 pt-1">
                 <FontAwesomeIcon size={"lg"} icon={faCircleInfo} />
               </div>

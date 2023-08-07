@@ -1,4 +1,5 @@
 import {
+  FeatureFlag,
   Guest,
   IIpLookupProgressUpdateMsg,
   IIpLookupReportDTO,
@@ -143,6 +144,14 @@ export const isAdmin = (session: ISession | null | undefined): boolean => {
   return Boolean(
     session?.resource_access["realm-management"]?.roles.includes("realm-admin")
   );
+};
+
+export const isFeatureEnabled = (feature: FeatureFlag, user: User): boolean => {
+  if (!user.featureFlags || typeof user.featureFlags !== "object") {
+    return false;
+  }
+
+  return Boolean((user.featureFlags as Record<FeatureFlag, boolean>)[feature]);
 };
 
 export const promise2Boolean = async (promise: Promise<any>) => {

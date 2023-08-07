@@ -1,7 +1,7 @@
 import { isGuestUser } from "../utils/common";
-import { useSession } from "./useSession";
+import { useGlobalStore } from "../zustand/global";
 
 export function useIsGuest() {
-  const session = useSession();
-  return isGuestUser(session.data?.user);
+  const { session } = useGlobalStore();
+  return isGuestUser(session?.user);
 }

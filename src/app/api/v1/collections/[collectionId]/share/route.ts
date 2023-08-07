@@ -45,5 +45,5 @@ export async function POST(_req: NextRequest, { params }: Params) {
       },
     },
   });
-  NextResponse.json(link);
+  return NextResponse.json(link);
 }

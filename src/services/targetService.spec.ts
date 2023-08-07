@@ -141,7 +141,7 @@ describe("Target Service Test Suite", () => {
       } as any;
 
       await targetService.getUserTargetsWithLatestTestResult(
-        { id: "abc", defaultCollectionId: 0 },
+        { id: "abc", defaultCollectionId: 0, featureFlags: {} },
         {
           sortDirection: "1",
           page: 0,
@@ -204,7 +204,7 @@ describe("Target Service Test Suite", () => {
       } as any;
 
       await targetService.getUserTargetsWithLatestTestResult(
-        { id: "abc", defaultCollectionId: 0 },
+        { id: "abc", defaultCollectionId: 0, featureFlags: {} },
         {
           sortDirection: "1",
           page: 0,

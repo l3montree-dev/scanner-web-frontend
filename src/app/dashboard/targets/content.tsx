@@ -50,6 +50,7 @@ import {
 import { clientHttpClient } from "../../../services/clientHttpClient";
 import {
   DetailedTarget,
+  FeatureFlag,
   IScanSuccessResponse,
   PaginateResult,
   TargetType,
@@ -57,6 +58,9 @@ import {
 import { classNames } from "../../../utils/common";
 import { DTO } from "../../../utils/server";
 import { optimisticUpdate } from "../../../utils/view";
+import { useIsFeatureEnabled } from "../../../hooks/useFeatureEnabled";
+import SubMenu from "../../../components/common/SubMenu";
+import CollectionMenuContent from "../../../components/CollectionMenuContent";
 
 const translateDomainType = (type: TargetType) => {
   switch (type) {
@@ -89,6 +93,7 @@ const Content: FunctionComponent<Props> = (props) => {
   const scanAllLoading = useLoading();
 
   const isGuest = useIsGuest();
+  const collectionEnabled = useIsFeatureEnabled(FeatureFlag.collections);
   const scanRequest = useLoading();
   const router = useRouter();
 
@@ -349,10 +354,10 @@ const Content: FunctionComponent<Props> = (props) => {
     });
 
     const res = await clientHttpClient(
-      `/api/v1/collections/${collectionId}/targets`,
+      `/api/v1/collections/${collectionId}/targets/delete`,
       crypto.randomUUID(),
       {
-        method: "DELETE",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -384,13 +389,15 @@ const Content: FunctionComponent<Props> = (props) => {
   const collectionIds = useMemo(() => {
     const collections =
       (searchParams?.get("collectionIds") as string | string[]) ?? [];
-    return (Array.isArray(collections) ? collections : [collections]).map(
-      (c) => +c
-    );
+    console.log(collections);
+    return (Array.isArray(collections) ? collections : collections.split(","))
+      .map((c) => +c)
+      .filter((c) => c > 0);
   }, [searchParams]);
 
   const handleCollectionFilterToggle = useCallback(
     (collectionId: number) => {
+      console.log("collectionIds", collectionId, collectionIds);
       if (collectionIds.includes(collectionId)) {
         patchQuery({
           collectionIds: collectionIds
@@ -492,20 +499,22 @@ const Content: FunctionComponent<Props> = (props) => {
                           <DropdownMenuItem onClick={deleteSelection}>
                             <div>Löschen</div>
                           </DropdownMenuItem>
-                          {/*<SubMenu
-                        Menu={
-                          <CollectionMenuContent
-                            collections={props.collections}
-                            onCollectionClick={(c) =>
-                              handleAddToCollection(
-                                selectedTargets.map((s) => ({ uri: s })),
-                                c.id
-                              )
-                            }
-                          />
-                        }
-                        Button={<>Zu Gruppe hinzufügen</>}
-                      />*/}
+                          {collectionEnabled && (
+                            <SubMenu
+                              Menu={
+                                <CollectionMenuContent
+                                  collections={props.collections}
+                                  onCollectionClick={(c) =>
+                                    handleAddToCollection(
+                                      selectedTargets.map((s) => ({ uri: s })),
+                                      c.id
+                                    )
+                                  }
+                                />
+                              }
+                              Button={<>Zu Gruppe hinzufügen</>}
+                            />
+                          )}
                         </>
                       }
                     />
@@ -539,27 +548,28 @@ const Content: FunctionComponent<Props> = (props) => {
                   }
                 />
 
-                {/*Object.keys(props.collections).length > 0 && (
-              <Menu
-                Button={
-                  <Button
-                    additionalClasses="whitespace-nowrap flex-1"
-                    RightIcon={<FontAwesomeIcon icon={faCaretDown} />}
-                  >
-                    Filter nach Gruppen
-                  </Button>
-                }
-                Menu={
-                  <CollectionMenuContent
-                    collections={props.collections}
-                    selectedCollections={collectionIds}
-                    onCollectionClick={(c) =>
-                      handleCollectionFilterToggle(c.id)
-                    }
-                  />
-                }
-              ></Menu>
-              )*/}
+                {collectionEnabled &&
+                  Object.keys(props.collections).length > 0 && (
+                    <Menu
+                      Button={
+                        <Button
+                          additionalClasses="whitespace-nowrap flex-1"
+                          RightIcon={<FontAwesomeIcon icon={faCaretDown} />}
+                        >
+                          Filter nach Gruppen
+                        </Button>
+                      }
+                      Menu={
+                        <CollectionMenuContent
+                          collections={props.collections}
+                          selectedCollections={collectionIds}
+                          onCollectionClick={(c) =>
+                            handleCollectionFilterToggle(c.id)
+                          }
+                        />
+                      }
+                    ></Menu>
+                  )}
 
                 {Object.keys(Object.fromEntries(searchParams ?? [])).length >
                   0 && (

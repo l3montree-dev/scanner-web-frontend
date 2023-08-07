@@ -3,6 +3,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import React, { FunctionComponent } from "react";
 import DropdownSubMenuContent from "./DropdownSubMenuContent";
+import DropdownMenuItem from "./DropdownMenuItem";
+import { classNames } from "../../utils/common";
 
 interface Props {
   Button: React.ReactNode;
@@ -12,8 +14,12 @@ interface Props {
 const SubMenu: FunctionComponent<Props> = ({ Button, Menu }) => {
   return (
     <DropdownMenu.Sub>
-      <DropdownMenu.SubTrigger>
-        <div className="lg:px-2 px-2 py-1 mx-1 rounded-sm cursor-pointer hover:bg-lightning-500 flex flex-row items-center justify-between gap-2 focus:text-deepblue-500 hover:text-deepblue-500">
+      <DropdownMenu.SubTrigger className="hover:outline-none">
+        <div
+          className={classNames(
+            "lg:px-2 px-2 py-1 cursor-pointer transition-color flex flex-row gap-2 mx-1 my-1 items-center justify-between hover:border-none hover:outline-none hover:bg-blau-20 focus:bg-blau-20 text-textblack  relative focus:outline-none"
+          )}
+        >
           {Button}
           <FontAwesomeIcon
             fontSize={15}

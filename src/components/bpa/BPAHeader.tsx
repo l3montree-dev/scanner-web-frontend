@@ -1,27 +1,25 @@
 "use client";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { FunctionComponent, useState } from "react";
 import { useSignOut } from "../../hooks/useSignOut";
 import { withAuthProvider } from "../../providers/AuthProvider";
-import { classNames, isAdmin, isGuestUser } from "../../utils/common";
+import { classNames } from "../../utils/common";
 import { useGlobalStore } from "../../zustand/global";
-import MenuButton from "../common/MenuButton";
 import SideMenu from "../SideMenu";
+import MenuButton from "../common/MenuButton";
+import { getLinks } from "../links";
 import Logo from "./Logo";
 import SmallLink from "./SmallLink";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getLinks } from "../links";
-import { useSession } from "../../hooks/useSession";
 
 const BPAHeader: FunctionComponent = () => {
   const activeLink = usePathname();
 
-  const { data: session } = useSession();
   const signOut = useSignOut();
 
-  const store = useGlobalStore();
+  const { user, session, hideLogin } = useGlobalStore();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const query = useSearchParams();
@@ -31,7 +29,7 @@ const BPAHeader: FunctionComponent = () => {
       <div className="container">
         <div className="flex flex-row flex-wrap justify-between items-center">
           <Logo />
-          {!store.hideLogin && (
+          {!hideLogin && (
             <>
               <div className="hidden lg:block">
                 <nav className="flex flex-row justify-end">
@@ -82,38 +80,37 @@ const BPAHeader: FunctionComponent = () => {
                     <nav className="flex flex-col">
                       {Boolean(session) ? (
                         <div className="flex flex-col">
-                          {getLinks(
-                            isGuestUser(session?.user),
-                            isAdmin(session)
-                          ).map(({ path, name, icon }) => (
-                            <Link
-                              key={name}
-                              className="hover:no-underline"
-                              href={path}
-                            >
-                              <div
-                                className={classNames(
-                                  "py-3 lg:py-5 lg:px-5  flex flex-row items-center lg:hover:bg-hellgrau-20 hover:text-bund lg:hover:text-blau-100 hover:underline lg:hover:no-underline transition-all border-b cursor-pointer",
-                                  activeLink === path
-                                    ? "text-bund lg:text-blau-100"
-                                    : "text-textblack"
-                                )}
+                          {getLinks(session, user).map(
+                            ({ path, name, icon }) => (
+                              <Link
+                                key={name}
+                                className="hover:no-underline"
+                                href={path}
                               >
-                                <div className="mr-4">
-                                  <FontAwesomeIcon
-                                    className="w-5 h-5"
-                                    icon={icon}
-                                  />
-                                </div>
-                                <span
-                                  title={name}
-                                  className="whitespace-nowrap hover:no-underline overflow-hidden text-ellipsis"
+                                <div
+                                  className={classNames(
+                                    "py-3 lg:py-5 lg:px-5  flex flex-row items-center lg:hover:bg-hellgrau-20 hover:text-bund lg:hover:text-blau-100 hover:underline lg:hover:no-underline transition-all border-b cursor-pointer",
+                                    activeLink === path
+                                      ? "text-bund lg:text-blau-100"
+                                      : "text-textblack"
+                                  )}
                                 >
-                                  {name}
-                                </span>
-                              </div>
-                            </Link>
-                          ))}
+                                  <div className="mr-4">
+                                    <FontAwesomeIcon
+                                      className="w-5 h-5"
+                                      icon={icon}
+                                    />
+                                  </div>
+                                  <span
+                                    title={name}
+                                    className="whitespace-nowrap hover:no-underline overflow-hidden text-ellipsis"
+                                  >
+                                    {name}
+                                  </span>
+                                </div>
+                              </Link>
+                            )
+                          )}
                           <span
                             className="font-medium cursor-pointer py-3 hover:text-blau-100 hover:underline"
                             onClick={() => {

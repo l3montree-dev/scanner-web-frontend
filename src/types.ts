@@ -1,6 +1,9 @@
 import { Target } from "@prisma/client";
 import { InspectionType, InspectResultDTO } from "./scanner/scans";
 
+export enum FeatureFlag {
+  collections = "collections",
+}
 export interface IDashboard {
   historicalData: CollectionStatMap;
   totals: {
@@ -38,7 +41,7 @@ export interface INetworkPatchDTO {
   comment?: string;
 }
 
-export type IUserPutDTO = ICreateUserDTO;
+export type IUserPutDTO = ICreateUserDTO & { id: string };
 
 export type IIpLookupReportMsg = {
   results: { [ip: string]: string[] };
@@ -102,6 +105,7 @@ export interface IToken extends ISession {
 
 export interface ICreateUserDTO {
   username: string;
+  featureFlags: Record<FeatureFlag, boolean>;
 }
 
 export type IScanSuccessResponse = {

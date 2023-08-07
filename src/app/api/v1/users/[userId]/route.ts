@@ -7,13 +7,15 @@ import { authOptions } from "../../../../../nextAuthOptions";
 import { keycloak } from "../../../../../services/keycloak";
 import { isAdmin } from "../../../../../utils/common";
 import { getJWTToken, getServerSession } from "../../../../../utils/server";
+import { userService } from "../../../../../services/userService";
+import { IUserPutDTO } from "../../../../../types";
 
 interface Params {
   params: {
     userId: string;
   };
 }
-/*
+
 export async function PUT(req: NextRequest, { params }: Params) {
   const userId = params.userId as string;
   if (!userId) {
@@ -40,8 +42,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
       realm: keycloak.getRealmName(),
     },
     {
-      firstName: putRequest.firstName,
-      lastName: putRequest.lastName,
+      username: putRequest.username,
     }
   );
 
@@ -49,10 +50,9 @@ export async function PUT(req: NextRequest, { params }: Params) {
 
   return NextResponse.json({
     ...user,
-    firstName: putRequest.firstName,
-    lastName: putRequest.lastName,
+    username: putRequest.username,
   });
-}*/
+}
 
 export async function DELETE(req: NextRequest, { params }: Params) {
   const userId = params.userId as string;

@@ -10,7 +10,7 @@ import {
   OrganizationalInspectionType,
   TLSInspectionType,
 } from "../scanner/scans";
-import { DetailedTarget } from "../types";
+import { DetailedTarget, FeatureFlag } from "../types";
 import { DTO } from "../utils/server";
 import { getDeprecatedTLSDeactivatedReportMessage } from "./deprecatedTLSDeactivated";
 import { getDNSSecReportMessage } from "./dnsSec";
@@ -111,6 +111,10 @@ export const descriptionMapper: { [key in InspectionType]: string } = {
   [HeaderInspectionType.XFrameOptions]: "",
   [HeaderInspectionType.XSSProtection]: "",
   [HeaderInspectionType.ContentTypeOptions]: "",
+};
+
+export const featureFlagMapper: { [key in FeatureFlag]: string } = {
+  [FeatureFlag.collections]: "Domain-Gruppen",
 };
 
 export const getCheckDescription = (

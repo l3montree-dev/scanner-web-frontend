@@ -1,4 +1,5 @@
 import { PrismaClient, User } from "@prisma/client";
+import { FeatureFlag } from "../types";
 
 const findUserById = async (
   id: string,
@@ -12,13 +13,14 @@ const findUserById = async (
 };
 
 const createUser = async (
-  user: { _id: string },
+  user: { _id: string; featureFlags: Record<FeatureFlag, boolean> },
   prisma: PrismaClient
 ): Promise<User> => {
   // then create the user with the network ids.
   const createdUser = await prisma.user.create({
     data: {
       id: user._id,
+      featureFlags: user.featureFlags,
       defaultCollection: {
         create: {
           title: "Default",
@@ -30,10 +32,9 @@ const createUser = async (
   return createdUser;
 };
 
-/*
 const updateUser = async (
   id: string,
-  user: { role: string },
+  data: { featureFlags: Record<FeatureFlag, boolean> },
   prisma: PrismaClient
 ): Promise<User> => {
   // then create the user with the network ids.
@@ -41,12 +42,13 @@ const updateUser = async (
     where: {
       id: id,
     },
-    data: { role: user.role },
+    data: {
+      featureFlags: data.featureFlags,
+    },
   });
 
   return updatedUser;
 };
-*/
 
 const getAll = async (prisma: PrismaClient): Promise<User[]> => {
   return await prisma.user.findMany();
@@ -55,6 +57,6 @@ const getAll = async (prisma: PrismaClient): Promise<User[]> => {
 export const userService = {
   findUserById,
   createUser,
-  // updateUser,
+  updateUser,
   getAll,
 };

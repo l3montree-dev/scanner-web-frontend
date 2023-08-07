@@ -18,6 +18,7 @@ function CollectionMenuContent<
         const selected =
           props.selectedCollections !== undefined &&
           props.selectedCollections.includes(+collection.id);
+
         return (
           <DropdownMenuCheckboxItem
             checked={selected}

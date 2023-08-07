@@ -6,29 +6,39 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { FunctionComponent, useEffect, useMemo, useState } from "react";
+import {
+  FunctionComponent,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition,
+} from "react";
 import EmptyDashboardNotice from "../../components/EmptyDashboardNotice";
 import PageTitle from "../../components/PageTitle";
 import Tooltip from "../../components/common/Tooltip";
 import PieCharts from "../../components/dashboard/PieCharts";
-import useRefreshOnVisit from "../../hooks/useRefreshOnVisit";
-import { ChartData, IDashboard } from "../../types";
-import { classNames } from "../../utils/common";
-import { diffDays } from "../../utils/view";
-import { useRouter } from "next/navigation";
 import useGeneratingStatsPoll from "../../hooks/useGeneratingStatsPoll";
+import useRefreshOnVisit from "../../hooks/useRefreshOnVisit";
+import { ChartData, FeatureFlag, IDashboard } from "../../types";
+import { classNames } from "../../utils/common";
+import { useIsFeatureEnabled } from "../../hooks/useFeatureEnabled";
+import CollectionPill from "../../components/CollectionPill";
+import { tailwindColors } from "../../utils/view";
+import { useGlobalStore } from "../../zustand/global";
+
+import { DTO } from "../../utils/server";
+import { Collection } from "@prisma/client";
 
 interface Props {
   dashboard: IDashboard;
   defaultCollectionId: number;
   refCollections: number[];
+  collections: { [id: number]: DTO<Collection> & { size: number } };
 }
 
-let pollInterval: any;
 const Content: FunctionComponent<Props> = (props) => {
   useRefreshOnVisit("dashboard");
 
-  const router = useRouter();
   const dashboard = props.dashboard;
   const currentStat = useMemo(
     () =>
@@ -48,6 +58,13 @@ const Content: FunctionComponent<Props> = (props) => {
     props.refCollections.concat(props.defaultCollectionId)
   );
 
+  const { session } = useGlobalStore();
+
+  const [_, startTransition] = useTransition();
+  const [_displayCollections, _setDisplayCollections] = useState(
+    props.refCollections.concat(props.defaultCollectionId)
+  );
+
   const [data, setData] = useState({
     totalCount: currentStat.totalCount,
     data: Object.fromEntries(
@@ -60,6 +77,32 @@ const Content: FunctionComponent<Props> = (props) => {
   const isGeneratingStats = useGeneratingStatsPoll(
     dashboard.historicalData[props.defaultCollectionId]?.series.length
   );
+
+  const collectionsEnabled = useIsFeatureEnabled(FeatureFlag.collections);
+
+  const handleDisplayCollectionToggle = (collectionId: number) => {
+    if (displayCollections.includes(collectionId)) {
+      // check if there is at least one collection left
+      if (displayCollections.length === 1) {
+        setDisplayCollections([props.defaultCollectionId]);
+        startTransition(() => {
+          _setDisplayCollections([props.defaultCollectionId]);
+        });
+        return;
+      }
+      setDisplayCollections((prev) => prev.filter((id) => id !== collectionId));
+      startTransition(() => {
+        _setDisplayCollections((prev) =>
+          prev.filter((id) => id !== collectionId)
+        );
+      });
+    } else {
+      setDisplayCollections((prev) => prev.concat(collectionId));
+      startTransition(() => {
+        _setDisplayCollections((prev) => prev.concat(collectionId));
+      });
+    }
+  };
 
   useEffect(() => {
     setData(currentStat);
@@ -79,6 +122,43 @@ const Content: FunctionComponent<Props> = (props) => {
           </div>
         </Tooltip>
       </div>
+      {collectionsEnabled && (
+        <div className=" sticky z-20 bg-white border-b-6 border-hellgrau-40 beneath-header py-2 flex flex-row mb-4 items-center">
+          <div className="text-lg gap-1 flex flex-col flex-1 mx-auto">
+            <span className="font-semibold">
+              Domain-Gruppe (Anzahl der Domains)
+            </span>
+            <div className="flex flex-wrap flex-row gap-2 items-center justify-start">
+              {Object.values(props.collections).map((col) => {
+                // check if selected
+                const selected = displayCollections.includes(col.id);
+
+                return (
+                  <CollectionPill
+                    onClick={() => {
+                      handleDisplayCollectionToggle(col.id);
+                    }}
+                    selected={selected}
+                    key={col.id}
+                    {...col}
+                    title={
+                      col.id === props.defaultCollectionId
+                        ? `${session?.user.name || "Meine"} (${col.size})`
+                        : `${col.title} (${col.size})`
+                    }
+                    color={
+                      col.id === props.defaultCollectionId
+                        ? tailwindColors.blau["100"]
+                        : col.color
+                    }
+                  />
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className={classNames(noDomains && "relative pointer-events-none")}>
         <div
           className={classNames(
@@ -99,7 +179,7 @@ const Content: FunctionComponent<Props> = (props) => {
         </div>
         {noDomains && (
           <div className="absolute pointer-events-auto z-90 mt-10 top-0 flex flex-row justify-center left-0 right-0 mb-10 px-3 flex-1">
-            <div className="p-5 flex flex-row bg-hellgrau-60 max-w-screen-lg text-textblack">
+            <div className="p-5 pb-12 flex flex-row rounded-sm bg-hellgrau-60 max-w-screen-lg text-textblack">
               <div className="pr-3 pt-1">
                 <FontAwesomeIcon size={"lg"} icon={faCircleInfo} />
               </div>

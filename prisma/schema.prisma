@@ -109,6 +109,8 @@ model User {
 
   defaultCollection   Collection @relation("default_collection", fields: [defaultCollectionId], references: [id], onDelete: Cascade)
   defaultCollectionId Int
+  
+  featureFlags Json @db.JsonB
 
   @@unique([defaultCollectionId])
   @@map("users")

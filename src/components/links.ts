@@ -5,7 +5,11 @@ import {
   faListCheck,
   faInfo,
   faUsers,
+  faTag,
 } from "@fortawesome/free-solid-svg-icons";
+import { User } from "@prisma/client";
+import { isAdmin, isFeatureEnabled, isGuestUser } from "../utils/common";
+import { FeatureFlag, Guest, ISession } from "../types";
 
 const defaultLinks = [
   {
@@ -29,32 +33,37 @@ const defaultLinks = [
     path: "/dashboard/targets",
   },
 ];
-export const getLinks = (isGuest: boolean, isAdmin: boolean) => {
-  if (isGuest) {
+export const getLinks = (
+  session: ISession | undefined | null,
+  currentUser: User | Guest | null
+) => {
+  if (!session || !currentUser || isGuestUser(session.user)) {
     return defaultLinks;
-  } else if (!isAdmin) {
-    return defaultLinks.concat({
-      icon: faInfo,
-      name: "Informationen zur OZG-Security-Challenge",
-      path: "/dashboard/info",
-    });
   }
+  const links = defaultLinks.concat({
+    icon: faInfo,
+    name: "Informationen zur OZG-Security-Challenge",
+    path: "/dashboard/info",
+  });
 
-  return defaultLinks.concat([
-    /*{
-        icon: faTag,
-        name: "Domain-Gruppen",
-        path: "/dashboard/collections",
-      },*/
-    {
-      icon: faUsers,
-      name: "Nutzerverwaltung",
-      path: "/dashboard/users",
-    },
-    {
-      icon: faInfo,
-      name: "Informationen zur OZG-Security-Challenge",
-      path: "/dashboard/info",
-    },
+  return links.concat([
+    ...(isFeatureEnabled(FeatureFlag.collections, currentUser as User)
+      ? [
+          {
+            icon: faTag,
+            name: "Domain-Gruppen",
+            path: "/dashboard/collections",
+          },
+        ]
+      : []),
+    ...(isAdmin(session)
+      ? [
+          {
+            icon: faUsers,
+            name: "Nutzerverwaltung",
+            path: "/dashboard/users",
+          },
+        ]
+      : []),
   ]);
 };
