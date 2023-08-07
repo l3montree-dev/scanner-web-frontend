@@ -1,25 +1,22 @@
 "use client";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { User } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { FunctionComponent, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useSignOut } from "../hooks/useSignOut";
-import { withAuthProvider } from "../providers/AuthProvider";
-import { ISession } from "../types";
 import { classNames } from "../utils/common";
+import { useGlobalStore } from "../zustand/global";
 import SideMenu from "./SideMenu";
 import MenuButton from "./common/MenuButton";
 import { getLinks } from "./links";
+import { withAuthProvider } from "../providers/AuthProvider";
 
-const MobileMenu: FunctionComponent<{
-  session: ISession;
-  user: User;
-}> = ({ session, user }) => {
+const MobileMenu = () => {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const pathname = usePathname();
+  const { session, user } = useGlobalStore();
 
   const signOut = useSignOut();
   useEffect(() => {
