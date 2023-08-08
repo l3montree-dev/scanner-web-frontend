@@ -202,7 +202,7 @@ a {
 }
 
 [data-radix-popper-content-wrapper] {
-    z-index: 110!important;
+    z-index: 1000!important;
 }
 
 .DropdownMenuContent[data-side='top'],

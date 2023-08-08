@@ -285,7 +285,7 @@ const Content: FunctionComponent<Props> = (props) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ target }),
+      body: JSON.stringify({ target, collectionIds: collectionIds }),
     });
 
     if (!res.ok) {

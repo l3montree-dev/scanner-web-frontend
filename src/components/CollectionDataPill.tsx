@@ -14,7 +14,7 @@ const CollectionDataPill: FunctionComponent<PropsWithChildren<Props>> = (
         borderColor: props.color,
       }}
       className={classNames(
-        "flex items-center border-2 bg-white rounded-md text-textblack px-2 py-1"
+        "flex items-center border-2 bg-white rounded-sm text-textblack px-2 py-1"
       )}
     >
       {props.children}

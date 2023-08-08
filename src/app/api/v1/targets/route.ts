@@ -17,6 +17,7 @@ import {
   splitLineBreak,
 } from "../../../../utils/common";
 import { getCurrentUser, toDTO } from "../../../../utils/server";
+import { collectionService } from "../../../../services/collectionService";
 
 const logger = getLogger(__filename);
 
@@ -27,7 +28,10 @@ export async function POST(req: NextRequest) {
   if (req.headers.get("content-type")?.includes("application/json")) {
     // the user does only send a single domain.
 
-    const { target }: { target: string } = await req.json();
+    const {
+      target,
+      collectionIds,
+    }: { target: string; collectionIds?: Array<number> } = await req.json();
 
     const sanitized = sanitizeURI(target);
     if (!sanitized) {
@@ -35,7 +39,15 @@ export async function POST(req: NextRequest) {
     }
 
     await targetService.handleNewTarget(
-      { uri: sanitized, queued: true },
+      {
+        uri: sanitized,
+        queued: true,
+        collectionIds: await collectionService.filterCollectionsToAllowed(
+          collectionIds ?? [],
+          currentUser,
+          prisma
+        ),
+      },
       prisma,
       currentUser
     );

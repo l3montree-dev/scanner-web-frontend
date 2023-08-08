@@ -17,7 +17,7 @@ import { getLogger } from "./logger";
 const logger = getLogger(__filename);
 
 const handleNewTarget = async (
-  target: { uri: string; queued?: boolean },
+  target: { uri: string; queued?: boolean; collectionIds?: Array<number> },
   prisma: PrismaClient,
   connectToUser?: User
 ): Promise<Target> => {
@@ -36,6 +36,14 @@ const handleNewTarget = async (
     update: {},
     create: payload,
   });
+
+  if (target.collectionIds) {
+    await Promise.all(
+      target.collectionIds.map((c) =>
+        targetCollectionService.createConnection([payload.uri], c, prisma)
+      )
+    );
+  }
 
   if (connectToUser) {
     await targetCollectionService.createConnection(

@@ -5,6 +5,8 @@ import {
   faQuestionCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Collection } from "@prisma/client";
+import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import React, {
   FunctionComponent,
   useEffect,
@@ -12,26 +14,24 @@ import React, {
   useState,
   useTransition,
 } from "react";
+import CollectionPill from "../../../components/CollectionPill";
 import EmptyDashboardNotice from "../../../components/EmptyDashboardNotice";
 import PageTitle from "../../../components/PageTitle";
 import Tooltip from "../../../components/common/Tooltip";
 import LineCharts from "../../../components/dashboard/LineCharts";
+import { useIsFeatureEnabled } from "../../../hooks/useFeatureEnabled";
+import useGeneratingStatsPoll from "../../../hooks/useGeneratingStatsPoll";
+import useRefreshOnVisit from "../../../hooks/useRefreshOnVisit";
 import useWindowSize from "../../../hooks/useWindowSize";
-import { ChartData, FeatureFlag, IDashboard } from "../../../types";
+import { FeatureFlag, IDashboard } from "../../../types";
 import { classNames, dateFormat } from "../../../utils/common";
+import { DTO } from "../../../utils/server";
 import {
   diffDays,
   displayInspections,
   localizeDefaultCollection,
   tailwindColors,
 } from "../../../utils/view";
-import useRefreshOnVisit from "../../../hooks/useRefreshOnVisit";
-import useGeneratingStatsPoll from "../../../hooks/useGeneratingStatsPoll";
-import { useIsFeatureEnabled } from "../../../hooks/useFeatureEnabled";
-import * as ToggleGroup from "@radix-ui/react-toggle-group";
-import CollectionPill from "../../../components/CollectionPill";
-import { DTO } from "../../../utils/server";
-import { Collection } from "@prisma/client";
 import { useGlobalStore } from "../../../zustand/global";
 
 interface Props {
@@ -139,7 +139,6 @@ const Content: FunctionComponent<Props> = (props) => {
 
   const handleDisplayCollectionToggle = (collectionId: number) => {
     if (displayCollections.includes(collectionId)) {
-      // check if there is at least one collection left
       if (displayCollections.length === 1) {
         setDisplayCollections([props.defaultCollectionId]);
         startTransition(() => {

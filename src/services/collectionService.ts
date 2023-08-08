@@ -59,6 +59,16 @@ const getAllCollectionsOfUser = async (
   return collections;
 };
 
+const filterCollectionsToAllowed = async (
+  collectionIds: number[],
+  user: User,
+  prisma: PrismaClient
+) => {
+  const cols = (await getAllCollectionsOfUser(user, prisma)).map((c) => c.id);
+  const allowed = collectionIds.filter((c) => cols.includes(c));
+  return allowed;
+};
+
 const getCollectionsOfTargets = async (
   targetUris: string[],
   user: User,
@@ -98,4 +108,5 @@ export const collectionService = {
   getAllCollectionsOfUser,
   getCollectionsOfTargets,
   isUserAllowedToModifyCollection,
+  filterCollectionsToAllowed,
 };
