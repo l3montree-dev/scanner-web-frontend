@@ -415,7 +415,7 @@ const Content: FunctionComponent<Props> = (props) => {
     [collectionIds, patchQuery]
   );
 
-  const handleGroupCollectionClick = (c: Collection) => {
+  const handleGroupCollectionClick = (c: DTO<Collection>) => {
     // check if all targets belong to that collection
     const selectedTargets = targets.filter((t) => selection[t.uri]);
     const allInCollection = selectedTargets.every((t) =>
