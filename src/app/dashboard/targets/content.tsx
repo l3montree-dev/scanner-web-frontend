@@ -415,6 +415,20 @@ const Content: FunctionComponent<Props> = (props) => {
     [collectionIds, patchQuery]
   );
 
+  const handleGroupCollectionClick = (c: Collection) => {
+    // check if all targets belong to that collection
+    const selectedTargets = targets.filter((t) => selection[t.uri]);
+    const allInCollection = selectedTargets.every((t) =>
+      t.collections?.includes(c.id)
+    );
+
+    if (allInCollection) {
+      return handleRemoveFromCollection(selectedTargets, c.id);
+    }
+
+    return handleAddToCollection(selectedTargets, c.id);
+  };
+
   const sort = {
     key: searchParams?.get("sort") as
       | "uri"
@@ -504,12 +518,7 @@ const Content: FunctionComponent<Props> = (props) => {
                               Menu={
                                 <CollectionMenuContent
                                   collections={props.collections}
-                                  onCollectionClick={(c) =>
-                                    handleAddToCollection(
-                                      selectedTargets.map((s) => ({ uri: s })),
-                                      c.id
-                                    )
-                                  }
+                                  onCollectionClick={handleGroupCollectionClick}
                                 />
                               }
                               Button={<>Zu Gruppe hinzufügen</>}

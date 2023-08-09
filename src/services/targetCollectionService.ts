@@ -13,6 +13,7 @@ const createConnection = async (
       collectionId,
       uri,
     })),
+    skipDuplicates: true,
   });
 
   // there is no need to avoid this, as it is a background task.
