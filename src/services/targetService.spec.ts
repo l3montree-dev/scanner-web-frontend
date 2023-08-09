@@ -46,6 +46,7 @@ describe("Target Service Test Suite", () => {
     );
     expect(prismaMock.targetCollectionRelation.createMany).toHaveBeenCalledWith(
       {
+        skipDuplicates: true,
         data: [
           {
             collectionId: 4711,
