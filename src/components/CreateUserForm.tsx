@@ -92,7 +92,9 @@ const CreateUserForm: FunctionComponent<Props> = ({ onCreateUser }) => {
         <div className="mt-5 text-right rounded-sm text-base bg-blau-100 px-4 py-2">
           <p className="text-white">
             Nutzer wurde mit folgendem initialen Password angelegt:{" "}
-            <span className="font-bold text-white">{userPassword}</span>
+            <span className="font-bold text-white whitespace-nowrap">
+              {userPassword}
+            </span>
           </p>
         </div>
       )}

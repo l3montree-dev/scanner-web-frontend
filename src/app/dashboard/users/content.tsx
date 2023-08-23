@@ -25,13 +25,18 @@ import EditUserForm from "../../../components/EditUserForm";
 
 interface Props {
   error: boolean;
-  users: Array<UserRepresentation & User & { id: string }>;
+  users: Array<
+    UserRepresentation &
+      User & { id: string; targetsCount: number; totalImprovements: number }
+  >;
 }
 
 const Content: FunctionComponent<Props> = (props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [editUser, setEditUser] = useState<
-    (UserRepresentation & User & { id: string }) | null
+    | (UserRepresentation &
+        User & { id: string; targetsCount?: number; totalImprovements: number })
+    | null
   >(null);
   const [users, setUser] = useState(props.users);
 
@@ -40,7 +45,7 @@ const Content: FunctionComponent<Props> = (props) => {
     if (username.length === 0) {
       throw new Error("Bitte trage einen Nutzernamen ein.");
     }
-    const createUserDTO = { username };
+    const createUserDTO = { username, featureFlags: form.featureFlags };
 
     const res = await clientHttpClient("/api/v1/users", crypto.randomUUID(), {
       method: "POST",
@@ -52,7 +57,10 @@ const Content: FunctionComponent<Props> = (props) => {
     const body = await res.json();
     const user: User = body.user;
 
-    setUser((users) => [user, ...users]);
+    setUser((users) => [
+      { ...user, targetsCount: 0, totalImprovements: 0 },
+      ...users,
+    ]);
     return body.password;
   };
 
@@ -93,12 +101,16 @@ const Content: FunctionComponent<Props> = (props) => {
     if (!res.ok) {
       throw res;
     }
-    const updatedUser: User = await res.json();
+    const updatedUser = await res.json();
 
     setUser((users) =>
       users.map((user) => {
         if (user.id === id) {
-          return updatedUser;
+          return {
+            ...updatedUser,
+            targetsCount: user.targetsCount,
+            totalImprovements: user.totalImprovements,
+          };
         }
         return user;
       })
@@ -138,10 +150,22 @@ const Content: FunctionComponent<Props> = (props) => {
             <thead className="hidden lg:table-header-group">
               <tr className="bg-dunkelblau-100  text-sm text-white text-left">
                 <th className="p-2 px-4 py-4">Nutzername</th>
+                <th className="p-2 px-4 py-4">Domains</th>
+                <th className="p-2 px-4 py-4">Einzelverbesserungen</th>
                 <th className="p-2 whitespace-nowrap py-4">Aktionen</th>
               </tr>
             </thead>
             <tbody>
+              <tr className="flex bg-hellgrau-60 flex-col lg:table-row relative mt-3">
+                <td className="p-2 px-4">Gesamt</td>
+                <td className="p-2 px-4">
+                  {users.reduce((acc, curr) => acc + curr.targetsCount, 0)}
+                </td>
+                <td className="p-2 px-4">
+                  {users.reduce((acc, curr) => acc + curr.totalImprovements, 0)}
+                </td>
+                <td className="p-2 px-4"></td>
+              </tr>
               {users.map((user, i) => (
                 <tr
                   className={classNames(
@@ -151,7 +175,8 @@ const Content: FunctionComponent<Props> = (props) => {
                   key={user.id}
                 >
                   <td className="p-2 px-4">{user.username}</td>
-
+                  <td className="p-2 px-4">{user.targetsCount ?? ""}</td>
+                  <td className="p-2 px-4">{user.totalImprovements ?? ""}</td>
                   <td className="p-2 w-20 absolute lg:static top-0 right-0 text-right">
                     <div className="flex flex-row justify-end">
                       <Menu

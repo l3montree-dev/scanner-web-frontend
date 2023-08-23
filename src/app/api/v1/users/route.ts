@@ -62,6 +62,7 @@ export async function POST(req: NextRequest) {
         },
       });
     } catch (e) {
+      logger.error({ error: e }, "Error creating user");
       // Rollback keycloak if this fails.
       await kcClient.users.del({ id, realm: keycloak.getRealmName() });
       return NextResponse.json({ success: false }, { status: 500 });

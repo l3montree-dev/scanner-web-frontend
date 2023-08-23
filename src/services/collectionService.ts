@@ -109,4 +109,17 @@ export const collectionService = {
   getCollectionsOfTargets,
   isUserAllowedToModifyCollection,
   filterCollectionsToAllowed,
+  countTargetsInCollections: async (
+    prisma: PrismaClient
+  ): Promise<Record<number, number>> => {
+    return (
+      await prisma.targetCollectionRelation.groupBy({
+        by: ["collectionId"],
+        _count: true,
+      })
+    ).reduce((acc, cur) => {
+      acc[cur.collectionId] = cur._count;
+      return acc;
+    }, {} as Record<number, number>);
+  },
 };

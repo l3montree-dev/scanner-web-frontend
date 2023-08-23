@@ -7,6 +7,7 @@ import { collectionId, isGuestUser } from "../utils/common";
 import { toDTO } from "../utils/server";
 import { eachDay } from "../utils/time";
 import { getLogger } from "./logger";
+import { displayInspections } from "../utils/view";
 
 const logger = getLogger(__filename);
 
@@ -210,6 +211,35 @@ export const getReferenceChartData = async (
   return res;
 };
 
+const getLatestAndEarliestStats = async (
+  user: User | Guest,
+  prisma: PrismaClient
+) => {
+  const [firstStat, lastStat] = await Promise.all([
+    prisma.stat.findFirst({
+      where: {
+        collectionId: collectionId(user),
+      },
+      orderBy: {
+        time: "asc",
+      },
+    }),
+    prisma.stat.findFirst({
+      where: {
+        collectionId: collectionId(user),
+      },
+      orderBy: {
+        time: "desc",
+      },
+    }),
+  ]);
+
+  return {
+    firstStat,
+    lastStat,
+  };
+};
+
 export const getDashboardForUser = async (
   user: User | Guest,
   prisma: PrismaClient
@@ -289,4 +319,5 @@ export const statService = {
   getReferenceChartData,
   generateStatsForCollection,
   deleteStatsOfCollection,
+  getLatestAndEarliestStats,
 };
