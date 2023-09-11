@@ -1,3 +1,4 @@
+import { TLSInspectionType } from "../scanner/scans";
 import { DetailedTarget } from "../types";
 import { DTO } from "../utils/server";
 
@@ -7,10 +8,12 @@ export const getDeprecatedTLSDeactivatedReportMessage = (
   if (report.details === null) {
     return "Die Überprüfung der Protokolle TLS 1.1 und älter sowie SSL konnte nicht durchgeführt werden.";
   }
-  const inspection = report.details["deprecatedTLSDeactivated"];
-  if (inspection?.didPass === null || inspection?.didPass === undefined) {
+  const inspection = report.details.runs[0].results.find(
+    (r) => r.ruleId === TLSInspectionType.DeprecatedTLSDeactivated
+  );
+  if (!inspection || inspection?.kind === "notApplicable") {
     return "Die Überprüfung der Protokolle TLS 1.1 und älter sowie SSL konnte nicht durchgeführt werden.";
-  } else if (inspection.didPass) {
+  } else if (inspection.kind === "pass") {
     return "Die Protokolle TLS 1.1 und älter sowie SSL sind deaktiviert.";
   } else {
     return "Die Protokolle TLS 1.1 und älter sowie SSL sind nicht deaktiviert.";

@@ -3,7 +3,7 @@ import PQueue from "p-queue";
 import { prisma } from "../db/connection";
 
 import { isMaster } from "../leaderelection/leaderelection";
-import { IScanResponse } from "../types";
+import { ISarifResponse, IScanResponse } from "../types";
 import { once } from "../utils/common";
 import { targetService } from "./targetService";
 
@@ -50,7 +50,7 @@ const startLookupResponseLoop = () => {
 const startScanResponseLoop = () => {
   logger.info("starting scan response loop");
   rabbitMQClient.listen("scan-response", async (msg) => {
-    const content = JSON.parse(msg.content.toString()).data as IScanResponse;
+    const content = JSON.parse(msg.content.toString()).data as ISarifResponse;
     await scanService.handleScanResponse(crypto.randomUUID(), content, {
       refreshCache: false,
       startTimeMS: Date.now(),

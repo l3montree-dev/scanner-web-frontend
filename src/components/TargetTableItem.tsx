@@ -5,7 +5,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Collection, Target } from "@prisma/client";
 import { toUnicode } from "punycode";
-import { FunctionComponent } from "react";
+import { FunctionComponent, useMemo } from "react";
 import { useIsGuest } from "../hooks/useIsGuest";
 import useLoading from "../hooks/useLoading";
 import {
@@ -19,7 +19,7 @@ import { getCheckDescription, titleMapper } from "../messages";
 import { DetailedTarget, FeatureFlag } from "../types";
 import { classNames, toGermanDate } from "../utils/common";
 import { DTO } from "../utils/server";
-import { didPass2CheckResult } from "../utils/view";
+import { kind2CheckResult } from "../utils/view";
 import Checkbox from "./common/Checkbox";
 import ResultIcon from "./ResultIcon";
 import Tooltip from "./common/Tooltip";
@@ -70,6 +70,13 @@ const TargetTableItem: FunctionComponent<Props> = ({
 }) => {
   const isGuest = useIsGuest();
   const collectionEnabled = useIsFeatureEnabled(FeatureFlag.collections);
+  const detailsMap = useMemo(
+    () =>
+      Object.fromEntries(
+        target.details?.runs[0].results.map((r) => [r.ruleId, r]) ?? []
+      ),
+    [target]
+  );
   return (
     <>
       <tr
@@ -134,8 +141,9 @@ const TargetTableItem: FunctionComponent<Props> = ({
             )}
           >
             <ResultIcon
-              checkResult={didPass2CheckResult(
-                target.details?.responsibleDisclosure?.didPass
+              checkResult={kind2CheckResult(
+                detailsMap[OrganizationalInspectionType.ResponsibleDisclosure]
+                  ?.kind
               )}
             />
           </Tooltip>
@@ -148,8 +156,8 @@ const TargetTableItem: FunctionComponent<Props> = ({
             tooltip={getCheckDescription(target, TLSInspectionType.TLSv1_3)}
           >
             <ResultIcon
-              checkResult={didPass2CheckResult(
-                target.details?.tlsv1_3?.didPass
+              checkResult={kind2CheckResult(
+                detailsMap[TLSInspectionType.TLSv1_3]?.kind
               )}
             />
           </Tooltip>
@@ -165,8 +173,8 @@ const TargetTableItem: FunctionComponent<Props> = ({
             )}
           >
             <ResultIcon
-              checkResult={didPass2CheckResult(
-                target.details?.deprecatedTLSDeactivated?.didPass
+              checkResult={kind2CheckResult(
+                detailsMap[TLSInspectionType.DeprecatedTLSDeactivated]?.kind
               )}
             />
           </Tooltip>
@@ -179,7 +187,9 @@ const TargetTableItem: FunctionComponent<Props> = ({
             tooltip={getCheckDescription(target, HeaderInspectionType.HSTS)}
           >
             <ResultIcon
-              checkResult={didPass2CheckResult(target.details?.hsts?.didPass)}
+              checkResult={kind2CheckResult(
+                detailsMap[HeaderInspectionType.HSTS]?.kind
+              )}
             />
           </Tooltip>
         </td>
@@ -191,7 +201,9 @@ const TargetTableItem: FunctionComponent<Props> = ({
             tooltip={getCheckDescription(target, DomainInspectionType.DNSSec)}
           >
             <ResultIcon
-              checkResult={didPass2CheckResult(target.details?.dnsSec?.didPass)}
+              checkResult={kind2CheckResult(
+                detailsMap[DomainInspectionType.DNSSec]?.kind
+              )}
             />
           </Tooltip>
         </td>
@@ -203,7 +215,9 @@ const TargetTableItem: FunctionComponent<Props> = ({
             tooltip={getCheckDescription(target, NetworkInspectionType.RPKI)}
           >
             <ResultIcon
-              checkResult={didPass2CheckResult(target.details?.rpki?.didPass)}
+              checkResult={kind2CheckResult(
+                detailsMap[NetworkInspectionType.RPKI]?.kind
+              )}
             />
           </Tooltip>
         </td>

@@ -240,7 +240,7 @@ const Content: FunctionComponent<Props> = (props) => {
     scanRequest.loading(uri);
 
     const response = await clientHttpClient(
-      `/api/v1/scan?site=${uri}&refresh=true`,
+      `/api/v2/scan?site=${uri}&refresh=true`,
       crypto.randomUUID()
     );
 

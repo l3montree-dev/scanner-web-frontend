@@ -38,21 +38,23 @@ export const getHttpMessage = (report: DTO<DetailedTarget>) => {
   if (report.details === null) {
     return "Die Überprüfung der HTTP Verbindung konnte nicht durchgeführt werden.";
   }
-  switch (report.details[HttpInspectionType.HTTP]?.didPass) {
-    case null:
+  const inspection = report.details.runs[0].results.find(
+    (r) => r.ruleId === HttpInspectionType.HTTP
+  );
+
+  switch (inspection?.kind) {
+    case "notApplicable":
       if (
         immediateActionHTTPErrors.includes(
-          report.details[HttpInspectionType.HTTP]?.actualValue.error.code
+          inspection.properties.actualValue.error.code
         )
       ) {
-        return getErrorMessage(
-          report.details[HttpInspectionType.HTTP]?.actualValue.error.code
-        );
+        return getErrorMessage(inspection.properties.actualValue.error.code);
       }
       return "Die Verbindung konnte nicht überprüft werden.";
-    case false:
+    case "fail":
       return `Die Verbindung konnte nicht hergestellt werden.`;
-    case true:
+    case "pass":
       return `Eine Verbindung konnte hergestellt werden.`;
     default:
       return "Die Verbindung konnte nicht überprüft werden.";

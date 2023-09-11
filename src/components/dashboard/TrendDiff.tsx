@@ -7,7 +7,7 @@ import { FunctionComponent, useEffect, useRef, useState } from "react";
 import useLoading from "../../hooks/useLoading";
 import { clientHttpClient } from "../../services/clientHttpClient";
 import { classNames } from "../../utils/common";
-import { didPass2CheckResult } from "../../utils/view";
+import { kind2CheckResult } from "../../utils/view";
 import ResultIcon from "../ResultIcon";
 import Spinner from "../common/Spinner";
 import { useSearchParams } from "next/navigation";
@@ -149,7 +149,7 @@ const TrendDiff: FunctionComponent<Props> = ({
                           <span>
                             <ResultIcon
                               size={16}
-                              checkResult={didPass2CheckResult(d.now)}
+                              checkResult={kind2CheckResult(d.now)}
                             />
                           </span>
                           <span>{d.uri}</span>

@@ -2,7 +2,7 @@ import {
   CheckResult,
   checkResult2BorderClassName,
   checkResult2Icon,
-  didPass2CheckResult,
+  kind2CheckResult,
 } from "./view";
 
 describe("view test suite", () => {
@@ -14,7 +14,7 @@ describe("view test suite", () => {
   ])(
     "should correctly transform a didPass value to a check result managed by the frontend",
     (param, expected) => {
-      const result = didPass2CheckResult(param);
+      const result = kind2CheckResult(param);
       expect(result).toEqual(expected);
     }
   );

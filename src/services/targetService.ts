@@ -4,6 +4,7 @@ import { InspectionType, InspectionTypeEnum } from "../scanner/scans";
 import {
   DetailedTarget,
   Guest,
+  ISarifScanErrorResponse,
   IScanErrorResponse,
   PaginateRequest,
   PaginateResult,
@@ -57,15 +58,18 @@ const handleNewTarget = async (
 };
 
 const handleTargetScanError = async (
-  content: IScanErrorResponse,
+  content: ISarifScanErrorResponse,
   prisma: PrismaClient
 ) => {
+  const lastScan =
+    new Date(content.runs[0].invocations[0].startTimeUtc).getTime() ??
+    Date.now();
   const res = await prisma.target.upsert({
     where: {
-      uri: content.target,
+      uri: content.runs[0].properties.target,
     },
     update: {
-      lastScan: content.timestamp ?? Date.now(),
+      lastScan,
       queued: false,
       errorCount: {
         increment: 1,
@@ -73,9 +77,9 @@ const handleTargetScanError = async (
     },
     create: {
       errorCount: 1,
-      uri: content.target,
-      lastScan: content.timestamp ?? Date.now(),
-      hostname: getHostnameFromUri(content.target),
+      uri: content.runs[0].properties.target,
+      lastScan,
+      hostname: getHostnameFromUri(content.runs[0].properties.target),
     },
   });
 

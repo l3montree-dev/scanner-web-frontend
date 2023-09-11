@@ -6,6 +6,7 @@ import { TargetType } from "../../../../../types";
 import { prisma } from "../../../../../db/connection";
 import { displayInspections } from "../../../../../utils/view";
 import { titleMapper } from "../../../../../messages";
+import { kind2DidPass } from "../../../../../services/sarifTransformer";
 
 const csvHeader = `domain,${displayInspections
   .map((inspection) => titleMapper[inspection])
@@ -50,7 +51,12 @@ export const GET = async (req: NextRequest) => {
           [
             target.uri,
             ...displayInspections.map(
-              (inspection) => target.details?.[inspection]?.didPass ?? ""
+              (inspection) =>
+                kind2DidPass(
+                  target.details?.runs[0].results.find(
+                    (r) => r.ruleId === inspection
+                  )?.kind
+                ) ?? ""
             ),
           ].join(",")
         )

@@ -1,3 +1,5 @@
+import { NetworkInspectionType } from "../scanner/scans";
+import { getSUTFromResponse } from "../services/sarifTransformer";
 import { DetailedTarget } from "../types";
 import { DTO } from "../utils/server";
 
@@ -13,29 +15,31 @@ export default function getRPKIReportMessage(report: DTO<DetailedTarget>) {
   if (report.details === null) {
     return `Der RPKI Status der Domain konnte nicht überprüft werden.`;
   }
-  const inspection = report.details["rpki"];
-  const uri = report.details.sut;
+  const inspection = report.details.runs[0].results.find(
+    (r) => r.ruleId === NetworkInspectionType.RPKI
+  );
+  const uri = getSUTFromResponse(report.details);
 
-  if (inspection?.didPass === null || inspection?.didPass === undefined) {
+  if (!inspection || inspection.kind === "notApplicable") {
     return `Der RPKI Status der Domain ${uri} konnte nicht überprüft werden.`;
-  } else if (inspection.didPass) {
+  } else if (inspection.kind === "pass") {
     let actualValue: {
       prefix: string;
       asn: number;
       holder: string;
-    } = inspection.actualValue as any;
+    } = inspection.properties.actualValue as any;
     if (
-      inspection.actualValue instanceof Array &&
-      inspection.actualValue.length === 1
+      inspection.properties.actualValue instanceof Array &&
+      inspection.properties.actualValue.length === 1
     ) {
-      actualValue = inspection.actualValue[0];
+      actualValue = inspection.properties.actualValue[0];
     } else if (
-      inspection.actualValue instanceof Array &&
-      inspection.actualValue.length > 1
+      inspection.properties.actualValue instanceof Array &&
+      inspection.properties.actualValue.length > 1
     ) {
-      return `Alle IP-Adressen Präfixe ${inspection.actualValue
+      return `Alle IP-Adressen Präfixe ${inspection.properties.actualValue
         .map((v) => v.prefix)
-        .join(", ")} (AS: ${inspection.actualValue
+        .join(", ")} (AS: ${inspection.properties.actualValue
         .map((v) => `${v.asn}${holderStr(v.holder)}`)
         .join(", ")}) weisen valide Signaturen auf.`;
     }
@@ -48,19 +52,19 @@ export default function getRPKIReportMessage(report: DTO<DetailedTarget>) {
       prefix: string;
       asn: number;
       holder: string;
-    } = inspection.actualValue as any;
+    } = inspection.properties.actualValue as any;
     if (
-      inspection.actualValue instanceof Array &&
-      inspection.actualValue.length === 1
+      inspection.properties.actualValue instanceof Array &&
+      inspection.properties.actualValue.length === 1
     ) {
-      actualValue = inspection.actualValue[0];
+      actualValue = inspection.properties.actualValue[0];
     } else if (
-      inspection.actualValue instanceof Array &&
-      inspection.actualValue.length > 1
+      inspection.properties.actualValue instanceof Array &&
+      inspection.properties.actualValue.length > 1
     ) {
-      return `Mindestens eines der IP-Adressen Präfixe ${inspection.actualValue
+      return `Mindestens eines der IP-Adressen Präfixe ${inspection.properties.actualValue
         .map((v) => v.prefix)
-        .join(", ")} (AS: ${inspection.actualValue
+        .join(", ")} (AS: ${inspection.properties.actualValue
         .map((v) => `${v.asn}${holderStr(v.holder)}`)
         .join(", ")}) weist keine valide Signatur auf.`;
     }

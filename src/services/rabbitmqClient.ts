@@ -57,7 +57,7 @@ export class RabbitMQClient {
       if (msg) {
         try {
           const start = Date.now();
-          await listener(JSON.parse(msg.content.toString()).data);
+          await listener(JSON.parse(msg.content.toString()));
           // manual acknowledge
           logger.info(
             {
@@ -206,7 +206,7 @@ export class RabbitMQRPCClient extends RabbitMQClient {
     this.eventEmitter.addListener(options.messageId, (buffer) => {
       onMessage(
         () => this.eventEmitter.removeAllListeners(options.messageId),
-        JSON.parse(buffer.toString()).data
+        JSON.parse(buffer.toString())
       );
     });
     this.send(
@@ -231,7 +231,7 @@ export class RabbitMQRPCClient extends RabbitMQClient {
     return new Promise(async (resolve) => {
       // resolve the promise after receiving an event - might block forever.
       this.eventEmitter.once(options.messageId, (buffer) => {
-        resolve(JSON.parse(buffer.toString()).data);
+        resolve(JSON.parse(buffer.toString()));
       });
       this.send(
         queue,

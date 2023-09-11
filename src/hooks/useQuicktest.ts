@@ -21,6 +21,7 @@ import { DetailedTarget, IScanSuccessResponse } from "../types";
 import { sanitizeURI } from "../utils/common";
 import { DTO } from "../utils/server";
 import useLoading from "./useLoading";
+import { displayInspections } from "../utils/view";
 
 const isInViewport = (element: HTMLElement) => {
   const rect = element.getBoundingClientRect();
@@ -59,7 +60,9 @@ export function useQuicktest(code?: string | null) {
       // forward the secret of query param s to the backend
       try {
         const response = await clientHttpClient(
-          `/api/v1/scan?site=${encodeURIComponent(target)}&s=${code}`,
+          `/api/v2/scan?site=${encodeURIComponent(
+            target
+          )}&s=${code}&refresh=${query.get("refresh")}`,
           crypto.randomUUID()
         );
         if (!response.ok) {
@@ -120,7 +123,7 @@ export function useQuicktest(code?: string | null) {
 
     try {
       const response = await clientHttpClient(
-        `/api/v1/scan?site=${encodeURIComponent(
+        `/api/v2/scan?site=${encodeURIComponent(
           target.uri
         )}&refresh=true&s=${code}`,
         crypto.randomUUID()
@@ -145,26 +148,9 @@ export function useQuicktest(code?: string | null) {
 
   const amountPassed = useMemo(() => {
     if (!target) return 0;
-    return Object.keys(target.details as Record<string, any>)
-      .filter((key) =>
-        (
-          [
-            TLSInspectionType.TLSv1_3,
-            TLSInspectionType.DeprecatedTLSDeactivated,
-            NetworkInspectionType.RPKI,
-            DomainInspectionType.DNSSec,
-            HeaderInspectionType.HSTS,
-            OrganizationalInspectionType.ResponsibleDisclosure,
-          ] as string[]
-        ).includes(key)
-      )
-      .map(
-        (key) =>
-          (target.details as IScanSuccessResponse["result"])[
-            key as InspectionType
-          ]?.didPass
-      )
-      .filter((inspection) => !!inspection).length;
+    return (target.details?.runs[0].results ?? []).filter(
+      (r) => r.kind === "pass"
+    ).length;
   }, [target]);
 
   const dateString = target

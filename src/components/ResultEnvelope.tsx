@@ -13,6 +13,7 @@ import {
 } from "../utils/view";
 import ResultGrid from "./ResultGrid";
 import Button from "./common/Button";
+import { getSUTFromResponse } from "../services/sarifTransformer";
 
 interface Props {
   target: DTO<DetailedTarget> | null;
@@ -38,6 +39,7 @@ const ResultEnvelope: FunctionComponent<Props> = ({
   refreshRequest,
   amountPassed,
 }) => {
+  const sut = getSUTFromResponse(target?.details) ?? "";
   return target !== null ? (
     <div className="md:p-0 text-textblack">
       <div className="md:flex block mb-5 gap-5 flex-row justify-between">
@@ -53,16 +55,16 @@ const ResultEnvelope: FunctionComponent<Props> = ({
               {toUnicode(target.uri)}{" "}
             </a>
           </h2>
-          {target.uri !== target.details?.sut && (
+          {target.uri !== sut && (
             <h2 className="text-xl">
               Weiterleitung auf:{" "}
               <a
                 target={"_blank"}
                 className="underline text-blau-100"
                 rel="noopener noreferrer"
-                href={`//${toUnicode(target.details?.sut ?? "")}`}
+                href={`//${toUnicode(sut)}`}
               >
-                {toUnicode(target.details?.sut ?? "")}
+                {toUnicode(sut)}
               </a>
             </h2>
           )}

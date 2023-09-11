@@ -3,17 +3,18 @@ import { prisma } from "../db/connection";
 import { GlobalRef } from "../services/globalRef";
 import { getLogger } from "../services/logger";
 import { rabbitMQRPCClient } from "../services/rabbitmqClient";
+import { reportService } from "../services/reportService";
 import {
-  reportService,
-  scanResult2TargetDetails,
-} from "../services/reportService";
+  startTimeOfResponse,
+  transformDeprecatedReportingSchemaToSarif,
+} from "../services/sarifTransformer";
 import { targetService } from "../services/targetService";
 import {
   DetailedTarget,
   DetailsJSON,
-  IScanErrorResponse,
-  IScanResponse,
-  IScanSuccessResponse,
+  ISarifResponse,
+  ISarifScanErrorResponse,
+  ISarifScanSuccessResponse,
 } from "../types";
 import CircuitBreaker from "../utils/CircuitBreaker";
 import {
@@ -24,6 +25,7 @@ import {
   timeout,
 } from "../utils/common";
 import { DTO, toDTO } from "../utils/server";
+import { OrganizationalInspectionType } from "./scans";
 
 export interface ScanTargetOptions {
   refreshCache: boolean; // if refresh is true, it will bypass all caching layers
@@ -62,8 +64,8 @@ export class ScanService {
     requestId: string,
     target: string,
     options: ScanTargetOptions
-  ): Promise<IScanResponse> {
-    const result = await this.messageBrokerClient.call<IScanResponse>(
+  ): Promise<ISarifResponse> {
+    const result = await this.messageBrokerClient.call<ISarifResponse>(
       process.env.SCAN_REQUEST_QUEUE ?? "scan-request",
       {
         target,
@@ -72,13 +74,13 @@ export class ScanService {
       },
       { messageId: requestId }
     );
-
+    console.log("result", result);
     return result;
   }
 
   public async handleScanResponse(
     requestId: string,
-    response: IScanResponse,
+    response: ISarifResponse,
     options: ScanTargetOptions
   ): Promise<DTO<DetailedTarget> | undefined> {
     if (isScanError(response)) {
@@ -104,15 +106,15 @@ export class ScanService {
           )
         ),
         {
-          uri: response.target,
-          lastScan: response.timestamp,
+          uri: response.runs[0].properties.target,
+          lastScan: startTimeOfResponse(response).getTime(),
           hostname: "",
           errorCount: 0,
           number: 0,
           queued: false,
-          createdAt: new Date(response.timestamp).toString(),
-          updatedAt: new Date(response.timestamp).toString(),
-          details: scanResult2TargetDetails(response),
+          createdAt: startTimeOfResponse(response).toString(),
+          updatedAt: startTimeOfResponse(response).toString(),
+          details: response,
         }
       );
     }
@@ -156,6 +158,9 @@ export class ScanService {
       | ({ details: DetailsJSON } & {
           target: Omit<Target, "lastScan"> & { lastScan: number };
         })
+      | (ISarifScanSuccessResponse & {
+          target: Omit<Target, "lastScan"> & { lastScan: number };
+        })
       | null
     >;
   }
@@ -168,8 +173,8 @@ export class ScanService {
     target: string | null,
     options: ScanTargetOptions
   ): Promise<
-    | [IScanSuccessResponse, DTO<DetailedTarget>]
-    | [IScanErrorResponse, undefined]
+    | [DTO<ISarifScanSuccessResponse>, DTO<DetailedTarget>]
+    | [DTO<ISarifScanErrorResponse>, undefined]
   > {
     const sanitizedURI = sanitizeURI(target);
     if (!sanitizedURI) {
@@ -189,17 +194,8 @@ export class ScanService {
         );
 
         const { target, ...rest } = details;
-        return [
-          {
-            target: target.uri,
-            result: rest.details as IScanSuccessResponse["result"],
-            duration: 0,
-            ipAddress: "",
-            sut: rest.details.sut,
-            timestamp: target.lastScan,
-          },
-          { ...target, details: rest.details },
-        ];
+        const transformed = transformDeprecatedReportingSchemaToSarif(rest);
+        return [transformed, { ...target, details: transformed }];
       } else {
         logger.info(
           { requestId },
@@ -208,7 +204,11 @@ export class ScanService {
       }
     }
     const result = await this.scanRPC(requestId, sanitizedURI, options);
-
+    console.log(
+      result.runs[0].results.find(
+        (r) => r.ruleId === OrganizationalInspectionType.ResponsibleDisclosure
+      )
+    );
     let detailedTarget: DTO<DetailedTarget> | undefined = undefined;
     if (isScanError(result)) {
       await neverThrow(
@@ -222,6 +222,7 @@ export class ScanService {
         { duration: Date.now() - start, requestId },
         `successfully scanned site: ${target}`
       );
+
       detailedTarget = await defaultOnError(
         this.scanCB.run(
           async () =>
@@ -236,21 +237,22 @@ export class ScanService {
             ) // use a 20 seconds timeout - it might happen, that the reportService will verify that the reports did really change and therefore issue another scan.
         ),
         {
-          uri: result.target,
-          lastScan: result.timestamp,
+          uri: result.runs[0].properties.target,
+          lastScan: startTimeOfResponse(result).getTime(),
           hostname: "",
           errorCount: 0,
           number: 0,
           queued: false,
-          createdAt: new Date(result.timestamp).toString(),
-          updatedAt: new Date(result.timestamp).toString(),
-          details: scanResult2TargetDetails(result),
+          createdAt: startTimeOfResponse(result).toString(),
+          updatedAt: startTimeOfResponse(result).toString(),
+          details: result,
         }
       );
     }
+
     return [result, detailedTarget] as
-      | [IScanSuccessResponse, DTO<DetailedTarget>]
-      | [IScanErrorResponse, undefined];
+      | [ISarifScanSuccessResponse, DTO<DetailedTarget>]
+      | [ISarifScanErrorResponse, undefined];
   }
 }
 

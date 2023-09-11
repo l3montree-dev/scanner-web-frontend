@@ -4,6 +4,9 @@ import {
   IIpLookupProgressUpdateMsg,
   IIpLookupReportDTO,
   IIpLookupReportMsg,
+  ISarifResponse,
+  ISarifScanErrorResponse,
+  ISarifScanSuccessResponse,
   IScanErrorResponse,
   IScanResponse,
   IScanSuccessResponse,
@@ -256,14 +259,14 @@ export const parseNetworkString = (networks: string | string[]): string[] => {
 };
 
 export const isScanError = (
-  response: IScanResponse
-): response is IScanErrorResponse => {
-  return "error" in response.result;
+  response: ISarifResponse
+): response is ISarifScanErrorResponse => {
+  return response.runs[0].invocations[0].exitCode !== 0;
 };
 
 export const isScanSuccess = (
-  response: IScanResponse
-): response is IScanSuccessResponse => {
+  response: ISarifResponse
+): response is ISarifScanSuccessResponse => {
   return !isScanError(response);
 };
 

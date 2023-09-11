@@ -15,6 +15,7 @@ import {
   OrganizationalInspectionType,
   TLSInspectionType,
 } from "../scanner/scans";
+import { Falsey } from "lodash";
 
 export enum CheckResult {
   Passed = "passed",
@@ -23,11 +24,13 @@ export enum CheckResult {
   Unknown = "unknown",
 }
 
-export const didPass2CheckResult = (didPass?: boolean | null) => {
-  switch (didPass) {
-    case true:
+export const kind2CheckResult = (
+  kind?: "notApplicable" | "fail" | "pass" | Falsey
+) => {
+  switch (kind) {
+    case "pass":
       return CheckResult.Passed;
-    case false:
+    case "fail":
       return CheckResult.Failed;
     default:
       return CheckResult.Unknown;

@@ -14,7 +14,7 @@ import { classNames, devOnly, linkMapper } from "../utils/common";
 import {
   CheckResult,
   checkResult2BorderClassName,
-  didPass2CheckResult,
+  kind2CheckResult,
 } from "../utils/view";
 
 import { getCheckDescription, titleMapper } from "../messages";
@@ -45,15 +45,16 @@ const shouldDisplayImmediateActionRequired = (
   if (report.details === null) {
     return false;
   }
+  const result = report.details.runs[0].results.find((r) => r.ruleId === check);
   if (check === HttpInspectionType.HTTP) {
     return (
-      report.details[check]?.didPass === null &&
+      result?.kind === "notApplicable" &&
       immediateActionHTTPErrors.includes(
-        report.details[check]?.actualValue.error.code
+        result.properties.actualValue.error.code
       )
     );
   }
-  return report.details[check]?.didPass === false;
+  return result?.kind === "fail";
 };
 
 interface Props {
@@ -117,9 +118,11 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
                   title={titleMapper[key]}
                   description={getCheckDescription(report, key)}
                   link={linkMapper[key]}
-                  checkResult={didPass2CheckResult(
+                  checkResult={kind2CheckResult(
                     report.details !== null
-                      ? report.details[key]?.didPass
+                      ? report.details.runs[0].results.find(
+                          (r) => r.ruleId === key
+                        )?.kind
                       : null
                   )}
                 />
