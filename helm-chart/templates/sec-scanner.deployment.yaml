@@ -63,6 +63,8 @@ spec:
               value: {{ .Values.secScanner.logLevel | default "info" | quote }}
             - name: GOMEMLIMIT
               value: {{ .Values.secScanner.gomemlimit | default "750MiB" | quote }}
+            - name: SLACK_WEBHOOK_URL
+              value: {{ .Values.secScanner.slackWebhookUrl | default "" | quote }}
           resources:
             {{- toYaml .Values.secScanner.resources | nindent 12 }}
       {{- with .Values.secScanner.nodeSelector }}
