@@ -30,13 +30,25 @@ describe("Report Service Test Suite", () => {
     await reportService.handleNewScanReport(
       "",
       {
-        target: "example.com",
-        timestamp: 4711,
-        result: {
-          dnsSec: {
-            didPass: true,
+        runs: [
+          {
+            invocations: [
+              {
+                endTimeUtc: "2021-08-24T12:00:00.000Z",
+                startTimeUtc: "2021-08-24T12:00:00.000Z",
+              },
+            ],
+            properties: {
+              target: "example.com",
+            },
+            results: [
+              {
+                ruleId: "dnsSec",
+                kind: "pass",
+              },
+            ],
           },
-        },
+        ],
       } as any,
       prismaMock as any,
       {
@@ -51,7 +63,7 @@ describe("Report Service Test Suite", () => {
       where: { uri: "example.com" },
       data: {
         queued: false,
-        lastScan: 4711,
+        lastScan: 1629806400000,
         errorCount: 0,
         hostname: "example.com",
       },
@@ -83,25 +95,49 @@ describe("Report Service Test Suite", () => {
     const scanRPCValidation = jest
       .spyOn(scanService, "scanRPC")
       .mockResolvedValue({
-        target: "example.com",
-        timestamp: 11,
-        result: {
-          dnsSec: {
-            didPass: true, // we are validating a change - dnsSec did still pass
+        runs: [
+          {
+            invocations: [
+              {
+                endTimeUtc: "2021-08-24T12:00:00.000Z",
+                startTimeUtc: "2021-08-24T12:00:00.000Z",
+              },
+            ],
+            properties: {
+              target: "example.com",
+            },
+            results: [
+              {
+                ruleId: "dnsSec",
+                kind: "pass",
+              },
+            ],
           },
-        },
+        ],
       } as any);
 
     await reportService.handleNewScanReport(
       "",
       {
-        target: "example.com",
-        timestamp: 4711,
-        result: {
-          dnsSec: {
-            didPass: false,
+        runs: [
+          {
+            invocations: [
+              {
+                endTimeUtc: "2021-08-24T12:00:00.000Z",
+                startTimeUtc: "2021-08-24T12:00:00.000Z",
+              },
+            ],
+            properties: {
+              target: "example.com",
+            },
+            results: [
+              {
+                ruleId: "dnsSec",
+                kind: "fail",
+              },
+            ],
           },
-        },
+        ],
       } as any,
       prismaMock as any,
       {
@@ -119,7 +155,7 @@ describe("Report Service Test Suite", () => {
       where: { uri: "example.com" },
       data: {
         queued: false,
-        lastScan: 4711,
+        lastScan: 1629806400000,
         errorCount: 0,
         hostname: "example.com",
       },
@@ -145,7 +181,7 @@ describe("Report Service Test Suite", () => {
       const target = {
         uri: "example.com/test",
         queued: false,
-        lastScan: 4711,
+        lastScan: 1629806400000,
         errorCount: 0,
         // make sure the hostname is set correctly.
         hostname: "example.com",
@@ -167,13 +203,25 @@ describe("Report Service Test Suite", () => {
       await reportService.handleNewScanReport(
         "",
         {
-          target: "example.com/test",
-          timestamp: 4711,
-          result: {
-            dnsSec: {
-              didPass: true,
+          runs: [
+            {
+              invocations: [
+                {
+                  endTimeUtc: "2021-08-24T12:00:00.000Z",
+                  startTimeUtc: "2021-08-24T12:00:00.000Z",
+                },
+              ],
+              properties: {
+                target: "example.com/test",
+              },
+              results: [
+                {
+                  ruleId: "dnsSec",
+                  kind: "pass",
+                },
+              ],
             },
-          },
+          ],
         } as any,
         prismaMock as any,
         {
@@ -183,12 +231,27 @@ describe("Report Service Test Suite", () => {
       );
 
       const lastScanDetails = {
-        details: expect.objectContaining({
-          sut: "example.com/test",
-          dnsSec: {
-            didPass: true,
-          },
-        }),
+        details: {
+          runs: [
+            {
+              invocations: [
+                {
+                  endTimeUtc: "2021-08-24T12:00:00.000Z",
+                  startTimeUtc: "2021-08-24T12:00:00.000Z",
+                },
+              ],
+              properties: {
+                target: "example.com/test",
+              },
+              results: [
+                {
+                  kind: "pass",
+                  ruleId: "dnsSec",
+                },
+              ],
+            },
+          ],
+        },
       };
 
       expect(prismaMock.scanReport.create).toHaveBeenCalled();
@@ -203,7 +266,7 @@ describe("Report Service Test Suite", () => {
           },
           update: {
             queued: false,
-            lastScan: 4711,
+            lastScan: 1629806400000,
             errorCount: 0,
             hostname: "example.com",
             lastScanDetails: {
@@ -219,9 +282,9 @@ describe("Report Service Test Suite", () => {
   );
   it("should validate a change in a scan report", async () => {
     const target = {
-      uri: "example.com/test",
+      uri: "example.com",
       queued: false,
-      lastScan: 4711,
+      lastScan: 1629806400000,
       errorCount: 0,
       // make sure the hostname is set correctly.
       hostname: "example.com",
@@ -250,25 +313,51 @@ describe("Report Service Test Suite", () => {
     const scanRPCValidation = jest
       .spyOn(scanService, "scanRPC")
       .mockResolvedValue({
-        target: "example.com",
-        timestamp: 11,
-        result: {
-          dnsSec: {
-            didPass: true, // we are validating a change - dnsSec did indeed pass
+        runs: [
+          {
+            invocations: [
+              {
+                endTimeUtc: "2021-08-24T14:00:00.000Z",
+                startTimeUtc: "2021-08-24T14:00:00.000Z",
+                exitCode: 0,
+              },
+            ],
+            properties: {
+              target: "example.com",
+            },
+            results: [
+              {
+                ruleId: "dnsSec",
+                kind: "pass", // dnssec did indeed pass
+              },
+            ],
           },
-        },
+        ],
       } as any);
 
     await reportService.handleNewScanReport(
       "",
       {
-        target: "example.com/test",
-        timestamp: 4711,
-        result: {
-          dnsSec: {
-            didPass: true, // there was a change - dnsSec did pass
+        runs: [
+          {
+            invocations: [
+              {
+                endTimeUtc: "2021-08-24T12:00:00.000Z",
+                startTimeUtc: "2021-08-24T12:00:00.000Z",
+                exitCode: 0,
+              },
+            ],
+            properties: {
+              target: "example.com",
+            },
+            results: [
+              {
+                ruleId: "dnsSec",
+                kind: "pass", // dnssec did indeed pass
+              },
+            ],
           },
-        },
+        ],
       } as any,
       prismaMock as any,
       {
@@ -280,28 +369,44 @@ describe("Report Service Test Suite", () => {
     config.socks5Proxy = undefined;
 
     const lastScanDetails = {
-      details: expect.objectContaining({
-        sut: "example.com/test",
-        dnsSec: {
-          didPass: true,
-        },
-      }),
+      details: {
+        runs: [
+          {
+            invocations: [
+              {
+                endTimeUtc: "2021-08-24T12:00:00.000Z",
+                startTimeUtc: "2021-08-24T12:00:00.000Z",
+                exitCode: 0,
+              },
+            ],
+            properties: {
+              target: "example.com",
+            },
+            results: [
+              {
+                kind: "pass",
+                ruleId: "dnsSec",
+              },
+            ],
+          },
+        ],
+      },
     };
     expect(scanRPCValidation).toHaveBeenCalled();
 
     expect(prismaMock.scanReport.create).toHaveBeenCalled();
     expect(prismaMock.target.upsert).toHaveBeenCalledWith({
-      where: { uri: "example.com/test" },
+      where: { uri: "example.com" },
       create: {
         ...target,
-        lastScan: 11, // expect the timestamp from the validation result
+        lastScan: 1629813600000, // timestamp of validation result
         lastScanDetails: {
           create: lastScanDetails,
         },
       },
       update: {
         queued: false,
-        lastScan: 11,
+        lastScan: 1629813600000, // timestamp of validation result
         errorCount: 0,
         hostname: "example.com",
         lastScanDetails: {
@@ -317,7 +422,7 @@ describe("Report Service Test Suite", () => {
     const target = {
       uri: "example.com/test",
       queued: false,
-      lastScan: 4711,
+      lastScan: 1629806400000,
       errorCount: 0,
       // make sure the hostname is set correctly.
       hostname: "example.com",
@@ -344,16 +449,30 @@ describe("Report Service Test Suite", () => {
     await reportService.handleNewScanReport(
       "",
       {
-        target: "example.com/test",
-        timestamp: 4711,
-        result: {
-          responsibleDisclosure: {
-            didPass: null, // could not be checked
+        runs: [
+          {
+            invocations: [
+              {
+                endTimeUtc: "2021-08-24T12:00:00.000Z",
+                startTimeUtc: "2021-08-24T12:00:00.000Z",
+                exitCode: 0,
+              },
+            ],
+            properties: {
+              target: "example.com/test",
+            },
+            results: [
+              {
+                kind: "notApplicable", // could not be checked
+                ruleId: "responsibleDisclosure",
+              },
+              {
+                kind: "fail",
+                ruleId: "dnsSec",
+              },
+            ],
           },
-          dnsSec: {
-            didPass: false,
-          },
-        },
+        ],
       } as any,
       prismaMock as any,
       {
@@ -363,18 +482,40 @@ describe("Report Service Test Suite", () => {
     );
 
     const replacedLastScanDetails = {
-      details: expect.objectContaining({
-        sut: "example.com/test",
-        dnsSec: {
-          didPass: false,
-        },
-        responsibleDisclosure: {
-          didPass: true, // expect the value from the last report - there is nothing else added - see next test
-          actualValue: {},
-          recommendations: [],
-          errors: [],
-        },
-      }),
+      details: {
+        runs: [
+          {
+            invocations: [
+              {
+                endTimeUtc: "2021-08-24T12:00:00.000Z",
+                startTimeUtc: "2021-08-24T12:00:00.000Z",
+                exitCode: 0,
+              },
+            ],
+            properties: {
+              target: "example.com/test",
+            },
+            results: [
+              {
+                kind: "pass", // replaced the value
+                ruleId: "responsibleDisclosure",
+                message: {
+                  text: "",
+                },
+                properties: {
+                  actualValue: {},
+                  errorIds: [],
+                  recommendationIds: [],
+                }, // those are default values - they should be present when interpolating
+              },
+              {
+                kind: "fail",
+                ruleId: "dnsSec",
+              },
+            ],
+          },
+        ],
+      },
     };
 
     expect(prismaMock.scanReport.create).toHaveBeenCalledWith({
@@ -394,7 +535,7 @@ describe("Report Service Test Suite", () => {
       },
       update: {
         queued: false,
-        lastScan: 4711,
+        lastScan: 1629806400000,
         errorCount: 0,
         hostname: "example.com",
         lastScanDetails: {
@@ -411,7 +552,7 @@ describe("Report Service Test Suite", () => {
     const target = {
       uri: "example.com/test",
       queued: false,
-      lastScan: 4711,
+      lastScan: 1629806400000,
       errorCount: 0,
       // make sure the hostname is set correctly.
       hostname: "example.com",
@@ -433,18 +574,37 @@ describe("Report Service Test Suite", () => {
       lastScanDetails: {
         findFirst: jest.fn(() => ({
           details: {
-            sut: "example.com/test",
-            dnsSec: {
-              didPass: false,
-              actualValue: "whatever",
-            },
-            responsibleDisclosure: {
-              didPass: true,
-              actualValue: {
-                "security.txt": "whatever",
+            runs: [
+              {
+                invocations: [
+                  {
+                    endTimeUtc: "2021-08-24T12:00:00.000Z",
+                    startTimeUtc: "2021-08-24T12:00:00.000Z",
+                    exitCode: 0,
+                  },
+                ],
+                properties: {
+                  target: "example.com/test",
+                },
+                results: [
+                  {
+                    kind: "pass", // could not be checked
+                    ruleId: "responsibleDisclosure",
+                    properties: {
+                      actualValue: {
+                        "security.txt": "whatever",
+                      },
+                    },
+                  },
+                  {
+                    kind: "fail", // could not be checked
+                    ruleId: "dnsSec",
+                    actualValue: "whatever",
+                  },
+                ],
               },
-            },
-          },
+            ],
+          } as any,
         })),
       },
     };
@@ -452,16 +612,30 @@ describe("Report Service Test Suite", () => {
     await reportService.handleNewScanReport(
       "",
       {
-        target: "example.com/test",
-        timestamp: 4711,
-        result: {
-          responsibleDisclosure: {
-            didPass: null, // could not be checked
+        runs: [
+          {
+            invocations: [
+              {
+                endTimeUtc: "2021-08-24T12:00:00.000Z",
+                startTimeUtc: "2021-08-24T12:00:00.000Z",
+                exitCode: 0,
+              },
+            ],
+            properties: {
+              target: "example.com/test",
+            },
+            results: [
+              {
+                kind: "notApplicable", // could not be checked
+                ruleId: "responsibleDisclosure",
+              },
+              {
+                kind: "fail",
+                ruleId: "dnsSec",
+              },
+            ],
           },
-          dnsSec: {
-            didPass: false,
-          },
-        },
+        ],
       } as any,
       prismaMock as any,
       {
@@ -472,22 +646,41 @@ describe("Report Service Test Suite", () => {
 
     const replacedLastScanDetails = {
       details: {
-        sut: "example.com/test",
-        dnsSec: {
-          didPass: false,
-        },
-        responsibleDisclosure: {
-          didPass: true,
-          actualValue: {
-            "security.txt": "whatever", // from the lastScanDetails NOT from the last scan report
+        runs: [
+          {
+            invocations: [
+              {
+                endTimeUtc: "2021-08-24T12:00:00.000Z",
+                startTimeUtc: "2021-08-24T12:00:00.000Z",
+                exitCode: 0,
+              },
+            ],
+            properties: {
+              target: "example.com/test",
+            },
+            results: [
+              {
+                kind: "pass", // could not be checked
+                ruleId: "responsibleDisclosure",
+
+                properties: {
+                  actualValue: {
+                    "security.txt": "whatever",
+                  },
+                },
+              },
+              {
+                kind: "fail",
+                ruleId: "dnsSec",
+              },
+            ],
           },
-        },
+        ],
       },
-    };
+    } as any;
 
     expect(prismaMock.scanReport.create).toHaveBeenCalledWith({
       data: expect.objectContaining({
-        dnsSec: false,
         responsibleDisclosure: true, // expect the value from the last scan details
       }),
     });
@@ -502,7 +695,7 @@ describe("Report Service Test Suite", () => {
       },
       update: {
         queued: false,
-        lastScan: 4711,
+        lastScan: 1629806400000,
         errorCount: 0,
         hostname: "example.com",
         lastScanDetails: {

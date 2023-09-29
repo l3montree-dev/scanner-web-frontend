@@ -7,10 +7,10 @@ import {
 
 describe("view test suite", () => {
   it.each([
-    [true, CheckResult.Passed],
-    [false, CheckResult.Failed],
+    ["pass" as const, CheckResult.Passed],
+    ["fail" as const, CheckResult.Failed],
     [undefined, CheckResult.Unknown],
-    [null, CheckResult.Unknown],
+    ["notApplicable" as const, CheckResult.Unknown],
   ])(
     "should correctly transform a didPass value to a check result managed by the frontend",
     (param, expected) => {

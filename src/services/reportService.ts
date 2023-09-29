@@ -182,7 +182,7 @@ const combineResults = (
     // get the index of this inspection
     const index = newResultKeyIndexMap[key];
 
-    if (newResult.runs[0].results[index].kind === "notApplicable") {
+    if (newResult.runs[0].results[index]?.kind === "notApplicable") {
       // prefer the lastResults since it holds more information.
       const lastResultIndex = lastResultKeyIndexMap[key];
 
@@ -312,10 +312,11 @@ const handleNewScanReport = async (
 
   const lastScanDetails = combineResults(
     lastReport,
-    lastResults === null
+    !Boolean(lastResults)
       ? null
       : transformDeprecatedReportingSchemaToSarif(
-          lastResults as unknown as { details: DetailsJSON }
+          (lastResults as unknown as { details: DetailsJSON | ISarifResponse })
+            .details
         ),
     result
   );

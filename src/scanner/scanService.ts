@@ -155,10 +155,7 @@ export class ScanService {
         })
       )
     ) as DTO<
-      | ({ details: DetailsJSON } & {
-          target: Omit<Target, "lastScan"> & { lastScan: number };
-        })
-      | (ISarifScanSuccessResponse & {
+      | ({ details: DetailsJSON | ISarifScanSuccessResponse } & {
           target: Omit<Target, "lastScan"> & { lastScan: number };
         })
       | null
@@ -194,7 +191,9 @@ export class ScanService {
         );
 
         const { target, ...rest } = details;
-        const transformed = transformDeprecatedReportingSchemaToSarif(rest);
+        const transformed = transformDeprecatedReportingSchemaToSarif(
+          rest.details
+        );
         return [transformed, { ...target, details: transformed }];
       } else {
         logger.info(
@@ -204,11 +203,7 @@ export class ScanService {
       }
     }
     const result = await this.scanRPC(requestId, sanitizedURI, options);
-    console.log(
-      result.runs[0].results.find(
-        (r) => r.ruleId === OrganizationalInspectionType.ResponsibleDisclosure
-      )
-    );
+
     let detailedTarget: DTO<DetailedTarget> | undefined = undefined;
     if (isScanError(result)) {
       await neverThrow(

@@ -7,17 +7,28 @@ jest.mock("../db/connection", () => ({
   prisma: {},
 }));
 
+const scanReport = {
+  runs: [
+    {
+      invocations: [{ exitCode: 0 }],
+      results: [
+        {
+          kind: "pass",
+          ruleId: "dnssec",
+        },
+      ],
+      properties: {
+        target: "example.com",
+        sut: "",
+      },
+    },
+  ],
+};
+
 describe("ScanService test suite", () => {
   it("should check in the database if there is a scan already existing", async () => {
     const existing = {
-      target: {
-        uri: "https://example.com",
-      },
-      details: {
-        dnsSec: {
-          didPass: true,
-        },
-      },
+      details: scanReport,
     };
     const prismaMock = {
       lastScanDetails: {
@@ -28,29 +39,17 @@ describe("ScanService test suite", () => {
     // it would throw an error if there is no scan already since we are
     // trying to call a method on the empty object (MessageBrokerClient)
     const sut = new ScanService({} as any, prismaMock as any);
-    const [result] = await sut.scanTargetRPC("", existing.target.uri, {
+    const [result] = await sut.scanTargetRPC("", "example.com", {
       refreshCache: false,
       startTimeMS: Date.now(),
     });
 
-    expect(result.result).toEqual({
-      dnsSec: {
-        didPass: true,
-      },
-    });
+    expect(result).toEqual(existing.details);
   });
 
   it("should return the scan report, even if there is an error during the database handling", async () => {
     const msgBrokerClientMock = {
-      call: jest.fn().mockResolvedValue({
-        target: "example.com",
-        timestamp: Date.now(),
-        result: {
-          dnsSec: {
-            didPass: true,
-          },
-        },
-      }),
+      call: jest.fn().mockResolvedValue(scanReport),
     };
 
     const prismaMock = {
@@ -73,25 +72,11 @@ describe("ScanService test suite", () => {
       startTimeMS: Date.now(),
     });
 
-    expect(res.result).toEqual(
-      expect.objectContaining({
-        dnsSec: {
-          didPass: true,
-        },
-      })
-    );
+    expect(res).toEqual(scanReport);
   });
   it("should return the new scan report if the scan was successful", async () => {
     const msgBrokerClientMock = {
-      call: jest.fn().mockResolvedValue({
-        target: "example.com",
-        timestamp: Date.now(),
-        result: {
-          dnsSec: {
-            didPass: true,
-          },
-        },
-      }),
+      call: jest.fn().mockResolvedValue(scanReport),
     };
 
     const prismaMock = {
@@ -115,27 +100,12 @@ describe("ScanService test suite", () => {
       startTimeMS: Date.now(),
     });
 
-    expect(res.result).toEqual(
-      expect.objectContaining({
-        dnsSec: {
-          didPass: true,
-        },
-      })
-    );
+    expect(res).toEqual(scanReport);
   });
 
   it("should save the new scan report inside the database if the scan was successful", async () => {
     const msgBrokerClientMock = {
-      call: jest.fn().mockResolvedValue({
-        target: "example.com",
-        result: {
-          details: {
-            dnsSec: {
-              didPass: true,
-            },
-          },
-        },
-      }),
+      call: jest.fn().mockResolvedValue(scanReport),
     };
 
     const prismaMock = {
@@ -164,10 +134,7 @@ describe("ScanService test suite", () => {
   describe("after scan", () => {
     it("should issue a scan if the site is valid and there is no scan already existing", async () => {
       const msgBrokerClientMock = {
-        call: jest.fn().mockResolvedValue({
-          target: "example.com",
-          result: {},
-        }),
+        call: jest.fn().mockResolvedValue(scanReport),
       };
 
       const prismaMock = {
@@ -197,10 +164,7 @@ describe("ScanService test suite", () => {
     });
     it("should issue a scan if the refresh query parameter is set to true", async () => {
       const msgBrokerClientMock = {
-        call: jest.fn().mockResolvedValue({
-          target: "example.com",
-          result: {},
-        }),
+        call: jest.fn().mockResolvedValue(scanReport),
       };
 
       const prismaMock = {

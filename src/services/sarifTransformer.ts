@@ -288,11 +288,7 @@ export const transformSarifToDeprecatedReportingSchema = (
 };
 
 export const transformDeprecatedReportingSchemaToSarif = (
-  input:
-    | {
-        details: DTO<DetailsJSON>;
-      }
-    | DTO<ISarifScanSuccessResponse>
+  input: DTO<DetailsJSON> | DTO<ISarifScanSuccessResponse>
 ): DTO<ISarifScanSuccessResponse> => {
   // check if the input is already in the new format
   if ("runs" in input) {
@@ -313,7 +309,7 @@ export const transformDeprecatedReportingSchemaToSarif = (
             rules: sarifRules,
           },
         },
-        results: Object.entries(input.details)
+        results: Object.entries(input)
           .filter(
             (el): el is [InspectionType, InspectResultDTO] => el[0] !== "sut"
           )
@@ -343,8 +339,8 @@ export const transformDeprecatedReportingSchemaToSarif = (
         ],
         properties: {
           ipAddress: "0.0.0.0", // this is just a dummy - it was not saved in the old format inside
-          sut: input.details.sut,
-          target: input.details.sut,
+          sut: input.sut,
+          target: input.sut,
         },
       },
     ],

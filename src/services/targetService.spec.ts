@@ -1,4 +1,5 @@
 import { InspectionType } from "../scanner/scans";
+import { ISarifScanErrorResponse } from "../types";
 import { targetService } from "./targetService";
 
 jest.mock("next-auth", () => ({}));
@@ -87,12 +88,39 @@ describe("Target Service Test Suite", () => {
       },
     } as any;
 
-    await targetService.handleTargetScanError(
-      {
-        target: "example.com/test",
-      } as any,
-      prismaMock
-    );
+    const resp: ISarifScanErrorResponse = {
+      $schema: "https://json.schemastore.org/sarif-2.1.0.json",
+      version: "2.1.0",
+      runs: [
+        {
+          tool: {
+            driver: {
+              name: "OZGSEC",
+              rules: [],
+              properties: {
+                scannerIp: "",
+              },
+            },
+          },
+          results: [],
+          invocations: [
+            {
+              exitCode: 1,
+              executionSuccessful: false,
+              startTimeUtc: new Date().toISOString(),
+              endTimeUtc: new Date().toISOString(),
+            },
+          ],
+          properties: {
+            target: "example.com/test",
+            sut: "",
+            ipAddress: "",
+          },
+        },
+      ],
+    };
+
+    await targetService.handleTargetScanError(resp, prismaMock);
     expect(prismaMock.target.upsert).toHaveBeenCalledWith({
       where: {
         uri: "example.com/test",
