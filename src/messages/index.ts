@@ -100,6 +100,11 @@ export const descriptionMapper: { [key in InspectionType]: string } = {
     "Schutz vor nicht autorisierter Umleitung von Datenverkehr",
   [DomainInspectionType.DNSSec]:
     "Sichere Verknüpfung von Internetadresse und Serveradresse",
+  [DomainInspectionType.DANE]: "",
+  [DomainInspectionType.DKIM]: "",
+  [DomainInspectionType.DMARC]: "",
+  [DomainInspectionType.SPF]: "",
+  [DomainInspectionType.STARTTLS]: "",
   [DomainInspectionType.CAA]: "",
   [ContentInspectionType.SubResourceIntegrity]: "",
   [ContentInspectionType.NoMixedContent]: "",
