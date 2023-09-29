@@ -7,12 +7,15 @@ import { getLogger } from "../../../../services/logger";
 import { scanService } from "../../../../scanner/scanService";
 import { InspectionType } from "../../../../scanner/scans";
 import { monitoringService } from "../../../../services/monitoringService";
-import { DetailedTarget, ISarifResponse } from "../../../../types";
+import {
+  getTargetFromResponse,
+  transformSarifToDeprecatedReportingSchema,
+} from "../../../../services/sarifTransformer";
+import { ISarifResponse } from "../../../../types";
 import { isScanError } from "../../../../utils/common";
-import { DTO, getServerSession } from "../../../../utils/server";
+import { getServerSession } from "../../../../utils/server";
 import { staticSecrets } from "../../../../utils/staticSecrets";
 import { displayInspections } from "../../../../utils/view";
-import { getTargetFromResponse } from "../../../../services/sarifTransformer";
 
 const logger = getLogger(__filename);
 
@@ -88,9 +91,12 @@ export async function GET(req: NextRequest) {
         { status: 422 }
       );
     } else {
-      return NextResponse.json(
-        limitToDisplayedInspections(detailedTarget as DTO<DetailedTarget>)
-      );
+      return NextResponse.json({
+        ...detailedTarget,
+        details: transformSarifToDeprecatedReportingSchema(
+          limitToDisplayedInspections({ details: result }).details
+        ),
+      });
     }
   } catch (e: any) {
     console.log(e);

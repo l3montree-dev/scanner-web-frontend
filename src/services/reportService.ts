@@ -188,6 +188,7 @@ const combineResults = (
 
       if (
         lastResults &&
+        lastResults.runs[0].results[lastResultIndex] &&
         lastResults.runs[0].results[lastResultIndex].kind !== "notApplicable"
       ) {
         newResult.runs[0].results[index] =
@@ -308,6 +309,7 @@ const handleNewScanReport = async (
   const lastReport = lastReports.length === 1 ? lastReports[0] : undefined;
 
   const newReport = combineReport(lastReport, scanResult2ScanReport(result));
+
   const lastScanDetails = combineResults(
     lastReport,
     lastResults === null

@@ -268,6 +268,24 @@ export function getSUTFromResponse(
   }
   return sarif.runs[0].properties.sut;
 }
+export const transformSarifToDeprecatedReportingSchema = (
+  input: DTO<ISarifResponse>
+): DTO<DetailsJSON> => {
+  return input.runs[0].results.reduce(
+    (acc, curr) => {
+      acc[curr.ruleId] = {
+        didPass: kind2DidPass(curr.kind),
+        errors: curr.properties.errorIds,
+        recommendations: curr.properties.recommendationIds,
+        actualValue: curr.properties.actualValue,
+      };
+      return acc;
+    },
+    {
+      sut: input.runs[0].properties.sut,
+    } as DTO<DetailsJSON>
+  );
+};
 
 export const transformDeprecatedReportingSchemaToSarif = (
   input:

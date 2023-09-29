@@ -114,7 +114,7 @@ export function useQuicktest(code?: string | null) {
 
     try {
       const response = await clientHttpClient(
-        `/api/v2/scan?site=${encodeURIComponent(
+        `/api/v1/scan?site=${encodeURIComponent(
           report.runs[0].properties.target
         )}&refresh=true&s=${code}`,
         crypto.randomUUID()
