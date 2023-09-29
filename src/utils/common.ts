@@ -292,6 +292,11 @@ export const linkMapper: { [key in InspectionType]: string } = {
   [NetworkInspectionType.RPKI]: "/one-pager/RPKI-One-Pager.pdf",
   [DomainInspectionType.DNSSec]: "/one-pager/DNSSEC-One-Pager.pdf",
   [DomainInspectionType.CAA]: "",
+  [DomainInspectionType.DANE]: "",
+  [DomainInspectionType.DKIM]: "",
+  [DomainInspectionType.DMARC]: "",
+  [DomainInspectionType.SPF]: "",
+  [DomainInspectionType.STARTTLS]: "",
   [OrganizationalInspectionType.ResponsibleDisclosure]:
     "/one-pager/Responsible_Disclosure-One-Pager.pdf",
   [ContentInspectionType.SubResourceIntegrity]: "",

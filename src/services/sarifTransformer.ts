@@ -8,7 +8,7 @@ import { DTO } from "../utils/server";
 
 // can be removed after the migration to the sarif format is done
 // those will be provided by the scanner anyways.
-const sarifRules = [
+export const sarifRules = [
   {
     fullDescription: {
       text: "Checks if all session cookies are secure and http only. The check inspects the Set-Cookie Header. If Expires attribute is set to 0, the cookie is NOT considered a session cookie.",
@@ -221,7 +221,7 @@ const sarifRules = [
   },
 ];
 
-const didPass2Kind = (
+export const didPass2Kind = (
   didPass: boolean | null
 ): "notApplicable" | "pass" | "fail" => {
   if (didPass === null) {

@@ -11,6 +11,7 @@ import { kind2CheckResult } from "../../utils/view";
 import ResultIcon from "../ResultIcon";
 import Spinner from "../common/Spinner";
 import { useSearchParams } from "next/navigation";
+import { didPass2Kind } from "../../services/sarifTransformer";
 
 const parseDate = (date: string) => {
   let [day, month, year] = date.split(".");
@@ -149,7 +150,9 @@ const TrendDiff: FunctionComponent<Props> = ({
                           <span>
                             <ResultIcon
                               size={16}
-                              checkResult={kind2CheckResult(d.now)}
+                              checkResult={kind2CheckResult(
+                                didPass2Kind(d.now)
+                              )}
                             />
                           </span>
                           <span>{d.uri}</span>

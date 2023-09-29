@@ -61,6 +61,11 @@ export const titleMapper = {
   [NetworkInspectionType.RPKI]: "RPKI",
   [DomainInspectionType.DNSSec]: "DNSSEC",
   [DomainInspectionType.CAA]: "CAA",
+  [DomainInspectionType.DANE]: "DANE",
+  [DomainInspectionType.DKIM]: "DKIM",
+  [DomainInspectionType.DMARC]: "DMARC",
+  [DomainInspectionType.SPF]: "SPF",
+  [DomainInspectionType.STARTTLS]: "STARTTLS",
   [OrganizationalInspectionType.ResponsibleDisclosure]:
     "Responsible Disclosure",
   [ContentInspectionType.SubResourceIntegrity]: "Sub Resource Integrity",
