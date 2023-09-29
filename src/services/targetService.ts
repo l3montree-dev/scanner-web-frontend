@@ -198,7 +198,7 @@ const getUserTargetsWithLatestTestResult = async (
     data: targets
       .map((t) => ({
         ...t,
-        details: transformDeprecatedReportingSchemaToSarif(t),
+        details: transformDeprecatedReportingSchemaToSarif(t.details),
       }))
       .map(toDTO),
   };
