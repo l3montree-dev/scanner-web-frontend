@@ -1,12 +1,12 @@
 import { TLSInspectionType } from "../scanner/scans";
-import { DetailedTarget } from "../types";
+import { DetailedTarget, ISarifResponse } from "../types";
 import { DTO } from "../utils/server";
 
-export const getTLSv1_3ReportMessage = (report: DTO<DetailedTarget>) => {
-  if (report.details === null) {
+export const getTLSv1_3ReportMessage = (report: DTO<ISarifResponse> | null) => {
+  if (report === null) {
     return "Die Überprüfung des TLS 1.3 Protokolls konnte nicht durchgeführt werden.";
   }
-  const inspection = report.details.runs[0].results.find(
+  const inspection = report.runs[0].results.find(
     (r) => r.ruleId === TLSInspectionType.TLSv1_3
   );
 

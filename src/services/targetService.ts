@@ -5,15 +5,15 @@ import {
   DetailedTarget,
   Guest,
   ISarifScanErrorResponse,
-  IScanErrorResponse,
   PaginateRequest,
   PaginateResult,
   TargetType,
 } from "../types";
 import { collectionId, getHostnameFromUri } from "../utils/common";
 import { DTO, toDTO } from "../utils/server";
-import { targetCollectionService } from "./targetCollectionService";
 import { getLogger } from "./logger";
+import { targetCollectionService } from "./targetCollectionService";
+import { transformDeprecatedReportingSchemaToSarif } from "./sarifTransformer";
 
 const logger = getLogger(__filename);
 
@@ -195,7 +195,12 @@ const getUserTargetsWithLatestTestResult = async (
     total: targets.length > 0 ? Number(targets[0].totalCount) : 0,
     page: paginateRequest.page,
     pageSize: paginateRequest.pageSize,
-    data: targets.map(toDTO),
+    data: targets
+      .map((t) => ({
+        ...t,
+        details: transformDeprecatedReportingSchemaToSarif(t),
+      }))
+      .map(toDTO),
   };
 };
 

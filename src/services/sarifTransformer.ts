@@ -305,7 +305,7 @@ export const transformDeprecatedReportingSchemaToSarif = (
               ruleId: k,
               ruleIndex: sarifRules.findIndex((el) => el.id === k),
               message: {
-                text: v.didPass === null ? v.actualValue.error.message : "",
+                text: v.didPass === null ? v.actualValue?.error?.message : "",
               },
               properties: {
                 errorIds: v.errors ?? [],

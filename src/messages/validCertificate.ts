@@ -1,14 +1,17 @@
 import { CertificateInspectionType } from "../scanner/scans";
-import { DetailedTarget } from "../types";
+import { ISarifResponse } from "../types";
 import { DTO } from "../utils/server";
 
-export const getValidCertificateMessage = (report: DTO<DetailedTarget>) => {
-  if (report.details === null) {
+export const getValidCertificateMessage = (
+  report: DTO<ISarifResponse> | null
+) => {
+  if (report === null) {
     return `Das Zertifikat der Domain oder des Weiterleitungsziels konnte nicht überprüft werden.`;
   }
   if (
-    report.details[CertificateInspectionType.ValidCertificate]?.didPass ===
-    false
+    report.runs[0].results.find(
+      (r) => r.ruleId === CertificateInspectionType.ValidCertificate
+    )?.kind === "fail"
   ) {
     return `"Das Zertifikat der Domain oder des Weiterleitungsziels ist abgelaufen.`;
   }

@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { toUnicode } from "punycode";
 import { FunctionComponent } from "react";
 import { legendMessages } from "../messages/legend";
-import { DetailedTarget } from "../types";
+import { DetailedTarget, ISarifResponse, IScanResponse } from "../types";
 import { classNames } from "../utils/common";
 import { DTO } from "../utils/server";
 import {
@@ -16,7 +16,7 @@ import Button from "./common/Button";
 import { getSUTFromResponse } from "../services/sarifTransformer";
 
 interface Props {
-  target: DTO<DetailedTarget> | null;
+  report: ISarifResponse | null;
   dateString: string;
   handleRefresh: () => Promise<void>;
   refreshRequest: {
@@ -33,14 +33,14 @@ interface Props {
 }
 
 const ResultEnvelope: FunctionComponent<Props> = ({
-  target,
+  report,
   dateString,
   handleRefresh,
   refreshRequest,
   amountPassed,
 }) => {
-  const sut = getSUTFromResponse(target?.details) ?? "";
-  return target !== null ? (
+  const sut = getSUTFromResponse(report) ?? "";
+  return report !== null ? (
     <div className="md:p-0 text-textblack">
       <div className="md:flex block mb-5 gap-5 flex-row justify-between">
         <div className="md:w-2/3">
@@ -50,12 +50,12 @@ const ResultEnvelope: FunctionComponent<Props> = ({
               target={"_blank"}
               className="text-blau-100"
               rel="noopener noreferrer"
-              href={`//${toUnicode(target.uri)}`}
+              href={`//${toUnicode(report.runs[0].properties.target)}`}
             >
-              {toUnicode(target.uri)}{" "}
+              {toUnicode(report.runs[0].properties.target)}{" "}
             </a>
           </h2>
-          {target.uri !== sut && (
+          {report.runs[0].properties.target !== sut && (
             <h2 className="text-xl">
               Weiterleitung auf:{" "}
               <a
@@ -121,7 +121,7 @@ const ResultEnvelope: FunctionComponent<Props> = ({
       </div>
       {!refreshRequest.isLoading && !refreshRequest.errored && (
         <div>
-          <ResultGrid report={target} />
+          <ResultGrid report={report} />
         </div>
       )}
       {refreshRequest.errored && (

@@ -10,6 +10,12 @@ export enum OrganizationalInspectionType {
 export enum DomainInspectionType {
   DNSSec = "dnsSec",
   CAA = "caa",
+
+  DKIM = "dkim",
+  SPF = "spf",
+  DMARC = "dmarc",
+  STARTTLS = "starttls",
+  DANE = "dane",
 }
 
 export enum NetworkInspectionType {

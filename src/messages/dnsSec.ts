@@ -1,18 +1,18 @@
 import { DomainInspectionType } from "../scanner/scans";
 import { getSUTFromResponse } from "../services/sarifTransformer";
-import { DetailedTarget } from "../types";
+import { ISarifResponse } from "../types";
 import { getUnicodeHostnameFromUri } from "../utils/common";
 import { DTO } from "../utils/server";
 
-export const getDNSSecReportMessage = (report: DTO<DetailedTarget>) => {
-  if (report.details === null) {
+export const getDNSSecReportMessage = (report: DTO<ISarifResponse> | null) => {
+  if (report === null) {
     return "DNSSEC konnte nicht überpüft werden.";
   }
-  const inspection = report.details.runs[0].results.find(
+  const inspection = report.runs[0].results.find(
     (r) => r.ruleId === DomainInspectionType.DNSSec
   );
   const hostname = getUnicodeHostnameFromUri(
-    getSUTFromResponse(report.details) as string
+    getSUTFromResponse(report) as string
   );
   if (!inspection || inspection?.kind === "notApplicable") {
     return `DNSSEC konnte für die Domain ${hostname} nicht überprüft werden.`;

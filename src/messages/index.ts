@@ -10,7 +10,7 @@ import {
   OrganizationalInspectionType,
   TLSInspectionType,
 } from "../scanner/scans";
-import { DetailedTarget, FeatureFlag } from "../types";
+import { FeatureFlag, ISarifResponse } from "../types";
 import { DTO } from "../utils/server";
 import { getDeprecatedTLSDeactivatedReportMessage } from "./deprecatedTLSDeactivated";
 import { getDNSSecReportMessage } from "./dnsSec";
@@ -118,7 +118,7 @@ export const featureFlagMapper: { [key in FeatureFlag]: string } = {
 };
 
 export const getCheckDescription = (
-  report: DTO<DetailedTarget>,
+  report: DTO<ISarifResponse> | null,
   key: keyof typeof messages
 ): string => {
   return messages[key](report) ?? "";

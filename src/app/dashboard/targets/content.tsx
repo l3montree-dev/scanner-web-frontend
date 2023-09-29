@@ -389,7 +389,7 @@ const Content: FunctionComponent<Props> = (props) => {
   const collectionIds = useMemo(() => {
     const collections =
       (searchParams?.get("collectionIds") as string | string[]) ?? [];
-    console.log(collections);
+
     return (Array.isArray(collections) ? collections : collections.split(","))
       .map((c) => +c)
       .filter((c) => c > 0);
@@ -397,7 +397,6 @@ const Content: FunctionComponent<Props> = (props) => {
 
   const handleCollectionFilterToggle = useCallback(
     (collectionId: number) => {
-      console.log("collectionIds", collectionId, collectionIds);
       if (collectionIds.includes(collectionId)) {
         patchQuery({
           collectionIds: collectionIds

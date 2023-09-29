@@ -16,7 +16,7 @@ const Content: FunctionComponent<Props> = (props) => {
     setWebsite,
     scanRequest,
     refreshRequest,
-    target,
+    report,
     dateString,
     amountPassed,
     handleRefresh,
@@ -64,10 +64,10 @@ const Content: FunctionComponent<Props> = (props) => {
           </small>
         )}
       </div>
-      {target !== null && (
+      {report !== null && (
         <div className="pt-5 p-0 mt-2">
           <ResultEnvelope
-            target={target}
+            report={report}
             dateString={dateString}
             handleRefresh={handleRefresh}
             refreshRequest={refreshRequest}

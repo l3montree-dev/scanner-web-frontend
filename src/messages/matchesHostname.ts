@@ -1,15 +1,17 @@
 import { CertificateInspectionType } from "../scanner/scans";
 import { getSUTFromResponse } from "../services/sarifTransformer";
-import { DetailedTarget } from "../types";
+import { ISarifResponse } from "../types";
 import { DTO } from "../utils/server";
 
-export const getMatchesHostnameMessage = (report: DTO<DetailedTarget>) => {
-  if (report.details === null) {
+export const getMatchesHostnameMessage = (
+  report: DTO<ISarifResponse> | null
+) => {
+  if (report === null) {
     return `Das Zertifikat des Servers konnte nicht überprüft werden.`;
   }
 
-  const sut = getSUTFromResponse(report.details);
-  const inspection = report.details.runs[0].results.find(
+  const sut = getSUTFromResponse(report);
+  const inspection = report.runs[0].results.find(
     (r) => r.ruleId === CertificateInspectionType.MatchesHostname
   );
 

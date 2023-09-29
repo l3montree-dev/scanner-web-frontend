@@ -1,5 +1,5 @@
 import { HttpInspectionType } from "../scanner/scans";
-import { DetailedTarget, ErrorCode } from "../types";
+import { ErrorCode, ISarifResponse } from "../types";
 import { DTO } from "../utils/server";
 
 export const immediateActionHTTPErrors = [
@@ -34,11 +34,11 @@ export const getErrorMessage = (code: ErrorCode) => {
   }
 };
 
-export const getHttpMessage = (report: DTO<DetailedTarget>) => {
-  if (report.details === null) {
+export const getHttpMessage = (report: DTO<ISarifResponse> | null) => {
+  if (report === null) {
     return "Die Überprüfung der HTTP Verbindung konnte nicht durchgeführt werden.";
   }
-  const inspection = report.details.runs[0].results.find(
+  const inspection = report.runs[0].results.find(
     (r) => r.ruleId === HttpInspectionType.HTTP
   );
 

@@ -7,21 +7,12 @@ import {
   useRef,
   useState,
 } from "react";
-import {
-  DomainInspectionType,
-  HeaderInspectionType,
-  InspectionType,
-  NetworkInspectionType,
-  OrganizationalInspectionType,
-  TLSInspectionType,
-} from "../scanner/scans";
 import { getErrorMessage } from "../messages/http";
 import { clientHttpClient } from "../services/clientHttpClient";
-import { DetailedTarget, IScanSuccessResponse } from "../types";
+import { ISarifResponse } from "../types";
 import { sanitizeURI } from "../utils/common";
 import { DTO } from "../utils/server";
 import useLoading from "./useLoading";
-import { displayInspections } from "../utils/view";
 
 const isInViewport = (element: HTMLElement) => {
   const rect = element.getBoundingClientRect();
@@ -38,7 +29,7 @@ export function useQuicktest(code?: string | null) {
   const [website, setWebsite] = useState("");
   const scanRequest = useLoading();
   const refreshRequest = useLoading();
-  const [target, setTarget] = useState<null | DTO<DetailedTarget>>(null);
+  const [report, setReport] = useState<null | DTO<ISarifResponse>>(null);
   const router = useRouter();
   const query = useSearchParams();
   const pathname = usePathname();
@@ -55,7 +46,7 @@ export function useQuicktest(code?: string | null) {
       }
       // react will batch those two calls anyways.
       scanRequest.loading();
-      setTarget(null);
+      setReport(null);
       // do the real api call.
       // forward the secret of query param s to the backend
       try {
@@ -73,8 +64,8 @@ export function useQuicktest(code?: string | null) {
             )}`
           );
         }
-        const obj: DTO<DetailedTarget> = await response.json();
-        setTarget(obj);
+        const obj: DTO<ISarifResponse> = await response.json();
+        setReport(obj);
         scanRequest.success();
       } catch (e) {
         scanRequest.error(
@@ -85,7 +76,7 @@ export function useQuicktest(code?: string | null) {
     [scanRequest, code]
   );
   useEffect(() => {
-    if (target) {
+    if (report) {
       const rec = document.getElementById("test-results");
       if (rec && !isInViewport(rec)) {
         window.scrollTo({
@@ -97,7 +88,7 @@ export function useQuicktest(code?: string | null) {
         });
       }
     }
-  }, [target]);
+  }, [report]);
 
   const scannedSite = useRef<null | string>(null);
 
@@ -116,7 +107,7 @@ export function useQuicktest(code?: string | null) {
   }, [query, onSubmit]);
 
   const handleRefresh = async () => {
-    if (!target) {
+    if (!report) {
       return;
     }
     refreshRequest.loading();
@@ -124,7 +115,7 @@ export function useQuicktest(code?: string | null) {
     try {
       const response = await clientHttpClient(
         `/api/v2/scan?site=${encodeURIComponent(
-          target.uri
+          report.runs[0].properties.target
         )}&refresh=true&s=${code}`,
         crypto.randomUUID()
       );
@@ -137,7 +128,7 @@ export function useQuicktest(code?: string | null) {
         );
       }
       const obj = await response.json();
-      setTarget(obj);
+      setReport(obj);
       refreshRequest.success();
     } catch (e) {
       refreshRequest.error(
@@ -147,14 +138,13 @@ export function useQuicktest(code?: string | null) {
   };
 
   const amountPassed = useMemo(() => {
-    if (!target) return 0;
-    return (target.details?.runs[0].results ?? []).filter(
-      (r) => r.kind === "pass"
-    ).length;
-  }, [target]);
+    if (!report) return 0;
+    return (report?.runs[0].results ?? []).filter((r) => r.kind === "pass")
+      .length;
+  }, [report]);
 
-  const dateString = target
-    ? new Date(Number(target.lastScan)).toLocaleString()
+  const dateString = report
+    ? new Date(report.runs[0].invocations[0].startTimeUtc).toLocaleString()
     : "";
 
   const handleSubmit = async (e: FormEvent) => {
@@ -172,7 +162,7 @@ export function useQuicktest(code?: string | null) {
     onSubmit: handleSubmit,
     scanRequest,
     refreshRequest,
-    target,
+    report,
     handleRefresh,
     amountPassed,
     dateString,

@@ -1,6 +1,6 @@
 import { NetworkInspectionType } from "../scanner/scans";
 import { getSUTFromResponse } from "../services/sarifTransformer";
-import { DetailedTarget } from "../types";
+import { ISarifResponse } from "../types";
 import { DTO } from "../utils/server";
 
 const holderStr = (holder?: string) => {
@@ -11,14 +11,16 @@ const holderStr = (holder?: string) => {
   return "";
 };
 
-export default function getRPKIReportMessage(report: DTO<DetailedTarget>) {
-  if (report.details === null) {
+export default function getRPKIReportMessage(
+  report: DTO<ISarifResponse> | null
+) {
+  if (report === null) {
     return `Der RPKI Status der Domain konnte nicht überprüft werden.`;
   }
-  const inspection = report.details.runs[0].results.find(
+  const inspection = report.runs[0].results.find(
     (r) => r.ruleId === NetworkInspectionType.RPKI
   );
-  const uri = getSUTFromResponse(report.details);
+  const uri = getSUTFromResponse(report);
 
   if (!inspection || inspection.kind === "notApplicable") {
     return `Der RPKI Status der Domain ${uri} konnte nicht überprüft werden.`;

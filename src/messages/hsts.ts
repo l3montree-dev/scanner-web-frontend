@@ -1,13 +1,13 @@
 import { HSTSValidationError } from "../scanner/result-enums/header.typings";
 import { HeaderInspectionType } from "../scanner/scans";
-import { DetailedTarget } from "../types";
+import { ISarifResponse } from "../types";
 import { DTO } from "../utils/server";
 
-export const getHSTSReportMessage = (report: DTO<DetailedTarget>) => {
-  if (report.details === null) {
+export const getHSTSReportMessage = (report: DTO<ISarifResponse> | null) => {
+  if (report === null) {
     return "Die Überprüfung des Strict-Transport-Security Headers konnte nicht durchgeführt werden.";
   }
-  const inspection = report.details.runs[0].results.find(
+  const inspection = report.runs[0].results.find(
     (r) => r.ruleId === HeaderInspectionType.HSTS
   );
   if (!inspection || inspection.kind === "notApplicable") {

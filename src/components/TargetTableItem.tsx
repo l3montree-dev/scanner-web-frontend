@@ -136,7 +136,7 @@ const TargetTableItem: FunctionComponent<Props> = ({
           </span>
           <Tooltip
             tooltip={getCheckDescription(
-              target,
+              target.details,
               OrganizationalInspectionType.ResponsibleDisclosure
             )}
           >
@@ -153,7 +153,10 @@ const TargetTableItem: FunctionComponent<Props> = ({
             {titleMapper[TLSInspectionType.TLSv1_3]}
           </span>
           <Tooltip
-            tooltip={getCheckDescription(target, TLSInspectionType.TLSv1_3)}
+            tooltip={getCheckDescription(
+              target.details,
+              TLSInspectionType.TLSv1_3
+            )}
           >
             <ResultIcon
               checkResult={kind2CheckResult(
@@ -168,7 +171,7 @@ const TargetTableItem: FunctionComponent<Props> = ({
           </span>
           <Tooltip
             tooltip={getCheckDescription(
-              target,
+              target.details,
               TLSInspectionType.DeprecatedTLSDeactivated
             )}
           >
@@ -184,7 +187,10 @@ const TargetTableItem: FunctionComponent<Props> = ({
             {titleMapper[HeaderInspectionType.HSTS]}
           </span>
           <Tooltip
-            tooltip={getCheckDescription(target, HeaderInspectionType.HSTS)}
+            tooltip={getCheckDescription(
+              target.details,
+              HeaderInspectionType.HSTS
+            )}
           >
             <ResultIcon
               checkResult={kind2CheckResult(
@@ -198,7 +204,10 @@ const TargetTableItem: FunctionComponent<Props> = ({
             {titleMapper[DomainInspectionType.DNSSec]}
           </span>
           <Tooltip
-            tooltip={getCheckDescription(target, DomainInspectionType.DNSSec)}
+            tooltip={getCheckDescription(
+              target.details,
+              DomainInspectionType.DNSSec
+            )}
           >
             <ResultIcon
               checkResult={kind2CheckResult(
@@ -212,7 +221,10 @@ const TargetTableItem: FunctionComponent<Props> = ({
             {titleMapper[NetworkInspectionType.RPKI]}
           </span>
           <Tooltip
-            tooltip={getCheckDescription(target, NetworkInspectionType.RPKI)}
+            tooltip={getCheckDescription(
+              target.details,
+              NetworkInspectionType.RPKI
+            )}
           >
             <ResultIcon
               checkResult={kind2CheckResult(

@@ -74,7 +74,7 @@ export class ScanService {
       },
       { messageId: requestId }
     );
-    console.log("result", result);
+
     return result;
   }
 

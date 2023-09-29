@@ -9,7 +9,7 @@ import {
   TLSInspectionType,
 } from "../scanner/scans";
 import { immediateActionHTTPErrors } from "../messages/http";
-import { DetailedTarget } from "../types";
+import { DetailedTarget, ISarifResponse } from "../types";
 import { classNames, devOnly, linkMapper } from "../utils/common";
 import {
   CheckResult,
@@ -39,13 +39,13 @@ const immediateActionRequired = [
 type ImmediateActions = typeof immediateActionRequired;
 
 const shouldDisplayImmediateActionRequired = (
-  report: DTO<DetailedTarget>,
+  report: DTO<ISarifResponse>,
   check: ImmediateActions[number]
 ): boolean => {
-  if (report.details === null) {
+  if (report === null) {
     return false;
   }
-  const result = report.details.runs[0].results.find((r) => r.ruleId === check);
+  const result = report.runs[0].results.find((r) => r.ruleId === check);
   if (check === HttpInspectionType.HTTP) {
     return (
       result?.kind === "notApplicable" &&
@@ -58,7 +58,7 @@ const shouldDisplayImmediateActionRequired = (
 };
 
 interface Props {
-  report: DTO<DetailedTarget>;
+  report: DTO<ISarifResponse>;
 }
 
 const ResultGrid: FunctionComponent<Props> = (props) => {
@@ -119,10 +119,9 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
                   description={getCheckDescription(report, key)}
                   link={linkMapper[key]}
                   checkResult={kind2CheckResult(
-                    report.details !== null
-                      ? report.details.runs[0].results.find(
-                          (r) => r.ruleId === key
-                        )?.kind
+                    report !== null
+                      ? report.runs[0].results.find((r) => r.ruleId === key)
+                          ?.kind
                       : null
                   )}
                 />

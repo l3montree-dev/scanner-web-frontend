@@ -1,16 +1,14 @@
 "use client";
 
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import React, { FunctionComponent, useEffect } from "react";
+import { FunctionComponent, useEffect } from "react";
 import { useQuicktest } from "../hooks/useQuicktest";
 import { classNames } from "../utils/common";
+import { useGlobalStore } from "../zustand/global";
 import ReleasePlaceHolder from "./ReleasePlaceholder";
 import ResultEnvelope from "./ResultEnvelope";
 import ScanPageHero from "./ScanPageHero";
-import Image from "next/image";
-import { useGlobalStore } from "../zustand/global";
-import { notificationClient } from "../notifications/notificationClient";
-import { NotificationType } from "../notifications/notifications";
 
 interface Props {
   displayNotAvailable: boolean;
@@ -22,7 +20,7 @@ const IndexContent: FunctionComponent<Props> = ({ displayNotAvailable }) => {
     setWebsite,
     scanRequest,
     refreshRequest,
-    target,
+    report,
     dateString,
     amountPassed,
     handleRefresh,
@@ -57,9 +55,9 @@ const IndexContent: FunctionComponent<Props> = ({ displayNotAvailable }) => {
             website={website}
             scanRequest={scanRequest}
           />
-          <div className={classNames(target && "my-10")}>
+          <div className={classNames(report && "my-10")}>
             <ResultEnvelope
-              target={target}
+              report={report}
               dateString={dateString}
               handleRefresh={handleRefresh}
               refreshRequest={refreshRequest}

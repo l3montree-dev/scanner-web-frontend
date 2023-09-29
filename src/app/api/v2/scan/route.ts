@@ -90,6 +90,7 @@ export async function GET(req: NextRequest) {
     } else {
       return NextResponse.json(
         limitToDisplayedInspections(detailedTarget as DTO<DetailedTarget>)
+          .details
       );
     }
   } catch (e: any) {

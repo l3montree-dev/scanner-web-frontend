@@ -1,24 +1,22 @@
 import { ResponsibleDisclosureValidationError } from "../scanner/result-enums/organizational.typings";
 import { OrganizationalInspectionType } from "../scanner/scans";
 import { getSUTFromResponse } from "../services/sarifTransformer";
-import { DetailedTarget } from "../types";
+import { ISarifResponse } from "../types";
 import { getUnicodeHostnameFromUri } from "../utils/common";
 import { DTO } from "../utils/server";
 
 export const getResponsibleDisclosureReportMessage = (
-  report: DTO<DetailedTarget>
+  report: DTO<ISarifResponse> | null
 ) => {
-  if (report.details === null) {
+  if (report === null) {
     return `Die Datei /.well-known/security.txt konnte nicht überprüft werden.`;
   }
 
-  const inspection = report.details.runs[0].results.find(
+  const inspection = report.runs[0].results.find(
     (r) => r.ruleId === OrganizationalInspectionType.ResponsibleDisclosure
   );
 
-  const uri = getUnicodeHostnameFromUri(
-    `http://${getSUTFromResponse(report.details)}`
-  );
+  const uri = getUnicodeHostnameFromUri(`http://${getSUTFromResponse(report)}`);
   if (!inspection || inspection.kind === "notApplicable") {
     return `Die Datei ${uri}/.well-known/security.txt konnte nicht überprüft werden.`;
   } else if (inspection.kind === "pass") {

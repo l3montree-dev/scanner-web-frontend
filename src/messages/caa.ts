@@ -1,16 +1,16 @@
 import { DomainInspectionType } from "../scanner/scans";
 import { getSUTFromResponse } from "../services/sarifTransformer";
-import { DetailedTarget } from "../types";
+import { DetailedTarget, ISarifResponse } from "../types";
 import { DTO } from "../utils/server";
 
-export const getCAAReportMessage = (report: DTO<DetailedTarget>) => {
-  if (report.details === null) {
+export const getCAAReportMessage = (report: DTO<ISarifResponse> | null) => {
+  if (report === null) {
     return "Die Überprüfung nach CAA Einträgen konnte nicht durchgeführt werden.";
   }
-  const inspection = report.details.runs[0].results.find(
+  const inspection = report.runs[0].results.find(
     (r) => r.ruleId === DomainInspectionType.CAA
   );
-  const uri = getSUTFromResponse(report.details);
+  const uri = getSUTFromResponse(report);
   if (
     inspection === null ||
     inspection === undefined ||
