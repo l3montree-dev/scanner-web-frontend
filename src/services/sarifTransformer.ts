@@ -269,7 +269,7 @@ export function getSUTFromResponse(
   return sarif.runs[0].properties.sut;
 }
 export const transformSarifToDeprecatedReportingSchema = (
-  input: DTO<ISarifResponse>
+  input: DTO<ISarifScanSuccessResponse>
 ): DTO<DetailsJSON> => {
   return input.runs[0].results.reduce(
     (acc, curr) => {

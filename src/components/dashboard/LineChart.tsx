@@ -309,7 +309,7 @@ const LineChart: FunctionComponent<Props> = ({
                   },
                 }}
                 //  interpolation={"basis"}
-                labels={(label) => {
+                labels={(label: any) => {
                   if (+label.index === d.series.length - 1) {
                     return `${label.datum.y.toFixed(1)}%`;
                   }
