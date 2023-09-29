@@ -59,6 +59,12 @@ model ScanReport {
   certificateTransparency Boolean?
   validCertificateChain   Boolean?
 
+  dane Boolean?
+  dkim Boolean?
+  dmarc Boolean?
+  spf  Boolean?
+  starttls Boolean?
+
   @@index([createdAt])
   @@index([uri])
   @@map("scan_reports")
