@@ -63,7 +63,7 @@ const Header: FunctionComponent<{ session: ISession | null }> = ({
                             </a>
                             <br />
                             Sprechstunde
-                            <br /> (Mi. 10:00 - 12:00 Uhr)
+                            <br /> (Mo. 10:00 - 12:00 Uhr)
                           </span>
                         </div>
                         <div

@@ -71,7 +71,7 @@ const EmptyDashboardNotice = () => {
                   0208 78012422
                 </a>
                 <br />
-                Sprechstunde (Mi. 10:00 - 12:00 Uhr)
+                Sprechstunde (Mo. 10:00 - 12:00 Uhr)
               </span>
             </div>
             <div key="one-pager" className="flex gap-x-3">
