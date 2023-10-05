@@ -62,7 +62,7 @@ const InfoContent: FunctionComponent<Props> = ({ displayNotAvailable }) => {
           <a href="tel:+4920878012422" className="font-normal">
             0208 78012422
           </a>{" "}
-          (Mi. 10-12 Uhr)
+          (Mo. 10-12 Uhr)
           <br />
           <a href="mailto:ozgsec@bmi.bund.de">ozgsec@bmi.bund.de</a>
           <br />
