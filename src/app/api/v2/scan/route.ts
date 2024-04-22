@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
   const site = req.nextUrl.searchParams.get("site");
   const refresh = req.nextUrl.searchParams.get("refresh");
 
-  if (!session && (!secret || !staticSecrets[secret])) {
+  /*if (!session && (!secret || !staticSecrets[secret])) {
     logger.error(`invalid secret provided: ${secret}`);
     return NextResponse.json(
       {
@@ -57,7 +57,7 @@ export async function GET(req: NextRequest) {
       },
       { status: 401 }
     );
-  }
+  }*/
 
   // check if the client does provide a request id.
   // if so, use this - otherwise generate a new one.

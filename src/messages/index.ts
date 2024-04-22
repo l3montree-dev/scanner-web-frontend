@@ -1,4 +1,5 @@
 import {
+  AccessiblityInspectionType,
   CertificateInspectionType,
   ContentInspectionType,
   CookieInspectionType,
@@ -17,6 +18,7 @@ import { getDNSSecReportMessage } from "./dnsSec";
 import { getHSTSReportMessage } from "./hsts";
 import { getHttpMessage } from "./http";
 import { getMatchesHostnameMessage } from "./matchesHostname";
+import { getProvidesEnglishWebsiteVersionMessage } from "./providesEnglishWebsiteVersion";
 import { getResponsibleDisclosureReportMessage } from "./responsibleDisclosure";
 import getRPKIReportMessage from "./rpki";
 import { getTLSv1_3ReportMessage } from "./tlsv1_3";
@@ -34,6 +36,9 @@ export const messages = {
   [CertificateInspectionType.MatchesHostname]: getMatchesHostnameMessage,
   [CertificateInspectionType.ValidCertificate]: getValidCertificateMessage,
   [HttpInspectionType.HTTP]: getHttpMessage,
+
+  [AccessiblityInspectionType.ProvidesEnglishWebsiteVersion]:
+    getProvidesEnglishWebsiteVersionMessage,
 };
 
 export const titleMapper = {
@@ -77,6 +82,9 @@ export const titleMapper = {
   [HeaderInspectionType.XFrameOptions]: "X-Frame-Options",
   [HeaderInspectionType.XSSProtection]: "X-XSS-Protection",
   [HeaderInspectionType.ContentTypeOptions]: "Content-Type-Options",
+
+  [AccessiblityInspectionType.ProvidesEnglishWebsiteVersion]:
+    "Englische Website-Version",
 };
 
 export const descriptionMapper: { [key in InspectionType]: string } = {
@@ -121,6 +129,9 @@ export const descriptionMapper: { [key in InspectionType]: string } = {
   [HeaderInspectionType.XFrameOptions]: "",
   [HeaderInspectionType.XSSProtection]: "",
   [HeaderInspectionType.ContentTypeOptions]: "",
+
+  [AccessiblityInspectionType.ProvidesEnglishWebsiteVersion]:
+    "Bereitstellung einer internationalen Version der Website",
 };
 
 export const featureFlagMapper: { [key in FeatureFlag]: string } = {

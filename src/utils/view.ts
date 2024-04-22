@@ -8,6 +8,7 @@ import resolveConfig from "tailwindcss/resolveConfig";
 import tinycolor from "tinycolor2";
 import tailwindConfig from "../../tailwind.config";
 import {
+  AccessiblityInspectionType,
   DomainInspectionType,
   HeaderInspectionType,
   InspectionType,
@@ -94,6 +95,8 @@ export const displayInspections: Array<InspectionType> = [
   HeaderInspectionType.HSTS,
   DomainInspectionType.DNSSec,
   NetworkInspectionType.RPKI,
+
+  AccessiblityInspectionType.ProvidesEnglishWebsiteVersion,
 ];
 
 const fullConfig = resolveConfig(tailwindConfig);

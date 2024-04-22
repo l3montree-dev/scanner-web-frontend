@@ -1,5 +1,7 @@
 import { FunctionComponent } from "react";
+import { immediateActionHTTPErrors } from "../messages/http";
 import {
+  AccessiblityInspectionType,
   CertificateInspectionType,
   DomainInspectionType,
   HeaderInspectionType,
@@ -8,8 +10,7 @@ import {
   OrganizationalInspectionType,
   TLSInspectionType,
 } from "../scanner/scans";
-import { immediateActionHTTPErrors } from "../messages/http";
-import { DetailedTarget, ISarifResponse } from "../types";
+import { ISarifResponse } from "../types";
 import { classNames, devOnly, linkMapper } from "../utils/common";
 import {
   CheckResult,
@@ -28,6 +29,8 @@ const regularChecks = [
   HeaderInspectionType.HSTS,
   DomainInspectionType.DNSSec,
   NetworkInspectionType.RPKI,
+
+  AccessiblityInspectionType.ProvidesEnglishWebsiteVersion,
 ] as const;
 
 const immediateActionRequired = [

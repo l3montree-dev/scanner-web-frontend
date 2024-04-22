@@ -40,6 +40,7 @@ import {
 } from "../../../notifications/notifications";
 import { withAuthProvider } from "../../../providers/AuthProvider";
 import {
+  AccessiblityInspectionType,
   DomainInspectionType,
   HeaderInspectionType,
   InspectionType,
@@ -705,7 +706,9 @@ const Content: FunctionComponent<Props> = (props) => {
                       <div>
                         <CheckStateMenu
                           onChange={handleFilterCheckState}
-                          inspectionType={NetworkInspectionType.RPKI}
+                          inspectionType={
+                            AccessiblityInspectionType.ProvidesEnglishWebsiteVersion
+                          }
                         />
                       </div>
                     </th>

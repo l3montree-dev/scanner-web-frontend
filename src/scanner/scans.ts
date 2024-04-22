@@ -1,3 +1,7 @@
+export enum AccessiblityInspectionType {
+  ProvidesEnglishWebsiteVersion = "providesEnglishWebsiteVersion",
+}
+
 export enum ContentInspectionType {
   SubResourceIntegrity = "subResourceIntegrity",
   NoMixedContent = "noMixedContent",
@@ -75,7 +79,8 @@ export type InspectionType =
   | DomainInspectionType
   | OrganizationalInspectionType
   | ContentInspectionType
-  | HeaderInspectionType;
+  | HeaderInspectionType
+  | AccessiblityInspectionType;
 
 export const InspectionTypeEnum = {
   ...HttpInspectionType,

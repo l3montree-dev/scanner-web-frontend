@@ -9,6 +9,7 @@ import { FunctionComponent, useMemo } from "react";
 import { useIsGuest } from "../hooks/useIsGuest";
 import useLoading from "../hooks/useLoading";
 import {
+  AccessiblityInspectionType,
   DomainInspectionType,
   HeaderInspectionType,
   NetworkInspectionType,
@@ -218,17 +219,23 @@ const TargetTableItem: FunctionComponent<Props> = ({
         </td>
         <td className="px-4 py-2 lg:p-2 col-span-8 flex lg:table-cell flex-row justify-between items-center">
           <span className="lg:hidden text-sm opacity-75">
-            {titleMapper[NetworkInspectionType.RPKI]}
+            {
+              titleMapper[
+                AccessiblityInspectionType.ProvidesEnglishWebsiteVersion
+              ]
+            }
           </span>
           <Tooltip
             tooltip={getCheckDescription(
               target.details,
-              NetworkInspectionType.RPKI
+              AccessiblityInspectionType.ProvidesEnglishWebsiteVersion
             )}
           >
             <ResultIcon
               checkResult={kind2CheckResult(
-                detailsMap[NetworkInspectionType.RPKI]?.kind
+                detailsMap[
+                  AccessiblityInspectionType.ProvidesEnglishWebsiteVersion
+                ]?.kind
               )}
             />
           </Tooltip>

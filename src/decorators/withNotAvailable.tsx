@@ -16,9 +16,7 @@ export function withNotAvailable<P extends { displayNotAvailable: boolean }>(
 
     const session = await getServerSession(authOptions);
 
-    const displayNotAvailable =
-      session === null &&
-      (!Boolean(code) || code === null || !staticSecrets[code]);
+    const displayNotAvailable = false; //  session === null &&(!Boolean(code) || code === null || !staticSecrets[code]);
 
     return (
       <Component

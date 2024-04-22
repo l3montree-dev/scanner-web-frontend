@@ -23,6 +23,8 @@ model ScanReport {
 
   sut String?
 
+  providesEnglishWebsiteVersion Boolean?
+
   subResourceIntegrity  Boolean?
   noMixedContent        Boolean?
   responsibleDisclosure Boolean?
