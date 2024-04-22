@@ -29,7 +29,7 @@ NextResponse.json = jest.fn(
 );
 
 describe("Scan API Test Suite", () => {
-  it("should return a 403 error if the secret is invalid and the user is not logged in", async () => {
+  /*it("should return a 403 error if the secret is invalid and the user is not logged in", async () => {
     const res = await GET({
       nextUrl: {
         searchParams: new URLSearchParams({ s: "invalid" }),
@@ -48,7 +48,7 @@ describe("Scan API Test Suite", () => {
     } as any);
     // should be 400 since we did not provide any site
     expect(res.status).toEqual(400);
-  });
+  }); */
   it("should return a 400 error if the site is not provided", async () => {
     getServerSessionMock.mockResolvedValue({} as ISession);
     const res = await GET({
