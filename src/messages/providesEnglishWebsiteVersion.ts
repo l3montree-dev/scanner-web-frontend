@@ -14,13 +14,13 @@ export const getProvidesEnglishWebsiteVersionMessage = (
 
   switch (inspection?.kind) {
     case "fail":
-      return `Die Website ist nicht in englischer Sprache verfügbar. Konfidenz: ${
+      return `Die Website ist nicht in englischer Sprache verfügbar. Konfidenz: ${Math.round(
         (1 - inspection.properties.actualValue.propability) * 100
-      }%`;
+      )}%`;
     case "pass":
-      return `Die Website ist in englischer Sprache verfügbar. Konfidenz: ${
+      return `Die Website ist in englischer Sprache verfügbar. Konfidenz: ${Math.round(
         inspection.properties.actualValue.propability * 100
-      }%`;
+      )}%`;
     default:
       return "Die Überprüfung, ob die Website auch in englischer Sprache verfügbar ist, konnte nicht durchgeführt werden.";
   }
