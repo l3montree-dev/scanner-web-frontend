@@ -19,6 +19,7 @@ import { Network, User } from "@prisma/client";
 import ip from "ip";
 import { toUnicode } from "punycode/";
 import {
+  AccessiblityInspectionType,
   CertificateInspectionType,
   ContentInspectionType,
   CookieInspectionType,
@@ -308,6 +309,8 @@ export const linkMapper: { [key in InspectionType]: string } = {
   [HeaderInspectionType.XFrameOptions]: "",
   [HeaderInspectionType.XSSProtection]: "",
   [HeaderInspectionType.ContentTypeOptions]: "",
+
+  [AccessiblityInspectionType.ProvidesEnglishWebsiteVersion]: "",
 };
 
 export type Normalized<T> = {

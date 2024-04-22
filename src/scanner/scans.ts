@@ -92,6 +92,8 @@ export const InspectionTypeEnum = {
   ...OrganizationalInspectionType,
   ...ContentInspectionType,
   ...HeaderInspectionType,
+
+  ...AccessiblityInspectionType,
 };
 export type InspectResultDTO =
   | SuccessInspectResultDTO
