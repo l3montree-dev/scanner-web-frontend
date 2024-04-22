@@ -6,7 +6,7 @@
 quicktest:
   image:
     pullPolicy: IfNotPresent
-    tag: "latest"
+    tag: "unstable"
   scanInterval: "5"
   imagePullSecrets:
     - name: regcred-ozgsec
