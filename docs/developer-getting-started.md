@@ -7,7 +7,7 @@
 5. Starten Sie das Frontend im Entwicklungsmodus: `npm run dev`
 6. Rufen Sie das Frontend in Ihrem Browser auf: [http://localhost:3000](http://localhost:3000)
 
-#### Vorraussetzungen
+#### Voraussetzungen
 
 - Es muss Docker installiert sein.
 - Es muss Docker-Compose installiert sein.
