@@ -1,108 +1,47 @@
-## Getting Started
+**Inhalte / Schnellnavigation**
 
-First, run the development server:
+[[_TOC_]]
 
-```bash
-npm run de
-# or
-yarn dev
-```
+# OZG Security Challenge - Web Frontend
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-During development it might be hard to read the JSON logs inside the terminal. Since the [pino](https://github.com/pinojs/pino) logger is used inside the project, the [pino-pretty](https://github.com/pinojs/pino-pretty) package can be used to improve the logging output.
+In diesem Repository finden Sie das Web Frontend, welches im Rahmen der OZG-Security-Challenge entwickelt wurde. Das Frontend stellt die Ergebnisse des [Best Practice Scanner](https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-best-practice-scanner) (ein Tool, das es ermöglicht, die IT-Sicherheit und die Umsetzung von Best Practices von Webseiten zu überprüfen) dar. 
 
 
-## Security Monitoring
+### Hintergrund
 
-The application can monitor the security state of selected sites. The requirements for this are:
+Mit der zunehmenden Digitalisierung der öffentlichen Verwaltung steigt die Bedeutung der zugrundeliegenden Informationssicherheit. Bürgerinnen, Bürger und Unternehmen erwarten, dass der Staat vertrauensvoll mit ihren persönlichen Daten umgeht und diese durch ein hohes Maß an IT-Sicherheit schützt. Das [Bundesministerium des Innern und für Heimat (BMI)](https://www.bmi.bund.de/DE/startseite/startseite-node.html) möchte daher die Steigerung der IT-Sicherheit bei der OZG-Umsetzung weiter vorantreiben und hat in Zusammenarbeit mit dem [Bundesamt für Sicherheit in der Informationstechnik (BSI)](https://www.bsi.bund.de/DE/Home/home_node.html) die „OZG-Security-Challenge 2023“ ins Leben gerufen. In diesem Rahmen wurde der „OZG-Security-Schnelltest“ und die hier vorliegende zugehörige „Web Frontend“-Komponente entwickelt.
 
-1. It needs a Kubernetes leader election sidecar
-2. The environment variables:
-    - LEADER_ELECTOR_URL
-    - POD_NAME
 
-   need to be defined.
-3. A file with the name `ozgsec.json` needs to be placed inside the root directory. It has to match this interface:
+## Features
 
-```json
-[
- {
-      "uri": "example.com",
-      "interval": 10000,
- }
- ...
-]
-```
+- Self-Service Prüfung des Umsetzungsgrades der folgenden Best Practices (**Beta**):
+  - Responsible Disclosure: Meldung von Schwachstellen vor Veröffentlichung
+  - Transport Layer Security (TLS) 1.3: Aktuelle Verschlüsselung der Kommunikation zwischen Bürgerinnen, Bürgern und OZG-Dienst
+  - TLS 1.0 & 1.1 deaktivieren: Veraltete Verschlüsselung deaktivieren
+  - HTTP Strict Transport Security (HSTS): Sicherstellung verschlüsselter Kommunikation zwischen Bürgerinnen, Bürgern und OZG-Dienst
+  - Domain Name System Security Extensions (DNSSEC): Sichere Verknüpfung von Internetadresse und Serveradresse
+  - Resource Public Key Infrastructure (RPKI): Schutz vor nicht autorisierter Umleitung von Datenverkehr
 
-The `interval` is used to specify the interval in SECONDS in which the site is checked. The default value is (60 * 60 * 4)s - 4 hours.
+-  Erklärungen und Hinweise zur Umsetzung der IT-Sicherheitsmaßnahmen ([Onepager](https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/tree/main/public/one-pager)), aufbereitet mit einer „Management Summary“, einer „Erläuterung für Onlinedienst-Verantwortliche“ und einem „Technischen Umsetzungsansatz“.
 
-## Deployment
+- Kontinuierliche Überprüfung von hinterlegten Webseiten
 
-The application can be deployed using a docker container or a kubernetes helm chart.
+- Dashboards zur Visualisierung der Ergebnisse
 
-### Docker Container
+- Verwalten von Domains in Gruppen 
 
-The following environment variables need to be provided:
+- Teilen von Auswertungen einer Gruppe (read-only link Sharing)
 
-```env
-MONGODB_PASSWORD="secret"
-MONGODB_USER="ozgsec"
-MONGODB_HOST="localhost"
-MONGODB_PORT="27017"
-MONGODB_DATABASE="ozgsec"
-```
+- API zur Integration in bestehende Systeme
 
-The container can be started with the following command:
+Hier finden Sie weitere Erläuterungen und Screenshots: [Erläuterungen der Features](./docs/features.md)
 
-```bash
-docker run registry.gitlab.com/ozg-security/ozgsec-security-quick-test/main
-```
 
-### Helm Chart
+## Mitarbeit
 
-#### MUST READ
-The application will not start since an influxdb token needs to be created for it to communicate with the influx database. This step cannot be handled by the helm chart itself. To create a token, login using the administration user. The credentials of the administrator can be found inside the `influxdb-credentials` secret. After that create a secret which matches the following format:
+Möchten Sie sich an der Weiterentwicklung beteiligen? Bringen Sie sich gerne aktiv, z. B. mit Änderungsvorschlägen (Merge Requests) oder durch Anwendungsfragen bzw. Vorschläge hier in diesem Repository ein. Weitere Informationen dazu finden Sie hier: [Mitwirkung](./CONTRIBUTING.md).
 
-```yaml
-apiVersion: v1
-metadata:
-  name: influxdb-token # important!
-kind: Secret
-data:
-  token: <the api token>
-type: Opaque
-```
 
-Besides that, a hackertarget api key needs to be created. This can be done by creating a secret which matches the following format:
+## Lizenz
 
-```yaml
-apiVersion: v1
-metadata:
-  name: hackertarget-api-key # important!
-kind: Secret
-data:
-  hackertarget-api: <the api key>
-type: Opaque
-```
-
-It is recommended to create an api token with limited capabilities. Only the write capability is required.
-
-The helm chart includes the following setup:
-
-1. A deployment with a single replica
-2. A mongodb database
-3. A influxdb database for monitoring purposes
-4. A sidecar setup to monitor the incoming requests
-
-The [values.example.yaml](./helm-chart/values.example.yaml) provides a good overview of the configuration options.
-
-The helm chart can be installed using the following commands:
-
-```bash
-helm repo add ozgsec https://gitlab.com/api/v4/projects/39163451/packages/helm/ozgsec
-```
-
-```bash
-helm install ozgsec ozgsec/ozgsec
-```
+Dieses Projekt ist lizenziert unter der [EUPL-1.2](./LICENSE.md) Lizenz.
