@@ -1,6 +1,6 @@
 ## Lokaler Schnellstart
 
-1. Clonen Sie das Repository: `git clone git@gitlab.opencode.de:bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-best-practice-scanner.git`
+1. Clonen Sie das Repository: `git clone git@gitlab.opencode.de:bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend.git`
 2. Legen Sie Ihre lokale Konfiguration an: `cp .env.example .env.local`
 3. Starten Sie die notwendigen Dienste: `docker-compose up -d`
 4. Installieren Sie die Abhängigkeiten: `npm install`
