@@ -2,24 +2,24 @@
 Hash: SHA256
 
 Contact: mailto:ozgsec@neuland-homeland.de
-Expires: 2023-12-31T23:00:00.000Z
-Encryption: https://ozgsec.de/ozgsec@neuland-homeland.de-0x52AC2F9AABDD3852-pub.asc
+Expires: 2024-12-31T23:00:00.000Z
+Encryption: https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/blob/main/public/ozgsec@neuland-homeland.de-0x52AC2F9AABDD3852-pub.asc
 Preferred-Languages: en, de
-Canonical: https://ozgsec.de/.well-known/security.txt
+Canonical: https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/blob/main/public/.well-known/security.txt
 -----BEGIN PGP SIGNATURE-----
 
-iQJPBAEBCAA5FiEEf6UQ6m1bQE+kne3dUqwvmqvdOFIFAmPJZnYbHG96Z3NlY0Bu
-ZXVsYW5kLWhvbWVsYW5kLmRlAAoJEFKsL5qr3ThSMuEQALx1XHnkF0dEpukUur3w
-Zc3mSe0kbWU8W3g8pzmXu7Bpm35tvbEDP0wx+zAaBzsL3K+JPIcNRMODI8+2DDXA
-Wfrc/usTKiF2Xmzk2Dl7zfSxhx5mW42FoYtPgSM6MXXtTzVKJBriXLwUv3lrJuLm
-cCqRM7GzLTXUcKzKh0QIbhl7RuMHdQ5PpSygMkbIRO/AKET7R6YWkErlX/vdblfg
-wcO2q5SEv6kP0i3tuGQF8jYiqRUD6RGb3Xu0oHBIAJZV/vBBzAU1pOszYIPAQLyd
-sKxn676P5HYmyMOChcoWC873ZnKYurY1xzxJlYPae5SP2GSLu9kkWXoutswtjn6K
-dNFcLKf7vuWXycc31W6Fi6BApB08AWzXVVkWd9kR+fKGofV8jAf7nQG9XZibPt9L
-TK/viUleizfhHcBPMgWf2XR938vKFWcHkegTd/M5czj+wY7KLp9cnPs2Ca7qN93K
-6gx3D5M/Otr81lkN3pFW5P9RJU0KF1ACGQHXIMpWvwrFUd4ilgnZ6srUJINZGzIt
-9/RmPG//iWRmQ5ZKhnxlKH14pYhOvTt8myzfzefh026C1ZsZq5MyatNJu4JnYCr/
-2xuZXvBgl0tqFrBh8eFfy333CqmX/PNRXP0rPTs7k7HAhtqA6UNSvF52zzB/IM/o
-B97hPDLgicKLIJfSCimXvWps
-=U8lF
+iQJPBAEBCAA5FiEEf6UQ6m1bQE+kne3dUqwvmqvdOFIFAmYrdecbHG96Z3NlY0Bu
+ZXVsYW5kLWhvbWVsYW5kLmRlAAoJEFKsL5qr3ThS8XIP/ikENYTN4AJaCL0ueNCd
++MDqE2dRnllULpcrnmWnpei356o7rs1f0ssaQNuUeOlhypnzQ6Iy0yHPXxJj7UWF
+UU4kdjQvqKA1otckcCT3kBf2vExHy3nwuFkKyCmj/F2QgwEaIDxXBUR0o9kFdVzN
+WWXe6VTenLNKK4e3j/oP6/nX43lmFTo/0FcF009Jj0hAIIeozwUx0pp7k/HOsWe7
+FXZTh2STwwd44w0SjgVX8CKaJagaUt+1bav46dMOVyFKq1RdhlDZ+o8kojwd+XOG
+Q5YwDw9S280DgIXVTqDucKvzy4I5Iu/t692061IcnuCzWF9h44PaO9S7qF7jFeS0
+z8koE4xV8LOijahbvv3kJ5RGRPBVxzTMpYa58hdrrlUXIVu6cQyqB2Kl6jMnztyH
+g0dGERfFp9/JLJBvjSJScTxGojOS9932MsqArnuu/JFtLYAZWPAFtku/CwycZxIk
+uaj+YM5j+e8fbPnpv4clC5+qy/LIgNqCMkcBfRGWIndmVdI5XFIYlbWqvfTI4dIj
+ILu2ehkTcbep7DwYMNsIgJtVB49S0iaytv4Kr5Vugch5L4n/pUS1r0E7Te2uA6qZ
+TGmOilqw3FHHOdJX1EGsdm+JUXC5XRR3hDrP3tJamND0iToS+bge9niPse0ItuHb
+hIJXJiyJbW9WrhVUbS6Ng78q
+=vSyi
 -----END PGP SIGNATURE-----
