@@ -1,224 +1,170 @@
 variables:
-    GIT_SUBMODULE_STRATEGY: recursive
+  GIT_SUBMODULE_STRATEGY: recursive
 
 stages:
-    - test
-    - build
-    - scan
-    - publish
-  
-gitguardianscan:
-    image: gitguardian/ggshield:v1.13.6@sha256:9dc9cf675acd2c9a59718cb65847a97b4c86e0ce07e7c178265aadd89f11cae1
-    stage: test
-    script: ggshield secret scan ci
-    rules:
-      - if: '$CI_COMMIT_REF_PROTECTED == "true"'
+- test
+- tag
+- build
+- container-scanning
+- publish
+- sign
 
+.oci:login:
+  stage: test
+  script:
+  - &oci_login |
+    export VERSION="1.1.0"
+    curl -LO "https://github.com/oras-project/oras/releases/download/v${VERSION}/oras_${VERSION}_linux_amd64.tar.gz"
+    mkdir -p oras-install/
+    tar -zxf oras_${VERSION}_*.tar.gz -C oras-install/
+    mv oras-install/oras /usr/local/bin/
+    rm -rf oras_${VERSION}_*.tar.gz oras-install/
+    echo "$CI_JOB_TOKEN" | oras login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
+
+
+secret-scanning:
+  image: zricethezav/gitleaks:v8.18.1
+  stage: test
+  variables:
+    GIT_DEPTH: 1
+  script:
+  - gitleaks -v detect --baseline-path gitleaks-report.json
+
+static-application-security-testing:
+  image: returntocorp/semgrep
+  stage: test
+  script:
+  - semgrep scan --config=p/ci .
+
+software-composition-analysis:
+  image: node:20
+  stage: test
+  script:
+  # fail on critical
+  - npm audit --audit-level=critical
 
 jest:
-    image: node:18@sha256:9d8a6466c6385e05f62f8ccf173e80209efb0ff4438f321f09ddf552b05af3ba
-    stage: test
-    script:
-        - npm i --force --include=dev
-        - "npx jest --ci --reporters=default --reporters=jest-junit"
-    artifacts:
-        when: always
-        reports:
-            junit:
-                - junit.xml
+  image: node:20.12.2-buster@sha256:57fe11caf946b3bdcbe370a444ab1d7102123421e62157f62516b2abd4d9b7ae
+  stage: test
+  script:
+  - npm i --force --include=dev
+  - "npx jest --ci --reporters=default --reporters=jest-junit"
+  artifacts:
+    when: always
+    reports:
+      junit:
+      - junit.xml
 
-# .lighthouse:
-#   image: cypress/browsers:node16.17.0-chrome106
-#   stage: test
-#   variables:
-#     NEXTAUTH_SECRET: TipnQPvS70R6hdyRMr54wdjHLuxtpCmy
-#   script:
-#     - npm ci --include=dev
-#     - npm run build
-#     - npm run lighthouse -- --output="json,html" $LIGHTHOUSE_ARGUMENTS
-
-
-# lighthouse:desktop:
-#   extends: .lighthouse
-#   variables:
-#     LIGHTHOUSE_ARGUMENTS: '--preset=desktop'
-#     FORM_FACTOR: 'desktop'
-#   artifacts:
-#     when: always
-#     expose_as: 'Lighthouse Report Desktop'
-#     paths:
-#       - .lighthouseci
-
-# lighthouse:mobile:
-#   extends: .lighthouse
-#   variables:
-#     LIGHTHOUSE_ARGUMENTS: '--preset=mobile'
-#     FORM_FACTOR: 'mobile'
-#   artifacts:
-#     when: always
-#     expose_as: 'Lighthouse Report Mobile'
-#     paths:
-#       - .lighthouseci
-
-.docker:build:
-  stage: build
+tag:
+  stage: tag
   needs: []
   dependencies: []
-  image:
-      name: gcr.io/kaniko-project/executor:v1.9.2-debug
-      entrypoint: [""]
   script:
-      - /kaniko/executor
-        --cleanup
-        --no-push
-        --context $CI_PROJECT_DIR
-        --dockerfile $CI_PROJECT_DIR/Dockerfile
-        --destination $IMAGE_TAG
-        --build-arg
-        NEXT_PUBLIC_ENVIRONMENT=$NEXT_PUBLIC_ENVIRONMENT
-        --build-arg
-        NEXT_PUBLIC_SENTRY_DSN=$NEXT_PUBLIC_SENTRY_DSN
-        --build-arg
-        SENTRY_AUTH_TOKEN=$SENTRY_AUTH_TOKEN
-        --build-arg
-        SENTRY_RELEASE=$SENTRY_RELEASE
-        --tarPath image.tar
+  - |
+    if [ -n "$CI_COMMIT_TAG" ]; then
+      # Set IMAGE_TAG if the pipeline was triggered by a tag
+      echo "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG" > image-tag.txt
+    else
+      # Set IMAGE_TAG if the pipeline was triggered by a push to main
+      branch=$(echo $CI_COMMIT_REF_NAME | sed 's/\//-/g')
+      sha=${CI_COMMIT_SHORT_SHA}
+      ts=$(date +%s)
+      echo "$CI_REGISTRY_IMAGE:${branch}-${sha}-${ts}" > image-tag.txt
+    fi
   artifacts:
     paths:
-    - image.tar
-    when: on_success
+    - image-tag.txt
+  only:
+  - main
+  - tags
 
 
-docker:build:tag:
-    extends: .docker:build
-    variables:
-        IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
-        NEXT_PUBLIC_ENVIRONMENT: production
-        SENTRY_RELEASE: $CI_COMMIT_TAG
-        SENTRY_AUTH_TOKEN: $SENTRY_AUTH_TOKEN
-    only:
-        - tags
-
-docker:build:main:
-    extends: .docker:build
-    variables:
-        IMAGE_TAG: $CI_REGISTRY_IMAGE:unstable
-        NEXT_PUBLIC_ENVIRONMENT: development
-        SENTRY_RELEASE: $CI_COMMIT_TAG
-        SENTRY_AUTH_TOKEN: $SENTRY_AUTH_TOKEN
-    only:
-        - main
-
-docker:build:ci:
-    extends: .docker:build
-    variables:
-        IMAGE_TAG: $CI_REGISTRY_IMAGE:ci
-        NEXT_PUBLIC_ENVIRONMENT: production
-        SENTRY_RELEASE: $CI_COMMIT_TAG
-        SENTRY_AUTH_TOKEN: $SENTRY_AUTH_TOKEN
-    only:
-        - ci
-
-.trivy:scan:
-  stage: scan
-  image: aquasec/trivy
-  script:
-  - trivy image --exit-code 1 --severity CRITICAL --no-progress --input image.tar
-  allow_failure: true
-
-trivy:scan:main:
-    extends: .trivy:scan
-    needs: [docker:build:main]
-    dependencies:
-      - docker:build:main
-    variables:
-        IMAGE_TAG: $CI_REGISTRY_IMAGE:unstable
-    only:
-        - main
-
-trivy:scan:ci:
-    extends: .trivy:scan
-    needs: [docker:build:ci]
-    dependencies:
-      - docker:build:ci
-    variables:
-        IMAGE_TAG: $CI_REGISTRY_IMAGE:ci
-    only:
-        - ci
-  
-trivy:scan:tag:
-    extends: .trivy:scan
-    needs: [docker:build:tag]
-    dependencies:
-      - docker:build:tag
-    variables:
-        IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
-    only:
-        - tags
-
-
-
-.docker:push:
-  stage: publish
+oci:build:
+  stage: build
+  needs: ["tag"]
+  dependencies: ["tag"]
   image:
-    name: gcr.io/go-containerregistry/crane:debug
+    name: gcr.io/kaniko-project/executor:v1.9.2-debug
     entrypoint: [""]
   script:
-  - crane auth login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-  - crane push image.tar $IMAGE_TAG
-
-docker:push:tag:
-    extends: .docker:push
-    needs: [docker:build:tag, trivy:scan:tag, gitguardianscan, jest]
-    dependencies:
-      - docker:build:tag
-      - trivy:scan:tag
-      - gitguardianscan
-      - jest
-    variables:
-        IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
-        NEXT_PUBLIC_ENVIRONMENT: production
-    only:
-        - tags
-
-docker:push:main:
-    extends: .docker:push
-    needs: [docker:build:main, trivy:scan:main, gitguardianscan, jest]
-    dependencies:
-      - docker:build:main
-      - trivy:scan:main
-      - gitguardianscan
-      - jest
-    variables:
-        IMAGE_TAG: $CI_REGISTRY_IMAGE:unstable
-        NEXT_PUBLIC_ENVIRONMENT: development
-    only:
-        - main
-
-docker:push:ci:
-    extends: .docker:push
-    needs: [docker:build:ci, trivy:scan:ci, gitguardianscan, jest]
-    dependencies:
-      - docker:build:ci
-      - trivy:scan:ci
-      - gitguardianscan
-      - jest
-    variables:
-        IMAGE_TAG: $CI_REGISTRY_IMAGE:ci
-        NEXT_PUBLIC_ENVIRONMENT: production
-    only:
-        - ci
-
-
-helm:
-  stage: publish
-  image: dtzar/helm-kubectl:3.10.0@sha256:489617317614daad6181603d55319c35529b9d41bfc4a23a11e8e3109a5f5588
-  before_script:
-    - 'helm repo add --username gitlab-ci-token --password ${CI_JOB_TOKEN} ${CI_PROJECT_NAME} ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/helm/stable'
-    - helm dependency update ./helm-chart
-  script:
-    - 'helm plugin install https://github.com/chartmuseum/helm-push.git'
-    - ./helm-package-and-push.sh
+  - /kaniko/executor --digest-file=digest.txt --cleanup --build-arg NEXT_PUBLIC_ENVIRONMENT=production --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $(cat image-tag.txt)
+  artifacts:
+    paths:
+    - digest.txt
+    when: on_success
   only:
-    - tags
+  - main
+  - tags
 
+container-scanning:
+  stage: container-scanning
+  needs: ["oci:build", "tag"]
+  dependencies:
+  - oci:build
+  - tag
+  image: alpine:3.19.1@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b
+  before_script:
+  # download oras and login to the registry
+  - apk add --update curl
+  - *oci_login
+  - curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.50.4
+  script:
+  - trivy image --exit-code 1 --severity CRITICAL --no-progress $(cat image-tag.txt)@$(cat digest.txt)
+  only:
+  - main
+  - tags
+
+sbom:
+  image: alpine:3.19.1@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b
+  before_script:
+  - apk add --update curl
+  - *oci_login
+  - curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+  stage: publish
+  needs: ["oci:build", "tag"]
+  dependencies:
+  - oci:build
+  - tag
+  script:
+  - syft $(cat image-tag.txt)@$(cat digest.txt) -o cyclonedx-json=sbom.json
+  artifacts:
+    paths:
+    - sbom.json
+  only:
+  - main
+  - tags
+
+sign-image:
+  stage: sign
+  needs: ['oci:build', 'tag']
+  dependencies:
+  - oci:build
+  - tag
+  image: alpine:3.19.1@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b
+  before_script:
+  - apk add --update cosign
+  - apk add --update curl
+  - *oci_login
+  script:
+  - cosign sign --yes --key $COSIGN_PRIVATE_KEY "$(cat image-tag.txt)@$(cat digest.txt)"
+  only:
+  - main
+  - tags
+
+sign-sbom:
+  stage: sign
+  needs: ["oci:build", 'tag', 'sbom']
+  dependencies:
+  - oci:build
+  - tag
+  - sbom
+  image: alpine:3.19.1@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b
+  before_script:
+  - apk add --update cosign
+  - apk add --update curl
+  - *oci_login
+  script:
+  - cosign attest --predicate ./sbom.json --key $COSIGN_PRIVATE_KEY "$(cat image-tag.txt)@$(cat digest.txt)"
+  only:
+  - main
+  - tags

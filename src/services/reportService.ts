@@ -316,7 +316,7 @@ const handleNewScanReport = async (
       ? null
       : transformDeprecatedReportingSchemaToSarif(
           (lastResults as unknown as { details: DetailsJSON | ISarifResponse })
-            .details
+            .details as any
         ),
     result
   );

@@ -286,7 +286,7 @@ const LineChart: FunctionComponent<Props> = ({
           </defs>
           <VictoryAxis fixLabelOverlap />
           <VictoryAxis
-            tickFormat={(t) => `${t}%`}
+            tickFormat={(t: any) => `${t}%`}
             dependentAxis
             domain={{ y: [-10, 1000] }}
             fixLabelOverlap

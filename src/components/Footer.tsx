@@ -20,26 +20,24 @@ const Footer: FunctionComponent = () => {
       <div className="container pt-10 text-xs">
         <div className="lg:flex text-white pt-10 border-t justify-between">
           <div className="flex flex-wrap gap-2  flex-row">
-            <span>
-              <LinkWithQuery
-                aria-label="Impressum öffnen"
-                href={"/impressum"}
-                className="cursor-pointer text-white uppercase font-medium p-2 hover:text-white"
-                type="button"
-              >
-                Impressum
-              </LinkWithQuery>
-            </span>
-            <span>
-              <LinkWithQuery
-                aria-label="Datenschutzerklärung öffnen"
-                href="/datenschutz"
-                className="cursor-pointer uppercase font-medium text-white p-2 hover:text-white"
-                type="button"
-              >
-                Datenschutz
-              </LinkWithQuery>
-            </span>
+            <LinkWithQuery
+              aria-label="Impressum öffnen"
+              href={"/impressum"}
+              className="cursor-pointer text-white uppercase font-medium p-2 hover:text-white"
+              type="button"
+            >
+              Impressum
+            </LinkWithQuery>
+
+            <LinkWithQuery
+              aria-label="Datenschutzerklärung öffnen"
+              href="/datenschutz"
+              className="cursor-pointer uppercase font-medium text-white p-2 hover:text-white"
+              type="button"
+            >
+              Datenschutz
+            </LinkWithQuery>
+
             <span>
               <a
                 href="https://www.onlinezugangsgesetz.de/"
