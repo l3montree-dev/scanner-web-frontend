@@ -1,3 +1,7 @@
+<div align="center">
+    <img src="./docs/assets/frontend.png" alt="OZG Security Frontend" width="192" height="192">
+</div>
+
 **Inhalte / Schnellnavigation**
 
 [[_TOC_]]
