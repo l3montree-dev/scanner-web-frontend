@@ -8,7 +8,8 @@ import { Stream } from "stream";
 import { prisma } from "../db/connection";
 import { UnauthorizedException } from "../errors/UnauthorizedException";
 import { Guest, ISession, IToken } from "../types";
-import { isGuestUser } from "./common";
+import { isAdmin, isGuestUser } from "./common";
+import { userService } from "../services/userService";
 
 export const getServerSession = async (
   options: AuthOptions
@@ -89,6 +90,7 @@ export const getCurrentUserOrGuestUser = async (
   if (!session) {
     throw new UnauthorizedException("no session");
   }
+  
   // check if guest
   if (isGuestUser(session.user)) {
     return session.user;
@@ -101,9 +103,15 @@ export const getCurrentUserOrGuestUser = async (
   });
 
   if (!currentUser) {
-    throw new UnauthorizedException(
-      `currentUser with id: ${session.user.id} not found`
-    );
+    // bootstrap the user
+    const user =  userService.createUser({
+        _id: session.user.id,
+        featureFlags: {
+            "collections": true,
+        }
+    }, prisma)
+
+    return user;
   }
 
   return currentUser;

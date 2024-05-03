@@ -64,16 +64,19 @@ tag:
     if [ -n "$CI_COMMIT_TAG" ]; then
       # Set IMAGE_TAG if the pipeline was triggered by a tag
       echo "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG" > image-tag.txt
+      echo "$CI_REGISTRY_IMAGE/initcontainer:$CI_COMMIT_TAG" > initcontainer-image-tag.txt
     else
       # Set IMAGE_TAG if the pipeline was triggered by a push to main
       branch=$(echo $CI_COMMIT_REF_NAME | sed 's/\//-/g')
       sha=${CI_COMMIT_SHORT_SHA}
       ts=$(date +%s)
       echo "$CI_REGISTRY_IMAGE:${branch}-${sha}-${ts}" > image-tag.txt
+      echo "$CI_REGISTRY_IMAGE/initcontainer:${branch}-${sha}-${ts}" > initcontainer-image-tag.txt
     fi
   artifacts:
     paths:
     - image-tag.txt
+    - initcontainer-image-tag.txt
   only:
   - main
   - tags
@@ -96,6 +99,23 @@ oci:build:
   - main
   - tags
 
+oci:build-initcontainer:
+  stage: build
+  needs: ["tag"]
+  dependencies: ["tag"]
+  image:
+    name: gcr.io/kaniko-project/executor:v1.9.2-debug
+    entrypoint: [""]
+  script:
+  - /kaniko/executor --digest-file=initcontainer-digest.txt --cleanup --build-arg NEXT_PUBLIC_ENVIRONMENT=production --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile.initcontainer --destination $(cat initcontainer-image-tag.txt)
+  artifacts:
+    paths:
+    - initcontainer-digest.txt
+    when: on_success
+  only:
+  - main
+  - tags
+
 container-scanning:
   stage: container-scanning
   needs: ["oci:build", "tag"]
@@ -110,6 +130,25 @@ container-scanning:
   - curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.50.4
   script:
   - trivy image --exit-code 1 --severity CRITICAL --no-progress $(cat image-tag.txt)@$(cat digest.txt)
+  only:
+  - main
+  - tags
+
+
+container-scanning-initcontainer:
+  stage: container-scanning
+  needs: ["oci:build-initcontainer", "tag"]
+  dependencies:
+  - oci:build-initcontainer
+  - tag
+  image: alpine:3.19.1@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b
+  before_script:
+  # download oras and login to the registry
+  - apk add --update curl
+  - *oci_login
+  - curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.50.4
+  script:
+  - trivy image --exit-code 1 --severity CRITICAL --no-progress $(cat initcontainer-image-tag.txt)@$(cat initcontainer-digest.txt)
   only:
   - main
   - tags
@@ -134,6 +173,26 @@ sbom:
   - main
   - tags
 
+sbom-initcontainer:
+  image: alpine:3.19.1@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b
+  before_script:
+  - apk add --update curl
+  - *oci_login
+  - curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+  stage: publish
+  needs: ["oci:build-initcontainer", "tag"]
+  dependencies:
+  - oci:build-initcontainer
+  - tag
+  script:
+  - syft $(cat initcontainer-image-tag.txt)@$(cat initcontainer-digest.txt) -o cyclonedx-json=sbom.json
+  artifacts:
+    paths:
+    - sbom.json
+  only:
+  - main
+  - tags
+
 sign-image:
   stage: sign
   needs: ['oci:build', 'tag']
@@ -151,6 +210,24 @@ sign-image:
   - main
   - tags
 
+sign-image-initcontainer:
+  stage: sign
+  needs: ['oci:build-initcontainer', 'tag']
+  dependencies:
+  - oci:build-initcontainer
+  - tag
+  image: alpine:3.19.1@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b
+  before_script:
+  - apk add --update cosign
+  - apk add --update curl
+  - *oci_login
+  script:
+  - cosign sign --yes --key $COSIGN_PRIVATE_KEY "$(cat initcontainer-image-tag.txt)@$(cat initcontainer-digest.txt)"
+  only:
+  - main
+  - tags
+
+
 sign-sbom:
   stage: sign
   needs: ["oci:build", 'tag', 'sbom']
@@ -165,6 +242,24 @@ sign-sbom:
   - *oci_login
   script:
   - cosign attest --predicate ./sbom.json --key $COSIGN_PRIVATE_KEY "$(cat image-tag.txt)@$(cat digest.txt)"
+  only:
+  - main
+  - tags
+
+sign-sbom-initcontainer:
+  stage: sign
+  needs: ["oci:build-initcontainer", 'tag', 'sbom-initcontainer']
+  dependencies:
+  - oci:build-initcontainer
+  - tag
+  - sbom-initcontainer
+  image: alpine:3.19.1@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b
+  before_script:
+  - apk add --update cosign
+  - apk add --update curl
+  - *oci_login
+  script:
+  - cosign attest --predicate ./sbom.json --key $COSIGN_PRIVATE_KEY "$(cat initcontainer-image-tag.txt)@$(cat initcontainer-digest.txt)"
   only:
   - main
   - tags
