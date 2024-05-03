@@ -92,7 +92,7 @@ describe("common test suite", () => {
     it("should return true, if the resource_access realm management contains the role realm-admin", () => {
       expect(
         isAdmin({
-          realm_access: {
+          realmAccess: {
             roles: ["admin"],
           },
         } as any),
