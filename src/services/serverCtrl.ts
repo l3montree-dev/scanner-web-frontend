@@ -43,7 +43,7 @@ const startLookupResponseLoop = () => {
         logger.error({ err: e.message });
       }
     },
-    { durable: true, maxPriority: 10 }
+    { durable: true, maxPriority: 10 },
   );
 };
 
@@ -74,7 +74,7 @@ const statLoop = () => {
         statService.generateStatsForCollection(
           collection.id,
           promiseQueue,
-          prisma
+          prisma,
         );
       });
 
@@ -84,11 +84,11 @@ const statLoop = () => {
     } else {
       if (!isMaster() && running) {
         logger.warn(
-          "not master and already running - this instance is not running stat loop"
+          "not master and already running - this instance is not running stat loop",
         );
       } else if (!isMaster() && !running) {
         logger.warn(
-          "not master and not running - this instance is not running stat loop"
+          "not master and not running - this instance is not running stat loop",
         );
       } else if (isMaster() && running) {
         logger.warn("master and not running - stat loop is already running");
@@ -128,7 +128,7 @@ const startScanLoop = () => {
       const requestId = randomUUID();
       logger.info(
         { requestId, component: "SCAN_LOOP" },
-        `found ${targets.length} targets to scan - sending scan request with id: ${requestId}`
+        `found ${targets.length} targets to scan - sending scan request with id: ${requestId}`,
       );
       promiseQueue.addAll(
         targets.map((domain) => {
@@ -138,7 +138,7 @@ const startScanLoop = () => {
               startTimeMS: Date.now(),
             });
           };
-        })
+        }),
       );
 
       running = false;

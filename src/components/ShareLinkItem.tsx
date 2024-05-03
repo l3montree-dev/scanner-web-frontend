@@ -24,7 +24,7 @@ const ShareLinkItem: FunctionComponent<Props> = ({ shareLink, onDelete }) => {
         <button
           onClick={() => {
             navigator.clipboard.writeText(
-              w()?.location.host + secretToShareLink(shareLink.secret)
+              w()?.location.host + secretToShareLink(shareLink.secret),
             );
             toast({
               msg: "Link wurde in die Zwischenablage kopiert",

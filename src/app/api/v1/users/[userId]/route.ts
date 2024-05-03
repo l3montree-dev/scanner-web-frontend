@@ -43,7 +43,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
     },
     {
       username: putRequest.username,
-    }
+    },
   );
 
   const user = await userService.updateUser(userId, putRequest, prisma);

@@ -6,7 +6,7 @@ const logger = getLogger(__filename);
 const createConnection = async (
   targetUri: string[],
   collectionId: number,
-  prisma: PrismaClient
+  prisma: PrismaClient,
 ) => {
   const res = await prisma.targetCollectionRelation.createMany({
     data: targetUri.map((uri) => ({
@@ -27,7 +27,7 @@ const createConnection = async (
 const deleteConnection = async (
   targetUri: string[],
   collectionId: number,
-  prisma: PrismaClient
+  prisma: PrismaClient,
 ) => {
   const res = await prisma.targetCollectionRelation.deleteMany({
     where: {

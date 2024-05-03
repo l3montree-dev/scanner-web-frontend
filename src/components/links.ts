@@ -35,7 +35,7 @@ const defaultLinks = [
 ];
 export const getLinks = (
   session: ISession | undefined | null,
-  currentUser: User | Guest | null
+  currentUser: User | Guest | null,
 ) => {
   if (!session || !currentUser || isGuestUser(session.user)) {
     return defaultLinks;

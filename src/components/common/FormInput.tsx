@@ -47,7 +47,7 @@ const FormInput: FunctionComponent<Props> = ({
           "transition-all transition-bund absolute pointer-events-none",
           focus || value !== ""
             ? `text-sm -translate-y-4 text-${focusColor}`
-            : "translate-y-1 text-base"
+            : "translate-y-1 text-base",
         )}
       >
         <span>{label}</span>
@@ -64,7 +64,7 @@ const FormInput: FunctionComponent<Props> = ({
         onFocus={() => setFocus(true)}
         className={classNames(
           `sm:py-1 mt-2 py-1 bg-transparent flex-1 transition-colors border-b-dunkelgrau-100 border-b focus:outline-none focus:border-b-${focusColor}`,
-          inputClassNames
+          inputClassNames,
         )}
       />
       {err !== null && <span className="text-rot-100 text-sm mt-1">{err}</span>}

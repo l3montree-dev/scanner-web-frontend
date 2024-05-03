@@ -9,9 +9,17 @@ export default function middleware(request: NextRequest) {
       request.nextUrl.pathname.startsWith("/dashboard") ||
       request.nextUrl.pathname.startsWith("/administration")
     ) {
-      return withAuth(request as NextRequestWithAuth);
+      return withAuth(request as NextRequestWithAuth, {
+        callbacks: {
+          authorized(params) {
+            if (!params.token) {
+              return false;
+            }
+            return params.token?.error === undefined;
+          },
+        },
+      });
     }
-    // does not work
     return NextResponse.next();
   } catch (e) {
     if (e instanceof HttpError) {

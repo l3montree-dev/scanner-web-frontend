@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
           ...user,
           _id: id,
         },
-        prisma
+        prisma,
       );
       return NextResponse.json({
         success: true,

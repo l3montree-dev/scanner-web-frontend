@@ -15,6 +15,6 @@ export function GET() {
       success: true,
       sseClients: serverSentEventsService.getConnectedClients(),
     },
-    { status: 200 }
+    { status: 200 },
   );
 }

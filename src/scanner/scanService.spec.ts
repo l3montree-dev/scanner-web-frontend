@@ -122,7 +122,7 @@ describe("ScanService test suite", () => {
     };
     await new ScanService(
       msgBrokerClientMock as any,
-      prismaMock as any
+      prismaMock as any,
     ).scanTargetRPC("", "example.com", {
       refreshCache: false,
       startTimeMS: Date.now(),
@@ -154,7 +154,7 @@ describe("ScanService test suite", () => {
 
       await new ScanService(
         msgBrokerClientMock as any,
-        prismaMock as any
+        prismaMock as any,
       ).scanTargetRPC("", "example.com", {
         refreshCache: false,
         startTimeMS: Date.now(),
@@ -184,7 +184,7 @@ describe("ScanService test suite", () => {
 
       await new ScanService(
         msgBrokerClientMock as any,
-        prismaMock as any
+        prismaMock as any,
       ).scanTargetRPC("", "example.com", {
         refreshCache: true,
         startTimeMS: Date.now(),

@@ -67,7 +67,7 @@ export const theme = {
         labels: baseLabelStyles,
       },
     },
-    baseProps
+    baseProps,
   ),
   axis: assign(
     {
@@ -103,7 +103,7 @@ export const theme = {
         }),
       },
     },
-    baseProps
+    baseProps,
   ),
   polarDependentAxis: assign({
     style: {
@@ -125,7 +125,7 @@ export const theme = {
         labels: baseLabelStyles,
       },
     },
-    baseProps
+    baseProps,
   ),
   boxplot: assign(
     {
@@ -143,7 +143,7 @@ export const theme = {
       },
       boxWidth: 20,
     },
-    baseProps
+    baseProps,
   ),
   candlestick: assign(
     {
@@ -158,7 +158,7 @@ export const theme = {
         negative: blueGrey700,
       },
     },
-    baseProps
+    baseProps,
   ),
   chart: baseProps,
   errorbar: assign(
@@ -174,13 +174,13 @@ export const theme = {
         labels: baseLabelStyles,
       },
     },
-    baseProps
+    baseProps,
   ),
   group: assign(
     {
       colorScale: colors,
     },
-    baseProps
+    baseProps,
   ),
   histogram: assign(
     {
@@ -193,7 +193,7 @@ export const theme = {
         labels: baseLabelStyles,
       },
     },
-    baseProps
+    baseProps,
   ),
   legend: {
     colorScale: colors,
@@ -220,7 +220,7 @@ export const theme = {
         labels: baseLabelStyles,
       },
     },
-    baseProps
+    baseProps,
   ),
   pie: assign(
     {
@@ -234,7 +234,7 @@ export const theme = {
         labels: assign({}, baseLabelStyles, { padding: 20 }),
       },
     },
-    baseProps
+    baseProps,
   ),
   scatter: assign(
     {
@@ -248,13 +248,13 @@ export const theme = {
         labels: baseLabelStyles,
       },
     },
-    baseProps
+    baseProps,
   ),
   stack: assign(
     {
       colorScale: colors,
     },
-    baseProps
+    baseProps,
   ),
   tooltip: {
     style: assign({}, baseLabelStyles, { padding: 0, pointerEvents: "none" }),
@@ -288,6 +288,6 @@ export const theme = {
         },
       },
     },
-    baseProps
+    baseProps,
   ),
 };

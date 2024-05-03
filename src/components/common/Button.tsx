@@ -36,7 +36,7 @@ const Button =
           "transition-all rounded-sm flex justify-between flex-row items-center gap-3 p-2 px-5",
           "bg-white focus:bg-dunkelblau-50 hover:bg-dunkelblau-100 hover:text-white border border-hellgrau-80 hover:border-dunkelblau-100",
           props.disabled && "opacity-50 cursor-not-allowed",
-          additionalClasses
+          additionalClasses,
         )}
         {...rest}
         onClick={(e) => {

@@ -25,13 +25,13 @@ const SideMenu: FunctionComponent<Props> = ({ isOpen, children, onClose }) => {
           "fixed bottom-0 text-base left-0 right-0 transition-all z-100 top-0 border-t-6 border-t-bund",
           isOpen
             ? "pointer-events-auto opacity-100"
-            : "pointer-events-none opacity-0"
+            : "pointer-events-none opacity-0",
         )}
       >
         <div
           className={classNames(
             "bg-hellgrau-40 w-full absolute flex flex-col right-0 top-0 bottom-0 transition-all",
-            isOpen ? "translate-x-0" : "translate-x-full"
+            isOpen ? "translate-x-0" : "translate-x-full",
           )}
         >
           <Image

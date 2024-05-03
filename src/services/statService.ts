@@ -24,7 +24,7 @@ const getTotalsOfUser = async (user: User | Guest, prisma: PrismaClient) => {
 
 const deleteStatsOfCollection = async (
   collectionId: number,
-  prisma: PrismaClient
+  prisma: PrismaClient,
 ) => {
   await prisma.stat.deleteMany({
     where: {
@@ -36,7 +36,7 @@ const deleteStatsOfCollection = async (
 const generateStatsForCollection = async (
   collectionId: number,
   promiseQueue: PQueue,
-  prisma: PrismaClient
+  prisma: PrismaClient,
 ) => {
   let date = new Date();
   if (!config.isProduction) {
@@ -53,7 +53,7 @@ const generateStatsForCollection = async (
             collectionId: collectionId,
             time: date,
           },
-        })
+        }),
       );
 
       if (!exists) {
@@ -62,7 +62,7 @@ const generateStatsForCollection = async (
         const stat = await getCollectionFailedSuccessPercentage(
           collectionId,
           prisma,
-          date
+          date,
         );
         await prisma.stat.create({
           data: {
@@ -73,7 +73,7 @@ const generateStatsForCollection = async (
         });
         logger.info(
           { duration: Date.now() - start },
-          `generated stat for Collection: ${collectionId} on ${new Date(date)}`
+          `generated stat for Collection: ${collectionId} on ${new Date(date)}`,
         );
       }
     });
@@ -82,7 +82,7 @@ const generateStatsForCollection = async (
 };
 
 const getTotals = async (
-  prisma: PrismaClient
+  prisma: PrismaClient,
 ): Promise<{ uniqueTargets: number }> => {
   return {
     uniqueTargets: await prisma.target.count(),
@@ -92,7 +92,7 @@ const getTotals = async (
 const getCollectionFailedSuccessPercentage = async (
   collectionId: number,
   prisma: PrismaClient,
-  until: number
+  until: number,
 ) => {
   let [res] = (await prisma.$queryRaw(
     // this query will pick the latest scan report for each domain and calculate the average of all the inspection types. If there was no scan report done before "until", it will pick the closest one of the future - this fakes the stats but was requested by the customer
@@ -151,7 +151,7 @@ const getCollectionFailedSuccessPercentage = async (
         AVG("notRevoked"::int) as "notRevoked",
         AVG("certificateTransparency"::int) as "certificateTransparency",
         AVG("validCertificateChain"::int) as "validCertificateChain",
-        COUNT(*) as "totalCount" from reports`
+        COUNT(*) as "totalCount" from reports`,
   )) as any;
 
   res = toDTO(res);
@@ -164,7 +164,7 @@ const getCollectionFailedSuccessPercentage = async (
 };
 
 export const getReferenceChartData = async (
-  prisma: PrismaClient
+  prisma: PrismaClient,
 ): Promise<CollectionStatMap> => {
   const stats = await prisma.stat.findMany({
     where: {
@@ -213,7 +213,7 @@ export const getReferenceChartData = async (
 
 const getLatestAndEarliestStats = async (
   user: User | Guest,
-  prisma: PrismaClient
+  prisma: PrismaClient,
 ) => {
   const [firstStat, lastStat] = await Promise.all([
     prisma.stat.findFirst({
@@ -242,7 +242,7 @@ const getLatestAndEarliestStats = async (
 
 export const getDashboardForUser = async (
   user: User | Guest,
-  prisma: PrismaClient
+  prisma: PrismaClient,
 ): Promise<IDashboard> => {
   const [totals, stats] = await Promise.all([
     getTotalsOfUser(user, prisma),

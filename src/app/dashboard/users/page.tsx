@@ -42,12 +42,17 @@ const Page = async () => {
 
     const stats = (
       await Promise.all(
-        usersFromDB.map((u) => statService.getLatestAndEarliestStats(u, prisma))
+        usersFromDB.map((u) =>
+          statService.getLatestAndEarliestStats(u, prisma),
+        ),
       )
-    ).reduce((acc, curr, i) => {
-      acc[usersFromDB[i].id.toString()] = curr;
-      return acc;
-    }, {} as Record<string, { firstStat: Stat | null; lastStat: Stat | null }>);
+    ).reduce(
+      (acc, curr, i) => {
+        acc[usersFromDB[i].id.toString()] = curr;
+        return acc;
+      },
+      {} as Record<string, { firstStat: Stat | null; lastStat: Stat | null }>,
+    );
 
     // attach the networks to the kc users.
     props = {
@@ -59,7 +64,7 @@ const Page = async () => {
         ])
         .filter(
           (params): params is [UserRepresentation, User] =>
-            params[1] !== undefined
+            params[1] !== undefined,
         )
         .map(([user, userFromDB]) => {
           return {
@@ -95,12 +100,12 @@ const Page = async () => {
                 // calculate the difference between the first and the last
                 return Math.round(
                   Math.round(
-                    lastStatValue.data[inspection] * lastStatValue.totalCount
+                    lastStatValue.data[inspection] * lastStatValue.totalCount,
                   ) -
                     Math.round(
                       firstStatValue.data[inspection] *
-                        firstStatValue.totalCount
-                    )
+                        firstStatValue.totalCount,
+                    ),
                 );
               })
               .reduce((acc, curr) => acc + Math.max(curr, 0), 0),
@@ -108,7 +113,6 @@ const Page = async () => {
         }),
     };
   } catch (e) {
-    console.log(e);
     // log the user out and redirect to keycloak
     props = {
       error: true,

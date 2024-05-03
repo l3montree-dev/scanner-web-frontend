@@ -27,7 +27,7 @@ const OutlineButton = forwardRef<
           "opacity-50 cursor-not-allowed hover:bg-dunkelblau-100",
         props.active && "bg-dunkelblau-100",
 
-        props.className
+        props.className,
       )}
       {...rest}
       ref={ref}

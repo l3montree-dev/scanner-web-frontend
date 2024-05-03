@@ -26,7 +26,7 @@ export enum CheckResult {
 }
 
 export const kind2CheckResult = (
-  kind?: "notApplicable" | "fail" | "pass" | Falsey
+  kind?: "notApplicable" | "fail" | "pass" | Falsey,
 ) => {
   switch (kind) {
     case "pass":
@@ -80,7 +80,7 @@ export const checkResult2Icon = (checkResult: CheckResult) => {
 export const optimisticUpdate = <T>(
   currentState: T,
   setStateFn: (fn: (prev: T) => T) => void,
-  transformer: (currentState: T) => T
+  transformer: (currentState: T) => T,
 ) => {
   const oldState = currentState;
   setStateFn(transformer);
@@ -122,11 +122,11 @@ export const adaptiveTextColorBasedOnContrast = (color: string) => {
 };
 
 export const localizeDefaultCollection = <
-  T extends { id: number; title: string; color: string }
+  T extends { id: number; title: string; color: string },
 >(
   collection: T,
   defaultCollectionId: number,
-  username: string
+  username: string,
 ): T => {
   if (collection.id === defaultCollectionId) {
     return {

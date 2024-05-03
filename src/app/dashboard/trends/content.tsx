@@ -60,21 +60,21 @@ const Content: FunctionComponent<Props> = (props) => {
   const dashboard = props.dashboard;
 
   const [displayCollections, setDisplayCollections] = useState<number[]>(
-    props.refCollections.concat(props.defaultCollectionId)
+    props.refCollections.concat(props.defaultCollectionId),
   );
 
   const [_, startTransition] = useTransition();
   const [_displayCollections, _setDisplayCollections] = useState(
-    props.refCollections.concat(props.defaultCollectionId)
+    props.refCollections.concat(props.defaultCollectionId),
   );
 
   const isGeneratingStats = useGeneratingStatsPoll(
-    dashboard.historicalData[props.defaultCollectionId]?.series.length
+    dashboard.historicalData[props.defaultCollectionId]?.series.length,
   );
   // if the expected series length is not matched, we display a loading indicator
   const expectedSeriesLength = useMemo(
     () => diffDays(new Date(2023, 0, 15), new Date()),
-    []
+    [],
   );
 
   const noDomains = dashboard.totals.uniqueTargets === 0;
@@ -98,30 +98,30 @@ const Content: FunctionComponent<Props> = (props) => {
                           y: item.data[key] * 100,
                           x: new Date(item.date).toLocaleDateString(
                             "de-DE",
-                            dateFormat
+                            dateFormat,
                           ),
                         };
                       }),
                     },
                     props.defaultCollectionId,
-                    props.username || "Meine"
+                    props.username || "Meine",
                   ),
                 ];
-              }
-            )
+              },
+            ),
           );
 
           const min = Math.min(
             ...Object.values(data)
               .map((item) => item.series)
               .flat()
-              .map((item) => item.y)
+              .map((item) => item.y),
           );
           const max = Math.max(
             ...Object.values(data)
               .map((item) => item.series)
               .flat()
-              .map((item) => item.y)
+              .map((item) => item.y),
           );
 
           return [
@@ -132,9 +132,9 @@ const Content: FunctionComponent<Props> = (props) => {
               max,
             },
           ];
-        })
+        }),
       ),
-    [dashboard.historicalData, props.username, props.defaultCollectionId]
+    [dashboard.historicalData, props.username, props.defaultCollectionId],
   );
 
   const handleDisplayCollectionToggle = (collectionId: number) => {
@@ -149,7 +149,7 @@ const Content: FunctionComponent<Props> = (props) => {
       setDisplayCollections((prev) => prev.filter((id) => id !== collectionId));
       startTransition(() => {
         _setDisplayCollections((prev) =>
-          prev.filter((id) => id !== collectionId)
+          prev.filter((id) => id !== collectionId),
         );
       });
     } else {
@@ -205,13 +205,13 @@ const Content: FunctionComponent<Props> = (props) => {
                       <div
                         className={classNames(
                           "border hover:bg-dunkelblau-100",
-                          zoomLevel === 2 ? "bg-dunkelblau-100" : "bg-white"
+                          zoomLevel === 2 ? "bg-dunkelblau-100" : "bg-white",
                         )}
                       >
                         <div
                           className={classNames(
                             "grid grid-cols-1 hover:invert gap-0.5 p-3",
-                            zoomLevel === 2 && "invert"
+                            zoomLevel === 2 && "invert",
                           )}
                         >
                           <div className="w-5 h-2 bg-textblack" />
@@ -227,13 +227,13 @@ const Content: FunctionComponent<Props> = (props) => {
                       <div
                         className={classNames(
                           "hover:bg-dunkelblau-100 border transition-all",
-                          zoomLevel === 1 ? "bg-dunkelblau-100" : "bg-white"
+                          zoomLevel === 1 ? "bg-dunkelblau-100" : "bg-white",
                         )}
                       >
                         <div
                           className={classNames(
                             "grid hover:invert  transition-all grid-cols-2 gap-0.5 p-3",
-                            zoomLevel === 1 && "invert"
+                            zoomLevel === 1 && "invert",
                           )}
                         >
                           <div className="w-2 h-2 bg-textblack" />
@@ -252,13 +252,13 @@ const Content: FunctionComponent<Props> = (props) => {
                       <div
                         className={classNames(
                           " hover:bg-dunkelblau-100 border transition-all",
-                          zoomLevel === 0 ? "bg-dunkelblau-100" : "bg-white"
+                          zoomLevel === 0 ? "bg-dunkelblau-100" : "bg-white",
                         )}
                       >
                         <div
                           className={classNames(
                             "grid hover:invert grid-cols-3 gap-0.5 p-3",
-                            zoomLevel === 0 && "invert"
+                            zoomLevel === 0 && "invert",
                           )}
                         >
                           <div className="w-1 h-2 bg-textblack" />
@@ -309,7 +309,7 @@ const Content: FunctionComponent<Props> = (props) => {
         <div
           className={classNames(
             "max-w-screen-2xl gap-4 pb-10 mt-5 flex flex-row mx-auto  flex-1 text-white",
-            noDomains && "blur-sm pointer-events-none overflow-hidden"
+            noDomains && "blur-sm pointer-events-none overflow-hidden",
           )}
           style={{
             maxHeight: noDomains ? "calc(100vh)" : "auto",

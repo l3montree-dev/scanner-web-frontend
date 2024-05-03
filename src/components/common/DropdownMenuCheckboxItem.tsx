@@ -10,7 +10,7 @@ const DropdownMenuCheckboxItem: FunctionComponent<
     <CheckboxItem
       className={classNames(
         "px-5 pl-10 text-sm py-1 cursor-pointer mx-1 my-1 rounded-sm focus:bg-dunkelblau-100 focus:text-white text-textblack relative focus:outline-none",
-        props.checked && "bg-dunkelblau-100 text-white"
+        props.checked && "bg-dunkelblau-100 text-white",
       )}
       {...rest}
     >

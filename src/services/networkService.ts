@@ -8,7 +8,7 @@ const getAll = async (prisma: PrismaClient) => {
 
 const createNetworks = async (
   networks: string[],
-  prisma: PrismaClient
+  prisma: PrismaClient,
 ): Promise<DTO<Network[]>> => {
   // first create all the networks.
   // check which networks do already exist based on the cidr
@@ -23,8 +23,8 @@ const createNetworks = async (
   const newNetworks = networks.filter(
     (network) =>
       !existingNetworks.find(
-        (existingNetwork) => existingNetwork.cidr === network
-      )
+        (existingNetwork) => existingNetwork.cidr === network,
+      ),
   );
   const data = newNetworks.map(parseNetwork);
   // create the new networks.

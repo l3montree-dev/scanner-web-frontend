@@ -20,7 +20,7 @@ const logger = getLogger(__filename);
 const handleNewTarget = async (
   target: { uri: string; queued?: boolean; collectionIds?: Array<number> },
   prisma: PrismaClient,
-  connectToUser?: User
+  connectToUser?: User,
 ): Promise<Target> => {
   // fetch the last existing report and check if we only need to update that one.
   let payload = {
@@ -41,8 +41,8 @@ const handleNewTarget = async (
   if (target.collectionIds) {
     await Promise.all(
       target.collectionIds.map((c) =>
-        targetCollectionService.createConnection([payload.uri], c, prisma)
-      )
+        targetCollectionService.createConnection([payload.uri], c, prisma),
+      ),
     );
   }
 
@@ -50,7 +50,7 @@ const handleNewTarget = async (
     await targetCollectionService.createConnection(
       [payload.uri],
       connectToUser.defaultCollectionId,
-      prisma
+      prisma,
     );
   }
 
@@ -59,7 +59,7 @@ const handleNewTarget = async (
 
 const handleTargetScanError = async (
   content: ISarifScanErrorResponse,
-  prisma: PrismaClient
+  prisma: PrismaClient,
 ) => {
   const lastScan =
     new Date(content.runs[0].invocations[0].startTimeUtc).getTime() ??
@@ -87,7 +87,7 @@ const handleTargetScanError = async (
 };
 
 const translateSortDirection = (
-  direction?: string | "1" | "-1"
+  direction?: string | "1" | "-1",
 ): "ASC" | "DESC" => {
   if (direction === "-1") {
     return "DESC";
@@ -99,7 +99,7 @@ const inspectionFilter = (filter: {
   [key in InspectionType]?: "0" | "1" | "-1";
 }): string => {
   const obj = Object.entries(filter).filter(([key]) =>
-    Object.values(InspectionTypeEnum).includes(key as InspectionType)
+    Object.values(InspectionTypeEnum).includes(key as InspectionType),
   );
 
   if (obj.length === 0) {
@@ -131,7 +131,7 @@ const getUserTargetsWithLatestTestResult = async (
   } & {
     [key in InspectionType]?: "0" | "1" | "-1";
   },
-  prisma: PrismaClient
+  prisma: PrismaClient,
 ): Promise<PaginateResult<DTO<DetailedTarget>>> => {
   const sqlValues: Array<string | number> = [
     collectionId(user),
@@ -174,8 +174,8 @@ const getUserTargetsWithLatestTestResult = async (
           paginateRequest.type === TargetType.unreachable
             ? 'AND "errorCount" >= 5'
             : paginateRequest.type === TargetType.reachable
-            ? 'AND "errorCount" < 5'
-            : ""
+              ? 'AND "errorCount" < 5'
+              : ""
         }
         ORDER BY 
            ARRAY(
@@ -188,7 +188,7 @@ const getUserTargetsWithLatestTestResult = async (
         LIMIT $2
         OFFSET $3;
 `,
-    ...sqlValues
+    ...sqlValues,
   )) as Array<any>;
 
   return {
@@ -212,12 +212,12 @@ const getTargets2Scan = async (prisma: PrismaClient) => {
     Math.round(Date.now() / 1000 / 60) % scanIntervalMinutes;
 
   logger.info(
-    `selecting: MOD(number + ${currentMinute}, ${scanIntervalMinutes}) = 0`
+    `selecting: MOD(number + ${currentMinute}, ${scanIntervalMinutes}) = 0`,
   );
 
   const targets = (await prisma.$queryRaw(Prisma.sql`
   SELECT * from targets where ("lastScan" < ${new Date(
-    new Date().getTime() - (scanIntervalMinutes * 60 * 1000) / 2 // look if the last scan is older than half the interval - otherwise since we ping each minute, it might happen, that the lastScanInterval does actually match the current minute so we loose a scan
+    new Date().getTime() - (scanIntervalMinutes * 60 * 1000) / 2, // look if the last scan is older than half the interval - otherwise since we ping each minute, it might happen, that the lastScanInterval does actually match the current minute so we loose a scan
   ).getTime()} OR "lastScan" IS NULL) AND "queued" = false AND "errorCount" < 5 AND MOD(number + ${currentMinute}, ${scanIntervalMinutes}) = 0 AND exists(SELECT 1 from target_collections tc WHERE tc.uri = targets.uri)`)) as Array<Target>;
 
   await prisma.target.updateMany({

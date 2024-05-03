@@ -40,7 +40,7 @@ export const GET = async (req: NextRequest) => {
         TargetType.all,
       sortDirection: searchParams.get("sortDirection") as string | undefined,
     },
-    prisma
+    prisma,
   );
 
   // return it as a csv file
@@ -54,20 +54,20 @@ export const GET = async (req: NextRequest) => {
               (inspection) =>
                 kind2DidPass(
                   target.details?.runs[0].results.find(
-                    (r) => r.ruleId === inspection
-                  )?.kind
-                ) ?? ""
+                    (r) => r.ruleId === inspection,
+                  )?.kind,
+                ) ?? "",
             ),
-          ].join(",")
+          ].join(","),
         )
         .join("\n")}`,
-      "utf-8"
+      "utf-8",
     ),
     {
       headers: {
         "Content-Type": "text/csv",
         "Content-Disposition": `attachment; filename="domain-export.csv"`,
       },
-    }
+    },
   );
 };

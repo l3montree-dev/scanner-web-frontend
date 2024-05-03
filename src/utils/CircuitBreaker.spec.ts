@@ -17,7 +17,7 @@ describe("CircuitBreaker test suite", () => {
     }
 
     await expect(
-      circuitBreaker.run(() => Promise.resolve("it should throw nevertheless"))
+      circuitBreaker.run(() => Promise.resolve("it should throw nevertheless")),
     ).rejects.toThrowError("Circuit breaker is open");
   });
 
@@ -33,7 +33,7 @@ describe("CircuitBreaker test suite", () => {
     jest.runAllTimers();
 
     await expect(
-      circuitBreaker.run(() => Promise.resolve("it should resolve"))
+      circuitBreaker.run(() => Promise.resolve("it should resolve")),
     ).resolves.toEqual("it should resolve");
   });
 });

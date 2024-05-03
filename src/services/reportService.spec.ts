@@ -54,7 +54,7 @@ describe("Report Service Test Suite", () => {
       {
         refreshCache: false,
         startTimeMS: Date.now(),
-      }
+      },
     );
 
     // it should not create a new scan report.
@@ -143,7 +143,7 @@ describe("Report Service Test Suite", () => {
       {
         refreshCache: false,
         startTimeMS: Date.now(),
-      }
+      },
     );
     // remove the config again
     config.socks5Proxy = undefined;
@@ -227,7 +227,7 @@ describe("Report Service Test Suite", () => {
         {
           refreshCache: false,
           startTimeMS: Date.now(),
-        }
+        },
       );
 
       const lastScanDetails = {
@@ -276,9 +276,9 @@ describe("Report Service Test Suite", () => {
               },
             },
           },
-        })
+        }),
       );
-    }
+    },
   );
   it("should validate a change in a scan report", async () => {
     const target = {
@@ -363,7 +363,7 @@ describe("Report Service Test Suite", () => {
       {
         refreshCache: false,
         startTimeMS: Date.now(),
-      }
+      },
     );
     // remove the config again
     config.socks5Proxy = undefined;
@@ -478,7 +478,7 @@ describe("Report Service Test Suite", () => {
       {
         refreshCache: false,
         startTimeMS: Date.now(),
-      }
+      },
     );
 
     const replacedLastScanDetails = {
@@ -641,7 +641,7 @@ describe("Report Service Test Suite", () => {
       {
         refreshCache: false,
         startTimeMS: Date.now(),
-      }
+      },
     );
 
     const replacedLastScanDetails = {
@@ -711,13 +711,13 @@ describe("Report Service Test Suite", () => {
   it("should not return that a scan report did change, if one of the values is null and the other one is undefined", () => {
     let actual = reportService.reportDidChange(
       { dnsSec: null } as any,
-      { dnsSec: undefined } as any
+      { dnsSec: undefined } as any,
     );
     expect(actual).toBe(false);
 
     actual = reportService.reportDidChange(
       { dnsSec: undefined } as any,
-      { dnsSec: null } as any
+      { dnsSec: null } as any,
     );
 
     expect(actual).toBe(false);

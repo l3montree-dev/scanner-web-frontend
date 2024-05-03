@@ -49,7 +49,7 @@ const NotificationCenter = () => {
             });
           }
         },
-      }
+      },
     );
     return () => {
       unsub();
@@ -66,12 +66,12 @@ const NotificationCenter = () => {
             key={notification.id}
             className={classNames(
               "transition-all duration-500 ease-in-out",
-              i + 1 !== arr.length ? "border-b border-dunkelblau-80" : ""
+              i + 1 !== arr.length ? "border-b border-dunkelblau-80" : "",
             )}
           >
             <div
               className={classNames(
-                "max-w-screen-2xl flex flex-row justify-between mx-auto px-8 py-4 items-center"
+                "max-w-screen-2xl flex flex-row justify-between mx-auto px-8 py-4 items-center",
               )}
             >
               <div>

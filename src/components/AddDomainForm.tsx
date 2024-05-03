@@ -33,7 +33,7 @@ const AddDomainForm: FunctionComponent<{
       createRequest.success();
     } catch (err) {
       createRequest.error(
-        "Leider ist ein Fehler aufgetreten. Bitte überprüfen Sie den Domainnamen."
+        "Leider ist ein Fehler aufgetreten. Bitte überprüfen Sie den Domainnamen.",
       );
     }
   };
@@ -111,7 +111,7 @@ const AddDomainForm: FunctionComponent<{
                           onClick={(e) => {
                             e.stopPropagation();
                             setFiles((prev) =>
-                              prev.filter((f) => f.name !== file.name)
+                              prev.filter((f) => f.name !== file.name),
                             );
                           }}
                         >

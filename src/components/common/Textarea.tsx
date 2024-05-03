@@ -17,7 +17,7 @@ const Textarea: FunctionComponent<Props> = (props) => {
     textareaRef.current.style.height = "inherit";
     // Set height
     setMinHeight(
-      Math.max(textareaRef.current.scrollHeight, MIN_TEXTAREA_HEIGHT)
+      Math.max(textareaRef.current.scrollHeight, MIN_TEXTAREA_HEIGHT),
     );
   }, [props.value]);
 

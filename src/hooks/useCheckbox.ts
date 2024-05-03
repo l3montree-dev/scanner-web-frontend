@@ -15,7 +15,7 @@ export default function useCheckbox(initialValue?: boolean) {
       }
       setValue(e.target.checked);
     },
-    []
+    [],
   );
 
   return { value, onChange, checked: value };

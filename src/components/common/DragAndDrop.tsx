@@ -60,7 +60,7 @@ export const DragAndDrop: FunctionComponent<PropsWithChildren<Props>> = ({
       onClick={() => fileSelector.current?.click()}
       className={classNames(
         "draganddrop hover:bg-hellgrau-60 rounded-md cursor-pointer transition-all w-full relative border-2 border-dashed border-dunkelgrau-100 flex flex-col justify-center items-center",
-        drag && "bg-hellgrau-60"
+        drag && "bg-hellgrau-60",
       )}
     >
       <input

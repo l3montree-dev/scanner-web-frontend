@@ -1,10 +1,8 @@
-import ecsFormat from "@elastic/ecs-pino-format";
 import pino from "pino";
 import { config } from "../config";
 
 const logger = pino({
-  ...(config.isProduction && ecsFormat()),
-  level: process.env.LOG_LEVEL || "debug",
+  level: process.env.LOG_LEVEL || "info",
 });
 export const getLogger = (file: string) => {
   if (config.isProduction) {

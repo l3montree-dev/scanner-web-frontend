@@ -88,7 +88,7 @@ describe("common test suite", () => {
               roles: ["not-realm-admin"],
             },
           },
-        } as any)
+        } as any),
       ).toBe(false);
     });
     it("should return true, if the resource_access realm management contains the role realm-admin", () => {
@@ -99,7 +99,7 @@ describe("common test suite", () => {
               roles: ["realm-admin"],
             },
           },
-        } as any)
+        } as any),
       ).toBe(true);
     });
   });
@@ -124,7 +124,7 @@ describe("common test suite", () => {
     });
     it("should work for subdomains", () => {
       expect(sanitizeURI("subdomain.example.com")).toBe(
-        "subdomain.example.com"
+        "subdomain.example.com",
       );
     });
     it("should work if blank characters are present", () => {

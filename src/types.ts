@@ -97,19 +97,19 @@ export interface ISession {
     // identifies a guest
     collectionId?: number;
   };
-  resource_access: {
-    [clientId: string]: {
-      roles: string[];
-    };
+  realm_access: {
+    roles: string[];
   };
   error?: string;
 }
 
-export interface IToken extends ISession {
+export interface AccessAndRefreshToken {
   accessToken: string;
   refreshToken: string;
   idToken: string;
+  expiresAt: number;
 }
+export interface IToken extends ISession, AccessAndRefreshToken {}
 
 export interface ICreateUserDTO {
   username: string;

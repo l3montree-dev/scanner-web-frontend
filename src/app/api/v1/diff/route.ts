@@ -16,7 +16,7 @@ import {
 
 export async function GET(req: NextRequest) {
   const inspection = req.nextUrl.searchParams.get(
-    "inspectionType"
+    "inspectionType",
   ) as InspectionType;
 
   const start = parseInt(req.nextUrl.searchParams.get("start") as string);
@@ -62,7 +62,7 @@ export async function GET(req: NextRequest) {
       pageSize: 20,
       collectionIds,
     },
-    prisma
+    prisma,
   );
 
   // filter the inspections by the inspection type
@@ -75,7 +75,7 @@ export async function GET(req: NextRequest) {
         uri: d.uri,
         ...d.diff[inspection],
       })),
-    "now"
+    "now",
   );
 
   return NextResponse.json(filteredInspections);

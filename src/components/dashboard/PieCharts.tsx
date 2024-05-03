@@ -33,7 +33,7 @@ const percentageToXInPieChart = (percentage: number, r = 100) => {
   return (
     -1 *
       Math.cos(
-        (+percentage / 100) * 360 * (Math.PI / 180) + 90 * (Math.PI / 180)
+        (+percentage / 100) * 360 * (Math.PI / 180) + 90 * (Math.PI / 180),
       ) *
       r +
     150
@@ -44,7 +44,7 @@ const percentageToYInPieChart = (percentage: number, r = 100) => {
   return (
     -1 *
       Math.sin(
-        (+percentage / 100) * 360 * (Math.PI / 180) + 90 * (Math.PI / 180)
+        (+percentage / 100) * 360 * (Math.PI / 180) + 90 * (Math.PI / 180),
       ) *
       r +
     150
@@ -165,7 +165,7 @@ const PieCharts: FunctionComponent<Props> = ({
                                     props.datum.eventKey === "implemented"
                                       ? "1"
                                       : "-1"
-                                  } `
+                                  } `,
                                 );
                               },
                             },
@@ -200,7 +200,7 @@ const PieCharts: FunctionComponent<Props> = ({
                     {
                       key: "implemented",
                       x: `Erfüllt (${(currentStat.data[key] * 100).toFixed(
-                        1
+                        1,
                       )}%)`,
                       y: currentStat.totalCount * currentStat.data[key],
                     },
@@ -246,11 +246,11 @@ const PieCharts: FunctionComponent<Props> = ({
                         textAnchor="middle"
                         x={percentageToXInPieChart(
                           +percentage,
-                          i % 2 == 0 ? 60 : 130
+                          i % 2 == 0 ? 60 : 130,
                         )}
                         y={percentageToYInPieChart(
                           +percentage,
-                          i % 2 == 0 ? 70 : 130
+                          i % 2 == 0 ? 70 : 130,
                         )}
                         style={{
                           fontSize: 16,
@@ -306,7 +306,7 @@ const PieCharts: FunctionComponent<Props> = ({
                   <span className="text-blau-100">
                     Erfüllt von{" "}
                     {(currentStat.data[key] * currentStat.totalCount).toFixed(
-                      0
+                      0,
                     )}{" "}
                     Domain
                     {currentStat.data[key] * currentStat.totalCount !== 1

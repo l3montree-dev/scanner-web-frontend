@@ -16,7 +16,7 @@ describe("view test suite", () => {
     (param, expected) => {
       const result = kind2CheckResult(param);
       expect(result).toEqual(expected);
-    }
+    },
   );
 
   it.each([
@@ -29,7 +29,7 @@ describe("view test suite", () => {
     (param, expected) => {
       const result = checkResult2BorderClassName(param);
       expect(result).toEqual(expected);
-    }
+    },
   );
 
   it.each([
@@ -42,6 +42,6 @@ describe("view test suite", () => {
     (param, expected) => {
       const result = checkResult2Icon(param);
       expect(result.iconName).toEqual(expected);
-    }
+    },
   );
 });

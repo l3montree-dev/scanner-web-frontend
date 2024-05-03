@@ -37,14 +37,14 @@ interface MessageBrokerClient {
   call<T extends Record<string, any>>(
     queue: string,
     message: Record<string, any>,
-    options: Record<string, any> & { messageId: string }
+    options: Record<string, any> & { messageId: string },
   ): Promise<T>;
 
   send(
     queue: string,
     message: Record<string, any>,
     queueOptions?: any,
-    options?: any
+    options?: any,
   ): Promise<void>;
 }
 
@@ -55,7 +55,7 @@ export class ScanService {
 
   constructor(
     private messageBrokerClient: MessageBrokerClient,
-    private db: PrismaClient
+    private db: PrismaClient,
   ) {}
 
   // wont save the result to the database
@@ -63,7 +63,7 @@ export class ScanService {
   public async scanRPC(
     requestId: string,
     target: string,
-    options: ScanTargetOptions
+    options: ScanTargetOptions,
   ): Promise<ISarifResponse> {
     const result = await this.messageBrokerClient.call<ISarifResponse>(
       process.env.SCAN_REQUEST_QUEUE ?? "scan-request",
@@ -72,7 +72,7 @@ export class ScanService {
         refresh: options.refreshCache, // if refresh is true, it will bypass all caching layers,
         socks5Proxy: options.socks5Proxy,
       },
-      { messageId: requestId }
+      { messageId: requestId },
     );
 
     return result;
@@ -81,16 +81,16 @@ export class ScanService {
   public async handleScanResponse(
     requestId: string,
     response: ISarifResponse,
-    options: ScanTargetOptions
+    options: ScanTargetOptions,
   ): Promise<DTO<DetailedTarget> | undefined> {
     if (isScanError(response)) {
       await neverThrow(
         this.scanCB.run(
           async () =>
             await timeout(
-              targetService.handleTargetScanError(response, this.db)
-            )
-        )
+              targetService.handleTargetScanError(response, this.db),
+            ),
+        ),
       );
       return undefined;
     } else {
@@ -101,9 +101,9 @@ export class ScanService {
               requestId,
               response,
               this.db,
-              options
-            )
-          )
+              options,
+            ),
+          ),
         ),
         {
           uri: response.runs[0].properties.target,
@@ -115,7 +115,7 @@ export class ScanService {
           createdAt: startTimeOfResponse(response).toString(),
           updatedAt: startTimeOfResponse(response).toString(),
           details: response,
-        }
+        },
       );
     }
   }
@@ -123,7 +123,7 @@ export class ScanService {
   public async scanTarget(
     requestId: string,
     target: string,
-    options: ScanTargetOptions
+    options: ScanTargetOptions,
   ) {
     const result = await this.messageBrokerClient.send(
       process.env.SCAN_REQUEST_QUEUE ?? "scan-request",
@@ -133,7 +133,7 @@ export class ScanService {
         socks5Proxy: options.socks5Proxy,
       },
       { durable: true, maxPriority: 10 },
-      { messageId: requestId, priority: 1, replyTo: "scan-response" }
+      { messageId: requestId, priority: 1, replyTo: "scan-response" },
     );
     return result;
   }
@@ -152,8 +152,8 @@ export class ScanService {
               gte: new Date(Date.now() - 1000 * 60 * 60 * 1),
             },
           },
-        })
-      )
+        }),
+      ),
     ) as DTO<
       | ({ details: DetailsJSON | ISarifScanSuccessResponse } & {
           target: Omit<Target, "lastScan"> & { lastScan: number };
@@ -168,7 +168,7 @@ export class ScanService {
   async scanTargetRPC(
     requestId: string,
     target: string | null,
-    options: ScanTargetOptions
+    options: ScanTargetOptions,
   ): Promise<
     | [DTO<ISarifScanSuccessResponse>, DTO<DetailedTarget>]
     | [DTO<ISarifScanErrorResponse>, undefined]
@@ -187,18 +187,18 @@ export class ScanService {
       if (details) {
         logger.info(
           { requestId },
-          `found existing report for site: ${sanitizedURI} - returning existing report`
+          `found existing report for site: ${sanitizedURI} - returning existing report`,
         );
 
         const { target, ...rest } = details;
         const transformed = transformDeprecatedReportingSchemaToSarif(
-          rest.details
+          rest.details,
         );
         return [transformed, { ...target, details: transformed }];
       } else {
         logger.info(
           { requestId },
-          `no existing report for site: ${sanitizedURI} - starting new scan`
+          `no existing report for site: ${sanitizedURI} - starting new scan`,
         );
       }
     }
@@ -209,13 +209,13 @@ export class ScanService {
       await neverThrow(
         this.scanCB.run(
           async () =>
-            await timeout(targetService.handleTargetScanError(result, this.db))
-        )
+            await timeout(targetService.handleTargetScanError(result, this.db)),
+        ),
       );
     } else {
       logger.info(
         { duration: Date.now() - start, requestId },
-        `successfully scanned site: ${target}`
+        `successfully scanned site: ${target}`,
       );
 
       detailedTarget = await defaultOnError(
@@ -226,10 +226,10 @@ export class ScanService {
                 requestId,
                 result,
                 this.db,
-                options
+                options,
               ),
-              40_000
-            ) // use a 20 seconds timeout - it might happen, that the reportService will verify that the reports did really change and therefore issue another scan.
+              40_000,
+            ), // use a 20 seconds timeout - it might happen, that the reportService will verify that the reports did really change and therefore issue another scan.
         ),
         {
           uri: result.runs[0].properties.target,
@@ -241,7 +241,7 @@ export class ScanService {
           createdAt: startTimeOfResponse(result).toString(),
           updatedAt: startTimeOfResponse(result).toString(),
           details: result,
-        }
+        },
       );
     }
 
@@ -253,5 +253,5 @@ export class ScanService {
 
 export const scanService = new GlobalRef(
   "scanService",
-  () => new ScanService(rabbitMQRPCClient, prisma)
+  () => new ScanService(rabbitMQRPCClient, prisma),
 ).value;

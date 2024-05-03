@@ -4,7 +4,7 @@ import { ISarifResponse } from "../types";
 import { DTO } from "../utils/server";
 
 export const getMatchesHostnameMessage = (
-  report: DTO<ISarifResponse> | null
+  report: DTO<ISarifResponse> | null,
 ) => {
   if (report === null) {
     return `Das Zertifikat des Servers konnte nicht überprüft werden.`;
@@ -12,7 +12,7 @@ export const getMatchesHostnameMessage = (
 
   const sut = getSUTFromResponse(report);
   const inspection = report.runs[0].results.find(
-    (r) => r.ruleId === CertificateInspectionType.MatchesHostname
+    (r) => r.ruleId === CertificateInspectionType.MatchesHostname,
   );
 
   switch (inspection?.kind) {

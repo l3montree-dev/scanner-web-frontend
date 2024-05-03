@@ -8,7 +8,7 @@ export default class CircuitBreaker {
   private state: "open" | "half-open" | "closed" = "closed";
   constructor(
     private readonly maxFailures = 2,
-    private readonly resetTimeout = 10_000
+    private readonly resetTimeout = 10_000,
   ) {}
 
   private handleSuccess() {
@@ -24,7 +24,7 @@ export default class CircuitBreaker {
     this.failures++;
     logger.warn(
       { failures: this.failures, maxFailures: this.maxFailures },
-      `circuit breaker failure: ${err}`
+      `circuit breaker failure: ${err}`,
     );
     if (this.failures >= this.maxFailures && this.state !== "open") {
       logger.warn("circuit breaker is now open");

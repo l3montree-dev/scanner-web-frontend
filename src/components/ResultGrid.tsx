@@ -43,7 +43,7 @@ type ImmediateActions = typeof immediateActionRequired;
 
 const shouldDisplayImmediateActionRequired = (
   report: DTO<ISarifResponse>,
-  check: ImmediateActions[number]
+  check: ImmediateActions[number],
 ): boolean => {
   if (report === null) {
     return false;
@@ -53,7 +53,7 @@ const shouldDisplayImmediateActionRequired = (
     return (
       result?.kind === "notApplicable" &&
       immediateActionHTTPErrors.includes(
-        result.properties.actualValue.error.code
+        result.properties.actualValue.error.code,
       )
     );
   }
@@ -68,7 +68,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
   const { report } = props;
 
   const immediateActionRequiredChecks = immediateActionRequired.filter((key) =>
-    shouldDisplayImmediateActionRequired(report, key)
+    shouldDisplayImmediateActionRequired(report, key),
   );
   return (
     <>
@@ -83,8 +83,8 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
                       className={classNames(
                         "bg-dunkelblau-20 border-2 h-full rounded-sm p-5",
                         `border-${checkResult2BorderClassName(
-                          CheckResult.Critical
-                        )}`
+                          CheckResult.Critical,
+                        )}`,
                       )}
                     >
                       <ResultBox
@@ -107,7 +107,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
             <div key={key} className="">
               <div
                 className={classNames(
-                  "bg-dunkelblau-20/40 h-full p-5"
+                  "bg-dunkelblau-20/40 h-full p-5",
                   /* `border-${checkResult2BorderClassName(
                     didPass2CheckResult(
                       report.details !== null
@@ -125,7 +125,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
                     report !== null
                       ? report.runs[0].results.find((r) => r.ruleId === key)
                           ?.kind
-                      : null
+                      : null,
                   )}
                 />
               </div>

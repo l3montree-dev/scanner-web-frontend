@@ -20,7 +20,7 @@ const Checkbox: FunctionComponent<Props> = (props) => {
         props.checked
           ? "bg-blau-100 border-blau-100"
           : "border-dunkelgrau-80 bg-white",
-        focused ? "outline outline-blau-100" : ""
+        focused ? "outline outline-blau-100" : "",
       )}
     >
       <input

@@ -3,13 +3,13 @@ import { useEffect, useMemo, useRef } from "react";
 import { diffDays } from "../utils/view";
 
 export default function useGeneratingStatsPoll(
-  seriesLength: number | undefined
+  seriesLength: number | undefined,
 ) {
   const router = useRouter();
   const pollInterval = useRef<any>(null);
   const expectedSeriesLength = useMemo(
     () => diffDays(new Date(2023, 0, 15), new Date()),
-    []
+    [],
   );
   const isGeneratingStats = expectedSeriesLength > (seriesLength ?? 0);
 

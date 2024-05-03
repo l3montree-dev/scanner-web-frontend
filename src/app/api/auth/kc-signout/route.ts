@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   let path = `${
     process.env.KEYCLOAK_ISSUER
   }/protocol/openid-connect/logout?post_logout_redirect_uri=${encodeURIComponent(
-    process.env.NEXTAUTH_URL as string
+    process.env.NEXTAUTH_URL as string,
   )}`;
 
   if (token?.idToken) {

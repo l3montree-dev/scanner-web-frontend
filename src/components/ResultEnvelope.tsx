@@ -91,7 +91,7 @@ const ResultEnvelope: FunctionComponent<Props> = ({
           <div className="flex-row flex items-center">
             <FontAwesomeIcon
               className={`text-${checkResult2BorderClassName(
-                CheckResult.Passed
+                CheckResult.Passed,
               )} text-2xl w-8`}
               icon={checkResult2Icon(CheckResult.Passed)}
             />
@@ -100,7 +100,7 @@ const ResultEnvelope: FunctionComponent<Props> = ({
           <div className="flex-row flex items-center">
             <FontAwesomeIcon
               className={`text-${checkResult2BorderClassName(
-                CheckResult.Failed
+                CheckResult.Failed,
               )} text-2xl w-8`}
               icon={checkResult2Icon(CheckResult.Failed)}
             />
@@ -110,7 +110,7 @@ const ResultEnvelope: FunctionComponent<Props> = ({
             <div className="w-8 flex flex-row items-center">
               <FontAwesomeIcon
                 className={`text-${checkResult2BorderClassName(
-                  CheckResult.Critical
+                  CheckResult.Critical,
                 )} text-2xl w-8`}
                 icon={checkResult2Icon(CheckResult.Critical)}
               />

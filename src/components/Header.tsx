@@ -24,7 +24,7 @@ const Header: FunctionComponent<{ session: ISession | null }> = ({
     <header
       className={classNames(
         "sticky top-0 border-t-bund border-t-6 transition-all z-100 duration-500 text-textblack border-b-6 border-b-hellgrau-40",
-        "bg-white"
+        "bg-white",
       )}
     >
       {session !== null && (

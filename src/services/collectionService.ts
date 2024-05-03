@@ -5,7 +5,7 @@ import { isGuestUser } from "../utils/common";
 
 const isUserAllowedToModifyCollection = async (
   collection: Collection,
-  user: User
+  user: User,
 ) => {
   // check if the user is the owner of the collection
   return collection.ownerId !== user.id;
@@ -14,7 +14,7 @@ const isUserAllowedToModifyCollection = async (
 const getAllCollectionsOfUser = async (
   user: User | Guest,
   prisma: PrismaClient,
-  includeRefCollections = false
+  includeRefCollections = false,
 ) => {
   const queries = isGuestUser(user)
     ? [
@@ -62,7 +62,7 @@ const getAllCollectionsOfUser = async (
 const filterCollectionsToAllowed = async (
   collectionIds: number[],
   user: User,
-  prisma: PrismaClient
+  prisma: PrismaClient,
 ) => {
   const cols = (await getAllCollectionsOfUser(user, prisma)).map((c) => c.id);
   const allowed = collectionIds.filter((c) => cols.includes(c));
@@ -72,7 +72,7 @@ const filterCollectionsToAllowed = async (
 const getCollectionsOfTargets = async (
   targetUris: string[],
   user: User,
-  prisma: PrismaClient
+  prisma: PrismaClient,
 ) => {
   // does not return the users default collection
   const collections = await prisma.targetCollectionRelation.findMany({
@@ -110,16 +110,19 @@ export const collectionService = {
   isUserAllowedToModifyCollection,
   filterCollectionsToAllowed,
   countTargetsInCollections: async (
-    prisma: PrismaClient
+    prisma: PrismaClient,
   ): Promise<Record<number, number>> => {
     return (
       await prisma.targetCollectionRelation.groupBy({
         by: ["collectionId"],
         _count: true,
       })
-    ).reduce((acc, cur) => {
-      acc[cur.collectionId] = cur._count;
-      return acc;
-    }, {} as Record<number, number>);
+    ).reduce(
+      (acc, cur) => {
+        acc[cur.collectionId] = cur._count;
+        return acc;
+      },
+      {} as Record<number, number>,
+    );
   },
 };

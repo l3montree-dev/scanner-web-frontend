@@ -21,7 +21,7 @@ const ResultIcon: FunctionComponent<Props> = ({
     <FontAwesomeIcon
       className={classNames(
         `text-${checkResult2BorderClassName(checkResult)}`,
-        className
+        className,
       )}
       fontSize={size ?? 24}
       icon={checkResult2Icon(checkResult)}
