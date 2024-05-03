@@ -7,7 +7,7 @@ import {
 } from "./notifications";
 
 type NotificationListener<T extends NotificationType> = (
-  notification: NotificationMap[T]
+  notification: NotificationMap[T],
 ) => void;
 
 const notificationListeners: {
@@ -22,7 +22,7 @@ const start = once(() => {
   // a simple reload will kill the event source connection but the user is still logged in
   const connectionId = crypto.randomUUID();
   const evtSource = new EventSource(
-    `/api/v1/notifications?connectionId=${connectionId}`
+    `/api/v1/notifications?connectionId=${connectionId}`,
   );
   evtSource.addEventListener("message", (e) => {
     // route the message to the correct listener
@@ -36,7 +36,7 @@ const start = once(() => {
   const interval = setInterval(async () => {
     const res = await clientHttpClient(
       `/api/v1/notifications/heartbeat?connectionId=${connectionId}`,
-      crypto.randomUUID()
+      crypto.randomUUID(),
     );
     if (!res.ok) {
       console.log("heartbeat failed - closing connection");
@@ -54,7 +54,7 @@ const on = <T extends NotificationType>(
   }: {
     id: string;
     fn: NotificationListener<T>;
-  }
+  },
 ) => {
   start(); // idempotent - will be noop if already started
   if (!notificationListeners[type]) {
@@ -71,7 +71,7 @@ const on = <T extends NotificationType>(
     // remove the listener
     // @ts-expect-error
     notificationListeners[type] = notificationListeners[type]?.filter(
-      (l) => l.id !== id
+      (l) => l.id !== id,
     );
   };
 };

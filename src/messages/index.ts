@@ -140,7 +140,7 @@ export const featureFlagMapper: { [key in FeatureFlag]: string } = {
 
 export const getCheckDescription = (
   report: DTO<ISarifResponse> | null,
-  key: keyof typeof messages
+  key: keyof typeof messages,
 ): string => {
   return messages[key](report) ?? "";
 };

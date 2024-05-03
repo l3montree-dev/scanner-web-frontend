@@ -17,7 +17,7 @@ class ServerSentEventsService {
   } = {};
 
   constructor(
-    private readonly horizontalScalingAdapter?: HorizontalScalingAdapter
+    private readonly horizontalScalingAdapter?: HorizontalScalingAdapter,
   ) {}
 
   public bootstrap() {
@@ -40,7 +40,7 @@ class ServerSentEventsService {
     }
 
     clearTimeout(
-      this.connectedClients[`${userId}:${connectionId}`]!.disconnectedTimeout
+      this.connectedClients[`${userId}:${connectionId}`]!.disconnectedTimeout,
     );
     // set a new timeout
     this.connectedClients[`${userId}:${connectionId}`]!.disconnectedTimeout =
@@ -67,7 +67,7 @@ class ServerSentEventsService {
     return setTimeout(() => {
       logger.debug(
         { userId, connectionId },
-        `disconnecting user ${userId} due to inactivity`
+        `disconnecting user ${userId} due to inactivity`,
       );
 
       const mapKey = `${userId}:${connectionId}`;
@@ -97,5 +97,5 @@ class ServerSentEventsService {
 // it would be much simpler to just detect if the event source request (SSE) is closed and then disconnect the user - but this is not possible with nextjs at the moment: https://github.com/vercel/next.js/discussions/48682
 export const serverSentEventsService = new GlobalRef(
   "serverSentEventsService",
-  () => new ServerSentEventsService(rabbitMQClient)
+  () => new ServerSentEventsService(rabbitMQClient),
 ).value;

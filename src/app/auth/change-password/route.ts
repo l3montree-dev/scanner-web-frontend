@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     `${
       process.env.KEYCLOAK_ISSUER
     }/protocol/openid-connect/auth?client_id=quicktest&redirect_uri=${encodeURIComponent(
-      `${loc.protocol}//${loc.host}`
-    )}&response_type=code&scope=openid&kc_action=UPDATE_PASSWORD`
+      `${loc.protocol}//${loc.host}`,
+    )}&response_type=code&scope=openid&kc_action=UPDATE_PASSWORD`,
   );
 }

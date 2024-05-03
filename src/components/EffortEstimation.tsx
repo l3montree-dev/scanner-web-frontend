@@ -23,7 +23,7 @@ const EffortEstimation: FunctionComponent<Props> = (props) => {
             <div
               className={classNames(
                 colorMapping[item.color],
-                "w-4 h-4 rounded-sm mr-2"
+                "w-4 h-4 rounded-sm mr-2",
               )}
             />
             <span className="leading-5 relative bottom-0.5">{item.title}</span>

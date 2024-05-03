@@ -9,10 +9,10 @@ export const getDNSSecReportMessage = (report: DTO<ISarifResponse> | null) => {
     return "DNSSEC konnte nicht überpüft werden.";
   }
   const inspection = report.runs[0].results.find(
-    (r) => r.ruleId === DomainInspectionType.DNSSec
+    (r) => r.ruleId === DomainInspectionType.DNSSec,
   );
   const hostname = getUnicodeHostnameFromUri(
-    getSUTFromResponse(report) as string
+    getSUTFromResponse(report) as string,
   );
   if (!inspection || inspection?.kind === "notApplicable") {
     return `DNSSEC konnte für die Domain ${hostname} nicht überprüft werden.`;

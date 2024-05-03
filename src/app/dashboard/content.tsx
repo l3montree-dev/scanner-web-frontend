@@ -51,31 +51,31 @@ const Content: FunctionComponent<Props> = (props) => {
             totalCount: 0,
             data: {},
           } as ChartData),
-    [dashboard.historicalData, props.defaultCollectionId]
+    [dashboard.historicalData, props.defaultCollectionId],
   );
 
   const [displayCollections, setDisplayCollections] = useState(
-    props.refCollections.concat(props.defaultCollectionId)
+    props.refCollections.concat(props.defaultCollectionId),
   );
 
   const { session } = useGlobalStore();
 
   const [_, startTransition] = useTransition();
   const [_displayCollections, _setDisplayCollections] = useState(
-    props.refCollections.concat(props.defaultCollectionId)
+    props.refCollections.concat(props.defaultCollectionId),
   );
 
   const [data, setData] = useState({
     totalCount: currentStat.totalCount,
     data: Object.fromEntries(
-      Object.keys(currentStat.data).map((key) => [key, 0])
+      Object.keys(currentStat.data).map((key) => [key, 0]),
     ),
   });
 
   const noDomains = dashboard.totals.uniqueTargets === 0;
 
   const isGeneratingStats = useGeneratingStatsPoll(
-    dashboard.historicalData[props.defaultCollectionId]?.series.length
+    dashboard.historicalData[props.defaultCollectionId]?.series.length,
   );
 
   const collectionsEnabled = useIsFeatureEnabled(FeatureFlag.collections);
@@ -93,7 +93,7 @@ const Content: FunctionComponent<Props> = (props) => {
       setDisplayCollections((prev) => prev.filter((id) => id !== collectionId));
       startTransition(() => {
         _setDisplayCollections((prev) =>
-          prev.filter((id) => id !== collectionId)
+          prev.filter((id) => id !== collectionId),
         );
       });
     } else {
@@ -163,7 +163,7 @@ const Content: FunctionComponent<Props> = (props) => {
         <div
           className={classNames(
             "max-w-screen-2xl pb-10 mx-auto flex-1 ",
-            noDomains && "blur-sm overflow-hidden"
+            noDomains && "blur-sm overflow-hidden",
           )}
           style={{
             maxHeight: noDomains ? "calc(100vh)" : "auto",

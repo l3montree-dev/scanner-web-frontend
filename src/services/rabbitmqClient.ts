@@ -22,7 +22,7 @@ export class RabbitMQClient {
   async publish(
     exchange: string,
     message: Record<string, any>,
-    options?: amqp.Options.Publish
+    options?: amqp.Options.Publish,
   ) {
     const channel = await this.getPublishChannel();
 
@@ -37,13 +37,13 @@ export class RabbitMQClient {
       {
         messageId: randomUUID(),
         ...options,
-      }
+      },
     );
   }
 
   async subscribe(
     exchange: string,
-    listener: (msg: Record<string, any>) => Promise<void> | void
+    listener: (msg: Record<string, any>) => Promise<void> | void,
   ) {
     const channel = await this.getSubscribeChannel();
     await channel.assertExchange(exchange, "fanout", {
@@ -65,7 +65,7 @@ export class RabbitMQClient {
               messageId: msg.properties.messageId,
               queue: queue.queue,
             },
-            `acknowledging message: ${msg.properties.messageId.toString()}`
+            `acknowledging message: ${msg.properties.messageId.toString()}`,
           );
           channel.ack(msg);
         } catch (e: any) {
@@ -98,7 +98,7 @@ export class RabbitMQClient {
   protected async getSubscribeChannel() {
     if (!this.subscribeChannel) {
       this.subscribeChannel = this.connect().then((connection) =>
-        connection.createChannel()
+        connection.createChannel(),
       );
     }
     return this.subscribeChannel;
@@ -107,7 +107,7 @@ export class RabbitMQClient {
   async listen(
     queue: string,
     listener: (msg: amqp.Message) => Promise<void> | void,
-    queueOptions?: amqp.Options.AssertQueue
+    queueOptions?: amqp.Options.AssertQueue,
   ) {
     const channel = await this.getSubscribeChannel();
     await channel.assertQueue(queue, queueOptions);
@@ -124,7 +124,7 @@ export class RabbitMQClient {
               messageId: msg.properties.messageId,
               queue,
             },
-            `acknowledging message: ${msg.properties.messageId.toString()}`
+            `acknowledging message: ${msg.properties.messageId.toString()}`,
           );
           channel.ack(msg);
         } catch (e: any) {
@@ -147,7 +147,7 @@ export class RabbitMQClient {
     queue: string,
     message: Record<string, any>,
     queueOptions?: amqp.Options.AssertQueue,
-    options?: amqp.Options.Publish
+    options?: amqp.Options.Publish,
   ): Promise<void> {
     const channel = await this.getPublishChannel();
 
@@ -158,7 +158,7 @@ export class RabbitMQClient {
       {
         messageId: randomUUID(),
         ...options,
-      }
+      },
     );
   }
 }
@@ -178,18 +178,18 @@ export class RabbitMQRPCClient extends RabbitMQClient {
         if (msg) {
           const listenerWasRegistered = this.eventEmitter.emit(
             msg.properties.messageId,
-            msg.content
+            msg.content,
           );
           if (!listenerWasRegistered) {
             logger.warn(
-              `no listener was registered for ${msg.properties.messageId}`
+              `no listener was registered for ${msg.properties.messageId}`,
             );
           }
         }
       },
       {
         exclusive: true,
-      }
+      },
     );
   }
 
@@ -198,13 +198,13 @@ export class RabbitMQRPCClient extends RabbitMQClient {
     message: Record<string, any>,
     options: amqp.Options.Publish & { messageId: string },
     // the first argument provided is a function that can be called to stop the stream
-    onMessage: (cancelFn: () => void, msg: T) => void
+    onMessage: (cancelFn: () => void, msg: T) => void,
   ) {
     // resolve the promise after receiving an event - might block forever.
     this.eventEmitter.addListener(options.messageId, (buffer) => {
       onMessage(
         () => this.eventEmitter.removeAllListeners(options.messageId),
-        JSON.parse(buffer.toString())
+        JSON.parse(buffer.toString()),
       );
     });
     this.send(
@@ -216,7 +216,7 @@ export class RabbitMQRPCClient extends RabbitMQClient {
         // an rpc should always have a higher priority than a regular message
         priority: 5,
         ...options,
-      }
+      },
     );
     return () => this.eventEmitter.removeAllListeners(options.messageId);
   }
@@ -224,7 +224,7 @@ export class RabbitMQRPCClient extends RabbitMQClient {
   call<T extends Record<string, any>>(
     queue: string,
     message: Record<string, any>,
-    options: amqp.Options.Publish & { messageId: string }
+    options: amqp.Options.Publish & { messageId: string },
   ): Promise<T> {
     return new Promise(async (resolve) => {
       // resolve the promise after receiving an event - might block forever.
@@ -240,14 +240,14 @@ export class RabbitMQRPCClient extends RabbitMQClient {
           // an rpc should always have a higher priority than a regular message
           priority: 5,
           ...options,
-        }
+        },
       ).then(() => {
         logger.debug(
           {
             messageId: options.messageId,
             queue,
           },
-          "sent message"
+          "sent message",
         );
       });
     });
@@ -256,9 +256,9 @@ export class RabbitMQRPCClient extends RabbitMQClient {
 
 export const rabbitMQRPCClient = new GlobalRef<RabbitMQRPCClient>(
   "rabbitmqRPCClient",
-  () => new RabbitMQRPCClient(getRabbitMQConnString())
+  () => new RabbitMQRPCClient(getRabbitMQConnString()),
 ).value;
 export const rabbitMQClient = new GlobalRef<RabbitMQClient>(
   "rabbitmqClient",
-  () => new RabbitMQClient(getRabbitMQConnString())
+  () => new RabbitMQClient(getRabbitMQConnString()),
 ).value;

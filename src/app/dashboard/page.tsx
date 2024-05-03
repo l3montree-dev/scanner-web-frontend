@@ -14,6 +14,7 @@ import { config } from "../../config";
 
 const Dashboard = async () => {
   const currentUser = await getCurrentUserOrGuestUser(authOptions);
+
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
 
@@ -35,7 +36,7 @@ const Dashboard = async () => {
     refCollections: config.generateStatsForCollections,
     collections: normalizeToMap(
       toDTO(collections).map((c) => ({ ...c, size: c._count.targets })),
-      "id"
+      "id",
     ),
   };
 

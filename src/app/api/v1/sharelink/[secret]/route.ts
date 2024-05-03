@@ -8,7 +8,7 @@ import { getCurrentUser } from "../../../../../utils/server";
 
 export async function DELETE(
   _: NextRequest,
-  { params }: { params: { secret: string } }
+  { params }: { params: { secret: string } },
 ) {
   // fetch the sharelink
   const [shareLink, currentUser] = await Promise.all([
@@ -29,7 +29,7 @@ export async function DELETE(
   if (
     !collectionService.isUserAllowedToModifyCollection(
       shareLink.collection,
-      currentUser
+      currentUser,
     )
   ) {
     throw new ForbiddenException();

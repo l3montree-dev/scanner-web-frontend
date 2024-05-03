@@ -3,7 +3,7 @@ import { FeatureFlag } from "../types";
 
 const findUserById = async (
   id: string,
-  prisma: PrismaClient
+  prisma: PrismaClient,
 ): Promise<User> => {
   return prisma.user.findFirstOrThrow({
     where: {
@@ -14,7 +14,7 @@ const findUserById = async (
 
 const createUser = async (
   user: { _id: string; featureFlags: Record<FeatureFlag, boolean> },
-  prisma: PrismaClient
+  prisma: PrismaClient,
 ): Promise<User> => {
   // then create the user with the network ids.
   const createdUser = await prisma.user.create({
@@ -35,7 +35,7 @@ const createUser = async (
 const updateUser = async (
   id: string,
   data: { featureFlags: Record<FeatureFlag, boolean> },
-  prisma: PrismaClient
+  prisma: PrismaClient,
 ): Promise<User> => {
   // then create the user with the network ids.
   const updatedUser = await prisma.user.update({

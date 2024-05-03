@@ -76,7 +76,7 @@ const Content: FunctionComponent<Props> = (props) => {
       crypto.randomUUID(),
       {
         method: "DELETE",
-      }
+      },
     );
     if (!res.ok) {
       throw res;
@@ -96,7 +96,7 @@ const Content: FunctionComponent<Props> = (props) => {
       {
         method: "PUT",
         body: JSON.stringify(form),
-      }
+      },
     );
     if (!res.ok) {
       throw res;
@@ -113,7 +113,7 @@ const Content: FunctionComponent<Props> = (props) => {
           };
         }
         return user;
-      })
+      }),
     );
     setEditUser(null);
   };
@@ -170,7 +170,7 @@ const Content: FunctionComponent<Props> = (props) => {
                 <tr
                   className={classNames(
                     "flex flex-col lg:table-row relative mt-3",
-                    i % 2 !== 0 ? "bg-blau-20/40" : "bg-dunkelblau-20/20"
+                    i % 2 !== 0 ? "bg-blau-20/40" : "bg-dunkelblau-20/20",
                   )}
                   key={user.id}
                 >

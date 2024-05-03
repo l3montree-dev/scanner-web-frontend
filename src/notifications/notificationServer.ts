@@ -6,7 +6,7 @@ import { rabbitMQClient } from "../services/rabbitmqClient";
 class NotificationServer {
   private readonly notifications = new EventEmitter();
   constructor(
-    private readonly horizontalScalingAdapter?: HorizontalScalingAdapter
+    private readonly horizontalScalingAdapter?: HorizontalScalingAdapter,
   ) {}
 
   public bootstrap() {
@@ -19,15 +19,15 @@ class NotificationServer {
         };
         this.localEmitNotification(
           notification.userId,
-          notification.notification
+          notification.notification,
         );
-      }
+      },
     );
   }
 
   private localEmitNotification(
     userId: string,
-    notification: Notification<any>
+    notification: Notification<any>,
   ) {
     this.notifications.emit(userId, notification);
   }
@@ -47,7 +47,7 @@ class NotificationServer {
 
   onNotification = (
     userId: string,
-    callback: (notification: Notification<any>) => void
+    callback: (notification: Notification<any>) => void,
   ) => {
     this.notifications.on(userId, callback);
     return () => {
@@ -57,5 +57,5 @@ class NotificationServer {
 }
 export const notificationServer = new GlobalRef(
   "notificationServer",
-  () => new NotificationServer(rabbitMQClient)
+  () => new NotificationServer(rabbitMQClient),
 ).value;

@@ -1,19 +1,11 @@
-import { AuthOptions } from "next-auth";
-import { prisma } from "./db/connection";
-import { IToken } from "./types";
+import { AuthOptions, CallbacksOptions } from "next-auth";
+import { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
 import KeycloakProvider from "next-auth/providers/keycloak";
+import { prisma } from "./db/connection";
+import { ISession } from "./types";
 
-/**
- * Takes a token, and returns a new token with updated
- * `accessToken` and `accessTokenExpires`. If an error occurs,
- * returns the old token and an error property
- */
-async function refreshAccessToken(token: IToken) {
-  return {
-    ...token,
-    error: "RefreshAccessTokenError",
-  };
+async function refreshAccessToken(token: JWT): Promise<JWT> {
   try {
     const response = await fetch(
       `${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/token`,
@@ -28,7 +20,7 @@ async function refreshAccessToken(token: IToken) {
           refresh_token: token.refreshToken,
           client_secret: process.env.KEYCLOAK_SECRET as string,
         }),
-      }
+      },
     );
     if (!response.ok) {
       throw response;
@@ -38,9 +30,11 @@ async function refreshAccessToken(token: IToken) {
 
     return {
       ...token,
+      error: undefined,
       accessToken: refreshedTokens.access_token,
-      accessTokenExpires: Date.now() + refreshedTokens.expires_at * 1000,
+      expiresAt: Date.now() + refreshedTokens.expires_in * 1000,
       refreshToken: refreshedTokens.refresh_token ?? token.refreshToken, // Fall back to old refresh token
+      idToken: refreshedTokens.id_token,
     };
   } catch (error) {
     return {
@@ -49,6 +43,66 @@ async function refreshAccessToken(token: IToken) {
     };
   }
 }
+
+const callbacks: CallbacksOptions = {
+  signIn: () => true,
+  async redirect({ url, baseUrl }) {
+    // Allows relative callback URLs
+    if (url.startsWith("/")) return `${baseUrl}${url}`;
+    // Allows callback URLs on the same origin
+    else if (new URL(url).origin === baseUrl) return url;
+    return baseUrl;
+  },
+  async session(params) {
+    return {
+      ...params.session,
+      user: {
+        name: params.token.username,
+        username: params.token.username,
+        id: params.token.sub ?? (params.token.id as string),
+        collectionId: params.token.collectionId as number,
+      },
+      realmAccess: params.token.realmAccess as ISession["realmAccess"],
+      error: params.token.error as string,
+    };
+  },
+  async jwt({ token, account, user, profile }): Promise<JWT> {
+    if (user) {
+      // check if guest user.
+      // if so, the collectionId is defined on the user.
+      if (user.collectionId) {
+        return {
+          user,
+          accessToken: "",
+          expiresAt: 0,
+          username: user.name,
+          refreshToken: "",
+          idToken: "",
+          realmAccess: {
+            roles: [],
+          },
+        };
+      }
+    }
+
+    if (profile) {
+      token.realmAccess = profile.realm_access;
+      token.username = profile.preferred_username;
+    }
+    if (account) {
+      token.accessToken = account.access_token;
+      token.expiresAt = account.expires_at * 1000;
+      token.refreshToken = account.refresh_token;
+      token.idToken = account.id_token;
+    }
+
+    if (token.expiresAt === undefined || Date.now() < token.expiresAt) {
+      return token;
+    }
+
+    return refreshAccessToken(token);
+  },
+};
 
 export const authOptions: AuthOptions = {
   pages: {
@@ -90,55 +144,13 @@ export const authOptions: AuthOptions = {
       clientId: process.env.KEYCLOAK_ID as string,
       clientSecret: process.env.KEYCLOAK_SECRET as string,
       issuer: process.env.KEYCLOAK_ISSUER,
-      profile(profile: any) {
+      profile(profile) {
         return {
           id: profile.sub,
           name: profile.preferred_username,
-          email: profile.email,
-          image: profile.picture,
         };
       },
     }),
   ],
-  callbacks: {
-    async session(params: any) {
-      return {
-        ...params.session,
-        user: {
-          ...params.session.user,
-          id: params.token.sub ?? params.token.id,
-          collectionId: params.token.collectionId,
-        },
-        resource_access: params.token.resource_access,
-        error: params.token.error,
-      };
-    },
-    jwt(params: any) {
-      if ("user" in params) {
-        // check if guest user.
-        // if so, the collectionId is defined on the user.
-        if (params.user.collectionId) {
-          return {
-            ...params.user,
-          };
-        }
-      }
-      if (params.profile) {
-        params.token.resource_access = params.profile.resource_access;
-      }
-      if (params.account) {
-        params.token.accessToken = params.account.access_token;
-        params.token.expiresAt = params.account.expires_at * 1000;
-        params.token.refreshToken = params.account.refresh_token;
-        params.token.idToken = params.account.id_token;
-
-        return params.token;
-      }
-
-      if (Date.now() < params.token.expiresAt) {
-        return params.token;
-      }
-      return refreshAccessToken(params.token);
-    },
-  },
+  callbacks,
 };

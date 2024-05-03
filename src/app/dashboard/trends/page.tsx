@@ -55,7 +55,7 @@ const Page = async ({ searchParams }: any) => {
     refCollections: config.generateStatsForCollections,
     collections: normalizeToMap(
       toDTO(collections).map((c) => ({ ...c, size: c._count.targets })),
-      "id"
+      "id",
     ),
   };
 

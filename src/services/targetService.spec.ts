@@ -16,7 +16,7 @@ describe("Target Service Test Suite", () => {
       {
         uri: "example.com/test",
       },
-      prismaMock
+      prismaMock,
     );
     expect(prismaMock.target.upsert).toHaveBeenCalledWith({
       where: { uri: "example.com/test" },
@@ -43,7 +43,7 @@ describe("Target Service Test Suite", () => {
         uri: "example.com/test",
       },
       prismaMock,
-      { id: "1234", defaultCollectionId: 4711 } as any
+      { id: "1234", defaultCollectionId: 4711 } as any,
     );
     expect(prismaMock.targetCollectionRelation.createMany).toHaveBeenCalledWith(
       {
@@ -54,7 +54,7 @@ describe("Target Service Test Suite", () => {
             uri: "example.com/test",
           },
         ],
-      }
+      },
     );
   });
   it("should delete the statistics of a collection if a target is added", async () => {
@@ -74,7 +74,7 @@ describe("Target Service Test Suite", () => {
         uri: "example.com/test",
       },
       prismaMock,
-      { id: "1234", defaultCollectionId: 4711 } as any
+      { id: "1234", defaultCollectionId: 4711 } as any,
     );
     // wait for the next tick
     await new Promise(process.nextTick);
@@ -177,7 +177,7 @@ describe("Target Service Test Suite", () => {
           pageSize: 10,
           ...(actual as { [key in InspectionType]?: "0" | "1" | "-1" }),
         },
-        prismaMock
+        prismaMock,
       );
 
       const query = prismaMock.$queryRawUnsafe.mock.calls[0][0];
@@ -199,16 +199,16 @@ describe("Target Service Test Suite", () => {
           .filter((s: string) => s.length > 0)
           .map((s: string) => s.trim())
           .join(" ")
-          .replace(/\s+/g, " ")
+          .replace(/\s+/g, " "),
       ).toEqual(
         expectedQuery
           .split("\n")
           .filter((s: string) => s.length > 0)
           .map((s) => s.trim())
           .join(" ")
-          .replace(/\s+/g, " ")
+          .replace(/\s+/g, " "),
       );
-    }
+    },
   );
   it.each([
     {
@@ -239,7 +239,7 @@ describe("Target Service Test Suite", () => {
           page: 0,
           pageSize: 10,
         },
-        prismaMock
+        prismaMock,
       );
 
       const query = prismaMock.$queryRawUnsafe.mock.calls[0][0];
@@ -261,16 +261,16 @@ describe("Target Service Test Suite", () => {
           .filter((s: string) => s.length > 0)
           .map((s: string) => s.trim())
           .join(" ")
-          .replace(/\s+/g, " ")
+          .replace(/\s+/g, " "),
       ).toEqual(
         expectedQuery
           .split("\n")
           .filter((s: string) => s.length > 0)
           .map((s) => s.trim())
           .join(" ")
-          .replace(/\s+/g, " ")
+          .replace(/\s+/g, " "),
       );
-    }
+    },
   );
 
   it("should mark the targets as queued after retrieving them from the database for scanning", async () => {

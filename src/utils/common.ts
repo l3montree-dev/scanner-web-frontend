@@ -71,13 +71,13 @@ export const getUnicodeHostnameFromUri = (hostname: string) => {
 };
 
 export const isProgressMessage = (
-  message: Record<string, any>
+  message: Record<string, any>,
 ): message is IIpLookupProgressUpdateMsg => {
   return "queued" in message;
 };
 
 export const transformIpLookupMsg2DTO = (
-  msg: IIpLookupReportMsg
+  msg: IIpLookupReportMsg,
 ): IIpLookupReportDTO => {
   return {
     ...msg,
@@ -86,7 +86,7 @@ export const transformIpLookupMsg2DTO = (
         domains.map((domain) => ({
           ip,
           domain,
-        }))
+        })),
       )
       .flat(),
   };
@@ -110,7 +110,7 @@ export const limitStringValues = <T>(obj: T, charLimit = 255): T => {
     return Object.fromEntries(
       Object.entries(obj).map(([key, value]) => {
         return [key, limitStringValues(value, charLimit)];
-      })
+      }),
     ) as any;
   }
   return obj;
@@ -136,18 +136,16 @@ export const replaceNullWithZero = <T>(obj: T): T => {
     return Object.fromEntries(
       Object.entries(obj).map(([key, value]) => {
         return [key, replaceNullWithZero(value)];
-      })
+      }),
     ) as T;
   }
   return obj;
 };
 export const isAdmin = (session: ISession | null | undefined): boolean => {
-  if (!session || !session.resource_access) {
+  if (!session || !session.realmAccess) {
     return false;
   }
-  return Boolean(
-    session?.resource_access["realm-management"]?.roles.includes("realm-admin")
-  );
+  return Boolean(session?.realmAccess?.roles.includes("admin"));
 };
 
 export const isFeatureEnabled = (feature: FeatureFlag, user: User): boolean => {
@@ -173,7 +171,7 @@ export const wait = (delayMS: number) => {
 
 export const timeout = async <T>(
   promise: Promise<T>,
-  timeoutMS = 3_000
+  timeoutMS = 3_000,
 ): Promise<T> => {
   const result = await Promise.race([promise, wait(timeoutMS)]);
   if (!result) {
@@ -198,7 +196,7 @@ export const sanitizeURI = (providedValue: any): string | null => {
   const url = new URL(
     providedValue.startsWith("https://") || providedValue.startsWith("http://")
       ? providedValue
-      : `https://${providedValue}`
+      : `https://${providedValue}`,
   );
 
   url.hostname = url.hostname.toLowerCase();
@@ -211,7 +209,7 @@ export const sanitizeURI = (providedValue: any): string | null => {
     return toUnicode(
       url.port
         ? `${url.hostname}:${url.port}${url.pathname}`
-        : url.hostname + url.pathname
+        : url.hostname + url.pathname,
     );
   }
 
@@ -260,13 +258,13 @@ export const parseNetworkString = (networks: string | string[]): string[] => {
 };
 
 export const isScanError = (
-  response: ISarifResponse
+  response: ISarifResponse,
 ): response is ISarifScanErrorResponse => {
   return response.runs[0].invocations[0].exitCode !== 0;
 };
 
 export const isScanSuccess = (
-  response: ISarifResponse
+  response: ISarifResponse,
 ): response is ISarifScanSuccessResponse => {
   return !isScanError(response);
 };
@@ -319,7 +317,7 @@ export type Normalized<T> = {
 
 export const normalizeToMap = <T extends object, Key extends keyof T>(
   arr: T[],
-  identifier: Key
+  identifier: Key,
 ) => {
   return arr.reduce((acc, cur) => {
     return {
@@ -333,14 +331,13 @@ export const neverThrow = async <T>(promise: Promise<T>): Promise<T | null> => {
   try {
     return await promise;
   } catch (e) {
-    console.warn(e);
     return null;
   }
 };
 
 export const defaultOnError = async <T, D>(
   promise: Promise<T>,
-  d: D
+  d: D,
 ): Promise<T | D> => {
   const res = await neverThrow(promise);
   if (res === null) {
@@ -357,7 +354,7 @@ export const dateFormat = {
 };
 
 export const emailRegex = new RegExp(
-  /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*$/
+  /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*$/,
 );
 
 export const toGermanDate = (date: Date): string => {

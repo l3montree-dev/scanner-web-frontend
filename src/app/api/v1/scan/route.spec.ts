@@ -25,7 +25,7 @@ NextResponse.json = jest.fn(
     ({
       json: () => obj,
       status: responseInit?.status ?? 200,
-    } as any)
+    }) as any,
 );
 
 describe("Scan API Test Suite", () => {

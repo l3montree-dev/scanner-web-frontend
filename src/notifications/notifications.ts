@@ -38,18 +38,18 @@ export interface NotificationMap {
 
 export const isDoneNotification = <
   Payload extends Record<string, any>,
-  T extends Notification<Payload>
+  T extends Notification<Payload>,
 >(
-  notification: T
+  notification: T,
 ): notification is T & { payload: DONE } => {
   return notification.payload === "DONE";
 };
 
 export const hasPayload = <
   Payload extends Record<string, any>,
-  T extends Notification<Payload>
+  T extends Notification<Payload>,
 >(
-  notification: T
+  notification: T,
 ): notification is T & { payload: Payload } => {
   return notification.payload !== "DONE";
 };

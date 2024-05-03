@@ -26,12 +26,12 @@ export const GET = async (req: NextRequest) => {
 
   logger.debug(
     { userId: user.id, connectionId },
-    `new connection for user ${user.id}`
+    `new connection for user ${user.id}`,
   );
 
   const onConnectionDisconnect = serverSentEventsService.newConnection(
     user.id,
-    connectionId
+    connectionId,
   );
 
   const asyncGenerator = eventListenerToAsyncGenerator<string>((fn) => {
@@ -52,7 +52,7 @@ export const GET = async (req: NextRequest) => {
       (notification) => {
         logger.debug("sending notification to", user.id);
         fn({ done: false, val: JSON.stringify(notification) });
-      }
+      },
     );
     onConnectionDisconnect(() => {
       deregisterListener();
@@ -72,7 +72,7 @@ export const GET = async (req: NextRequest) => {
           return;
         }
         controller.enqueue(
-          encoder.encode(serverSentEventsService.transformToSSE(value))
+          encoder.encode(serverSentEventsService.transformToSSE(value)),
         );
       },
     }),
@@ -83,6 +83,6 @@ export const GET = async (req: NextRequest) => {
         Connection: "keep-alive",
         "Content-Encoding": "none",
       },
-    }
+    },
   );
 };

@@ -74,9 +74,9 @@ const TargetTableItem: FunctionComponent<Props> = ({
   const detailsMap = useMemo(
     () =>
       Object.fromEntries(
-        target.details?.runs[0].results.map((r) => [r.ruleId, r]) ?? []
+        target.details?.runs[0].results.map((r) => [r.ruleId, r]) ?? [],
       ),
-    [target]
+    [target],
   );
   return (
     <>
@@ -88,7 +88,7 @@ const TargetTableItem: FunctionComponent<Props> = ({
             ? "line-through"
             : "",
           clNames,
-          Object.keys(collections).length === 0 ? "rounded-b-md" : ""
+          Object.keys(collections).length === 0 ? "rounded-b-md" : "",
         )}
       >
         <td
@@ -138,13 +138,13 @@ const TargetTableItem: FunctionComponent<Props> = ({
           <Tooltip
             tooltip={getCheckDescription(
               target.details,
-              OrganizationalInspectionType.ResponsibleDisclosure
+              OrganizationalInspectionType.ResponsibleDisclosure,
             )}
           >
             <ResultIcon
               checkResult={kind2CheckResult(
                 detailsMap[OrganizationalInspectionType.ResponsibleDisclosure]
-                  ?.kind
+                  ?.kind,
               )}
             />
           </Tooltip>
@@ -156,12 +156,12 @@ const TargetTableItem: FunctionComponent<Props> = ({
           <Tooltip
             tooltip={getCheckDescription(
               target.details,
-              TLSInspectionType.TLSv1_3
+              TLSInspectionType.TLSv1_3,
             )}
           >
             <ResultIcon
               checkResult={kind2CheckResult(
-                detailsMap[TLSInspectionType.TLSv1_3]?.kind
+                detailsMap[TLSInspectionType.TLSv1_3]?.kind,
               )}
             />
           </Tooltip>
@@ -173,12 +173,12 @@ const TargetTableItem: FunctionComponent<Props> = ({
           <Tooltip
             tooltip={getCheckDescription(
               target.details,
-              TLSInspectionType.DeprecatedTLSDeactivated
+              TLSInspectionType.DeprecatedTLSDeactivated,
             )}
           >
             <ResultIcon
               checkResult={kind2CheckResult(
-                detailsMap[TLSInspectionType.DeprecatedTLSDeactivated]?.kind
+                detailsMap[TLSInspectionType.DeprecatedTLSDeactivated]?.kind,
               )}
             />
           </Tooltip>
@@ -190,12 +190,12 @@ const TargetTableItem: FunctionComponent<Props> = ({
           <Tooltip
             tooltip={getCheckDescription(
               target.details,
-              HeaderInspectionType.HSTS
+              HeaderInspectionType.HSTS,
             )}
           >
             <ResultIcon
               checkResult={kind2CheckResult(
-                detailsMap[HeaderInspectionType.HSTS]?.kind
+                detailsMap[HeaderInspectionType.HSTS]?.kind,
               )}
             />
           </Tooltip>
@@ -207,12 +207,12 @@ const TargetTableItem: FunctionComponent<Props> = ({
           <Tooltip
             tooltip={getCheckDescription(
               target.details,
-              DomainInspectionType.DNSSec
+              DomainInspectionType.DNSSec,
             )}
           >
             <ResultIcon
               checkResult={kind2CheckResult(
-                detailsMap[DomainInspectionType.DNSSec]?.kind
+                detailsMap[DomainInspectionType.DNSSec]?.kind,
               )}
             />
           </Tooltip>
@@ -228,14 +228,14 @@ const TargetTableItem: FunctionComponent<Props> = ({
           <Tooltip
             tooltip={getCheckDescription(
               target.details,
-              AccessiblityInspectionType.ProvidesEnglishWebsiteVersion
+              AccessiblityInspectionType.ProvidesEnglishWebsiteVersion,
             )}
           >
             <ResultIcon
               checkResult={kind2CheckResult(
                 detailsMap[
                   AccessiblityInspectionType.ProvidesEnglishWebsiteVersion
-                ]?.kind
+                ]?.kind,
               )}
             />
           </Tooltip>

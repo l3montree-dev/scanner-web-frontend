@@ -23,7 +23,7 @@ const Pagination: FunctionComponent<Props> = (props) => {
   const lastPage = Math.floor(props.total / props.pageSize);
   const pages = useMemo(
     () => buildArray(lastPage, props.page),
-    [props.page, lastPage]
+    [props.page, lastPage],
   );
 
   return (
@@ -32,7 +32,7 @@ const Pagination: FunctionComponent<Props> = (props) => {
         <button
           onClick={() => props.onPageChange(0)}
           className={classNames(
-            "page-box px-3 py-1 mx-1 mr-5 rounded-sm border border-hellgrau-100 transition-all hover:bg-dunkelblau-100 hover:border-bund hover:text-white"
+            "page-box px-3 py-1 mx-1 mr-5 rounded-sm border border-hellgrau-100 transition-all hover:bg-dunkelblau-100 hover:border-bund hover:text-white",
           )}
         >
           1
@@ -46,7 +46,7 @@ const Pagination: FunctionComponent<Props> = (props) => {
               "page-box px-3 py-1 mx-1 rounded-sm border transition-all hover:bg-dunkelblau-100 hover:border-bund hover:text-white",
               i === props.page
                 ? "bg-dunkelblau-100 border-bund text-white"
-                : "border-hellgrau-100"
+                : "border-hellgrau-100",
             )}
             key={i}
           >
@@ -60,7 +60,7 @@ const Pagination: FunctionComponent<Props> = (props) => {
             props.onPageChange(Math.floor(props.total / props.pageSize))
           }
           className={classNames(
-            "ml-5 page-box px-3 py-1 rounded-sm mx-1 border border-hellgrau-100 transition-all hover:bg-dunkelblau-100 hover:border-bund hover:text-white"
+            "ml-5 page-box px-3 py-1 rounded-sm mx-1 border border-hellgrau-100 transition-all hover:bg-dunkelblau-100 hover:border-bund hover:text-white",
           )}
         >
           {Math.floor(props.total / props.pageSize) + 1}

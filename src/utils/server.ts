@@ -12,7 +12,7 @@ import { isAdmin, isGuestUser } from "./common";
 import { userService } from "../services/userService";
 
 export const getServerSession = async (
-  options: AuthOptions
+  options: AuthOptions,
 ): Promise<ISession | null> => {
   return nextAuthGetServerSession(options) as any as Promise<ISession | null>;
 };
@@ -22,7 +22,7 @@ export const getJWTToken = async (params: GetTokenParams) => {
 };
 
 export async function* eventListenerToAsyncGenerator<Data>(
-  listenForEvents: (fn: (ev: { val: Data; done: boolean }) => void) => void
+  listenForEvents: (fn: (ev: { val: Data; done: boolean }) => void) => void,
 ): AsyncGenerator<Data> {
   const eventResolvers: Array<(ev: { val: Data; done: boolean }) => void> = [];
   const eventPromises = [
@@ -36,7 +36,7 @@ export async function* eventListenerToAsyncGenerator<Data>(
       new Promise((resolve) => {
         eventResolvers.push(resolve);
         eventResolvers.shift()!(event);
-      })
+      }),
     );
   });
 
@@ -50,7 +50,7 @@ export async function* eventListenerToAsyncGenerator<Data>(
 }
 
 export const getSessionAndUser = async (
-  options: AuthOptions
+  options: AuthOptions,
 ): Promise<{ session: ISession; user: User }> => {
   const session = await getServerSession(options);
   if (!session) {
@@ -76,7 +76,7 @@ export const getSessionAndUser = async (
 
   if (!currentUser) {
     throw new UnauthorizedException(
-      `currentUser with id: ${session.user.id} not found`
+      `currentUser with id: ${session.user.id} not found`,
     );
   }
 
@@ -84,13 +84,14 @@ export const getSessionAndUser = async (
 };
 
 export const getCurrentUserOrGuestUser = async (
-  options: AuthOptions
+  options: AuthOptions,
 ): Promise<User | Guest> => {
   const session = await getServerSession(options);
+
   if (!session) {
     throw new UnauthorizedException("no session");
   }
-  
+
   // check if guest
   if (isGuestUser(session.user)) {
     return session.user;
@@ -104,12 +105,15 @@ export const getCurrentUserOrGuestUser = async (
 
   if (!currentUser) {
     // bootstrap the user
-    const user =  userService.createUser({
+    const user = userService.createUser(
+      {
         _id: session.user.id,
         featureFlags: {
-            "collections": true,
-        }
-    }, prisma)
+          collections: true,
+        },
+      },
+      prisma,
+    );
 
     return user;
   }
@@ -130,7 +134,7 @@ export const getCurrentUser = async (options: AuthOptions): Promise<User> => {
 
   if (!currentUser) {
     throw new UnauthorizedException(
-      `currentUser with id: ${session.user.id} not found`
+      `currentUser with id: ${session.user.id} not found`,
     );
   }
 
@@ -154,16 +158,16 @@ export type ServerSideProps<T> = {
 export type DTO<T> = T extends bigint
   ? number
   : T extends Prisma.Decimal
-  ? number
-  : T extends undefined
-  ? null
-  : T extends Array<infer U>
-  ? DTO<U>[]
-  : T extends Date
-  ? string
-  : T extends object
-  ? { [K in keyof T]: DTO<T[K]> }
-  : T;
+    ? number
+    : T extends undefined
+      ? null
+      : T extends Array<infer U>
+        ? DTO<U>[]
+        : T extends Date
+          ? string
+          : T extends object
+            ? { [K in keyof T]: DTO<T[K]> }
+            : T;
 
 export const toDTO = <T>(v: T): DTO<T> => {
   if (v instanceof Date) {
@@ -184,7 +188,7 @@ export const toDTO = <T>(v: T): DTO<T> => {
   }
   if (typeof v === "object" && v !== null) {
     return Object.fromEntries(
-      Object.entries(v).map(([k, v]) => [k, toDTO(v)])
+      Object.entries(v).map(([k, v]) => [k, toDTO(v)]),
     ) as DTO<T>;
   }
   return v as DTO<T>;

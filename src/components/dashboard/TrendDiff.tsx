@@ -90,7 +90,7 @@ const TrendDiff: FunctionComponent<Props> = ({
     }).toString();
     const res = await clientHttpClient(
       `/api/v1/diff?${url}`,
-      crypto.randomUUID()
+      crypto.randomUUID(),
     );
     const diff: {
       false: Array<{ uri: string; was: boolean; now: boolean }>;
@@ -151,7 +151,7 @@ const TrendDiff: FunctionComponent<Props> = ({
                             <ResultIcon
                               size={16}
                               checkResult={kind2CheckResult(
-                                didPass2Kind(d.now)
+                                didPass2Kind(d.now),
                               )}
                             />
                           </span>

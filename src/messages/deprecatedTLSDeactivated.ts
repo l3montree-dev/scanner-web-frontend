@@ -3,13 +3,13 @@ import { ISarifResponse } from "../types";
 import { DTO } from "../utils/server";
 
 export const getDeprecatedTLSDeactivatedReportMessage = (
-  report: DTO<ISarifResponse> | null
+  report: DTO<ISarifResponse> | null,
 ) => {
   if (report === null) {
     return "Die Überprüfung der Protokolle TLS 1.1 und älter sowie SSL konnte nicht durchgeführt werden.";
   }
   const inspection = report.runs[0].results.find(
-    (r) => r.ruleId === TLSInspectionType.DeprecatedTLSDeactivated
+    (r) => r.ruleId === TLSInspectionType.DeprecatedTLSDeactivated,
   );
   if (!inspection || inspection?.kind === "notApplicable") {
     return "Die Überprüfung der Protokolle TLS 1.1 und älter sowie SSL konnte nicht durchgeführt werden.";

@@ -47,7 +47,7 @@ const Content: FunctionComponent<Props> = (props) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(collection),
-      }
+      },
     );
 
     if (!res.ok) {
@@ -66,7 +66,7 @@ const Content: FunctionComponent<Props> = (props) => {
       crypto.randomUUID(),
       {
         method: "DELETE",
-      }
+      },
     );
 
     if (!res.ok) {
@@ -91,7 +91,7 @@ const Content: FunctionComponent<Props> = (props) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(collection),
-      }
+      },
     );
 
     if (!res.ok) {
@@ -115,7 +115,7 @@ const Content: FunctionComponent<Props> = (props) => {
       crypto.randomUUID(),
       {
         method: "POST",
-      }
+      },
     );
     if (!res.ok) {
       throw res;
@@ -150,7 +150,7 @@ const Content: FunctionComponent<Props> = (props) => {
       crypto.randomUUID(),
       {
         method: "DELETE",
-      }
+      },
     );
     if (!res.ok) {
       throw res;
@@ -161,7 +161,7 @@ const Content: FunctionComponent<Props> = (props) => {
           return {
             ...c,
             shareLinks: c.shareLinks.filter(
-              (sl) => sl.secret !== shareLink.secret
+              (sl) => sl.secret !== shareLink.secret,
             ),
           };
         }
@@ -174,7 +174,7 @@ const Content: FunctionComponent<Props> = (props) => {
         return {
           ...prev,
           shareLinks: prev.shareLinks.filter(
-            (sl) => sl.secret !== shareLink.secret
+            (sl) => sl.secret !== shareLink.secret,
           ),
         };
       }
@@ -228,7 +228,7 @@ const Content: FunctionComponent<Props> = (props) => {
                     " group/collection-item",
                     i !== arr.length - 1 && "border-b",
                     "border-b-deepblue-300 transition-all",
-                    i % 2 !== 0 ? "bg-blau-20/40" : "bg-dunkelblau-20/20"
+                    i % 2 !== 0 ? "bg-blau-20/40" : "bg-dunkelblau-20/20",
                   )}
                   key={collection.id}
                 >
@@ -251,7 +251,7 @@ const Content: FunctionComponent<Props> = (props) => {
                       "order-2 md:w-auto px-2 w-full",
                       collection.shareLinks.length > 0
                         ? "px-2 "
-                        : "hidden md:table-cell"
+                        : "hidden md:table-cell",
                     )}
                   >
                     <div className="py-2 flex flex-col gap-2">

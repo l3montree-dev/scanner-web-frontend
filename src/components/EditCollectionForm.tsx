@@ -117,7 +117,7 @@ const EditCollectionForm: FunctionComponent<Props> = (props) => {
             <Button
               onClick={() =>
                 generateLinkRequest.run(
-                  props.onGenerateLink(props.collection.id)
+                  props.onGenerateLink(props.collection.id),
                 )
               }
               loading={generateLinkRequest.isLoading}

@@ -34,7 +34,7 @@ const HeaderTitle = () => {
     <h2
       className={classNames(
         "text-textblack text-xl font-bold transition duration-500",
-        title === "" ? "opacity-0" : "opacity-100"
+        title === "" ? "opacity-0" : "opacity-100",
       )}
     >
       {title}

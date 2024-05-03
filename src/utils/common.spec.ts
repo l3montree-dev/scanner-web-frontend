@@ -83,23 +83,19 @@ describe("common test suite", () => {
     it("should return false, if the resource_access realm management does not contain the role realm-admin", () => {
       expect(
         isAdmin({
-          resource_access: {
-            "realm-management": {
-              roles: ["not-realm-admin"],
-            },
+          realm_access: {
+            roles: ["notadmin"],
           },
-        } as any)
+        } as any),
       ).toBe(false);
     });
     it("should return true, if the resource_access realm management contains the role realm-admin", () => {
       expect(
         isAdmin({
-          resource_access: {
-            "realm-management": {
-              roles: ["realm-admin"],
-            },
+          realmAccess: {
+            roles: ["admin"],
           },
-        } as any)
+        } as any),
       ).toBe(true);
     });
   });
@@ -124,7 +120,7 @@ describe("common test suite", () => {
     });
     it("should work for subdomains", () => {
       expect(sanitizeURI("subdomain.example.com")).toBe(
-        "subdomain.example.com"
+        "subdomain.example.com",
       );
     });
     it("should work if blank characters are present", () => {

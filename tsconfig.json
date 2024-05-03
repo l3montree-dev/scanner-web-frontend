@@ -35,7 +35,8 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "types/next-auth.d.ts"
 , "src/app/api/kc-signout"  ],
   "exclude": [
     "node_modules"

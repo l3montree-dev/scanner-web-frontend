@@ -53,7 +53,7 @@ const BPAHeader: FunctionComponent = () => {
                   <Link
                     className={classNames(
                       activeLink === "/" ? "text-bund" : "text-textblack",
-                      "hover:text-blau-100"
+                      "hover:text-blau-100",
                     )}
                     href={`/?${query}`}
                   >
@@ -62,7 +62,7 @@ const BPAHeader: FunctionComponent = () => {
                   <Link
                     className={classNames(
                       activeLink === "/info" ? "text-bund" : "text-textblack",
-                      "hover:text-blau-100"
+                      "hover:text-blau-100",
                     )}
                     href={`/info?${query}`}
                   >
@@ -92,7 +92,7 @@ const BPAHeader: FunctionComponent = () => {
                                     "py-3 lg:py-5 lg:px-5  flex flex-row items-center lg:hover:bg-hellgrau-20 hover:text-bund lg:hover:text-blau-100 hover:underline lg:hover:no-underline transition-all border-b cursor-pointer",
                                     activeLink === path
                                       ? "text-bund lg:text-blau-100"
-                                      : "text-textblack"
+                                      : "text-textblack",
                                   )}
                                 >
                                   <div className="mr-4">
@@ -109,7 +109,7 @@ const BPAHeader: FunctionComponent = () => {
                                   </span>
                                 </div>
                               </Link>
-                            )
+                            ),
                           )}
                           <span
                             className="font-medium cursor-pointer py-3 hover:text-blau-100 hover:underline"
@@ -128,7 +128,7 @@ const BPAHeader: FunctionComponent = () => {
                               activeLink === "/"
                                 ? "text-bund"
                                 : "text-textblack",
-                              "hover:text-blau-100"
+                              "hover:text-blau-100",
                             )}
                             href={`/?${query}`}
                           >
@@ -140,7 +140,7 @@ const BPAHeader: FunctionComponent = () => {
                               activeLink === "/info"
                                 ? "text-bund"
                                 : "text-textblack",
-                              "hover:text-bund"
+                              "hover:text-bund",
                             )}
                             href={`/info?${query}`}
                           >

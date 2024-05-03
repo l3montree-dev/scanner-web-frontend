@@ -40,7 +40,7 @@ const Page = async ({ searchParams }: any) => {
           TargetType.all,
         sortDirection: searchParams["sortDirection"] as string | undefined,
       },
-      prisma
+      prisma,
     ),
     collectionService.getAllCollectionsOfUser(currentUser, prisma),
   ]);
@@ -50,7 +50,7 @@ const Page = async ({ searchParams }: any) => {
     : await collectionService.getCollectionsOfTargets(
         targets.data.map((t) => t.uri),
         currentUser,
-        prisma
+        prisma,
       );
 
   const props = {
@@ -65,7 +65,7 @@ const Page = async ({ searchParams }: any) => {
     },
     collections: normalizeToMap(
       toDTO(collections.filter((c) => c.id !== collectionId(currentUser))),
-      "id"
+      "id",
     ),
   };
 

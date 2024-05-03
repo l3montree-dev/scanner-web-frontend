@@ -25,7 +25,7 @@ const logger = getLogger(__filename);
 
 const didPassEq = (
   didPassA: boolean | null | undefined,
-  didPassB: boolean | null | undefined
+  didPassB: boolean | null | undefined,
 ) => {
   if (didPassA === didPassB) {
     return true;
@@ -40,7 +40,7 @@ const didPassEq = (
 };
 const reportDidChange = (
   lastReport: Omit<ScanReport, "createdAt" | "updatedAt" | "id">,
-  newReport: Omit<ScanReport, "createdAt" | "updatedAt" | "id">
+  newReport: Omit<ScanReport, "createdAt" | "updatedAt" | "id">,
 ) => {
   const res = Object.values(InspectionTypeEnum).some((key) => {
     return !didPassEq(lastReport[key], newReport[key]);
@@ -51,25 +51,28 @@ const reportDidChange = (
 
 export const diffReport = (
   lastReport: ScanReport,
-  secondLastReport?: ScanReport
+  secondLastReport?: ScanReport,
 ): Record<InspectionType, { was: boolean | null; now: boolean | null }> => {
-  const res = Object.values(InspectionTypeEnum).reduce((acc, key) => {
-    if (!secondLastReport) {
+  const res = Object.values(InspectionTypeEnum).reduce(
+    (acc, key) => {
+      if (!secondLastReport) {
+        acc[key] = {
+          now: lastReport[key],
+          was: null,
+        };
+        return acc;
+      }
+      if (lastReport[key] === secondLastReport[key]) {
+        return acc;
+      }
       acc[key] = {
         now: lastReport[key],
-        was: null,
+        was: secondLastReport[key],
       };
       return acc;
-    }
-    if (lastReport[key] === secondLastReport[key]) {
-      return acc;
-    }
-    acc[key] = {
-      now: lastReport[key],
-      was: secondLastReport[key],
-    };
-    return acc;
-  }, {} as Record<InspectionType, { was: boolean | null; now: boolean | null }>);
+    },
+    {} as Record<InspectionType, { was: boolean | null; now: boolean | null }>,
+  );
   return res;
 };
 
@@ -80,7 +83,7 @@ export const getChangedInspectionsOfCollections = async (
     end: Date;
     collectionIds: number[];
   },
-  prisma: PrismaClient
+  prisma: PrismaClient,
 ): Promise<Diffs> => {
   const start = options.start;
   start.setDate(start.getDate() - 1);
@@ -89,10 +92,10 @@ export const getChangedInspectionsOfCollections = async (
     Prisma.sql`
     WITH last_report AS (
         SELECT DISTINCT ON (sr.uri) * FROM scan_reports sr WHERE "createdAt" >= ${start} AND "createdAt" <= ${
-      options.end
-    } AND EXISTS(select 1 from target_collections tc 
+          options.end
+        } AND EXISTS(select 1 from target_collections tc 
             WHERE sr.uri = tc.uri AND tc."collectionId" IN (${Prisma.join(
-              options.collectionIds
+              options.collectionIds,
             )})
         ) ORDER BY sr.uri, "createdAt" DESC
     ),
@@ -128,7 +131,7 @@ export const getChangedInspectionsOfCollections = async (
         sr2."dnsSec" is distinct from sr1."dnsSec" OR
         sr2."rpki" is distinct from  sr1."rpki"
     )
-    `
+    `,
   )) as Array<{
     lastReport: ScanReport;
     secondLastReport: ScanReport;
@@ -148,7 +151,7 @@ export const getChangedInspectionsOfCollections = async (
 
 const combineReport = (
   lastReport: ScanReport | undefined,
-  newReport: Omit<ScanReport, "createdAt" | "updatedAt" | "id">
+  newReport: Omit<ScanReport, "createdAt" | "updatedAt" | "id">,
 ) => {
   if (lastReport === undefined) {
     return newReport;
@@ -164,18 +167,18 @@ const combineReport = (
 const combineResults = (
   lastReport: ScanReport | undefined,
   lastResults: DTO<ISarifResponse> | undefined | null,
-  newResult: DTO<ISarifScanSuccessResponse>
+  newResult: DTO<ISarifScanSuccessResponse>,
 ) => {
   if (lastReport === undefined && lastResults === undefined) {
     return newResult;
   }
 
   const newResultKeyIndexMap = Object.fromEntries(
-    newResult.runs[0].results.map((res, index) => [res.ruleId, index])
+    newResult.runs[0].results.map((res, index) => [res.ruleId, index]),
   ) as Record<string, number>;
 
   const lastResultKeyIndexMap = Object.fromEntries(
-    lastResults?.runs[0].results.map((res, index) => [res.ruleId, index]) ?? []
+    lastResults?.runs[0].results.map((res, index) => [res.ruleId, index]) ?? [],
   ) as Record<string, number>;
 
   Object.values(InspectionTypeEnum).forEach((key) => {
@@ -214,7 +217,7 @@ const combineResults = (
 };
 
 export const scanResult2ScanReport = (
-  result: ISarifScanSuccessResponse
+  result: ISarifScanSuccessResponse,
 ): Omit<ScanReport, "createdAt" | "updatedAt" | "id"> => {
   return {
     uri: result.runs[0].properties.target,
@@ -227,7 +230,7 @@ export const scanResult2ScanReport = (
       result.runs[0].results.map((res) => [
         res.ruleId,
         kind2DidPass(res.kind as "notApplicable" | "pass" | "fail"),
-      ])
+      ]),
     ) as {
       [key in InspectionType]: boolean;
     }),
@@ -238,7 +241,7 @@ const handleReportDidChange = async (
   newReport: Omit<ScanReport, "createdAt" | "updatedAt" | "id">,
   lastScanDetails: ISarifScanSuccessResponse,
   result: ISarifScanSuccessResponse,
-  prisma: PrismaClient
+  prisma: PrismaClient,
 ) => {
   // if the report changed, we need to create a new one.
   const target = await prisma.target.upsert({
@@ -288,7 +291,7 @@ const handleNewScanReport = async (
   requestId: string,
   result: ISarifScanSuccessResponse,
   prisma: PrismaClient,
-  options: ScanTargetOptions
+  options: ScanTargetOptions,
 ): Promise<DTO<DetailedTarget>> => {
   // fetch the last existing report and check if we only need to update that one.
   const [lastReports, lastResults] = await Promise.all([
@@ -316,9 +319,9 @@ const handleNewScanReport = async (
       ? null
       : transformDeprecatedReportingSchemaToSarif(
           (lastResults as unknown as { details: DetailsJSON | ISarifResponse })
-            .details as any
+            .details as any,
         ),
-    result
+    result,
   );
 
   if (
@@ -337,7 +340,7 @@ const handleNewScanReport = async (
         },
         `report for ${getTargetFromResponse(result)} exceeds threshold of ${
           config.scanReportDurationThresholdUntilValidation
-        } - verifying the report`
+        } - verifying the report`,
       );
     } else if (reportDidChange(lastReport, newReport)) {
       logger.debug(
@@ -346,8 +349,8 @@ const handleNewScanReport = async (
           duration: Date.now() - options.startTimeMS,
         },
         `report did change for ${getTargetFromResponse(
-          result
-        )} - verifying that the report changed`
+          result,
+        )} - verifying that the report changed`,
       );
     }
     // we should verify that the report changed.
@@ -359,7 +362,7 @@ const handleNewScanReport = async (
         refreshCache: true, // it makes no sense to use the cache here :)
         socks5Proxy: config.socks5Proxy,
         startTimeMS: options.startTimeMS,
-      }
+      },
     );
 
     if (
@@ -368,8 +371,8 @@ const handleNewScanReport = async (
         lastReport,
         combineReport(
           lastReport,
-          scanResult2ScanReport(validationResult as ISarifScanSuccessResponse)
-        )
+          scanResult2ScanReport(validationResult as ISarifScanSuccessResponse),
+        ),
       )
     ) {
       // check if the validation response and the initial result are the same
@@ -380,14 +383,14 @@ const handleNewScanReport = async (
           duration: Date.now() - options.startTimeMS,
         },
         `report did change for ${getTargetFromResponse(
-          result
-        )} - verified that the report changed`
+          result,
+        )} - verified that the report changed`,
       );
       return handleReportDidChange(
         newReport,
         lastScanDetails,
         validationResult as ISarifScanSuccessResponse,
-        prisma
+        prisma,
       );
     }
     // it was a scan error OR we were not able to verify that the report changed. - lets just return the last report.
@@ -397,8 +400,8 @@ const handleNewScanReport = async (
         duration: Date.now() - options.startTimeMS,
       },
       `could not verify that the report changed for ${getTargetFromResponse(
-        result
-      )} - returning last report`
+        result,
+      )} - returning last report`,
     );
   } else if (!lastReport || reportDidChange(lastReport, newReport)) {
     return handleReportDidChange(newReport, lastScanDetails, result, prisma);

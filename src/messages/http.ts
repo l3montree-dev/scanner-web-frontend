@@ -39,14 +39,14 @@ export const getHttpMessage = (report: DTO<ISarifResponse> | null) => {
     return "Die Überprüfung der HTTP Verbindung konnte nicht durchgeführt werden.";
   }
   const inspection = report.runs[0].results.find(
-    (r) => r.ruleId === HttpInspectionType.HTTP
+    (r) => r.ruleId === HttpInspectionType.HTTP,
   );
 
   switch (inspection?.kind) {
     case "notApplicable":
       if (
         immediateActionHTTPErrors.includes(
-          inspection.properties.actualValue.error.code
+          inspection.properties.actualValue.error.code,
         )
       ) {
         return getErrorMessage(inspection.properties.actualValue.error.code);

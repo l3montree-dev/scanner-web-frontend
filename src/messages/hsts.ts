@@ -8,7 +8,7 @@ export const getHSTSReportMessage = (report: DTO<ISarifResponse> | null) => {
     return "Die Überprüfung des Strict-Transport-Security Headers konnte nicht durchgeführt werden.";
   }
   const inspection = report.runs[0].results.find(
-    (r) => r.ruleId === HeaderInspectionType.HSTS
+    (r) => r.ruleId === HeaderInspectionType.HSTS,
   );
   if (!inspection || inspection.kind === "notApplicable") {
     return "Die Überprüfung des Strict-Transport-Security Headers konnte nicht durchgeführt werden.";
@@ -17,11 +17,11 @@ export const getHSTSReportMessage = (report: DTO<ISarifResponse> | null) => {
   } else {
     switch (true) {
       case inspection.properties.errorIds.includes(
-        HSTSValidationError.MissingHeader
+        HSTSValidationError.MissingHeader,
       ):
         return "Der Strict-Transport-Security Header ist nicht vorhanden.";
       case inspection.properties.errorIds.includes(
-        HSTSValidationError.MissingMaxAge
+        HSTSValidationError.MissingMaxAge,
       ):
         return "Der Strict-Transport-Security Header ist vorhanden, enthält aber keinen max-age Parameter.";
       default:

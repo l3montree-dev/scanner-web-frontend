@@ -123,7 +123,7 @@ const Content: FunctionComponent<Props> = (props) => {
 
   const handleFilterCheckState = (
     key: InspectionType,
-    value: 1 | 0 | -1 | undefined
+    value: 1 | 0 | -1 | undefined,
   ) => {
     if (value === undefined) {
       const { [key]: _, ...query } = Object.fromEntries(searchParams ?? []);
@@ -149,13 +149,13 @@ const Content: FunctionComponent<Props> = (props) => {
         `${pathname}?${new URLSearchParams({
           ...Object.fromEntries(searchParams ?? []),
           ...(query as Record<string, string>),
-        }).toString()}`
+        }).toString()}`,
       );
 
       setCurrentDomainChangeCount(0);
       setSelection({});
     },
-    [router, pathname, searchParams]
+    [router, pathname, searchParams],
   );
 
   useEffect(() => {
@@ -172,14 +172,14 @@ const Content: FunctionComponent<Props> = (props) => {
             router.refresh();
           }
         },
-      }
+      },
     );
     return () => unsub();
   }, [router]);
   const deleteTarget = async (uri: string) => {
     // do an optimistic update
     const revert = optimisticUpdate(targets, setTargets, (prev) =>
-      prev.filter((d) => d.uri !== uri)
+      prev.filter((d) => d.uri !== uri),
     );
     setSelection((prev) => ({
       ...prev,
@@ -194,7 +194,7 @@ const Content: FunctionComponent<Props> = (props) => {
         body: JSON.stringify({
           targets: [uri],
         }),
-      }
+      },
     );
     if (!response.ok) {
       setCurrentDomainChangeCount((prev) => prev + 1);
@@ -207,7 +207,7 @@ const Content: FunctionComponent<Props> = (props) => {
       Object.entries(selection)
         .filter(([key, value]) => value)
         .map(([key]) => key),
-    [selection]
+    [selection],
   );
 
   const deleteSelection = async () => {
@@ -219,11 +219,11 @@ const Content: FunctionComponent<Props> = (props) => {
         body: JSON.stringify({
           targets: selectedTargets,
         }),
-      }
+      },
     );
     if (response.ok) {
       setTargets((prev) =>
-        prev.filter((d) => !selectedTargets.includes(d.uri))
+        prev.filter((d) => !selectedTargets.includes(d.uri)),
       );
       setCurrentDomainChangeCount((prev) => prev - selectedTargets.length);
       // remove them from the selection
@@ -242,7 +242,7 @@ const Content: FunctionComponent<Props> = (props) => {
 
     const response = await clientHttpClient(
       `/api/v2/scan?site=${uri}&refresh=true`,
-      crypto.randomUUID()
+      crypto.randomUUID(),
     );
 
     if (response.ok) {
@@ -299,7 +299,7 @@ const Content: FunctionComponent<Props> = (props) => {
 
   const handleAddToCollection = async (
     target: DTO<{ uri: string }[]>,
-    collectionId: number
+    collectionId: number,
   ) => {
     const uris = target.map((d) => d.uri);
     // do an optimistic update.
@@ -324,7 +324,7 @@ const Content: FunctionComponent<Props> = (props) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(target),
-      }
+      },
     );
 
     if (!res.ok) {
@@ -336,7 +336,7 @@ const Content: FunctionComponent<Props> = (props) => {
 
   const handleRemoveFromCollection = async (
     target: DTO<Target[]>,
-    collectionId: number
+    collectionId: number,
   ) => {
     const uris = target.map((d) => d.uri);
     // do an optimistic update
@@ -346,7 +346,7 @@ const Content: FunctionComponent<Props> = (props) => {
           return {
             ...d,
             collections: (d.collections ?? []).filter(
-              (c) => c !== collectionId
+              (c) => c !== collectionId,
             ),
           };
         }
@@ -363,7 +363,7 @@ const Content: FunctionComponent<Props> = (props) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(target),
-      }
+      },
     );
 
     if (!res.ok) {
@@ -412,14 +412,14 @@ const Content: FunctionComponent<Props> = (props) => {
         });
       }
     },
-    [collectionIds, patchQuery]
+    [collectionIds, patchQuery],
   );
 
   const handleGroupCollectionClick = (c: DTO<Collection>) => {
     // check if all targets belong to that collection
     const selectedTargets = targets.filter((t) => selection[t.uri]);
     const allInCollection = selectedTargets.every((t) =>
-      t.collections?.includes(c.id)
+      t.collections?.includes(c.id),
     );
 
     if (allInCollection) {
@@ -501,7 +501,7 @@ const Content: FunctionComponent<Props> = (props) => {
                               scanAllLoading.loading();
                               try {
                                 await Promise.all(
-                                  selectedTargets.map((d) => scanTarget(d))
+                                  selectedTargets.map((d) => scanTarget(d)),
                                 );
                               } finally {
                                 scanAllLoading.success();
@@ -629,10 +629,13 @@ const Content: FunctionComponent<Props> = (props) => {
                           }
                           onChange={() => {
                             setSelection((prev) => {
-                              return targets.reduce((acc, domain) => {
-                                acc[domain.uri] = !Boolean(prev[domain.uri]);
-                                return acc;
-                              }, {} as Record<string, boolean>);
+                              return targets.reduce(
+                                (acc, domain) => {
+                                  acc[domain.uri] = !Boolean(prev[domain.uri]);
+                                  return acc;
+                                },
+                                {} as Record<string, boolean>,
+                              );
                             });
                           }}
                         />
@@ -653,7 +656,7 @@ const Content: FunctionComponent<Props> = (props) => {
                             "ml-0 transition-all font-normal border px-1 border-white/20 text-white",
                             reverseUriBeforeSort
                               ? "bg-white/20 text-black"
-                              : "bg-transparent"
+                              : "bg-transparent",
                           )}
                         >
                           Nach Subdomains sortieren
@@ -733,7 +736,7 @@ const Content: FunctionComponent<Props> = (props) => {
                           ) {
                             return handleRemoveFromCollection(
                               [target],
-                              collection.id
+                              collection.id,
                             );
                           }
                           return handleAddToCollection([target], collection.id);
@@ -749,8 +752,8 @@ const Content: FunctionComponent<Props> = (props) => {
                           selection[target.uri]
                             ? "bg-dunkelblau-20"
                             : i % 2 !== 0
-                            ? "bg-blau-20/40"
-                            : "bg-dunkelblau-20/20"
+                              ? "bg-blau-20/40"
+                              : "bg-dunkelblau-20/20",
                         )}
                         onSelect={(target) => {
                           setSelection((prev) => {

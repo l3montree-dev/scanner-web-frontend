@@ -9,7 +9,7 @@ import { getCurrentUser } from "../../../../../utils/server";
 const deleteTargetRelation = async (
   uris: string[],
   user: User,
-  prisma: PrismaClient
+  prisma: PrismaClient,
 ) => {
   if (uris.length === 0) {
     return;
@@ -37,8 +37,8 @@ const deleteTargetRelation = async (
   });
   return Promise.all(
     relations.map((r) =>
-      targetCollectionService.deleteConnection(uris, r.collectionId, prisma)
-    )
+      targetCollectionService.deleteConnection(uris, r.collectionId, prisma),
+    ),
   );
 };
 

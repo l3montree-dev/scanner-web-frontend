@@ -45,11 +45,11 @@ export async function POST(req: NextRequest) {
         collectionIds: await collectionService.filterCollectionsToAllowed(
           collectionIds ?? [],
           currentUser,
-          prisma
+          prisma,
         ),
       },
       prisma,
-      currentUser
+      currentUser,
     );
 
     const [result, detailedTarget] = await scanService.scanTargetRPC(
@@ -58,12 +58,12 @@ export async function POST(req: NextRequest) {
       {
         refreshCache: true,
         startTimeMS: Date.now(),
-      }
+      },
     );
     if (isScanError(result)) {
       logger.error(
         { requestId, userId: currentUser.id },
-        `target import - error while scanning domain: ${sanitized}`
+        `target import - error while scanning domain: ${sanitized}`,
       );
 
       throw new BadRequestException();
@@ -80,12 +80,12 @@ export async function POST(req: NextRequest) {
       // validate for text files.
       .filter(
         (file) =>
-          file.type === "text/csv" || file.type === "application/vnd.ms-excel"
+          file.type === "text/csv" || file.type === "application/vnd.ms-excel",
       )
       .map(async (file) => {
         // open the file.
         return file.text();
-      })
+      }),
   );
   const entries = fileText.map((file) => splitLineBreak(file)).flat();
 
@@ -93,7 +93,7 @@ export async function POST(req: NextRequest) {
 
   logger.info(
     { requestId, userId: currentUser.id },
-    `starting import of ${entries.length} targets.`
+    `starting import of ${entries.length} targets.`,
   );
 
   let imported = 0;
@@ -103,7 +103,7 @@ export async function POST(req: NextRequest) {
     entries
       .map((domain) => sanitizeURI(domain))
       .filter(
-        (domain): domain is string => domain !== null && domain.length > 0
+        (domain): domain is string => domain !== null && domain.length > 0,
       )
       .map((domain, _, arr) => {
         return async () => {
@@ -123,8 +123,8 @@ export async function POST(req: NextRequest) {
               targetService.handleNewTarget(
                 { uri: domain, queued: true },
                 prisma,
-                currentUser
-              )
+                currentUser,
+              ),
             );
 
             const tmpRqId = crypto.randomUUID();
@@ -136,7 +136,7 @@ export async function POST(req: NextRequest) {
             if (isScanError(result)) {
               logger.error(
                 { tmpRqId, userId: currentUser.id },
-                `target import - error while scanning domain: ${domain}`
+                `target import - error while scanning domain: ${domain}`,
               );
               return;
             }
@@ -145,7 +145,7 @@ export async function POST(req: NextRequest) {
             return;
           }
         };
-      })
+      }),
   );
 
   // check when promise queue is empty

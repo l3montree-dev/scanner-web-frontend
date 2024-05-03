@@ -33,7 +33,7 @@ export async function POST(req: NextRequest, { params }: Params) {
   await targetCollectionService.deleteConnection(
     targets.map((t) => t.uri),
     collection.id,
-    prisma
+    prisma,
   );
 
   return NextResponse.json({ success: true }, { status: 200 });

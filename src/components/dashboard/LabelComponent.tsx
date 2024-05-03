@@ -3,7 +3,7 @@ import { VictoryLabel, VictoryTooltip } from "victory";
 import { tailwindColors } from "../../utils/view";
 
 export const LabelComponent: FunctionComponent<any & { fill: string }> = (
-  props
+  props,
 ) => {
   if (props.data?.length - 1 === +(props.index ?? 0)) {
     return (

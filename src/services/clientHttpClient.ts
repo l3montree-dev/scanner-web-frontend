@@ -5,7 +5,7 @@ const fetchWithTimeout = (
   timeoutMS: number,
   input: RequestInfo | URL,
   requestId: string,
-  init?: RequestInit | undefined
+  init?: RequestInit | undefined,
 ) => {
   return new Promise<Response>(async (resolve, reject) => {
     const controller = new AbortController();
@@ -13,7 +13,7 @@ const fetchWithTimeout = (
       controller.abort();
       console.error(
         { requestId },
-        `fetchWithTimeout: request to ${input} timed out after ${timeoutMS}ms`
+        `fetchWithTimeout: request to ${input} timed out after ${timeoutMS}ms`,
       );
     }, timeoutMS);
     // spread the provided parameters.
@@ -45,7 +45,7 @@ export const httpClientFactory =
     request: RequestInfo | URL,
     // needs always to be defined! This makes our logs more readable.
     requestId: string,
-    init?: RequestInit | undefined
+    init?: RequestInit | undefined,
   ): Promise<Response> => {
     // capture the tries variable inside the closure
     // this way we can avoid using it as a parameter of the api fn itself.
@@ -53,14 +53,14 @@ export const httpClientFactory =
 
     const retry = async (
       request: RequestInfo | URL,
-      init?: RequestInit | undefined
+      init?: RequestInit | undefined,
     ): Promise<Response> => {
       try {
         const response = await fetchWithTimeout(
           timeoutMS,
           request,
           requestId,
-          init
+          init,
         );
 
         return response;
@@ -69,7 +69,7 @@ export const httpClientFactory =
           tries++;
           console.warn(
             { err: error },
-            `api call: ${request} failed, retrying: ${tries}/${maxRetries}`
+            `api call: ${request} failed, retrying: ${tries}/${maxRetries}`,
           );
           await wait(timeoutBetweenRetriesMS);
           return retry(request, init);
@@ -82,7 +82,7 @@ export const httpClientFactory =
 
 export const clientHttpClient = httpClientFactory(
   config.clientTimeout,
-  config.clientRetries
+  config.clientRetries,
 );
 
 export type HttpClient = ReturnType<typeof httpClientFactory>;

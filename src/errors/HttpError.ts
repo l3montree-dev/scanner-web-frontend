@@ -19,7 +19,7 @@ export default class HttpError extends Error {
         name: this.name,
         message: this.message,
       },
-      { status: this.status }
+      { status: this.status },
     );
   }
 }

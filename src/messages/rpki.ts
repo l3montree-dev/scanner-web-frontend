@@ -12,13 +12,13 @@ const holderStr = (holder?: string) => {
 };
 
 export default function getRPKIReportMessage(
-  report: DTO<ISarifResponse> | null
+  report: DTO<ISarifResponse> | null,
 ) {
   if (report === null) {
     return `Der RPKI Status der Domain konnte nicht überprüft werden.`;
   }
   const inspection = report.runs[0].results.find(
-    (r) => r.ruleId === NetworkInspectionType.RPKI
+    (r) => r.ruleId === NetworkInspectionType.RPKI,
   );
   const uri = getSUTFromResponse(report);
 

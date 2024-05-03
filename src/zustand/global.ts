@@ -43,11 +43,11 @@ export const GlobalStoreContext = createContext<GlobalStore | null>(null);
 export function useGlobalStore(): GlobalState;
 export function useGlobalStore<T>(
   selector: (state: GlobalState) => T,
-  equalityFn?: (left: T, right: T) => boolean
+  equalityFn?: (left: T, right: T) => boolean,
 ): T;
 export function useGlobalStore<T>(
   selector?: (state: GlobalState) => T,
-  equalityFn?: (left: T, right: T) => boolean
+  equalityFn?: (left: T, right: T) => boolean,
 ): T {
   const store = useContext(GlobalStoreContext);
   if (!store)

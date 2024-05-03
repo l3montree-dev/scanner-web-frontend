@@ -52,16 +52,16 @@ export function useQuicktest(code?: string | null) {
       try {
         const response = await clientHttpClient(
           `/api/v2/scan?site=${encodeURIComponent(
-            target
+            target,
           )}&s=${code}&refresh=${query.get("refresh")}`,
-          crypto.randomUUID()
+          crypto.randomUUID(),
         );
         if (!response.ok) {
           const err = await response.json();
           return scanRequest.error(
             `Es ist ein Fehler aufgetreten - Fehlermeldung: ${getErrorMessage(
-              err.error
-            )}`
+              err.error,
+            )}`,
           );
         }
         const obj: DTO<ISarifResponse> = await response.json();
@@ -69,11 +69,11 @@ export function useQuicktest(code?: string | null) {
         scanRequest.success();
       } catch (e) {
         scanRequest.error(
-          "Es ist ein Fehler aufgetreten. Bitte versuche es später erneut."
+          "Es ist ein Fehler aufgetreten. Bitte versuche es später erneut.",
         );
       }
     },
-    [scanRequest, code]
+    [scanRequest, code],
   );
   useEffect(() => {
     if (report) {
@@ -101,7 +101,7 @@ export function useQuicktest(code?: string | null) {
         {
           preventDefault: () => {},
         } as FormEvent,
-        query?.get("site") as string
+        query?.get("site") as string,
       );
     }
   }, [query, onSubmit]);
@@ -115,16 +115,16 @@ export function useQuicktest(code?: string | null) {
     try {
       const response = await clientHttpClient(
         `/api/v2/scan?site=${encodeURIComponent(
-          report.runs[0].properties.target
+          report.runs[0].properties.target,
         )}&refresh=true&s=${code}`,
-        crypto.randomUUID()
+        crypto.randomUUID(),
       );
       if (!response.ok) {
         const err = await response.json();
         return refreshRequest.error(
           `Es ist ein Fehler aufgetreten - Fehlermeldung: ${getErrorMessage(
-            err.error.code
-          )}`
+            err.error.code,
+          )}`,
         );
       }
       const obj = await response.json();
@@ -132,7 +132,7 @@ export function useQuicktest(code?: string | null) {
       refreshRequest.success();
     } catch (e) {
       refreshRequest.error(
-        "Es ist ein Fehler aufgetreten. Bitte versuche es später erneut."
+        "Es ist ein Fehler aufgetreten. Bitte versuche es später erneut.",
       );
     }
   };

@@ -24,7 +24,7 @@ const CollectionPage = async () => {
           .map((c) => ({
             ...c,
             shareLinks: toDTO(links.filter((l) => l.collectionId === c.id)),
-          }))
+          })),
       )}
     />
   );

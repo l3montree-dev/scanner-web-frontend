@@ -23,7 +23,7 @@ const Result: FunctionComponent<Props> = (props) => {
             <h2
               className={classNames(
                 props.didPass ? "text-lightning-500" : "text-red-500",
-                "text-xl font-bold"
+                "text-xl font-bold",
               )}
             >
               {props.didPass ? "Test bestanden" : "Test fehlgeschlagen"}

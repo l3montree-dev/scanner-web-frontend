@@ -10,7 +10,7 @@ interface Props<T extends { id: number; title: string; color: string }> {
   onCollectionClick: (collection: T) => void;
 }
 function CollectionMenuContent<
-  T extends { id: number; title: string; color: string }
+  T extends { id: number; title: string; color: string },
 >(props: Props<T>) {
   return (
     <>

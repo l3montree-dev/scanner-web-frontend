@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 export default function useDelayChange<T>(
   inputStateVar: T,
   delay = 500,
-  shouldDelayTransition: (oldValue: T, newValue: T) => boolean = () => true
+  shouldDelayTransition: (oldValue: T, newValue: T) => boolean = () => true,
 ) {
   const [outputStateVar, setOutputStateVar] = useState(inputStateVar);
 

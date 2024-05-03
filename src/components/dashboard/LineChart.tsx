@@ -114,7 +114,7 @@ const LineChart: FunctionComponent<Props> = ({
             distance,
           },
         ];
-      })
+      }),
     );
   };
 
@@ -122,8 +122,8 @@ const LineChart: FunctionComponent<Props> = ({
     // calculate the trend over the whole time
     calculateNewTrends(
       0,
-      (data.data[defaultCollectionId]?.series.length ?? 0) - 1
-    )
+      (data.data[defaultCollectionId]?.series.length ?? 0) - 1,
+    ),
   );
 
   const handleDomainChange = useCallback(
@@ -132,8 +132,8 @@ const LineChart: FunctionComponent<Props> = ({
       const endIdx = Math.floor(
         Math.min(
           (newDomain[1] as number) - 1,
-          (data.data[defaultCollectionId]?.series.length ?? 0) - 1
-        )
+          (data.data[defaultCollectionId]?.series.length ?? 0) - 1,
+        ),
       );
 
       setTrends(calculateNewTrends(startIdx, endIdx));
@@ -141,7 +141,7 @@ const LineChart: FunctionComponent<Props> = ({
       const endX = data.data[defaultCollectionId]?.series[endIdx].x;
       setVisibleDomain([startX, endX]);
     }, 500),
-    [data.data, defaultCollectionId]
+    [data.data, defaultCollectionId],
   );
 
   const exportToPng = async () => {
@@ -156,7 +156,7 @@ const LineChart: FunctionComponent<Props> = ({
         // add a full size white rect as background color.
         const rect = document.createElementNS(
           "http://www.w3.org/2000/svg",
-          "rect"
+          "rect",
         );
         rect.setAttribute("width", "100%");
         rect.setAttribute("height", "100%");
@@ -225,7 +225,7 @@ const LineChart: FunctionComponent<Props> = ({
         const serializer = new XMLSerializer();
         const c = Canvg.fromString(
           ctx,
-          serializer.serializeToString(clonedNode)
+          serializer.serializeToString(clonedNode),
         );
         await c.render();
 
@@ -389,8 +389,8 @@ const LineChart: FunctionComponent<Props> = ({
                   trend.distance === 0
                     ? faArrowRight
                     : trend.distance > 0
-                    ? faArrowTrendUp
-                    : faArrowTrendDown
+                      ? faArrowTrendUp
+                      : faArrowTrendDown
                 }
               />
             </CollectionDataPill>

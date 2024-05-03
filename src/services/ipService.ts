@@ -11,7 +11,7 @@ const lookupNetwork = async (cidr: string, requestId: string) => {
     {
       messageId: requestId,
       replyTo: "ip-lookup-response",
-    }
+    },
   );
 };
 

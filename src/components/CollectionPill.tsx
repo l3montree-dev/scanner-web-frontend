@@ -20,7 +20,7 @@ const CollectionPill: FunctionComponent<Props> = ({
         onClick?.(id);
       }}
       className={classNames(
-        "flex bg-white border-2 cursor-pointer flex-row items-center  text-sm px-2 rounded-sm"
+        "flex bg-white border-2 cursor-pointer flex-row items-center  text-sm px-2 rounded-sm",
       )}
       style={{ borderColor: selected ? color : undefined }}
     >

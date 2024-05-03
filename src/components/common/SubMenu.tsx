@@ -17,7 +17,7 @@ const SubMenu: FunctionComponent<Props> = ({ Button, Menu }) => {
       <DropdownMenu.SubTrigger className="hover:outline-none">
         <div
           className={classNames(
-            "lg:px-2 px-2 py-1 cursor-pointer transition-color flex flex-row gap-2 mx-1 my-1 items-center justify-between hover:border-none hover:outline-none hover:bg-blau-20 focus:bg-blau-20 text-textblack  relative focus:outline-none"
+            "lg:px-2 px-2 py-1 cursor-pointer transition-color flex flex-row gap-2 mx-1 my-1 items-center justify-between hover:border-none hover:outline-none hover:bg-blau-20 focus:bg-blau-20 text-textblack  relative focus:outline-none",
           )}
         >
           {Button}

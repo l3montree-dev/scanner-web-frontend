@@ -8,7 +8,7 @@ export const getCAAReportMessage = (report: DTO<ISarifResponse> | null) => {
     return "Die Überprüfung nach CAA Einträgen konnte nicht durchgeführt werden.";
   }
   const inspection = report.runs[0].results.find(
-    (r) => r.ruleId === DomainInspectionType.CAA
+    (r) => r.ruleId === DomainInspectionType.CAA,
   );
   const uri = getSUTFromResponse(report);
   if (

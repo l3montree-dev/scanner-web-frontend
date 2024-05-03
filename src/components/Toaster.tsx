@@ -85,7 +85,7 @@ const Toaster = () => {
           "toast",
           Boolean(toast) ? "opacity-100" : "opacity-0",
           bgColor(toast?.type ?? delayedToast?.type ?? "info"),
-          textColor(toast?.type ?? delayedToast?.type ?? "info")
+          textColor(toast?.type ?? delayedToast?.type ?? "info"),
         )}
       >
         <FontAwesomeIcon

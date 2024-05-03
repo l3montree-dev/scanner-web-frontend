@@ -19,7 +19,7 @@ import { useSearchParams } from "next/navigation";
 interface Props {
   onChange: (
     inspectionType: InspectionType,
-    checkState: 1 | 0 | -1 | undefined
+    checkState: 1 | 0 | -1 | undefined,
   ) => void;
   inspectionType: InspectionType;
 }
@@ -58,7 +58,7 @@ const CheckStateMenu: FunctionComponent<Props> = ({
           title={titleMapper[inspectionType]}
           className={classNames(
             "flex flex-row gap-2 cursor-pointer text-left w-24 items-center font-bold",
-            selectedToClassName(+selected)
+            selectedToClassName(+selected),
           )}
         >
           <span className="text-ellipsis overflow-hidden whitespace-nowrap">

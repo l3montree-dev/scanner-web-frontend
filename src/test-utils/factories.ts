@@ -8,12 +8,12 @@ export const buildJSONResponse = (
   data: any,
   headers = {
     "Content-Type": "application/json",
-  }
+  },
 ) => {
   return Promise.resolve(
     new Response(JSON.stringify(data), {
       headers,
-    })
+    }),
   );
 };
 

@@ -222,7 +222,7 @@ export const sarifRules = [
 ];
 
 export const didPass2Kind = (
-  didPass: boolean | null
+  didPass: boolean | null,
 ): "notApplicable" | "pass" | "fail" => {
   if (didPass === null) {
     return "notApplicable";
@@ -234,7 +234,7 @@ export const didPass2Kind = (
 };
 
 export const kind2DidPass = (
-  kind: "notApplicable" | "pass" | "fail" | undefined
+  kind: "notApplicable" | "pass" | "fail" | undefined,
 ): boolean | null => {
   if (kind === undefined) {
     return null;
@@ -261,7 +261,7 @@ export const getTargetFromResponse = (sarif: ISarifResponse): string => {
 };
 
 export function getSUTFromResponse(
-  sarif: ISarifResponse | undefined | null
+  sarif: ISarifResponse | undefined | null,
 ): string | undefined {
   if (!sarif) {
     return undefined;
@@ -269,7 +269,7 @@ export function getSUTFromResponse(
   return sarif.runs[0].properties.sut;
 }
 export const transformSarifToDeprecatedReportingSchema = (
-  input: DTO<ISarifScanSuccessResponse>
+  input: DTO<ISarifScanSuccessResponse>,
 ): DTO<DetailsJSON> => {
   return input.runs[0].results.reduce(
     (acc, curr) => {
@@ -283,12 +283,12 @@ export const transformSarifToDeprecatedReportingSchema = (
     },
     {
       sut: input.runs[0].properties.sut,
-    } as DTO<DetailsJSON>
+    } as DTO<DetailsJSON>,
   );
 };
 
 export const transformDeprecatedReportingSchemaToSarif = (
-  input: DTO<DetailsJSON> | DTO<ISarifScanSuccessResponse>
+  input: DTO<DetailsJSON> | DTO<ISarifScanSuccessResponse>,
 ): DTO<ISarifScanSuccessResponse> => {
   // check if the input is already in the new format
   if ("runs" in input) {
@@ -311,7 +311,7 @@ export const transformDeprecatedReportingSchemaToSarif = (
         },
         results: Object.entries(input)
           .filter(
-            (el): el is [InspectionType, InspectResultDTO] => el[0] !== "sut"
+            (el): el is [InspectionType, InspectResultDTO] => el[0] !== "sut",
           )
           .map(([k, v]) => {
             return {

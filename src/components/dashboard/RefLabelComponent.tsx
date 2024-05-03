@@ -3,7 +3,7 @@ import { VictoryLabel } from "victory";
 import { tailwindColors } from "../../utils/view";
 
 export const RefLabelComponent: FunctionComponent<any & { fill: string }> = (
-  props
+  props,
 ) => {
   const totalElements = props.data?.length - 1;
   const totalRefComponents = props.nRefComponents;
