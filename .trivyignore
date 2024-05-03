@@ -1,0 +1,8 @@
+# Added: 2024-05-03
+# Status: will_not_fix, main image is not affected currently (distroless) - https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/jobs/189800
+CVE-2023-45853
+
+# Added: 2024-05-03
+# Risk temp. accepted, main image is not affected currently (distroless) - https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/jobs/189800
+CVE-2023-5841
+CVE-2023-6879
