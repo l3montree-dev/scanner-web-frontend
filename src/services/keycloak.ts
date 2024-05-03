@@ -7,7 +7,7 @@ const getBaseUrl = () => {
   const issuer = process.env.KEYCLOAK_ISSUER;
   const url = new URL(issuer);
   // build the base url from the issuer
-  return `${url.protocol}//${url.hostname}`;
+  return `${url.protocol}//${url.hostname}:${url.port}`;
 };
 
 const getRealmName = () => {

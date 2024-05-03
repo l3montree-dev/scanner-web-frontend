@@ -3,6 +3,7 @@ import { signIn, useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { withAuthProvider } from "../../../providers/AuthProvider";
+import { ISession } from "../../../types";
 
 const SignIn = () => {
   const { status, data } = useSession();
@@ -20,7 +21,11 @@ const SignIn = () => {
       });
       return;
     }
-    if (status === "unauthenticated") {
+
+    if (
+      status === "unauthenticated" ||
+      (data as unknown as ISession)?.error !== undefined
+    ) {
       void signIn("keycloak");
     } else if (status === "authenticated") {
       if (ref.current === "idle") {
