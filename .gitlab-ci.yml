@@ -84,7 +84,7 @@ tag:
 
 oci:build:
   stage: build
-  needs: ["tag"]
+  needs: [tag,jest,software-composition-analysis,static-application-security-testing,secret-scanning]
   dependencies: ["tag"]
   image:
     name: gcr.io/kaniko-project/executor:v1.9.2-debug
@@ -101,7 +101,7 @@ oci:build:
 
 oci:build-initcontainer:
   stage: build
-  needs: ["tag"]
+  needs: [tag,jest,software-composition-analysis,static-application-security-testing,secret-scanning]
   dependencies: ["tag"]
   image:
     name: gcr.io/kaniko-project/executor:v1.9.2-debug
