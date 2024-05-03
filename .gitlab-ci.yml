@@ -14,7 +14,9 @@ stages:
   script:
   - &oci_login |
     export VERSION="1.1.0"
+    export ORAS_SHASUM="e09e85323b24ccc8209a1506f142e3d481e6e809018537c6b3db979c891e6ad7"
     curl -LO "https://github.com/oras-project/oras/releases/download/v${VERSION}/oras_${VERSION}_linux_amd64.tar.gz"
+    echo "${ORAS_SHASUM}  oras_${VERSION}_linux_amd64.tar.gz" | sha256sum -c -
     mkdir -p oras-install/
     tar -zxf oras_${VERSION}_*.tar.gz -C oras-install/
     mv oras-install/oras /usr/local/bin/
@@ -23,7 +25,7 @@ stages:
 
 
 secret-scanning:
-  image: zricethezav/gitleaks:v8.18.1
+  image: ghcr.io/gitleaks/gitleaks:v8.18.2@sha256:8bd05f793efe84e7bbba36c4e138080b88f6acb77f3865835024eb7bef30c41f
   stage: test
   variables:
     GIT_DEPTH: 1
@@ -31,20 +33,20 @@ secret-scanning:
   - gitleaks -v detect --baseline-path gitleaks-report.json
 
 static-application-security-testing:
-  image: returntocorp/semgrep
+  image: returntocorp/semgrep:1.70.0@sha256:7843a979bf88d9d16c476e9f7f547b573187f395532b1f74825fd58c6463c5b0
   stage: test
   script:
   - semgrep scan --config=p/ci .
 
 software-composition-analysis:
-  image: node:20
+  image: node:20.12.2-bookworm@sha256:cbd62dc7ba7e50d01520f2c0a8d9853ec872187fa806ed61d0f87081c220386d
   stage: test
   script:
   # fail on critical
   - npm audit --audit-level=critical
 
 jest:
-  image: node:20.12.2-buster@sha256:57fe11caf946b3bdcbe370a444ab1d7102123421e62157f62516b2abd4d9b7ae
+  image: node:20.12.2-bookworm@sha256:cbd62dc7ba7e50d01520f2c0a8d9853ec872187fa806ed61d0f87081c220386d
   stage: test
   script:
   - npm i --force --include=dev
@@ -87,7 +89,7 @@ oci:build:
   needs: [tag,jest,software-composition-analysis,static-application-security-testing,secret-scanning]
   dependencies: ["tag"]
   image:
-    name: gcr.io/kaniko-project/executor:v1.9.2-debug
+    name: gcr.io/kaniko-project/executor:v1.22.0-debug@sha256:7b3699e9e105521075812cd3f3f4c62c913cb5cd113c929975502022df3bcf60
     entrypoint: [""]
   script:
   - /kaniko/executor --digest-file=digest.txt --cleanup --build-arg NEXT_PUBLIC_ENVIRONMENT=production --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $(cat image-tag.txt)
@@ -104,7 +106,7 @@ oci:build-initcontainer:
   needs: [tag,jest,software-composition-analysis,static-application-security-testing,secret-scanning]
   dependencies: ["tag"]
   image:
-    name: gcr.io/kaniko-project/executor:v1.9.2-debug
+    name: gcr.io/kaniko-project/executor:v1.22.0-debug@sha256:7b3699e9e105521075812cd3f3f4c62c913cb5cd113c929975502022df3bcf60
     entrypoint: [""]
   script:
   - /kaniko/executor --digest-file=initcontainer-digest.txt --cleanup --build-arg NEXT_PUBLIC_ENVIRONMENT=production --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile.initcontainer --destination $(cat initcontainer-image-tag.txt)
