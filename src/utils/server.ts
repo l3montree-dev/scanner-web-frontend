@@ -87,7 +87,7 @@ export const getCurrentUserOrGuestUser = async (
   options: AuthOptions,
 ): Promise<User | Guest> => {
   const session = await getServerSession(options);
-  console.log(session);
+
   if (!session) {
     throw new UnauthorizedException("no session");
   }

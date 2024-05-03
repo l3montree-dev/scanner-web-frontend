@@ -83,10 +83,8 @@ describe("common test suite", () => {
     it("should return false, if the resource_access realm management does not contain the role realm-admin", () => {
       expect(
         isAdmin({
-          resource_access: {
-            "realm-management": {
-              roles: ["not-realm-admin"],
-            },
+          realm_access: {
+            roles: ["notadmin"],
           },
         } as any),
       ).toBe(false);
@@ -94,10 +92,8 @@ describe("common test suite", () => {
     it("should return true, if the resource_access realm management contains the role realm-admin", () => {
       expect(
         isAdmin({
-          resource_access: {
-            "realm-management": {
-              roles: ["realm-admin"],
-            },
+          realm_access: {
+            roles: ["admin"],
           },
         } as any),
       ).toBe(true);

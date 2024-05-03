@@ -91,13 +91,11 @@ export interface ISession {
   user: {
     name: string;
     username: string;
-    email: string;
-    image: string;
     id: string;
     // identifies a guest
     collectionId?: number;
   };
-  realm_access: {
+  realmAccess: {
     roles: string[];
   };
   error?: string;

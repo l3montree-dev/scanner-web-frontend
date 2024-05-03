@@ -142,10 +142,10 @@ export const replaceNullWithZero = <T>(obj: T): T => {
   return obj;
 };
 export const isAdmin = (session: ISession | null | undefined): boolean => {
-  if (!session || !session.realm_access) {
+  if (!session || !session.realmAccess) {
     return false;
   }
-  return Boolean(session?.realm_access?.roles.includes("admin"));
+  return Boolean(session?.realmAccess?.roles.includes("admin"));
 };
 
 export const isFeatureEnabled = (feature: FeatureFlag, user: User): boolean => {

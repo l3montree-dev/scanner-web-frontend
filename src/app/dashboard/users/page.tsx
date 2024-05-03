@@ -17,6 +17,7 @@ const Page = async () => {
   const token = await getJWTToken({
     req: { cookies: cookies() },
   } as any);
+
   // check if the user is an admin
   // if not, redirect him to the dashboard page.
   if (!isAdmin(token) || !token) {

@@ -3,6 +3,7 @@ import { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
 import KeycloakProvider from "next-auth/providers/keycloak";
 import { prisma } from "./db/connection";
+import { ISession } from "./types";
 
 async function refreshAccessToken(token: JWT): Promise<JWT> {
   try {
@@ -56,12 +57,13 @@ const callbacks: CallbacksOptions = {
     return {
       ...params.session,
       user: {
-        ...params.session.user,
-        id: params.token.sub ?? params.token.id,
-        collectionId: params.token.collectionId,
+        name: params.token.username,
+        username: params.token.username,
+        id: params.token.sub ?? (params.token.id as string),
+        collectionId: params.token.collectionId as number,
       },
-      realm_access: params.token.realm_access,
-      error: params.token.error,
+      realmAccess: params.token.realmAccess as ISession["realmAccess"],
+      error: params.token.error as string,
     };
   },
   async jwt({ token, account, user, profile }): Promise<JWT> {
@@ -73,6 +75,7 @@ const callbacks: CallbacksOptions = {
           user,
           accessToken: "",
           expiresAt: 0,
+          username: user.name,
           refreshToken: "",
           idToken: "",
           realmAccess: {
@@ -84,6 +87,7 @@ const callbacks: CallbacksOptions = {
 
     if (profile) {
       token.realmAccess = profile.realm_access;
+      token.username = profile.preferred_username;
     }
     if (account) {
       token.accessToken = account.access_token;
