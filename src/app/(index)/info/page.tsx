@@ -6,8 +6,7 @@ import { Metadata } from "next";
 
 const title =
   "Die OZG-Security-Challenge 2023: Gemeinsam zu mehr IT-Sicherheit";
-const description =
-  "Das Bundesministerium des Innern und für Heimat (BMI) möchte zur Stärkung der IT-Sicherheit bei der OZG-Umsetzung in Form einer Challenge beitragen. Bis zum 31. Oktober 2023 haben OZG-Dienstverantwortliche im Rahmen der „OZG-Security-Challenge 2023“ die Möglichkeit, die IT-Sicherheit der OZG-Onlinedienste mithilfe eines zugangsgeschützten Schnelltests sowie unterstützt durch Workshops und Sprechstunden weiter zu steigern.";
+const description = "";
 
 export const metadata: Metadata = {
   title,

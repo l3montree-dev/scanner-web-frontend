@@ -16,6 +16,10 @@ Die neuesten Patches und die aktuellste Software werden auf dem Tag `:unstable` 
 
 Sie können eine Schwachstelle oder Anomalie an das Entwicklungsteam melden. Dadurch wird das Verfahren der koordinierten Offenlegung von Sicherheitslücken eingeleitet. Das Team wird sich dann bemühen, wenn möglich innerhalb einer Woche Sicherheitspatches zu entwickeln. Die Schwachstelle wird dann im Zuge der Veröffentlichung bekannt gemacht. Wenn Sie es wünschen, können Sie auch als Reporter veröffentlicht werden.
 
+Sie können Ihre Meldung an die folgende E-Mail-Adresse senden: [ozgsec@bmi.bund.de](mailto:ozgsec@bmi.bund.de)
+
+Alternativ können Sie an die aktuellen Projekt-Maintainer eine verschlüsselte E-Mail senden:
+
 ```
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA256

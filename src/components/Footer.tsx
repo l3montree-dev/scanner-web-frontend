@@ -51,8 +51,14 @@ const Footer: FunctionComponent = () => {
           </div>
           <div className="flex flex-wrap flex-row mb-0">
             <span className="mt-5 py-2 sm:mt-0">
-              © Bundesministerium des Innern und für Heimat,{" "}
-              {new Date().getFullYear()}
+              <a
+                href="https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec"
+                rel="noopener noreferrer"
+                className="p-2 uppercase font-medium text-white block hover:text-white"
+                target={"_blank"}
+              >
+                Code des Projekts auf Open CoDE
+              </a>
             </span>
           </div>
         </div>
