@@ -1,5 +1,7 @@
 # Sicherheitspolitik
 
+_[English Version available](./SECURITY-en.md)_
+
 ## Versionen
 
 Die neuesten Patches und die aktuellste Software werden unter dem Tag-Schema `:main-<commit-short-hash>-<unix-timestamp>` des Container-Images veröffentlicht. Daher werden die neuesten Sicherheitsupdates zuerst auf einem solchen Tag veröffentlicht. Für den produktiven Einsatz gibt es regelmäßig einen Patch oder eine kleinere Version mit einem versionierten Container-Image-Tag.
