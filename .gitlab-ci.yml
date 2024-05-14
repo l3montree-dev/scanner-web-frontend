@@ -33,20 +33,20 @@ secret-scanning:
   - gitleaks -v detect --baseline-path gitleaks-report.json
 
 static-application-security-testing:
-  image: returntocorp/semgrep:1.70.0@sha256:7843a979bf88d9d16c476e9f7f547b573187f395532b1f74825fd58c6463c5b0
+  image: returntocorp/semgrep:1.72.0@sha256:18fcd539c83a1e8a3df78e77dddce457511f25dc2bd92b6e3bf999f51ab425d3
   stage: test
   script:
   - semgrep scan --config=p/ci .
 
 software-composition-analysis:
-  image: node:20.12.2-bookworm@sha256:cbd62dc7ba7e50d01520f2c0a8d9853ec872187fa806ed61d0f87081c220386d
+  image: node:20.13.1-bookworm@sha256:45da3826d21df329eacade6725afa328442710e094454407151c42fef1341b0c
   stage: test
   script:
   # fail on critical
   - npm audit --audit-level=critical
 
 jest:
-  image: node:20.12.2-bookworm@sha256:cbd62dc7ba7e50d01520f2c0a8d9853ec872187fa806ed61d0f87081c220386d
+  image: node:20.13.1-bookworm@sha256:45da3826d21df329eacade6725afa328442710e094454407151c42fef1341b0c
   stage: test
   script:
   - npm i --force --include=dev
