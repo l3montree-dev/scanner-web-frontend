@@ -1,3 +1,5 @@
+_[English Version available](./CODE_OF_CONDUCT-en.md)_
+
 ## 1. Zielsetzung
 
 Der Code of Conduct unterstützt unser Bestreben, eine angenehme Atmosphäre in unserer Community zu schaffen.

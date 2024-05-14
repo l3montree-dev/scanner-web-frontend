@@ -1,5 +1,7 @@
 # Beitragen
 
+_[English Version available](./CONTRIBUTING-en.md)_
+
 ## Code of Conduct
 
 Das Projekt hat einen Verhaltenskodex ([Code of Conduct](CODE_OF_CONDUCT.md))

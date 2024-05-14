@@ -1,21 +1,19 @@
 # Changelog
 
-Alle nennenswerten Änderungen an diesem Projekt werden in dieser Datei dokumentiert.
-
-_[English Version available](./CHANGELOG-en.md)_
+All significant changes to this project are documented in this file.
 
 ## [Unreleased]
 
 ### Added
 
-- Repo-Pflege: Englische Übersetzung verschiedener Dokumente (README, CONTRIBUTING, etc.)
-- Repo-Pflege: License-Scanning für Abhängigkeiten in CI/CD-Pipeline
-- Repo-Pflege: DCO (Developer Certificate of Origin) für Beiträge
+- Repo care: English translation of various documents (README, CONTRIBUTING, etc.)
+- Repo care: Licence scanning for dependencies in CI/CD pipeline
+- Repo care: DCO (Developer Certificate of Origin) for contributions
 
 ### Changed
 
-- Dependencies aktualisiert (patch-level)
-- Update zu node:20.13.1
+- Dependencies updated (patch-level)
+- Update to node:20.13.1
 
 ## [1.0.1] - 2024-05-03
 
@@ -27,12 +25,12 @@ Signed SBOM: `registry.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-f
 
 ### Added
 
-- Init-Container Image (nicht distroless) ist nun verfügbar
+- Init container image (not distroless) is now available
 
 ### Fixed
 
-- Einige Tests wurden korrigiert
-- Kleinere Fehler wurden behoben
+- Some tests have been corrected
+- Minor bugs have been fixed
 
 ## [1.0.0] - 2024-04-29
 
@@ -44,12 +42,12 @@ Image-Signature: `registry.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-w
 
 Signed SBOM: `registry.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend:sha256-bcf2dc751dc7551548b736f6f73cae25db990a61a31489f5d0e90ed0d886e4b2.att`
 
-## Allgemeine Hinweise
+## General notes
 
-Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-und dieses Projekt hält sich an die [Semantische Versionierung](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-Sie finden den öffentlichen Schlüssel zur Überprüfung der Image- und SBOM-Signaturen hier: [cosign.pub](https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/blob/main/cosign.pub)
+You can find the public key for verifying the image and SBOM signatures here: [cosign.pub](https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/blob/main/cosign.pub)
 
 [Unreleased]: https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/compare/v1.0.1...HEAD
 [1.0.1]: https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/compare/v1.0.0...v1.0.1

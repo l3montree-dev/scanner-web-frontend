@@ -6,6 +6,8 @@
 
 [[_TOC_]]
 
+_[English Version available](./README-en.md)_
+
 # OZG Security Challenge - Web Frontend
 
 In diesem Repository finden Sie das Web Frontend, welches im Rahmen der OZG-Security-Challenge entwickelt wurde. Das Frontend stellt die Ergebnisse des [Best Practice Scanner](https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-best-practice-scanner) (ein Tool, das es ermöglicht, die IT-Sicherheit und die Umsetzung von Best Practices von Webseiten zu überprüfen) dar. 
