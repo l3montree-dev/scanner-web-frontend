@@ -15,7 +15,7 @@
         "@fortawesome/free-solid-svg-icons": "^6.5.2",
         "@fortawesome/react-fontawesome": "^0.2.0",
         "@influxdata/influxdb-client": "^1.33.2",
-        "@keycloak/keycloak-admin-client": "^24.0.3",
+        "@keycloak/keycloak-admin-client": "^24.0.4",
         "@prisma/client": "^4.14.0",
         "@radix-ui/react-checkbox": "^1.0.4",
         "@radix-ui/react-dialog": "^1.0.5",
@@ -32,7 +32,7 @@
         "ip": "^2.0.1",
         "lodash": "^4.17.21",
         "long": "^5.2.3",
-        "next": "13.4.2",
+        "next": "13.4.19",
         "next-auth": "^4.24.7",
         "p-queue": "^7.3.4",
         "pino": "^8.14.1",
@@ -51,7 +51,7 @@
     "devDependencies": {
         "@lhci/cli": "^0.13.0",
         "@swc/cli": "^0.3.12",
-        "@swc/core": "^1.5.2",
+        "@swc/core": "^1.5.6",
         "@testing-library/jest-dom": "^5.16.5",
         "@testing-library/react": "^14.0.0",
         "@types/amqplib": "^0.10.5",
@@ -59,12 +59,12 @@
         "@types/ip": "^1.1.3",
         "@types/jest": "^29.5.12",
         "@types/jsdom": "^21.1.6",
-        "@types/lodash": "^4.17.0",
-        "@types/node": "^20.12.8",
+        "@types/lodash": "^4.17.1",
+        "@types/node": "^20.12.12",
         "@types/punycode": "^2.1.4",
-        "@types/react": "18.3.1",
+        "@types/react": "18.3.2",
         "@types/react-dom": "18.3.0",
-        "@types/react-syntax-highlighter": "^15.5.12",
+        "@types/react-syntax-highlighter": "^15.5.13",
         "@types/tinycolor2": "^1.4.6",
         "autoprefixer": "^10.4.19",
         "eslint": "8.40.0",
@@ -83,16 +83,16 @@
         "ts-node": "^10.9.2",
         "typescript": "^5.4.5"
     },
-    "description": "First, run the development server:",
+    "description": "OZG Security Challenge Web Frontend",
     "main": "jest.config.js",
     "repository": {
         "type": "git",
-        "url": "git+ssh://git@gitlab.com/ozg-security/ozgsec-security-quick-test.git"
+        "url": "git@gitlab.opencode.de:bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend.git"
     },
     "author": "",
     "license": "ISC",
     "bugs": {
-        "url": "https://gitlab.com/ozg-security/ozgsec-security-quick-test/issues"
+        "url": "https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/issues"
     },
-    "homepage": "https://gitlab.com/ozg-security/ozgsec-security-quick-test#readme"
+    "homepage": "https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend"
 }

@@ -1,4 +1,4 @@
-FROM node:20.12.2-bookworm@sha256:cbd62dc7ba7e50d01520f2c0a8d9853ec872187fa806ed61d0f87081c220386d as builder
+FROM node:20.13.1-bookworm@sha256:45da3826d21df329eacade6725afa328442710e094454407151c42fef1341b0c as builder
 LABEL maintainer="ozgsec@neuland-homeland.de"
 
 WORKDIR /usr/app/
