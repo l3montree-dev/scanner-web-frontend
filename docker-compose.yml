@@ -16,6 +16,9 @@ services:
       RABBITMQ_PORT: 5672
       SERVER_TIMEOUT: 10000
       RIPE_SOURCE_APP: "quicktest-bmi-germany"
+    depends_on:
+      - rabbitmq
+      - redis
   
   redis:
     image: bitnami/redis

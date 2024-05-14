@@ -34,7 +34,7 @@ With public administration becoming more digital, the importance of information 
 
 - Sharing analyses of a group (read-only link sharing)
 
-- API for integration into existing systems
+- API for integration into existing systems ([OpenAPI Spec](./docs/api/openapi.yaml))
 
 You can find further explanations and screenshots here: [Explanations of the features](./docs/features.md)
 

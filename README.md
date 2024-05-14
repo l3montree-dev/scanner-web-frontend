@@ -38,7 +38,7 @@ Mit der zunehmenden Digitalisierung der öffentlichen Verwaltung steigt die Bede
 
 - Teilen von Auswertungen einer Gruppe (read-only link Sharing)
 
-- API zur Integration in bestehende Systeme
+- API zur Integration in bestehende Systeme ([OpenAPI Spezifikation](./docs/api/openapi.yaml))
 
 Hier finden Sie weitere Erläuterungen und Screenshots: [Erläuterungen der Features](./docs/features.md)
 

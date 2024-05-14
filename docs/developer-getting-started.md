@@ -4,8 +4,9 @@
 2. Legen Sie Ihre lokale Konfiguration an: `cp .env.example .env.local`
 3. Starten Sie die notwendigen Dienste: `docker-compose up -d`
 4. Installieren Sie die Abhängigkeiten: `npm install`
-5. Starten Sie das Frontend im Entwicklungsmodus: `npm run dev`
-6. Rufen Sie das Frontend in Ihrem Browser auf: [http://localhost:3000](http://localhost:3000)
+5. Erstellen Sie die Datenbank: `DATABASE_URL=postgres://<user>:<pass>@<host>:<port>/<db> npx prisma migrate dev`
+6. Starten Sie das Frontend im Entwicklungsmodus: `npm run dev`
+7. Rufen Sie das Frontend in Ihrem Browser auf: [http://localhost:3000](http://localhost:3000)
 
 #### Voraussetzungen
 
