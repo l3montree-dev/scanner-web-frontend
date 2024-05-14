@@ -57,6 +57,14 @@ jest:
       junit:
       - junit.xml
 
+license-compliance:
+  stage: test
+  image: ruby:3.3.1-alpine3.19@sha256:92047b87f9a122a10b22fba43ad647969a5c1ca43da663abebf5718dce1ab6a0
+  script:
+  - gem install license_finder
+  - apk add --update npm
+  - license_finder --decisions_file ./docs/dependency_decisions.yml --enabled-package-managers npm
+
 tag:
   stage: tag
   needs: []
@@ -86,7 +94,7 @@ tag:
 
 oci:build:
   stage: build
-  needs: [tag,jest,software-composition-analysis,static-application-security-testing,secret-scanning]
+  needs: [tag,jest,software-composition-analysis,static-application-security-testing,secret-scanning,license-compliance]
   dependencies: ["tag"]
   image:
     name: gcr.io/kaniko-project/executor:v1.22.0-debug@sha256:7b3699e9e105521075812cd3f3f4c62c913cb5cd113c929975502022df3bcf60
@@ -103,7 +111,7 @@ oci:build:
 
 oci:build-initcontainer:
   stage: build
-  needs: [tag,jest,software-composition-analysis,static-application-security-testing,secret-scanning]
+  needs: [tag,jest,software-composition-analysis,static-application-security-testing,secret-scanning,license-compliance]
   dependencies: ["tag"]
   image:
     name: gcr.io/kaniko-project/executor:v1.22.0-debug@sha256:7b3699e9e105521075812cd3f3f4c62c913cb5cd113c929975502022df3bcf60
