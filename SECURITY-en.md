@@ -2,7 +2,7 @@
 
 ## Versions
 
-The latest patches and the latest software are published under the `:main-<commit-short-hash>-<unix-timestamp>` tag scheme of the container image. The latest security updates are therefore published on such a tag first. For productive use, there is regularly a patch or a smaller version with a versioned container image tag.
+The latest patches and the latest software are published under the `:main-<commit-short-hash>-<unix-timestamp>` tag scheme of the container image. The latest security updates are therefore published on such a tag first. A versioned container image (tag) is regularly available for productive use.
 
 Older tags need to be updated manually, as we normally do not release an updated image for an existing tag; this is only done in case of _severe_ security vulnerabilities.
 

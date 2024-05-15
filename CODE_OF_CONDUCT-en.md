@@ -66,7 +66,7 @@ We ask that your report includes the following:
 
 Please only use the contact above so that the appropriate team can respond to your report. Your matter will be handled with discretion. We respect the confidentiality of all enquiries to protect the individuals concerned.
 
-## 7 Licence and references
+## 7. Licence and references
 
 The Code of Conduct is provided under the Creative Commons Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0) licence (https://creativecommons.org/licenses/by-sa/3.0/).
 

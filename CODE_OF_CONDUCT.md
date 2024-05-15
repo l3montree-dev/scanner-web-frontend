@@ -1,4 +1,4 @@
-_[English Version available](./CODE_OF_CONDUCT-en.md)_
+_[English version available](./CODE_OF_CONDUCT-en.md)_
 
 ## 1. Zielsetzung
 

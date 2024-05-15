@@ -23,4 +23,4 @@ Here you can add any additional information or specific comments that may be rel
 
 ---
 
-Your accurate and precise description of the error will help us to continuously improve the quality of our document. Thank you for your contribution!
+Your accurate and precise description of the error will help us to continuously improve the quality of this project. Thank you for your contribution!

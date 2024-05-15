@@ -40,7 +40,7 @@ You can find further explanations and screenshots here: [Explanations of the fea
 
 ## Collaboration
 
-Would you like to participate in the further development? You are welcome to contribute actively, e.g. with change proposals (merge requests) or by submitting application questions or suggestions here in this repository. Further information can be found here: [CONTRIBUTING.md](./CONTRIBUTING-en.md).
+Would you like to participate in the further development? You are welcome to contribute actively, e.g. with change proposals (merge requests) or by submitting application questions or suggestions here in this repository. Further information can be found here: [CONTRIBUTING-en.md](./CONTRIBUTING-en.md).
 
 ## Licence
 

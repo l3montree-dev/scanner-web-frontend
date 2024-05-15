@@ -6,17 +6,15 @@
 
 [[_TOC_]]
 
-_[English Version available](./README-en.md)_
+_[English version available](./README-en.md)_
 
 # OZG Security Challenge - Web Frontend
 
 In diesem Repository finden Sie das Web Frontend, welches im Rahmen der OZG-Security-Challenge entwickelt wurde. Das Frontend stellt die Ergebnisse des [Best Practice Scanner](https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-best-practice-scanner) (ein Tool, das es ermöglicht, die IT-Sicherheit und die Umsetzung von Best Practices von Webseiten zu überprüfen) dar. 
 
-
 ### Hintergrund
 
 Mit der zunehmenden Digitalisierung der öffentlichen Verwaltung steigt die Bedeutung der zugrundeliegenden Informationssicherheit. Bürgerinnen, Bürger und Unternehmen erwarten, dass der Staat vertrauensvoll mit ihren persönlichen Daten umgeht und diese durch ein hohes Maß an IT-Sicherheit schützt. Das [Bundesministerium des Innern und für Heimat (BMI)](https://www.bmi.bund.de/DE/startseite/startseite-node.html) möchte daher die Steigerung der IT-Sicherheit bei der OZG-Umsetzung weiter vorantreiben und hat in Zusammenarbeit mit dem [Bundesamt für Sicherheit in der Informationstechnik (BSI)](https://www.bsi.bund.de/DE/Home/home_node.html) die „OZG-Security-Challenge 2023“ ins Leben gerufen. In diesem Rahmen wurde der „OZG-Security-Schnelltest“ und die hier vorliegende zugehörige „Web Frontend“-Komponente entwickelt.
-
 
 ## Features
 
@@ -42,11 +40,9 @@ Mit der zunehmenden Digitalisierung der öffentlichen Verwaltung steigt die Bede
 
 Hier finden Sie weitere Erläuterungen und Screenshots: [Erläuterungen der Features](./docs/features.md)
 
-
 ## Mitarbeit
 
-Möchten Sie sich an der Weiterentwicklung beteiligen? Bringen Sie sich gerne aktiv, z. B. mit Änderungsvorschlägen (Merge Requests) oder durch Anwendungsfragen bzw. Vorschläge hier in diesem Repository ein. Weitere Informationen dazu finden Sie hier: [Mitwirkung](./CONTRIBUTING.md).
-
+Möchten Sie sich an der Weiterentwicklung beteiligen? Bringen Sie sich gerne aktiv, z. B. mit Änderungsvorschlägen (Merge Requests) oder durch Anwendungsfragen bzw. Vorschläge hier in diesem Repository ein. Weitere Informationen dazu finden Sie hier: [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## Lizenz
 

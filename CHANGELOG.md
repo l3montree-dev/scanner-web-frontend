@@ -2,7 +2,7 @@
 
 Alle nennenswerten Änderungen an diesem Projekt werden in dieser Datei dokumentiert.
 
-_[English Version available](./CHANGELOG-en.md)_
+_[English version available](./CHANGELOG-en.md)_
 
 ## [Unreleased]
 

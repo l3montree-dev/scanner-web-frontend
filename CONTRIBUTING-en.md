@@ -2,7 +2,7 @@
 
 ## Code of Conduct
 
-The project has a code of conduct ([Code of Conduct](CODE_OF_CONDUCT.md))
+The project has a code of conduct ([Code of Conduct](CODE_OF_CONDUCT-en.md))
 to which all contributors must adhere.
 
 ## Direct participation
@@ -19,7 +19,7 @@ To simplify and standardise the creation and processing of issues, we provide sp
 
 - **Bug report:** If you discover application errors (bugs) or other errors, e.g. in the documentation, please use our [bug report template](https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/issues/new?issuable_template=bug-en).
 
-- Feature requests or suggestions for improvement:** For suggestions for extending the project or implementing new functions, please use our [feature request template](https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/issues/new?issuable_template=feature-en).
+- **Feature requests or suggestions for improvement:** For suggestions for extending the project or implementing new functions, please use our [feature request template](https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/issues/new?issuable_template=feature-en).
 
 Fill in all the required fields of the template. The more detailed your description, the better we can respond to your request. Our community or team will review the issue and respond accordingly.
 
@@ -29,7 +29,7 @@ We appreciate your contributions to the continuous improvement of this project!
 
 In this project, we use the so-called Feature Branch Workflow in development. This process ensures that the source code of the project remains stable and that changes can be checked quickly. Only one specific feature or improvement is processed on each branch. 
 
-[Overview of the branching principle](./docs/assets/Branching.png)
+![Overview of the branching principle](./docs/assets/Branching.png)
 
 Here is a brief guide on how to use this workflow:
 
@@ -75,7 +75,7 @@ be published under the [EUPL-1.2](./LICENSE) licence.
 
 Please report any vulnerabilities you find privately so that we can fix them!
 
-See [SECURITY.md](./SECURITY.md) for information on reporting vulnerabilities.
+See [SECURITY.md](./SECURITY-en.md) for information on reporting vulnerabilities.
 
 ## Code changes
 
@@ -92,7 +92,7 @@ We recommend creating tests first and then adding code (also known as test-drive
 
 Pay attention to security and work *with* (not against) our security mechanisms. Protect private information. If possible, avoid mechanisms that could be used for tracking.
 
-You can find out more about security at [security](./SECURITY.md).
+You can find out more about security at [security](./SECURITY-en.md).
 
 We want the software to perform adequately for typical users. Use caching to improve performance in typical cases.
 

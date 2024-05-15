@@ -1,21 +1,19 @@
 # Beitragen
 
-_[English Version available](./CONTRIBUTING-en.md)_
+_[English version available](./CONTRIBUTING-en.md)_
 
 ## Code of Conduct
 
 Das Projekt hat einen Verhaltenskodex ([Code of Conduct](CODE_OF_CONDUCT.md))
 an den sich alle Mitwirkenden halten müssen.
 
-
 ## Direkte Mitwirkung
 
 Wir freuen uns über Ihre Mitarbeit! Sie können sich aktiv, z. B. mit Änderungsvorschlägen (Merge Requests), Fragen oder Dokumentation hier in diesem Repository einbringen.
 
-
 ### Anwendungsfragen bzw. Vorschläge (Issues)
 
-Wenn Sie Fragen zu diesem Projekt haben oder Vorschläge für Ihre Weiterentwicklung oder Anpassung machen möchten, ermutigen wir Sie, ein Issue in unserem Repository zu erstellen. Issues sind ein zentraler Bestandteil unseres Projekts, da sie es uns ermöglichen, offene Fragen zu diskutieren, Feedback zu sammeln und neue Ideen oder Verbesserungen zu erkunden.
+Wenn Sie Fragen zu diesem Projekt haben oder Vorschläge für eine Weiterentwicklung oder Anpassung machen möchten, ermutigen wir Sie, ein Issue in unserem Repository zu erstellen. Issues sind ein zentraler Bestandteil unseres Projekts, da sie es uns ermöglichen, offene Fragen zu diskutieren, Feedback zu sammeln und neue Ideen oder Verbesserungen zu erkunden.
 
 #### Erstellen eines Issues
 
@@ -28,7 +26,6 @@ Um die Erstellung und Bearbeitung von Issues zu vereinfachen und zu standardisie
 Füllen Sie alle erforderlichen Felder des Templates aus. Je detaillierter Ihre Beschreibung, desto besser können wir auf Ihr Anliegen eingehen. Unsere Community oder unser Team wird sich das Issue ansehen und entsprechend darauf reagieren.
 
 Wir schätzen Ihre Mitarbeit und Ihre Beiträge zur kontinuierlichen Verbesserung dieses Projekts!
-
 
 ### Konkrete Änderungsvorschläge: Feature Branch Workflow und Merge Requests
 
@@ -105,7 +102,7 @@ Es muss immer zwischen verschiedenen Charakteristiken abgewägt werden: speziell
 
 ### Anforderungen für wiederverwendete Komponenten
 
-Wir bevorzugen die Wiederverwendung von Komponenten, anstatt viel Code zu schreiben, aber bitte bewerten Sie alle neuen Komponenten, bevor Sie sie hinzufügen (auch, ob Sie sie wirklich brauchen oder nicht). Wir möchten das Risiko verringern, dass wir von Software abhängig sind, die schlecht gewartet wird oder (beabsichtigte oder unbeabsichtigte) Schwachstellen aufweist.
+Wir bevorzugen die Wiederverwendung von Komponenten. Allerdings bewerten Sie bitte alle neuen Komponenten, bevor Sie sie hinzufügen (auch, ob Sie sie wirklich brauchen oder nicht). Wir möchten das Risiko verringern, dass wir von Software abhängig sind, die schlecht gewartet wird oder (beabsichtigte oder unbeabsichtigte) Schwachstellen aufweist.
 
 Bevorzugen Sie Software, die aktuell gewartet wird, an der mehr als ein Entwickler arbeitet und die gute Praktiken anwendet.
 

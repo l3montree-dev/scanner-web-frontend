@@ -23,4 +23,4 @@ Hier können Sie weitere Informationen oder spezielle Anmerkungen hinzufügen, d
 
 ---
 
-Durch Ihre genaue und präzise Fehlerbeschreibung helfen Sie uns, die Qualität unseres Dokuments kontinuierlich zu verbessern. Vielen Dank für Ihren Beitrag!
+Durch Ihre genaue und präzise Fehlerbeschreibung helfen Sie uns, die Qualität unseres Projekts kontinuierlich zu verbessern. Vielen Dank für Ihren Beitrag!
