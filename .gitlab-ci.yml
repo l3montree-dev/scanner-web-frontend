@@ -251,7 +251,7 @@ sign-sbom:
   - apk add --update curl
   - *oci_login
   script:
-  - cosign attest --predicate ./sbom.json --key $COSIGN_PRIVATE_KEY "$(cat image-tag.txt)@$(cat digest.txt)"
+  - cosign attest --yes --predicate ./sbom.json --key $COSIGN_PRIVATE_KEY "$(cat image-tag.txt)@$(cat digest.txt)"
   only:
   - main
   - tags
@@ -269,7 +269,7 @@ sign-sbom-initcontainer:
   - apk add --update curl
   - *oci_login
   script:
-  - cosign attest --predicate ./sbom.json --key $COSIGN_PRIVATE_KEY "$(cat initcontainer-image-tag.txt)@$(cat initcontainer-digest.txt)"
+  - cosign attest --yes --predicate ./sbom.json --key $COSIGN_PRIVATE_KEY "$(cat initcontainer-image-tag.txt)@$(cat initcontainer-digest.txt)"
   only:
   - main
   - tags
