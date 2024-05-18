@@ -16,6 +16,8 @@ jobs:
   # Secret scanning job to detect secrets in codebase
   secret-scanning:
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
     steps:
     - name: Checkout code
       uses: actions/checkout@v4 # Check out the repository content to the runner
