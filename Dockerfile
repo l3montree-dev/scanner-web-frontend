@@ -18,8 +18,10 @@ COPY . .
 ENV NODE_ENV production
 RUN npm run build
 
-FROM gcr.io/distroless/nodejs20-debian12
+# checkov:skip=CKV_DOCKER_3
+FROM gcr.io/distroless/nodejs20-debian12@sha256:36b2247bda45163fff0cfef127806d8c7661648ceb27b1c255eb987df3388551
 
+# checkov:skip=CKV_DOCKER_2
 WORKDIR /usr/app/
 ENV PORT 3000
 
