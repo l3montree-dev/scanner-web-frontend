@@ -2,13 +2,15 @@
 # This workflow is triggered on every push to the repository
 name: DevSecOps Workflow
 
+on:
+  push:
+    branches:
+    - '*'
+    tags:
+    - '*'
 
-on: push
-
-# Environment variables used across multiple jobs
-env:
-  IMAGE_TAG: ghcr.io/${{ github.repository }}:unstable
-  IMAGE_NAME: ghcr.io/${{ github.repository }}
+permissions:
+  contents: read
 
 jobs:
   # Secret scanning job to detect secrets in codebase
@@ -20,7 +22,7 @@ jobs:
     - name: Run Gitleaks Scan
       # Running Gitleaks to scan the code for secrets
       run: |
-        docker run --rm -v $(pwd):/code -u $(id -u):$(id -g) ghcr.io/gitleaks/gitleaks:v8.18.2 -s /code detect -f sarif -r /code/gitleaks.sarif.json
+        docker run --rm -v $(pwd):/code -u $(id -u):$(id -g) ghcr.io/gitleaks/gitleaks:v8.18.2 --baseline-path /code/gitleaks-report.json -s /code detect -f sarif -r /code/gitleaks.sarif.json
     - name: Upload sarif file
       uses: github/codeql-action/upload-sarif@v3
       with:
@@ -30,6 +32,8 @@ jobs:
   # Software Composition Analysis (SCA) to find vulnerabilities in project dependencies
   sca:
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -43,7 +47,7 @@ jobs:
         format: "sarif"
         output: "trivy-results.sarif"
     - name: Upload Trivy scan results to GitHub Security tab
-      uses: github/codeql-action/upload-sarif@v2
+      uses: github/codeql-action/upload-sarif@v3
       with:
         sarif_file: "trivy-results.sarif"
         category: "sca"
@@ -51,6 +55,8 @@ jobs:
   # Static Application Security Testing (SAST) to identify security vulnerabilities in source code
   sast:
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -67,16 +73,16 @@ jobs:
   
   # Docker image build job
   build-image:
+    permissions:
+      packages: write
     runs-on: ubuntu-latest
-    outputs:
-      image_path: ${{ steps.build_output.outputs.image_path }}
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
     steps:
     - uses: actions/checkout@v4
     - name: Set IMAGE_TAG if tagged
       # Setting the image tag if the push is a tag push
       run: |
-        echo "IMAGE_TAG=ghcr.io/${{ github.repository }}:${GITHUB_REF#refs/tags/}" > image-tag.txt
+        echo "ghcr.io/${{ github.repository }}:${GITHUB_REF#refs/tags/}" > image-tag.txt
         export IMAGE_TAG=$(cat image-tag.txt)
         echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
       if: startsWith(github.ref, 'refs/tags/')
@@ -89,15 +95,12 @@ jobs:
         export IMAGE_TAG=$(cat image-tag.txt)
         echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
       if: github.ref == 'refs/heads/main'
-    - name: Git describe
-      id: ghd
-      uses: proudust/gh-describe@v2
     - name: Build Docker image with Kaniko
       # Building the Docker image using Kaniko
       id: build_image
       uses: docker://gcr.io/kaniko-project/executor:v1.22.0
       with:
-        args: --destination=${{ env.IMAGE_TAG }} --context=/github/workspace --build-arg "VERSION=${{ steps.ghd.outputs.describe }}" --dockerfile=/github/workspace/Dockerfile --no-push --tarPath /github/workspace/image.tar
+        args: --destination=${{ env.IMAGE_TAG }} --context=/github/workspace --dockerfile=/github/workspace/Dockerfile --no-push --tarPath /github/workspace/image.tar
     - name: Setup crane
       uses: imjasonh/setup-crane@v0.1
     - name: Use crane to get the digest
@@ -120,10 +123,11 @@ jobs:
         name: image-tag
         path: image-tag.txt
 
-
   # Image scanning job to detect vulnerabilities in the built Docker image
   image-scanning:
     needs: build-image
+    permissions:
+      security-events: write
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
     steps:
@@ -141,15 +145,17 @@ jobs:
         format: "sarif"
         output: "trivy-results.sarif"
     - name: Upload Trivy scan results to GitHub Security tab
-      uses: github/codeql-action/upload-sarif@v2
+      uses: github/codeql-action/upload-sarif@v3
       with:
         sarif_file: "trivy-results.sarif"
         category: "image-scanning"
 
   # Publish job to push the Docker image to a registry
   publish:
-    needs: [build-image, image-scanning, secret-scanning, sca, sast]
+    needs: [build-image, image-scanning, secret-scanning, sca, sast, iac]
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
     steps:
     - uses: actions/download-artifact@v4
@@ -165,15 +171,35 @@ jobs:
         export IMAGE_TAG=$(cat image-tag.txt)
         echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
     - uses: imjasonh/setup-crane@v0.1
-    - name: Set IMAGE_TAG if tagged
-      # Setting the image tag if the push is a tag push
-      run: echo "IMAGE_TAG=ghcr.io/${{ github.repository }}:${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-      if: startsWith(github.ref, 'refs/tags/')
     - name: Push Docker image to GitHub image Registry
       # Pushing the Docker image to GitHub Container Registry
       run: crane push image.tar ${{ env.IMAGE_TAG }}
 
+  sbom:
+    runs-on: ubuntu-latest # Specify the runner
+    needs: [build-image]
+    container:
+      image: alpine:3.19.1@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b
+    steps:
+    - name: Install curl
+      run: apk add --update curl
+    - name: Install Syft
+      run: curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+    - name: Download artifact from previous build
+      uses: actions/download-artifact@v4
+      with:
+        name: docker-image
+    - name: Generate SBOM with Syft
+      run: syft ./image.tar -o cyclonedx-json=sbom.json
+    - name: Upload SBOM as an artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: sbom
+        path: sbom.json
+
   sign-image:
+    permissions:
+      packages: write
     runs-on: ubuntu-latest
     needs: publish
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
@@ -209,4 +235,43 @@ jobs:
     - name: Sign the published Docker image
       env:
         COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-      run: cosign sign --yes --key cosign.key "${{ env.IMAGE_TAG }}@${{ env.IMAGE_DIGEST }}"
+      run: cosign sign --yes --key cosign.key "$(cat image-tag.txt)@${{ env.IMAGE_DIGEST }}"
+
+  sign-sbom:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    needs: publish
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+    steps:
+    - name: cosign-installer
+      uses: sigstore/cosign-installer@v3.3.0
+      with:
+        cosign-release: 'v2.2.3' # optional
+    - name: Download digest
+      uses: actions/download-artifact@v4
+      with:
+        name: digest
+        path: .
+    - name: Download image tag
+      uses: actions/download-artifact@v4
+      with:
+        name: image-tag
+        path: .
+    - name: Download sbom tag
+      uses: actions/download-artifact@v4
+      with:
+        name: sbom
+        path: .
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v2.1.0
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Write signing key to disk (only needed for `cosign sign --key`)
+      run: echo "${{ secrets.COSIGN_PRIVATE_KEY }}" > cosign.key
+    - name: Sign SBOM
+      run: cosign attest --yes --predicate ./sbom.json --key cosign.key "$(cat image-tag.txt)@$(cat digest.txt)"
+      env:
+        COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
