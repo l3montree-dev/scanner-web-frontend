@@ -51,7 +51,7 @@ export const getResponsibleDisclosureReportMessage = (
       case inspection.properties.errorIds.includes(
         ResponsibleDisclosureValidationError.WrongMimeType,
       ):
-        return `Die Datei ${uri}/.well-known/security.txt ist vorhanden, besitzt aber nicht den korrekten Content-Type: text/plain Header.`;
+        return `Die Datei ${uri}/.well-known/security.txt ist vorhanden, besitzt aber nicht den korrekten "content-type: text/plain; charset=UTF-8" Header.`;
     }
   }
 };

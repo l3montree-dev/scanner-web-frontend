@@ -34,7 +34,7 @@ const Button =
         ref={ref}
         className={classNames(
           "transition-all rounded-sm flex justify-between flex-row items-center gap-3 p-2 px-5",
-          "bg-white focus:bg-dunkelblau-50 hover:bg-dunkelblau-100 hover:text-white border border-hellgrau-80 hover:border-dunkelblau-100",
+          "bg-white focus:bg-dunkelblau-50 hover:bg-zinc-500 hover:text-white border border-hellgrau-80 hover:border-zinc-500",
           props.disabled && "opacity-50 cursor-not-allowed",
           additionalClasses,
         )}
