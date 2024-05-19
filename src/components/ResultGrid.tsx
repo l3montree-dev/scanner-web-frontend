@@ -1,7 +1,6 @@
 import { FunctionComponent } from "react";
 import { immediateActionHTTPErrors } from "../messages/http";
 import {
-  AccessiblityInspectionType,
   CertificateInspectionType,
   DomainInspectionType,
   HeaderInspectionType,
@@ -29,8 +28,6 @@ const regularChecks = [
   HeaderInspectionType.HSTS,
   DomainInspectionType.DNSSec,
   NetworkInspectionType.RPKI,
-
-  AccessiblityInspectionType.ProvidesEnglishWebsiteVersion,
 ] as const;
 
 const immediateActionRequired = [
@@ -107,7 +104,7 @@ const ResultGrid: FunctionComponent<Props> = (props) => {
             <div key={key} className="">
               <div
                 className={classNames(
-                  "bg-dunkelblau-20/40 h-full p-5",
+                  "bg-zinc-900 h-full p-5",
                   /* `border-${checkResult2BorderClassName(
                     didPass2CheckResult(
                       report.details !== null

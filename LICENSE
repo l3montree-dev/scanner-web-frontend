@@ -1,5 +1,10 @@
 Files: * except where noted otherwise (since root, 6c8561269f80cd74eaffad6cc013d013a16fedd2)
 Copyright: Copyright (c) 2023 Bundesministerium des Innern und für Heimat, Referat DV II 2 – Rahmenarchitektur, Standardisierung für Plattformsysteme und für Digitale Services
+
+Files: public/assets/logo.svg is not covered by the license,
+        "l3montree" word mark:  The name "l3montree" is the registered word mark of l3montree UG (haftungsbeschränkt). It is protected by trademark law.
+        l3montree figurative mark (lemon): The stylized image of the lemon, as it can be seen on this website, e.g. in the header, is the registered figurative mark of l3montree UG (haftungsbeschränkt). It is protected by trademark law.
+
 License: EUPL-1.2
 
                       OPEN-SOURCE-LIZENZ FÜR DIE EUROPÄISCHE UNION v. 1.2

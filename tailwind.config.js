@@ -38,12 +38,12 @@ module.exports = {
             }
         },
         fontSize: {
-            xs: '1rem',
-            sm: '1.25rem',
-            base: '1.5rem',
-            lg: '1.625rem',
-            xl: '1.75rem',
-            '2xl': '3.5rem',
+            xs: '0.8rem',
+            sm: '1.1rem',
+            base: '1.3rem',
+            lg: '1.6rem',
+            xl: '2rem',
+            '2xl': '2.8rem',
         },
         borderWidth: {
             DEFAULT: '1px',
@@ -92,6 +92,19 @@ module.exports = {
                 "15/16": "93.75%",
             },
             "colors": {
+                l3: {
+                    50: '#fbfcea',
+                    100: '#f9f9c8',
+                    200: '#f5f193',
+                    300: '#efe355',
+                    400: '#e9d432',
+                    500: '#d8ba1a',
+                    600: '#ba9214',
+                    700: '#956b13',
+                    800: '#7c5517',
+                    900: '#69461a',
+                    950: '#3d250b',
+                },
                 bund: "#004F80",
                 deepblue: {
                     "50": "#383f6a",

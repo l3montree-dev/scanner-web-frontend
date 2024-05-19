@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { FunctionComponent, useEffect } from "react";
 import { useQuicktest } from "../hooks/useQuicktest";
@@ -9,6 +8,7 @@ import { useGlobalStore } from "../zustand/global";
 import ReleasePlaceHolder from "./ReleasePlaceholder";
 import ResultEnvelope from "./ResultEnvelope";
 import ScanPageHero from "./ScanPageHero";
+import GeneralInfoSection from "./GeneralInfoSection";
 
 interface Props {
   displayNotAvailable: boolean;
@@ -38,24 +38,60 @@ const IndexContent: FunctionComponent<Props> = ({ displayNotAvailable }) => {
   }
 
   return (
-    <div className="flex relative md:py-10 flex-col w-full justify-center">
+    <div className="flex relative md:py-10 flex-col w-full justify-center bg-zinc-950">
       <div className="relative">
-        <Image
-          className="absolute hidden lg:inline top-0 right-0"
-          width={500}
-          height={225}
-          priority
-          src={"/assets/Adler_Ausschnitt_1.svg"}
-          alt="OZG-Logo"
-        />
         <div className="container relative z-10">
+          <div className="border-l-4 border-l3-500 bg-l3-50 p-4 mt-10">
+            <div className="flex">
+              <div className="ml-3 flex-1 md:flex md:justify-between">
+                <p className="text-sm text-l3-800">
+                  Dieser Scanner basiert auf dem{" "}
+                  <a
+                    className="hover:text-l3-600"
+                    href="https://bmi.usercontent.opencode.de/ozg-rahmenarchitektur/ozgsec/ozgsec-info/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    OZG Security Challenge Projekt
+                  </a>{" "}
+                  des{" "}
+                  <a
+                    className="hover:text-l3-600"
+                    href="https://www.bmi.bund.de/DE/startseite/startseite-node.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    BMI
+                  </a>{" "}
+                  &{" "}
+                  <a
+                    className="hover:text-l3-600"
+                    href="https://www.bsi.bund.de/DE/Home/home_node.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    BSI
+                  </a>
+                </p>
+                <p className="mt-3 text-sm md:ml-6 md:mt-0">
+                  <a
+                    href="https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec"
+                    className="whitespace-nowrap font-medium text-l3-800 hover:text-l3-600"
+                  >
+                    Open CoDE
+                    <span aria-hidden="true"> &rarr;</span>
+                  </a>
+                </p>
+              </div>
+            </div>
+          </div>
           <ScanPageHero
             onSubmit={onSubmit}
             setWebsite={setWebsite}
             website={website}
             scanRequest={scanRequest}
           />
-          <div className={classNames(report && "my-10")}>
+          <div className={classNames(report && "mt-16")}>
             <ResultEnvelope
               report={report}
               dateString={dateString}
@@ -64,18 +100,9 @@ const IndexContent: FunctionComponent<Props> = ({ displayNotAvailable }) => {
               amountPassed={amountPassed}
             />
           </div>
-          {/*<div className="bg-deepblue-400 justify-center mx-5 md:mx-0 mb-5 flex flex-col md:flex-row md:justify-between items-center text-white mt-5 p-4">
-        <p>Die OZG-Security-Challenge: Hintergrundinfos und Vieles mehr.</p>
-        <a
-          title="Mehr Informationen zur OZG-Security-Challenge 2023"
-          target={"_blank"}
-          rel={"noopener noreferrer"}
-          className="bg-lightning-500 hover:bg-lightning-900 mt-5 md:mt-0 transition-all px-5 py-2 text-deepblue-500 text-center font-bold"
-          href="www.onlinezugangsgesetz.de/ozgsec"
-        >
-          Mehr erfahren
-        </a>
-  </div>*/}
+        </div>
+        <div className="mt-24">
+          <GeneralInfoSection />
         </div>
       </div>
     </div>

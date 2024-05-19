@@ -44,11 +44,11 @@ const ResultEnvelope: FunctionComponent<Props> = ({
     <div className="md:p-0 text-textblack">
       <div className="md:flex block mb-5 gap-5 flex-row justify-between">
         <div className="md:w-2/3">
-          <h2 id="test-results" className="text-xl">
+          <h2 id="test-results" className="text-xl text-white">
             Testergebnisse für{" "}
             <a
               target={"_blank"}
-              className="text-blau-100"
+              className="text-l3-400"
               rel="noopener noreferrer"
               href={`//${toUnicode(report.runs[0].properties.target)}`}
             >
@@ -56,11 +56,11 @@ const ResultEnvelope: FunctionComponent<Props> = ({
             </a>
           </h2>
           {report.runs[0].properties.target !== sut && (
-            <h2 className="text-xl">
+            <h2 className="text-xl text-white">
               Weiterleitung auf:{" "}
               <a
                 target={"_blank"}
-                className="underline text-blau-100"
+                className="underline text-l3-400"
                 rel="noopener noreferrer"
                 href={`//${toUnicode(sut)}`}
               >
@@ -70,8 +70,10 @@ const ResultEnvelope: FunctionComponent<Props> = ({
           )}
           <div className="flex-wrap mt-4 justify-between flex-row">
             <div className="flex-1">
-              <div className="flex gap-3 items-center flex-row">
-                <p>{dateString.substring(0, dateString.length - 3)}</p>
+              <div className="flex gap-3 items-center flex-rowtext-white">
+                <p className="text-white">
+                  {dateString.substring(0, dateString.length - 3)}
+                </p>
                 <Button
                   onClick={handleRefresh}
                   title="Testergebnisse aktualisieren"
@@ -82,12 +84,12 @@ const ResultEnvelope: FunctionComponent<Props> = ({
                   />
                 </Button>
               </div>
-              <p>Erfüllt: {amountPassed}/6</p>
+              <p className="text-white">Erfüllt: {amountPassed}/6</p>
             </div>
           </div>
         </div>
 
-        <div className="md:w-1/3 md:px-4 text-textblack">
+        <div className="md:w-1/3 md:px-4 text-white">
           <div className="flex-row flex items-center">
             <FontAwesomeIcon
               className={`text-${checkResult2BorderClassName(
@@ -120,7 +122,7 @@ const ResultEnvelope: FunctionComponent<Props> = ({
         </div>
       </div>
       {!refreshRequest.isLoading && !refreshRequest.errored && (
-        <div>
+        <div className="mt-10">
           <ResultGrid report={report} />
         </div>
       )}

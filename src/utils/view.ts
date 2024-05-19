@@ -95,8 +95,6 @@ export const displayInspections: Array<InspectionType> = [
   HeaderInspectionType.HSTS,
   DomainInspectionType.DNSSec,
   NetworkInspectionType.RPKI,
-
-  AccessiblityInspectionType.ProvidesEnglishWebsiteVersion,
 ];
 
 const fullConfig = resolveConfig(tailwindConfig);

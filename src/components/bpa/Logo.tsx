@@ -51,32 +51,10 @@ const Logo: FunctionComponent<Props> = (props) => {
         <Image
           priority
           alt="Logo Adler"
-          width={37 * factor}
-          height={50 * factor}
-          src={"/assets/logo_eagle.svg"}
+          width={250 * factor}
+          height={100 * factor}
+          src={"/assets/logo.svg"}
         />
-        <div className="transition-bund ml-2 relative">
-          <Image
-            priority
-            className="transition-bund origin-top"
-            alt="Logo Flagge"
-            width={5.5 * factor}
-            height={100 * factor}
-            style={{ transform: scrolled ? "scaleY(0.367)" : "" }}
-            src={"/assets/logo_flag.svg"}
-          />
-        </div>
-        <div style={{ width: 280 * factor }} className="absolute right-0">
-          <Image
-            priority
-            alt="Logo Text"
-            className="transition-bund"
-            style={{ opacity: scrolled ? 0 : 1 }}
-            width={280 * factor}
-            height={50 * factor}
-            src={"/assets/logo_text.svg"}
-          />
-        </div>
       </div>
     </Link>
   );

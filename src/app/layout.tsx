@@ -22,6 +22,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="de">
+      <head>
+        <script
+          async
+          src="https://umami.l3montree.com/script.js"
+          data-website-id="38b37448-06d8-4d44-9715-a929271df4ba"
+        ></script>
+      </head>
       <body className="text-base">
         {children}
         <Toaster />

@@ -1,5 +1,4 @@
 FROM node:20.13.1-bookworm@sha256:45da3826d21df329eacade6725afa328442710e094454407151c42fef1341b0c as builder
-LABEL maintainer="ozgsec@neuland-homeland.de"
 
 WORKDIR /usr/app/
 ENV PORT 3000

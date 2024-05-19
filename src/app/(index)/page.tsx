@@ -4,13 +4,13 @@ import { withNotAvailable } from "../../decorators/withNotAvailable";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "OZG-Security-Challenge 2023",
+  title: "Security Challenge Schnelltest | L3montree",
   description:
-    "OZG Security Schnelltest einer Webseite in Bezug auf IT-Sicherheitsmaßnahmen und Best-Practices",
+    "Security Challenge Schnelltest einer Webseite in Bezug auf IT-Sicherheitsmaßnahmen und Best-Practices",
   openGraph: {
-    title: "OZG-Security-Challenge 2023",
+    title: "Security Challenge Schnelltest",
     description:
-      "OZG Security Schnelltest einer Webseite in Bezug auf IT-Sicherheitsmaßnahmen und Best-Practices",
+      "Security Challenge Schnelltest einer Webseite in Bezug auf IT-Sicherheitsmaßnahmen und Best-Practices",
     type: "website",
   },
   alternates: {
