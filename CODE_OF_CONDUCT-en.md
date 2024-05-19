@@ -54,8 +54,7 @@ Please take action and report any violation of the Code of Conduct.
 
 If you are affected by unacceptable behaviour, witness it or have other concerns, please report it directly:
 
-ozgsec@bmi.bund.de
-or ozgsec@neuland-homeland.de
+developer@l3montree.com
 
 We ask that your report includes the following:
 

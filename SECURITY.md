@@ -12,9 +12,7 @@ Die neuesten Patches und die aktuellste Software werden unter dem Tag-Schema `:m
 
 Sie können eine Schwachstelle oder Anomalie an das Entwicklungsteam melden. Dadurch wird das Verfahren der koordinierten Offenlegung von Sicherheitslücken eingeleitet. Das Team wird sich dann bemühen, wenn möglich innerhalb einer Woche Sicherheitspatches zu entwickeln. Die Schwachstelle wird dann im Zuge der Veröffentlichung bekannt gemacht. Wenn Sie es wünschen, können Sie auch als Reporter veröffentlicht werden.
 
-* Sie können Ihre Meldung an die folgende E-Mail-Adresse senden: [ozgsec@bmi.bund.de](mailto:ozgsec@bmi.bund.de)
-
-* Sie können auch ein [vertrauliches Issue in diesem Repository erstellen](https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/issues/new?issue[confidential]=on&issuable_template=security-advisory).
+* Sie können eine [Sicherheitsmeldung in diesem Repository erstellen](https://github.com/l3montree-dev/scanner-web-frontend/security/advisories/new).
 
 * Alternativ können Sie an die folgende E-Mail-Adresse eine verschlüsselte E-Mail senden:
 
@@ -22,27 +20,27 @@ Sie können eine Schwachstelle oder Anomalie an das Entwicklungsteam melden. Dad
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA256
 
-Contact: mailto:ozgsec@neuland-homeland.de
-Expires: 2024-12-31T23:00:00.000Z
-Encryption: https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/blob/main/public/ozgsec@neuland-homeland.de-0x52AC2F9AABDD3852-pub.asc
+Contact: mailto:developer@l3montree.com
+Expires: 2026-12-31T23:00:00.000Z
+Encryption: https://l3montree.com/developer@l3montree.com-0xA71508222B6168D5-pub.asc
 Preferred-Languages: en, de
-Canonical: https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/blob/main/public/.well-known/security.txt
+Canonical: https://l3montree.com/.well-known/security.txt
 -----BEGIN PGP SIGNATURE-----
 
-iQJPBAEBCAA5FiEEf6UQ6m1bQE+kne3dUqwvmqvdOFIFAmYrdecbHG96Z3NlY0Bu
-ZXVsYW5kLWhvbWVsYW5kLmRlAAoJEFKsL5qr3ThS8XIP/ikENYTN4AJaCL0ueNCd
-+MDqE2dRnllULpcrnmWnpei356o7rs1f0ssaQNuUeOlhypnzQ6Iy0yHPXxJj7UWF
-UU4kdjQvqKA1otckcCT3kBf2vExHy3nwuFkKyCmj/F2QgwEaIDxXBUR0o9kFdVzN
-WWXe6VTenLNKK4e3j/oP6/nX43lmFTo/0FcF009Jj0hAIIeozwUx0pp7k/HOsWe7
-FXZTh2STwwd44w0SjgVX8CKaJagaUt+1bav46dMOVyFKq1RdhlDZ+o8kojwd+XOG
-Q5YwDw9S280DgIXVTqDucKvzy4I5Iu/t692061IcnuCzWF9h44PaO9S7qF7jFeS0
-z8koE4xV8LOijahbvv3kJ5RGRPBVxzTMpYa58hdrrlUXIVu6cQyqB2Kl6jMnztyH
-g0dGERfFp9/JLJBvjSJScTxGojOS9932MsqArnuu/JFtLYAZWPAFtku/CwycZxIk
-uaj+YM5j+e8fbPnpv4clC5+qy/LIgNqCMkcBfRGWIndmVdI5XFIYlbWqvfTI4dIj
-ILu2ehkTcbep7DwYMNsIgJtVB49S0iaytv4Kr5Vugch5L4n/pUS1r0E7Te2uA6qZ
-TGmOilqw3FHHOdJX1EGsdm+JUXC5XRR3hDrP3tJamND0iToS+bge9niPse0ItuHb
-hIJXJiyJbW9WrhVUbS6Ng78q
-=vSyi
+iQJMBAEBCAA2FiEEg2Cvc8K1bPr9yFM3pxUIIithaNUFAmWz2RIYHGRldmVsb3Bl
+ckBsM21vbnRyZWUuY29tAAoJEKcVCCIrYWjVFeIQALn6RPOJaUhnIG7i1woTq6fq
+Xi1RrHwT6x0m0+RfERuYyOklUnx131VFrfa/axRri6v+gajFTcNrCEObZyjp2KTC
+CvTGUKM26w1wbrz1pgmPc7NZV/M/XTzV+yr4Qhh237v0YxVRKkeKuUAJpeVJ8OPq
+TcJoZrRRmIZ1stLk6IpNH/GBmcjcQRlOZQK+oIOlRVRR8j66Ko3M6hkCO3AUYw6e
+bhjVJ4WbaWSVhT853QAsgZy9hhI8Ug9aeR5/ytC5C1ZWu6D/MiURJLYfRLS9OeKQ
+Za3Jm1R/1iizNfQ4bMke/+zbAe2Qy5D53r+hMX/hOkBrbmzDtxqYBaEkRMy9bTcY
+18O+81/tqhEfVcfLnXnMuqFqL1v6SG3oH2mhn5GWzdE9ihKhSJiqK/apdmJccTa2
+64Pwvbn96fNOxO5rVSJH+nRVedmGnkKRKkTKio/DNNy4JdUzM5HvYgc2BOxGHcSp
+K1+JJPx+LwTZ0b+M5kpJ0OImPdziSYa6uLM30tZ97LapIM70KIJD9yKOLVykAo8J
+di+uAwE2HG9DZx+2QR9qhypm6NZflVHXPfNdKSVleCb0H1iO4jRtAlwaiuqcoVuW
+DZ3ISTStXalb96Xbf3A5cVY/IMqeXaTZ/hwcK3icNvokSVgG9EqhvLVSZmrt6XJb
+2B2IVNof3KEgRt3kQsvg
+=FPOy
 -----END PGP SIGNATURE-----
 ```
 

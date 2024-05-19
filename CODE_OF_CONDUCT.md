@@ -56,8 +56,7 @@ Bitte werden Sie aktiv und melden jeden Verstoß gegen den Code of Conduct.
 
 Wenn Sie von inakzeptablem Verhalten betroffen sind, davon Zeuge werden oder andere Bedenken haben, benachrichtigen Sie bitte direkt:
 
-ozgsec@bmi.bund.de
-oder ozgsec@neuland-homeland.de
+developer@l3montree.com
 
 Wir bitten darum, dass Ihr Bericht Folgendes enthält:
 
