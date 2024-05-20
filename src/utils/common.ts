@@ -274,9 +274,10 @@ export const linkMapper: { [key in InspectionType]: string } = {
   [HttpInspectionType.HTTP308]: "",
   [HttpInspectionType.HTTPRedirectsToHttps]: "",
   [TLSInspectionType.TLSv1_2]: "",
-  [TLSInspectionType.TLSv1_3]: "/one-pager/TLS1_3-One-Pager.pdf",
+  [TLSInspectionType.TLSv1_3]:
+    "https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/raw/main/public/one-pager/TLS1_3-One-Pager.pdf",
   [TLSInspectionType.DeprecatedTLSDeactivated]:
-    "/one-pager/TLS1_1_off-One-Pager.pdf",
+    "https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/raw/main/public/one-pager/TLS1_1_off-One-Pager.pdf",
   [TLSInspectionType.StrongKeyExchange]: "",
   [TLSInspectionType.StrongCipherSuites]: "",
   [CertificateInspectionType.ValidCertificate]: "",
@@ -288,8 +289,10 @@ export const linkMapper: { [key in InspectionType]: string } = {
   [CertificateInspectionType.ValidCertificateChain]: "",
   [CookieInspectionType.SecureSessionCookies]: "",
   [NetworkInspectionType.IPv6]: "",
-  [NetworkInspectionType.RPKI]: "/one-pager/RPKI-One-Pager.pdf",
-  [DomainInspectionType.DNSSec]: "/one-pager/DNSSEC-One-Pager.pdf",
+  [NetworkInspectionType.RPKI]:
+    "https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/raw/main/public/one-pager/RPKI-One-Pager.pdf",
+  [DomainInspectionType.DNSSec]:
+    "https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/raw/main/public/one-pager/DNSSEC-One-Pager.pdf",
   [DomainInspectionType.CAA]: "",
   [DomainInspectionType.DANE]: "",
   [DomainInspectionType.DKIM]: "",
@@ -297,11 +300,12 @@ export const linkMapper: { [key in InspectionType]: string } = {
   [DomainInspectionType.SPF]: "",
   [DomainInspectionType.STARTTLS]: "",
   [OrganizationalInspectionType.ResponsibleDisclosure]:
-    "/one-pager/Responsible_Disclosure-One-Pager.pdf",
+    "https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/raw/main/public/one-pager/Responsible_Disclosure-One-Pager.pdf",
   [ContentInspectionType.SubResourceIntegrity]: "",
   [ContentInspectionType.NoMixedContent]: "",
   [HeaderInspectionType.HTTPS]: "",
-  [HeaderInspectionType.HSTS]: "/one-pager/HSTS-One-Pager.pdf",
+  [HeaderInspectionType.HSTS]:
+    "https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/raw/main/public/one-pager/HSTS-One-Pager.pdf",
   [HeaderInspectionType.HSTSPreloaded]: "",
   [HeaderInspectionType.ContentSecurityPolicy]: "",
   [HeaderInspectionType.XFrameOptions]: "",

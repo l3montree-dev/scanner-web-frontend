@@ -57,6 +57,12 @@ export function useQuicktest(code?: string | null) {
           crypto.randomUUID(),
         );
         if (!response.ok) {
+          if (response.status === 429) {
+            scanRequest.error(
+              "Es wurden zu viele Anfragen gestellt. Bitte versuchen Sie es in einer Minute erneut.",
+            );
+            return;
+          }
           const err = await response.json();
           return scanRequest.error(
             `Es ist ein Fehler aufgetreten - Fehlermeldung: ${getErrorMessage(
@@ -120,6 +126,12 @@ export function useQuicktest(code?: string | null) {
         crypto.randomUUID(),
       );
       if (!response.ok) {
+        if (response.status === 429) {
+          scanRequest.error(
+            "Es wurden zu viele Anfragen gestellt. Bitte versuchen Sie es in einer Minute erneut.",
+          );
+          return;
+        }
         const err = await response.json();
         return refreshRequest.error(
           `Es ist ein Fehler aufgetreten - Fehlermeldung: ${getErrorMessage(

@@ -41,22 +41,25 @@ const ResultEnvelope: FunctionComponent<Props> = ({
 }) => {
   const sut = getSUTFromResponse(report) ?? "";
   return report !== null ? (
-    <div className="md:p-0 text-textblack">
+    <div className="p-6 md:p-0 text-textblack">
       <div className="md:flex block mb-5 gap-5 flex-row justify-between">
         <div className="md:w-2/3">
-          <h2 id="test-results" className="text-xl text-white">
+          <h2
+            id="test-results"
+            className="text-lg md:text-base font-bold text-white"
+          >
             Testergebnisse für{" "}
             <a
               target={"_blank"}
-              className="text-l3-400"
+              className="text-l3-400 font-bold underline underline-offset-4 decoration-dotted hover:text-l3-300"
               rel="noopener noreferrer"
               href={`//${toUnicode(report.runs[0].properties.target)}`}
             >
-              {toUnicode(report.runs[0].properties.target)}{" "}
+              {toUnicode(report.runs[0].properties.target)}
             </a>
           </h2>
           {report.runs[0].properties.target !== sut && (
-            <h2 className="text-xl text-white">
+            <h2 className="text-base text-white">
               Weiterleitung auf:{" "}
               <a
                 target={"_blank"}
@@ -68,10 +71,10 @@ const ResultEnvelope: FunctionComponent<Props> = ({
               </a>
             </h2>
           )}
-          <div className="flex-wrap mt-4 justify-between flex-row">
+          <div className="flex-wrap mt-8 justify-between flex-row">
             <div className="flex-1">
               <div className="flex gap-3 items-center flex-rowtext-white">
-                <p className="text-white">
+                <p className="text-white text-sm">
                   {dateString.substring(0, dateString.length - 3)}
                 </p>
                 <Button
@@ -84,12 +87,12 @@ const ResultEnvelope: FunctionComponent<Props> = ({
                   />
                 </Button>
               </div>
-              <p className="text-white">Erfüllt: {amountPassed}/6</p>
+              <p className="text-white text-sm">Erfüllt: {amountPassed}/6</p>
             </div>
           </div>
         </div>
 
-        <div className="md:w-1/3 md:px-4 text-white">
+        <div className="md:w-1/3 md:px-4 text-white text-sm">
           <div className="flex-row flex items-center">
             <FontAwesomeIcon
               className={`text-${checkResult2BorderClassName(

@@ -62,7 +62,7 @@ export default function GeneralInfoSection() {
               href="https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-l3-400 px-3.5 py-2.5 text-sm sm:text-xs font-semibold text-black shadow-sm hover:bg-l3-300 hover:text-black hover:no-underline"
+              className="bg-l3-400 px-3.5 py-2.5 rounded-sm text-sm sm:text-xs font-semibold text-black shadow-sm hover:bg-l3-300 hover:text-black hover:no-underline"
             >
               Zu OZGSec auf Open CoDE
             </a>
@@ -73,11 +73,11 @@ export default function GeneralInfoSection() {
             <div className="max-w-xl text-sm leading-7 lg:max-w-lg">
               <p>
                 Das Bundesministerium des Innern und für Heimat hat auf der
-                Plattform Open CoDE den Source Code des Projekts
+                Plattform Open CoDE den Source Code des Projekts{" "}
                 <a
                   href="https://bmi.usercontent.opencode.de/ozg-rahmenarchitektur/ozgsec/ozgsec-info/"
                   target="_blank"
-                  className="text-l3-400 font-normal underline decoration-dotted decoration-l3-400 underline-offset-4 hover:text-l3-300"
+                  className="text-l3-600 font-normal underline decoration-dotted decoration-l3-600 underline-offset-4 hover:text-l3-500"
                   rel="noopener noreferrer"
                 >
                   „OZG-Security-Challenge 2023“
@@ -133,7 +133,7 @@ export default function GeneralInfoSection() {
                 <a
                   href="https://github.com/l3montree-dev/scanner-web-frontend"
                   target="_blank"
-                  className="text-l3-400 font-normal underline decoration-dotted decoration-l3-400 underline-offset-4 hover:text-l3-300"
+                  className="text-l3-600 font-normal underline decoration-dotted decoration-l3-600 underline-offset-4 hover:text-l3-500"
                   rel="noopener noreferrer"
                 >
                   Code auf GitHub
@@ -148,22 +148,74 @@ export default function GeneralInfoSection() {
                 Die folgenden Maßnahmen werden von dem System abgetestet:
               </p>
               <ul className="list-disc list-inside mt-2">
-                <li>Responsible Disclosure</li>
-                <li>Transport Layer Security (TLS) 1.3</li>
-                <li>TLS 1.0 & 1.1 deaktivieren</li>
-                <li>HTTP Strict Transport Security (HSTS)</li>
-                <li>Domain Name System Security Extensions (DNSSEC)</li>
-                <li>Resource Public Key Infrastructure (RPKI)</li>
+                <li>
+                  <a
+                    href="https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/raw/main/public/one-pager/Responsible_Disclosure-One-Pager.pdf"
+                    target="_blank"
+                    className="text-l3-600 font-normal underline decoration-dotted decoration-l3-600 underline-offset-4 hover:text-l3-500"
+                    rel="noopener noreferrer"
+                  >
+                    Responsible Disclosure
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/raw/main/public/one-pager/TLS1_3-One-Pager.pdf"
+                    target="_blank"
+                    className="text-l3-600 font-normal underline decoration-dotted decoration-l3-600 underline-offset-4 hover:text-l3-500"
+                    rel="noopener noreferrer"
+                  >
+                    Transport Layer Security (TLS) 1.3
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/raw/main/public/one-pager/TLS1_1_off-One-Pager.pdf"
+                    target="_blank"
+                    className="text-l3-600 font-normal underline decoration-dotted decoration-l3-600 underline-offset-4 hover:text-l3-500"
+                    rel="noopener noreferrer"
+                  >
+                    TLS 1.0 & 1.1 deaktivieren
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/raw/main/public/one-pager/HSTS-One-Pager.pdf"
+                    target="_blank"
+                    className="text-l3-600 font-normal underline decoration-dotted decoration-l3-600 underline-offset-4 hover:text-l3-500"
+                    rel="noopener noreferrer"
+                  >
+                    HTTP Strict Transport Security (HSTS)
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/raw/main/public/one-pager/DNSSEC-One-Pager.pdf"
+                    target="_blank"
+                    className="text-l3-600 font-normal underline decoration-dotted decoration-l3-600 underline-offset-4 hover:text-l3-500"
+                    rel="noopener noreferrer"
+                  >
+                    Domain Name System Security Extensions (DNSSEC)
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/raw/main/public/one-pager/RPKI-One-Pager.pdf"
+                    target="_blank"
+                    className="text-l3-600 font-normal underline decoration-dotted decoration-l3-600 underline-offset-4 hover:text-l3-500"
+                    rel="noopener noreferrer"
+                  >
+                    Resource Public Key Infrastructure (RPKI)
+                  </a>
+                </li>
               </ul>
               <p className="mt-8">
-                Zu jeder der Maßnahmen können Sie einen One-Pager abrufen.
-                Dieser erläutert die jeweilige Maßnahme aufgeteilt in eine
-                „Management-Summary“, eine „Erläuterung für
+                Das BMI hat zu jeder Maßnahme einen sogenannten One-Pager
+                erstellt, welchen Sie bei den Prüfergebnissen abrufen können.
+                Dieser erläutert jede Maßnahme auf einer Seite, aufgeteilt in
+                eine „Management-Summary“, eine „Erläuterung für
                 Onlinedienst-Verantwortliche“ und einen „Technischen
-                Umsetzungsansatz“. Die Rechte für diese One-Pager liegen beim
-                Bundesministerium des Innern und für Heimat, Referat DV II 2 -
-                Rahmenarchitektur, Standardisierung für Plattformsysteme und für
-                Digitale Services.
+                Umsetzungsansatz“.
               </p>
             </div>
           </div>

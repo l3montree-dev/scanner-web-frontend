@@ -25,11 +25,11 @@ const ResultBox: FunctionComponent<Props> = (props) => {
           )}
           icon={checkResult2Icon(props.checkResult)}
         />
-        <div className={classNames("flex ml-4 md:ml-2 flex-col mt-0.5")}>
+        <div className={classNames("flex ml-4 md:ml-4 flex-col mt-0.5")}>
           <div>
             <h3
               className={classNames(
-                "md:text-lg block leading-8 scroll-mt-11 font-bold text-white",
+                "md:text-base block leading-9 scroll-mt-11 font-bold text-white",
                 // `text-${checkResult2TextClassName(props.checkResult)}`
               )}
             >
