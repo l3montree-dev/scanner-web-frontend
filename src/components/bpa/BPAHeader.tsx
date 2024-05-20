@@ -3,6 +3,7 @@
 import { FunctionComponent, useState } from "react";
 import { withAuthProvider } from "../../providers/AuthProvider";
 import Image from "next/image";
+import Link from "next/link";
 
 const BPAHeader: FunctionComponent = () => {
   return (
@@ -10,7 +11,7 @@ const BPAHeader: FunctionComponent = () => {
       <div className="container">
         <div className="flex flex-row flex-wrap justify-between items-center">
           <div className="my-8">
-            <a
+            <Link
               id="l3montree-link"
               data-umami-event="Go to l3montree homepage"
               href="https://l3montree.com"
@@ -22,9 +23,9 @@ const BPAHeader: FunctionComponent = () => {
                 alt="L3montree Cybersecurity Logo"
                 width={250}
                 height={100}
-                src={"/assets/logo.svg"}
+                src="/assets/logo.svg"
               />
-            </a>
+            </Link>
           </div>
         </div>
       </div>
