@@ -19,6 +19,8 @@ const Footer: FunctionComponent = () => {
               type="button"
               target="_blank"
               rel="noopener noreferrer"
+              id="imprint-link"
+              data-umami-event="Open imprint page"
             >
               Impressum
             </LinkWithQuery>
@@ -30,6 +32,8 @@ const Footer: FunctionComponent = () => {
               rel="noopener noreferrer"
               className="cursor-pointer uppercase font-medium text-white p-2 hover:text-white"
               type="button"
+              id="privacy-link"
+              data-umami-event="Open privacy page"
             >
               Datenschutz
             </LinkWithQuery>
@@ -41,6 +45,8 @@ const Footer: FunctionComponent = () => {
                 rel="noopener noreferrer"
                 className="p-2 uppercase font-medium text-white block hover:text-white"
                 target={"_blank"}
+                id="github-link"
+                data-umami-event="Open github page - footer"
               >
                 Code dieser Anwendung auf GitHub ↗
               </a>

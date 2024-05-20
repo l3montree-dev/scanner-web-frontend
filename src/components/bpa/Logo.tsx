@@ -50,7 +50,7 @@ const Logo: FunctionComponent<Props> = (props) => {
       >
         <Image
           priority
-          alt="Logo Adler"
+          alt="L3montree - Cybersecurity Logo"
           width={250 * factor}
           height={100 * factor}
           src={"/assets/logo.svg"}

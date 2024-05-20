@@ -78,6 +78,8 @@ const ResultEnvelope: FunctionComponent<Props> = ({
                   {dateString.substring(0, dateString.length - 3)}
                 </p>
                 <Button
+                  id="rescan-button"
+                  data-umami-event="Re-Scan triggered"
                   onClick={handleRefresh}
                   title="Testergebnisse aktualisieren"
                 >

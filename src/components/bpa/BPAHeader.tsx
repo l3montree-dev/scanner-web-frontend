@@ -10,13 +10,21 @@ const BPAHeader: FunctionComponent = () => {
       <div className="container">
         <div className="flex flex-row flex-wrap justify-between items-center">
           <div className="my-8">
-            <Image
-              priority
-              alt="Logo Adler"
-              width={250}
-              height={100}
-              src={"/assets/logo.svg"}
-            />
+            <a
+              id="l3montree-link"
+              data-umami-event="Go to l3montree homepage"
+              href="https://l3montree.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Image
+                priority
+                alt="L3montree Cybersecurity Logo"
+                width={250}
+                height={100}
+                src={"/assets/logo.svg"}
+              />
+            </a>
           </div>
         </div>
       </div>

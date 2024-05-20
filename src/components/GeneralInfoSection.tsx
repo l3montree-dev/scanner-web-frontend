@@ -62,6 +62,8 @@ export default function GeneralInfoSection() {
               href="https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec"
               target="_blank"
               rel="noopener noreferrer"
+              id="info-sec-opencode-button"
+              data-umami-event="Open CoDE button info section clicked"
               className="bg-l3-400 px-3.5 py-2.5 rounded-sm text-sm sm:text-xs font-semibold text-black shadow-sm hover:bg-l3-300 hover:text-black hover:no-underline"
             >
               Zu OZGSec auf Open CoDE
@@ -135,6 +137,8 @@ export default function GeneralInfoSection() {
                   target="_blank"
                   className="text-l3-600 font-normal underline decoration-dotted decoration-l3-600 underline-offset-4 hover:text-l3-500"
                   rel="noopener noreferrer"
+                  id="github-link-info"
+                  data-umami-event="Open github page info section"
                 >
                   Code auf GitHub
                 </a>

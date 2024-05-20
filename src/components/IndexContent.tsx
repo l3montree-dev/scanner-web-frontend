@@ -51,6 +51,8 @@ const IndexContent: FunctionComponent<Props> = ({ displayNotAvailable }) => {
                     href="https://bmi.usercontent.opencode.de/ozg-rahmenarchitektur/ozgsec/ozgsec-info/"
                     target="_blank"
                     rel="noopener noreferrer"
+                    id="banner-ozgsec-info"
+                    data-umami-event="Banner click - OZG Security Challenge Projekt"
                   >
                     OZG Security Challenge Projekt
                   </a>{" "}
@@ -77,6 +79,8 @@ const IndexContent: FunctionComponent<Props> = ({ displayNotAvailable }) => {
                   <a
                     href="https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec"
                     className="whitespace-nowrap font-medium text-l3-800 hover:text-l3-600"
+                    id="banner-opencode-info"
+                    data-umami-event="Banner click - Open CoDE"
                   >
                     Open CoDE
                     <span aria-hidden="true"> &rarr;</span>

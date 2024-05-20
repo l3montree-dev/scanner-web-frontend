@@ -70,6 +70,8 @@ const ScanPageHero: FunctionComponent<Props> = ({
             }
             additionalClasses="border-white hover:border-white"
             loading={scanRequest.isLoading}
+            id="scan-start-button"
+            data-umami-event="Scan triggered"
             type="submit"
           >
             Scan starten
