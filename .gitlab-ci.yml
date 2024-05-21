@@ -65,6 +65,12 @@ license-compliance:
   - apk add --update npm
   - license_finder --decisions_file ./docs/dependency_decisions.yml --enabled-package-managers npm
 
+iac: 
+  stage: test
+  image: bridgecrew/checkov:3.2.98@sha256:2a280191e5b9e3890c7b64013955b48870e7e2a6fb5ae10a558d03b3aa81510b
+  script:
+  - checkov -d . --quiet
+
 tag:
   stage: tag
   needs: []
@@ -94,7 +100,7 @@ tag:
 
 oci:build:
   stage: build
-  needs: [tag,jest,software-composition-analysis,static-application-security-testing,secret-scanning,license-compliance]
+  needs: [tag,jest,software-composition-analysis,static-application-security-testing,secret-scanning,license-compliance,iac]
   dependencies: ["tag"]
   image:
     name: gcr.io/kaniko-project/executor:v1.22.0-debug@sha256:7b3699e9e105521075812cd3f3f4c62c913cb5cd113c929975502022df3bcf60
@@ -111,7 +117,7 @@ oci:build:
 
 oci:build-initcontainer:
   stage: build
-  needs: [tag,jest,software-composition-analysis,static-application-security-testing,secret-scanning,license-compliance]
+  needs: [tag,jest,software-composition-analysis,static-application-security-testing,secret-scanning,license-compliance,iac]
   dependencies: ["tag"]
   image:
     name: gcr.io/kaniko-project/executor:v1.22.0-debug@sha256:7b3699e9e105521075812cd3f3f4c62c913cb5cd113c929975502022df3bcf60

@@ -1,3 +1,5 @@
+# checkov:skip=CKV_OPENAPI_4:
+# checkov:skip=CKV_OPENAPI_21:
 openapi: 3.0.3
 servers: []
 info:
@@ -99,6 +101,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/ScanReport-V1"
 components:
+  # checkov:skip=CKV_OPENAPI_5:
+  securitySchemes: {}
   schemas:
     ScanReport-V2:
       type: object
