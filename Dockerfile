@@ -1,4 +1,4 @@
-FROM node:20.13.1-bookworm@sha256:45da3826d21df329eacade6725afa328442710e094454407151c42fef1341b0c as builder
+FROM node:22.5.1-bookworm@sha256:86915971d2ce1548842315fcce7cda0da59319a4dab6b9fc0827e762ef04683a as builder
 LABEL maintainer="ozgsec@neuland-homeland.de"
 
 # checkov:skip=CKV_DOCKER_2
@@ -20,7 +20,7 @@ COPY . .
 ENV NODE_ENV production
 RUN npm run build
 
-FROM gcr.io/distroless/nodejs20-debian12:nonroot@sha256:94d77ed5018ae072449732067c2985d3f2f99ce0fe8b8f244cac122ca69b8e73
+FROM gcr.io/distroless/nodejs22-debian12:nonroot@sha256:9f702c576ea50445bc8493ddec25b4e3ec0ee572b67c1b943014fa13b10d96ac
 
 USER 53111
 
