@@ -58,9 +58,10 @@ export function useQuicktest(code?: string | null) {
         );
         if (!response.ok) {
           const err = await response.json();
+
           return scanRequest.error(
             `Es ist ein Fehler aufgetreten - Fehlermeldung: ${getErrorMessage(
-              err.error,
+              err.errorMessage,
             )}`,
           );
         }
@@ -123,7 +124,7 @@ export function useQuicktest(code?: string | null) {
         const err = await response.json();
         return refreshRequest.error(
           `Es ist ein Fehler aufgetreten - Fehlermeldung: ${getErrorMessage(
-            err.error.code,
+            err.errorMessage,
           )}`,
         );
       }
