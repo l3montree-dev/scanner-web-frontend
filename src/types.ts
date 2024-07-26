@@ -128,7 +128,7 @@ export type IScanSuccessResponse = {
   sut: string;
 };
 
-export type ErrorCode = "" | string;
+export type ErrorCode = "could_not_resolve_hostname" | "could_not_parse_url"; // those strings are defined in the best-practices-scanner
 
 /**
  * @deprecated The scanner will provide new reports in sarif format.

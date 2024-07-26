@@ -86,6 +86,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json(
         {
           error: result.runs[0].invocations[0].exitCode,
+          errorMessage: result.runs[0].invocations[0].exitCodeDescription,
           uri: getTargetFromResponse(result),
         },
         { status: 422 },
