@@ -224,6 +224,11 @@ export type ISarifResponse =
 
 export type IScanResponse = IScanErrorResponse | IScanSuccessResponse;
 
+export interface TestAmount {
+  passed: number;
+  total: number;
+}
+
 export interface PaginateRequest {
   page: number;
   pageSize: number;
