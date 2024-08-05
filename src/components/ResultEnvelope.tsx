@@ -3,9 +3,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { toUnicode } from "punycode";
 import { FunctionComponent } from "react";
 import { legendMessages } from "../messages/legend";
-import { DetailedTarget, ISarifResponse, IScanResponse } from "../types";
+import { ISarifResponse, TestAmount } from "../types";
 import { classNames } from "../utils/common";
-import { DTO } from "../utils/server";
 import {
   CheckResult,
   checkResult2BorderClassName,
@@ -29,7 +28,7 @@ interface Props {
     key: string;
     successed: boolean;
   };
-  amountPassed: number;
+  testAmount: TestAmount;
 }
 
 const ResultEnvelope: FunctionComponent<Props> = ({
@@ -37,7 +36,7 @@ const ResultEnvelope: FunctionComponent<Props> = ({
   dateString,
   handleRefresh,
   refreshRequest,
-  amountPassed,
+  testAmount,
 }) => {
   const sut = getSUTFromResponse(report) ?? "";
   return report !== null ? (
@@ -82,7 +81,9 @@ const ResultEnvelope: FunctionComponent<Props> = ({
                   />
                 </Button>
               </div>
-              <p>Erfüllt: {amountPassed}/6</p>
+              <p>
+                Erfüllt: {testAmount.passed}/{testAmount.total}
+              </p>
             </div>
           </div>
         </div>
