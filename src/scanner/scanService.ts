@@ -25,7 +25,6 @@ import {
   timeout,
 } from "../utils/common";
 import { DTO, toDTO } from "../utils/server";
-import { OrganizationalInspectionType } from "./scans";
 
 export interface ScanTargetOptions {
   refreshCache: boolean; // if refresh is true, it will bypass all caching layers
@@ -33,7 +32,7 @@ export interface ScanTargetOptions {
   startTimeMS: number;
 }
 
-interface MessageBrokerClient {
+export interface MessageBrokerClient {
   call<T extends Record<string, any>>(
     queue: string,
     message: Record<string, any>,
