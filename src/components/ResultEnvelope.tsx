@@ -51,7 +51,7 @@ const ResultEnvelope: FunctionComponent<Props> = ({
             Testergebnisse für{" "}
             <a
               target={"_blank"}
-              className="text-l3-400 font-bold underline underline-offset-4 decoration-dotted hover:text-l3-300"
+              className="text-ccb-400 font-bold underline underline-offset-4 decoration-dotted hover:text-ccb-300"
               rel="noopener noreferrer"
               href={`//${toUnicode(report.runs[0].properties.target)}`}
             >
@@ -63,7 +63,7 @@ const ResultEnvelope: FunctionComponent<Props> = ({
               Weiterleitung auf:{" "}
               <a
                 target={"_blank"}
-                className="underline text-l3-400"
+                className="underline text-ccb-400"
                 rel="noopener noreferrer"
                 href={`//${toUnicode(sut)}`}
               >

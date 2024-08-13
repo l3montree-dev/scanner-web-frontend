@@ -64,7 +64,7 @@ export default function GeneralInfoSection() {
               rel="noopener noreferrer"
               id="info-sec-opencode-button"
               data-umami-event="Open CoDE button info section clicked"
-              className="bg-l3-400 px-3.5 py-2.5 rounded-sm text-sm sm:text-xs font-semibold text-black shadow-sm hover:bg-l3-300 hover:text-black hover:no-underline"
+              className="bg-ccb-500 px-3.5 py-2.5 rounded-sm text-sm sm:text-xs text-white shadow-sm hover:bg-ccb-600 hover:text-white hover:no-underline"
             >
               Zu OZGSec auf Open CoDE
             </a>
@@ -79,7 +79,7 @@ export default function GeneralInfoSection() {
                 <a
                   href="https://bmi.usercontent.opencode.de/ozg-rahmenarchitektur/ozgsec/ozgsec-info/"
                   target="_blank"
-                  className="text-l3-600 font-normal underline decoration-dotted decoration-l3-600 underline-offset-4 hover:text-l3-500"
+                  className="text-ccb-600 font-normal underline decoration-dotted decoration-ccb-600 underline-offset-4 hover:text-ccb-500"
                   rel="noopener noreferrer"
                 >
                   „OZG-Security-Challenge 2023“
@@ -135,7 +135,7 @@ export default function GeneralInfoSection() {
                 <a
                   href="https://github.com/l3montree-dev/scanner-web-frontend"
                   target="_blank"
-                  className="text-l3-600 font-normal underline decoration-dotted decoration-l3-600 underline-offset-4 hover:text-l3-500"
+                  className="text-ccb-600 font-normal underline decoration-dotted decoration-ccb-600 underline-offset-4 hover:text-ccb-500"
                   rel="noopener noreferrer"
                   id="github-link-info"
                   data-umami-event="Open github page info section"
@@ -156,7 +156,7 @@ export default function GeneralInfoSection() {
                   <a
                     href="https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/raw/main/public/one-pager/Responsible_Disclosure-One-Pager.pdf"
                     target="_blank"
-                    className="text-l3-600 font-normal underline decoration-dotted decoration-l3-600 underline-offset-4 hover:text-l3-500"
+                    className="text-ccb-600 font-normal underline decoration-dotted decoration-ccb-600 underline-offset-4 hover:text-ccb-500"
                     rel="noopener noreferrer"
                   >
                     Responsible Disclosure
@@ -166,7 +166,7 @@ export default function GeneralInfoSection() {
                   <a
                     href="https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/raw/main/public/one-pager/TLS1_3-One-Pager.pdf"
                     target="_blank"
-                    className="text-l3-600 font-normal underline decoration-dotted decoration-l3-600 underline-offset-4 hover:text-l3-500"
+                    className="text-ccb-600 font-normal underline decoration-dotted decoration-ccb-600 underline-offset-4 hover:text-ccb-500"
                     rel="noopener noreferrer"
                   >
                     Transport Layer Security (TLS) 1.3
@@ -176,7 +176,7 @@ export default function GeneralInfoSection() {
                   <a
                     href="https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/raw/main/public/one-pager/TLS1_1_off-One-Pager.pdf"
                     target="_blank"
-                    className="text-l3-600 font-normal underline decoration-dotted decoration-l3-600 underline-offset-4 hover:text-l3-500"
+                    className="text-ccb-600 font-normal underline decoration-dotted decoration-ccb-600 underline-offset-4 hover:text-ccb-500"
                     rel="noopener noreferrer"
                   >
                     TLS 1.0 & 1.1 deaktivieren
@@ -186,7 +186,7 @@ export default function GeneralInfoSection() {
                   <a
                     href="https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/raw/main/public/one-pager/HSTS-One-Pager.pdf"
                     target="_blank"
-                    className="text-l3-600 font-normal underline decoration-dotted decoration-l3-600 underline-offset-4 hover:text-l3-500"
+                    className="text-ccb-600 font-normal underline decoration-dotted decoration-ccb-600 underline-offset-4 hover:text-ccb-500"
                     rel="noopener noreferrer"
                   >
                     HTTP Strict Transport Security (HSTS)
@@ -196,7 +196,7 @@ export default function GeneralInfoSection() {
                   <a
                     href="https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/raw/main/public/one-pager/DNSSEC-One-Pager.pdf"
                     target="_blank"
-                    className="text-l3-600 font-normal underline decoration-dotted decoration-l3-600 underline-offset-4 hover:text-l3-500"
+                    className="text-ccb-600 font-normal underline decoration-dotted decoration-ccb-600 underline-offset-4 hover:text-ccb-500"
                     rel="noopener noreferrer"
                   >
                     Domain Name System Security Extensions (DNSSEC)
@@ -206,7 +206,7 @@ export default function GeneralInfoSection() {
                   <a
                     href="https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/raw/main/public/one-pager/RPKI-One-Pager.pdf"
                     target="_blank"
-                    className="text-l3-600 font-normal underline decoration-dotted decoration-l3-600 underline-offset-4 hover:text-l3-500"
+                    className="text-ccb-600 font-normal underline decoration-dotted decoration-ccb-600 underline-offset-4 hover:text-ccb-500"
                     rel="noopener noreferrer"
                   >
                     Resource Public Key Infrastructure (RPKI)

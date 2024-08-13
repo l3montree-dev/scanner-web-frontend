@@ -33,7 +33,7 @@ const ScanPageHero: FunctionComponent<Props> = ({
             Security Challenge Schnelltest
           </h1>
           <div className="flex-row items-center justify-between sm:justify-start mt-0 md:-mt-5 flex">
-            <h2 className="text-l3-400 text-base sm:text-xl font-bold">
+            <h2 className="text-ccb-500 text-base font-bold">
               BETA-Cybersecurity-Werkzeug
             </h2>
           </div>
