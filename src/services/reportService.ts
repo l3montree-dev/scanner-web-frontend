@@ -410,7 +410,7 @@ const handleNewScanReport = async (
       hostname: getHostnameFromUri(newReport.uri),
       lastScanDetails: {
         update: {
-          details: lastScanDetails as any,
+          updatedAt: endTimeOfResponse(result),
         },
       },
     },
