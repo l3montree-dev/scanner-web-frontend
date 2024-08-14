@@ -39,6 +39,7 @@ const ResultEnvelope: FunctionComponent<Props> = ({
   testAmount,
 }) => {
   const sut = getSUTFromResponse(report) ?? "";
+  const disableRefresh = process.env.NEXT_PUBLIC_DISABLE_REFRESH;
   return report !== null ? (
     <div className="md:p-0 text-textblack">
       <div className="md:flex block mb-5 gap-5 flex-row justify-between">
@@ -71,15 +72,17 @@ const ResultEnvelope: FunctionComponent<Props> = ({
             <div className="flex-1">
               <div className="flex gap-3 items-center flex-row">
                 <p>{dateString.substring(0, dateString.length - 3)}</p>
-                <Button
-                  onClick={handleRefresh}
-                  title="Testergebnisse aktualisieren"
-                >
-                  <FontAwesomeIcon
-                    className={refreshRequest.isLoading ? "rotate" : ""}
-                    icon={faRefresh}
-                  />
-                </Button>
+                {disableRefresh ? null : (
+                  <Button
+                    onClick={handleRefresh}
+                    title="Testergebnisse aktualisieren"
+                  >
+                    <FontAwesomeIcon
+                      className={refreshRequest.isLoading ? "rotate" : ""}
+                      icon={faRefresh}
+                    />
+                  </Button>
+                )}
               </div>
               <p>
                 Erfüllt: {testAmount.passed}/{testAmount.total}

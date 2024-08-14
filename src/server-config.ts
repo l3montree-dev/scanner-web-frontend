@@ -2,6 +2,9 @@ export const getRabbitMQConnString = (): string => {
   return `amqp://${process.env.RABBITMQ_USER}:${process.env.RABBITMQ_PASS}@${process.env.RABBITMQ_HOST}:${process.env.RABBITMQ_PORT}`;
 };
 
+export const IS_REFRESH_DISABLED =
+  process.env.NEXT_PUBLIC_DISABLE_REFRESH || false;
+
 export const databaseConnection = {
   host: process.env.POSTGRES_HOST,
   port: process.env.POSTGRES_PORT,

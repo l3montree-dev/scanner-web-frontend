@@ -18,6 +18,7 @@ import {
 } from "../../../../utils/common";
 import { getCurrentUser, toDTO } from "../../../../utils/server";
 import { collectionService } from "../../../../services/collectionService";
+import { IS_REFRESH_DISABLED } from "../../../../server-config";
 
 const logger = getLogger(__filename);
 
@@ -56,7 +57,7 @@ export async function POST(req: NextRequest) {
       requestId,
       sanitized,
       {
-        refreshCache: true,
+        refreshCache: !Boolean(IS_REFRESH_DISABLED) && true,
         startTimeMS: Date.now(),
       },
     );
