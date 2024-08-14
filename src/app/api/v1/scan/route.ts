@@ -14,7 +14,6 @@ import {
 import { ISarifResponse } from "../../../../types";
 import { isScanError } from "../../../../utils/common";
 import { getServerSession } from "../../../../utils/server";
-import { staticSecrets } from "../../../../utils/staticSecrets";
 import { displayInspections } from "../../../../utils/view";
 import { IS_REFRESH_DISABLED } from "../../../../server-config";
 
@@ -73,7 +72,7 @@ export async function GET(req: NextRequest) {
       requestId,
       site,
       {
-        refreshCache: !Boolean(IS_REFRESH_DISABLED) && refresh === "true",
+        refreshCache: !IS_REFRESH_DISABLED && refresh === "true",
         socks5Proxy: req.nextUrl.searchParams.get("socks5Proxy") ?? undefined,
         startTimeMS: Date.now(),
       },

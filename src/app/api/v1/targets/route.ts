@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
       requestId,
       sanitized,
       {
-        refreshCache: !Boolean(IS_REFRESH_DISABLED) && true,
+        refreshCache: !IS_REFRESH_DISABLED && true,
         startTimeMS: Date.now(),
       },
     );

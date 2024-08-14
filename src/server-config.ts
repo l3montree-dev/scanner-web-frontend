@@ -3,7 +3,7 @@ export const getRabbitMQConnString = (): string => {
 };
 
 export const IS_REFRESH_DISABLED =
-  process.env.NEXT_PUBLIC_DISABLE_REFRESH || false;
+  process.env.NEXT_PUBLIC_DISABLE_REFRESH === "true";
 
 export const databaseConnection = {
   host: process.env.POSTGRES_HOST,

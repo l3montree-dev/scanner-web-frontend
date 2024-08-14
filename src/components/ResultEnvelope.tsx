@@ -39,7 +39,7 @@ const ResultEnvelope: FunctionComponent<Props> = ({
   testAmount,
 }) => {
   const sut = getSUTFromResponse(report) ?? "";
-  const disableRefresh = process.env.NEXT_PUBLIC_DISABLE_REFRESH;
+  const disableRefresh = process.env.NEXT_PUBLIC_DISABLE_REFRESH === "true";
   return report !== null ? (
     <div className="md:p-0 text-textblack">
       <div className="md:flex block mb-5 gap-5 flex-row justify-between">
