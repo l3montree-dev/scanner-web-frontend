@@ -13,6 +13,7 @@ import {
 import ResultGrid from "./ResultGrid";
 import Button from "./common/Button";
 import { getSUTFromResponse } from "../services/sarifTransformer";
+import { featureFlags } from "../feature-flags";
 
 interface Props {
   report: ISarifResponse | null;
@@ -39,7 +40,7 @@ const ResultEnvelope: FunctionComponent<Props> = ({
   testAmount,
 }) => {
   const sut = getSUTFromResponse(report) ?? "";
-  const disableRefresh = process.env.NEXT_PUBLIC_DISABLE_REFRESH === "true";
+  const { disableRefresh } = featureFlags;
   return report !== null ? (
     <div className="md:p-0 text-textblack">
       <div className="md:flex block mb-5 gap-5 flex-row justify-between">

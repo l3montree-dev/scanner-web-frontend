@@ -15,7 +15,7 @@ import { ISarifResponse } from "../../../../types";
 import { isScanError } from "../../../../utils/common";
 import { getServerSession } from "../../../../utils/server";
 import { displayInspections } from "../../../../utils/view";
-import { IS_REFRESH_DISABLED } from "../../../../server-config";
+import { featureFlags } from "../../../../feature-flags";
 
 const logger = getLogger(__filename);
 
@@ -72,7 +72,7 @@ export async function GET(req: NextRequest) {
       requestId,
       site,
       {
-        refreshCache: !IS_REFRESH_DISABLED && refresh === "true",
+        refreshCache: !featureFlags.disableRefresh && refresh === "true",
         socks5Proxy: req.nextUrl.searchParams.get("socks5Proxy") ?? undefined,
         startTimeMS: Date.now(),
       },
