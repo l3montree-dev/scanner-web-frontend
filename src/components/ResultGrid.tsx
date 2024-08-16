@@ -1,11 +1,10 @@
 import { FunctionComponent } from "react";
-import { immediateActionHTTPErrors } from "../messages/http";
+
 import {
   AccessiblityInspectionType,
   CertificateInspectionType,
   DomainInspectionType,
   HeaderInspectionType,
-  HttpInspectionType,
   NetworkInspectionType,
   OrganizationalInspectionType,
   TLSInspectionType,
@@ -36,7 +35,6 @@ const regularChecks = [
 const immediateActionRequired = [
   CertificateInspectionType.MatchesHostname,
   CertificateInspectionType.ValidCertificate,
-  HttpInspectionType.HTTP,
 ] as const;
 
 type ImmediateActions = typeof immediateActionRequired;
@@ -49,14 +47,6 @@ const shouldDisplayImmediateActionRequired = (
     return false;
   }
   const result = report.runs[0].results.find((r) => r.ruleId === check);
-  if (check === HttpInspectionType.HTTP) {
-    return (
-      result?.kind === "notApplicable" &&
-      immediateActionHTTPErrors.includes(
-        result.properties.actualValue.error.code,
-      )
-    );
-  }
   return result?.kind === "fail";
 };
 
