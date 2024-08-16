@@ -14,6 +14,7 @@ services:
       RABBITMQ_USER: rabbitmq
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
+      RABBITMQ_CONNECTION_RETRIES: 1
       SERVER_TIMEOUT: 10000
       RIPE_SOURCE_APP: "quicktest-bmi-germany"
     ports:
