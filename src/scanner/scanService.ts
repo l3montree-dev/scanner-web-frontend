@@ -5,6 +5,7 @@ import { getLogger } from "../services/logger";
 import { rabbitMQRPCClient } from "../services/rabbitmqClient";
 import { reportService } from "../services/reportService";
 import {
+  getTargetFromResponse,
   startTimeOfResponse,
   transformDeprecatedReportingSchemaToSarif,
 } from "../services/sarifTransformer";
@@ -81,7 +82,8 @@ export class ScanService {
     requestId: string,
     response: ISarifResponse,
     options: ScanTargetOptions,
-  ): Promise<DTO<DetailedTarget> | undefined> {
+    timeoutMS?: number,
+  ): Promise<DTO<DetailedTarget>> {
     if (isScanError(response)) {
       await neverThrow(
         this.scanCB.run(
@@ -91,8 +93,11 @@ export class ScanService {
             ),
         ),
       );
-      return undefined;
     } else {
+      logger.info(
+        { duration: Date.now() - startTimeOfResponse(response), requestId },
+        `successfully scanned site: ${getTargetFromResponse(response)}`,
+      );
       return defaultOnError(
         this.scanCB.run(async () =>
           timeout(
@@ -102,10 +107,11 @@ export class ScanService {
               this.db,
               options,
             ),
+            timeoutMS,
           ),
         ),
         {
-          uri: response.runs[0].properties.target,
+          uri: getTargetFromResponse(response),
           lastScan: startTimeOfResponse(response).getTime(),
           hostname: "",
           errorCount: 0,
@@ -118,6 +124,7 @@ export class ScanService {
       );
     }
   }
+
   // this fires an asynchronous request - it does not wait for the result
   public async scanTarget(
     requestId: string,
@@ -178,75 +185,51 @@ export class ScanService {
     }
 
     logger.debug({ requestId }, `received request to scan site: ${target}`);
-    const start = Date.now();
 
     if (!options.refreshCache) {
       // check if it already inside the cache
-      const details = await this.checkInCache(sanitizedURI);
-      if (details) {
-        logger.info(
-          { requestId },
-          `found existing report for site: ${sanitizedURI} - returning existing report`,
-        );
-
-        const { target, ...rest } = details;
-        const transformed = transformDeprecatedReportingSchemaToSarif(
-          rest.details,
-        );
-        return [transformed, { ...target, details: transformed }];
-      } else {
-        logger.info(
-          { requestId },
-          `no existing report for site: ${sanitizedURI} - starting new scan`,
-        );
-      }
+      const resultFromCache = await this.getReportFromCache(
+        requestId,
+        sanitizedURI,
+      );
+      if (resultFromCache) return resultFromCache;
     }
     const result = await this.scanRPC(requestId, sanitizedURI, options);
 
-    let detailedTarget: DTO<DetailedTarget> | undefined = undefined;
-    if (isScanError(result)) {
-      await neverThrow(
-        this.scanCB.run(
-          async () =>
-            await timeout(targetService.handleTargetScanError(result, this.db)),
-        ),
-      );
-    } else {
-      logger.info(
-        { duration: Date.now() - start, requestId },
-        `successfully scanned site: ${target}`,
-      );
-
-      detailedTarget = await defaultOnError(
-        this.scanCB.run(
-          async () =>
-            timeout(
-              reportService.handleNewScanReport(
-                requestId,
-                result,
-                this.db,
-                options,
-              ),
-              40_000,
-            ), // use a 20 seconds timeout - it might happen, that the reportService will verify that the reports did really change and therefore issue another scan.
-        ),
-        {
-          uri: result.runs[0].properties.target,
-          lastScan: startTimeOfResponse(result).getTime(),
-          hostname: "",
-          errorCount: 0,
-          number: 0,
-          queued: false,
-          createdAt: startTimeOfResponse(result).toString(),
-          updatedAt: startTimeOfResponse(result).toString(),
-          details: result,
-        },
-      );
-    }
+    let detailedTarget: DTO<DetailedTarget> = await this.handleScanResponse(
+      requestId,
+      result,
+      options,
+      40_000,
+    );
 
     return [result, detailedTarget] as
       | [ISarifScanSuccessResponse, DTO<DetailedTarget>]
       | [ISarifScanErrorResponse, undefined];
+  }
+
+  private async getReportFromCache(
+    requestId: string,
+    sanitizedURI: string,
+  ): Promise<[ISarifScanSuccessResponse, DTO<DetailedTarget>]> {
+    const details = await this.checkInCache(sanitizedURI);
+    if (details) {
+      logger.info(
+        { requestId },
+        `found existing report for site: ${sanitizedURI} - returning existing report`,
+      );
+
+      const { target, ...rest } = details;
+      const transformed = transformDeprecatedReportingSchemaToSarif(
+        rest.details,
+      );
+      return [transformed, { ...target, details: transformed }];
+    } else {
+      logger.info(
+        { requestId },
+        `no existing report for site: ${sanitizedURI} - starting new scan`,
+      );
+    }
   }
 }
 
