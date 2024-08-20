@@ -4,13 +4,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "../../../../nextAuthOptions";
 import { getLogger } from "../../../../services/logger";
 
-import { scanService } from "../../../../scanner/scanService";
+import { scanService } from "../../../../scanner/scanner.module";
 import { InspectionType } from "../../../../scanner/scans";
 import { monitoringService } from "../../../../services/monitoringService";
 import { DetailedTarget, ISarifResponse } from "../../../../types";
 import { isScanError } from "../../../../utils/common";
 import { DTO, getServerSession } from "../../../../utils/server";
-import { staticSecrets } from "../../../../utils/staticSecrets";
 import { displayInspections } from "../../../../utils/view";
 import { getTargetFromResponse } from "../../../../services/sarifTransformer";
 

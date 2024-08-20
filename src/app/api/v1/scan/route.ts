@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "../../../../nextAuthOptions";
 import { getLogger } from "../../../../services/logger";
 
-import { scanService } from "../../../../scanner/scanService";
+import { scanService } from "../../../../scanner/scanner.module";
 import { InspectionType } from "../../../../scanner/scans";
 import { monitoringService } from "../../../../services/monitoringService";
 import {

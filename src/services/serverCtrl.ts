@@ -8,7 +8,7 @@ import { once } from "../utils/common";
 import { targetService } from "./targetService";
 
 import { notificationServer } from "../notifications/notificationServer";
-import { scanService } from "../scanner/scanService";
+import { scanService } from "../scanner/scanner.module";
 import { getLogger } from "./logger";
 import { rabbitMQClient } from "./rabbitmqClient";
 import { serverSentEventsService } from "./serverSentEventsService";

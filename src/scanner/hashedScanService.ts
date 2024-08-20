@@ -22,10 +22,7 @@ import {
 const logger = getLogger(__filename);
 
 export class HashedScanService extends ScanService {
-  constructor(
-    private messageBrokerClient: MessageBrokerClient,
-    private db: PrismaClient,
-  ) {
+  constructor(messageBrokerClient: MessageBrokerClient, db: PrismaClient) {
     super(messageBrokerClient, db);
   }
 
@@ -69,14 +66,12 @@ export class HashedScanService extends ScanService {
     const result: ISarifScanSuccessResponse | ISarifScanErrorResponse =
       await this.scanRPC(requestId, sanitizedURI, options);
 
-    const detailedTarget: DTO<DetailedTarget> = await this.handleScanResponse(
-      requestId,
-      result,
-      options,
-      40_000,
-    );
+    const detailedTarget: DTO<DetailedTarget> | undefined =
+      await this.handleScanResponse(requestId, result, options, 40_000);
 
-    return [result, detailedTarget];
+    return [result, detailedTarget] as
+      | [DTO<ISarifScanSuccessResponse>, DTO<DetailedTarget>]
+      | [DTO<ISarifScanErrorResponse>, undefined];
   }
 
   // abstracts the whole app functionality for rpc calls.
@@ -113,7 +108,9 @@ export class HashedScanService extends ScanService {
     return [
       resetHashedObjects.responseResult,
       resetHashedObjects.responseDetailedTarget,
-    ];
+    ] as
+      | [DTO<ISarifScanSuccessResponse>, DTO<DetailedTarget>]
+      | [DTO<ISarifScanErrorResponse>, undefined];
   }
 
   private async hashURIInSarifResponse(

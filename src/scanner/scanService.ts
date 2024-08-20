@@ -81,7 +81,7 @@ export class ScanService {
     response: ISarifResponse,
     options: ScanTargetOptions,
     timeoutMS?: number,
-  ): Promise<DTO<DetailedTarget>> {
+  ): Promise<DTO<DetailedTarget> | undefined> {
     if (isScanError(response)) {
       await neverThrow(
         this.scanCB.run(
@@ -91,9 +91,13 @@ export class ScanService {
             ),
         ),
       );
+      return;
     } else {
       logger.info(
-        { duration: Date.now() - startTimeOfResponse(response), requestId },
+        {
+          duration: Date.now() - startTimeOfResponse(response).getTime(),
+          requestId,
+        },
         `successfully scanned site: ${getTargetFromResponse(response)}`,
       );
       return defaultOnError(
@@ -194,20 +198,18 @@ export class ScanService {
     const result: ISarifScanSuccessResponse | ISarifScanErrorResponse =
       await this.scanRPC(requestId, sanitizedURI, options);
 
-    const detailedTarget: DTO<DetailedTarget> = await this.handleScanResponse(
-      requestId,
-      result,
-      options,
-      40_000,
-    );
+    const detailedTarget: DTO<DetailedTarget> | undefined =
+      await this.handleScanResponse(requestId, result, options, 40_000);
 
-    return [result, detailedTarget];
+    return [result, detailedTarget] as
+      | [DTO<ISarifScanSuccessResponse>, DTO<DetailedTarget>]
+      | [DTO<ISarifScanErrorResponse>, undefined];
   }
 
   protected async getReportFromCache(
     requestId: string,
     sanitizedURI: string,
-  ): Promise<[ISarifScanSuccessResponse, DTO<DetailedTarget>]> {
+  ): Promise<[ISarifScanSuccessResponse, DTO<DetailedTarget>] | undefined> {
     const details = await this.checkInCache(sanitizedURI);
     if (details) {
       logger.info(
@@ -225,11 +227,7 @@ export class ScanService {
         { requestId },
         `no existing report for site: ${sanitizedURI} - starting new scan`,
       );
+      return undefined;
     }
   }
 }
-
-export const scanService = new GlobalRef(
-  "scanService",
-  () => new ScanService(rabbitMQRPCClient, prisma),
-).value;

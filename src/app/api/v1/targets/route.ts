@@ -8,7 +8,7 @@ import BadRequestException from "../../../../errors/BadRequestException";
 import { authOptions } from "../../../../nextAuthOptions";
 import { notificationServer } from "../../../../notifications/notificationServer";
 import { NotificationType } from "../../../../notifications/notifications";
-import { scanService } from "../../../../scanner/scanService";
+import { scanService } from "../../../../scanner/scanner.module";
 import { getLogger } from "../../../../services/logger";
 import {
   isScanError,
