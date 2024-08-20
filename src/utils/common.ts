@@ -7,9 +7,6 @@ import {
   ISarifResponse,
   ISarifScanErrorResponse,
   ISarifScanSuccessResponse,
-  IScanErrorResponse,
-  IScanResponse,
-  IScanSuccessResponse,
   ISession,
   WithoutId,
 } from "../types";
@@ -66,8 +63,7 @@ export const clientOnly = <T>(fn: () => T): T | null => {
 };
 
 export const getUnicodeHostnameFromUri = (hostname: string) => {
-  const unicodeHostname = toUnicode(getHostnameFromUri(hostname));
-  return unicodeHostname;
+  return toUnicode(getHostnameFromUri(hostname));
 };
 
 export const isProgressMessage = (
@@ -114,6 +110,27 @@ export const limitStringValues = <T>(obj: T, charLimit = 255): T => {
     ) as any;
   }
   return obj;
+};
+
+export const hash = async (stringToHash: string) => {
+  const utf8 = new TextEncoder().encode(stringToHash);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", utf8);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((bytes) => bytes.toString(16).padStart(2, "0")).join("");
+};
+
+export const getUriWithHashedHostname = async (
+  uri: string,
+): Promise<string> => {
+  const hashedHostname = await hash(getHostnameFromUri(uri));
+  const urlPath = getPathFromUri(uri);
+  return `${hashedHostname}${urlPath.length > 1 ? urlPath : ""}`;
+};
+
+export const getPathFromUri = (uri: string): string => {
+  const urlWithHttp = uri.startsWith("http") ? uri : `http://${uri}`;
+  const path = new URL(urlWithHttp).pathname;
+  return path === "/" ? "" : path;
 };
 
 export const getHostnameFromUri = (uri: string): string => {
@@ -233,7 +250,7 @@ export const parseNetwork = (cidr: string): WithoutId<DTO<Network>> => {
     comment: null,
     startAddressNumber: ip.toLong(subnet.firstAddress),
     endAddressNumber: ip.toLong(subnet.lastAddress),
-  };
+  } as WithoutId<DTO<Network>>;
 };
 
 export const parseNetworkString = (networks: string | string[]): string[] => {

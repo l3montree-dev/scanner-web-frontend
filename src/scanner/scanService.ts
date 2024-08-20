@@ -65,7 +65,7 @@ export class ScanService {
     target: string,
     options: ScanTargetOptions,
   ): Promise<ISarifResponse> {
-    const result = await this.messageBrokerClient.call<ISarifResponse>(
+    return this.messageBrokerClient.call<ISarifResponse>(
       process.env.SCAN_REQUEST_QUEUE ?? "scan-request",
       {
         target,
@@ -74,8 +74,6 @@ export class ScanService {
       },
       { messageId: requestId },
     );
-
-    return result;
   }
 
   public async handleScanResponse(
@@ -131,7 +129,7 @@ export class ScanService {
     target: string,
     options: ScanTargetOptions,
   ) {
-    const result = await this.messageBrokerClient.send(
+    return this.messageBrokerClient.send(
       process.env.SCAN_REQUEST_QUEUE ?? "scan-request",
       {
         target,
@@ -141,7 +139,6 @@ export class ScanService {
       { durable: true, maxPriority: 10 },
       { messageId: requestId, priority: 1, replyTo: "scan-response" },
     );
-    return result;
   }
 
   async checkInCache(target: string) {
@@ -194,21 +191,20 @@ export class ScanService {
       );
       if (resultFromCache) return resultFromCache;
     }
-    const result = await this.scanRPC(requestId, sanitizedURI, options);
+    const result: ISarifScanSuccessResponse | ISarifScanErrorResponse =
+      await this.scanRPC(requestId, sanitizedURI, options);
 
-    let detailedTarget: DTO<DetailedTarget> = await this.handleScanResponse(
+    const detailedTarget: DTO<DetailedTarget> = await this.handleScanResponse(
       requestId,
       result,
       options,
       40_000,
     );
 
-    return [result, detailedTarget] as
-      | [ISarifScanSuccessResponse, DTO<DetailedTarget>]
-      | [ISarifScanErrorResponse, undefined];
+    return [result, detailedTarget];
   }
 
-  private async getReportFromCache(
+  protected async getReportFromCache(
     requestId: string,
     sanitizedURI: string,
   ): Promise<[ISarifScanSuccessResponse, DTO<DetailedTarget>]> {
