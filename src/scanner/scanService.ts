@@ -1,8 +1,5 @@
 import { PrismaClient, Target } from "@prisma/client";
-import { prisma } from "../db/connection";
-import { GlobalRef } from "../services/globalRef";
 import { getLogger } from "../services/logger";
-import { rabbitMQRPCClient } from "../services/rabbitmqClient";
 import { reportService } from "../services/reportService";
 import {
   getTargetFromResponse,
@@ -58,7 +55,7 @@ export class ScanService {
     private db: PrismaClient,
   ) {}
 
-  // wont save the result to the database
+  // won't save the result to the database
   // use scanTargetRPC instead
   public async scanRPC(
     requestId: string,

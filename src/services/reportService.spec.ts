@@ -1,5 +1,5 @@
 import { config } from "../config";
-import { scanService } from "../scanner/scanService";
+import { scanService } from "../scanner/scanner.module";
 import { reportService } from "./reportService";
 
 jest.mock("next-auth", () => ({}));

@@ -1,4 +1,5 @@
 import { ScanService } from "./scanService";
+import { reportService } from "../services/reportService";
 
 jest.mock("next-auth", () => ({}));
 jest.mock("next-auth/jwt", () => ({}));
@@ -6,6 +7,13 @@ jest.mock("../app/api/auth/[...nextauth]/route", () => ({}));
 jest.mock("../db/connection", () => ({
   prisma: {},
 }));
+jest.mock("../services/reportService", () => {
+  return {
+    reportService: {
+      handleNewScanReport: jest.fn(),
+    },
+  };
+});
 
 const scanReport = {
   runs: [
@@ -103,7 +111,7 @@ describe("ScanService test suite", () => {
     expect(res).toEqual(scanReport);
   });
 
-  it("should save the new scan report inside the database if the scan was successful", async () => {
+  it("should call handleNewScanReport of reportService", async () => {
     const msgBrokerClientMock = {
       call: jest.fn().mockResolvedValue(scanReport),
     };
@@ -128,7 +136,7 @@ describe("ScanService test suite", () => {
       startTimeMS: Date.now(),
     });
 
-    expect(prismaMock.scanReport.create).toHaveBeenCalled();
+    expect(reportService.handleNewScanReport).toHaveBeenCalled();
   });
 
   describe("after scan", () => {
