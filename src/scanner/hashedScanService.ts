@@ -21,6 +21,12 @@ import {
 
 const logger = getLogger(__filename);
 
+/**
+ * This is an extension for the scanner service.
+ * HashedScanService hashes the uris and masks the ip address for further processes after scanning.
+ * The response returned form the service is an unmasked result.
+ */
+
 export class HashedScanService extends ScanService {
   constructor(messageBrokerClient: MessageBrokerClient, db: PrismaClient) {
     super(messageBrokerClient, db);
@@ -38,46 +44,10 @@ export class HashedScanService extends ScanService {
     return result;
   }
 
-  async scanTargetRPCImpl(
-    requestId: string,
-    sanitizedURI: string,
-    options: ScanTargetOptions,
-    hashedUriForDBReference: string,
-  ): Promise<
-    | [DTO<ISarifScanSuccessResponse>, DTO<DetailedTarget>]
-    | [DTO<ISarifScanErrorResponse>, undefined]
-  > {
-    logger.debug(
-      { requestId },
-      `received request to scan site: ${hashedUriForDBReference}`,
-    );
-
-    if (!options.refreshCache) {
-      // check if it exists already inside the cache
-      const responseResult = await super.getReportFromCache(
-        requestId,
-        hashedUriForDBReference,
-      );
-
-      if (responseResult) {
-        return responseResult;
-      }
-    }
-    const result: ISarifScanSuccessResponse | ISarifScanErrorResponse =
-      await this.scanRPC(requestId, sanitizedURI, options);
-
-    const detailedTarget: DTO<DetailedTarget> | undefined =
-      await this.handleScanResponse(requestId, result, options, 40_000);
-
-    return [result, detailedTarget] as
-      | [DTO<ISarifScanSuccessResponse>, DTO<DetailedTarget>]
-      | [DTO<ISarifScanErrorResponse>, undefined];
-  }
-
   // abstracts the whole app functionality for rpc calls.
   // it makes sure, that the database is in a consistent state.
   // do not use the response to update the database.
-  async scanTargetRPC(
+  public async scanTargetRPC(
     requestId: string,
     target: string | null,
     options: ScanTargetOptions,
@@ -109,6 +79,42 @@ export class HashedScanService extends ScanService {
       resetHashedObjects.responseResult,
       resetHashedObjects.responseDetailedTarget,
     ] as
+      | [DTO<ISarifScanSuccessResponse>, DTO<DetailedTarget>]
+      | [DTO<ISarifScanErrorResponse>, undefined];
+  }
+
+  private async scanTargetRPCImpl(
+    requestId: string,
+    sanitizedURI: string,
+    options: ScanTargetOptions,
+    hashedUriForDBReference: string,
+  ): Promise<
+    | [DTO<ISarifScanSuccessResponse>, DTO<DetailedTarget>]
+    | [DTO<ISarifScanErrorResponse>, undefined]
+  > {
+    logger.debug(
+      { requestId },
+      `received request to scan site: ${hashedUriForDBReference}`,
+    );
+
+    if (!options.refreshCache) {
+      // check if it exists already inside the cache
+      const responseResult = await super.getReportFromCache(
+        requestId,
+        hashedUriForDBReference,
+      );
+
+      if (responseResult) {
+        return responseResult;
+      }
+    }
+    const result: ISarifScanSuccessResponse | ISarifScanErrorResponse =
+      await this.scanRPC(requestId, sanitizedURI, options);
+
+    const detailedTarget: DTO<DetailedTarget> | undefined =
+      await this.handleScanResponse(requestId, result, options, 40_000);
+
+    return [result, detailedTarget] as
       | [DTO<ISarifScanSuccessResponse>, DTO<DetailedTarget>]
       | [DTO<ISarifScanErrorResponse>, undefined];
   }
