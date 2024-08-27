@@ -65,11 +65,18 @@ license-compliance:
   - apk add --update npm
   - license_finder --decisions_file ./docs/dependency_decisions.yml --enabled-package-managers npm
 
-iac: 
+iac:
   stage: test
   image: bridgecrew/checkov:3.2.208@sha256:528276dd7d05bb3901d4546208dbec2727744a0c3878de8e06d26d4f6cd4901f
   script:
   - checkov -d . --quiet
+
+next-build:
+  image: node:22.5.1-bookworm@sha256:86915971d2ce1548842315fcce7cda0da59319a4dab6b9fc0827e762ef04683a
+  stage: test
+  script:
+  - npm ci
+  - npm run build
 
 tag:
   stage: tag
@@ -100,7 +107,7 @@ tag:
 
 oci:build:
   stage: build
-  needs: [tag,jest,software-composition-analysis,static-application-security-testing,secret-scanning,license-compliance,iac]
+  needs: [tag, jest, software-composition-analysis, static-application-security-testing, secret-scanning, license-compliance, iac]
   dependencies: ["tag"]
   image:
     name: gcr.io/kaniko-project/executor:v1.23.2-debug@sha256:c3109d5926a997b100c4343944e06c6b30a6804b2f9abe0994d3de6ef92b028e
@@ -114,10 +121,13 @@ oci:build:
   only:
   - main
   - tags
+  except:
+    variables:
+    - $CI_PIPELINE_SOURCE == "schedule"
 
 oci:build-initcontainer:
   stage: build
-  needs: [tag,jest,software-composition-analysis,static-application-security-testing,secret-scanning,license-compliance,iac]
+  needs: [tag, jest, software-composition-analysis, static-application-security-testing, secret-scanning, license-compliance, iac]
   dependencies: ["tag"]
   image:
     name: gcr.io/kaniko-project/executor:v1.23.2-debug@sha256:c3109d5926a997b100c4343944e06c6b30a6804b2f9abe0994d3de6ef92b028e
@@ -131,6 +141,9 @@ oci:build-initcontainer:
   only:
   - main
   - tags
+  except:
+    variables:
+    - $CI_PIPELINE_SOURCE == "schedule"
 
 container-scanning:
   stage: container-scanning
@@ -149,6 +162,9 @@ container-scanning:
   only:
   - main
   - tags
+  except:
+    variables:
+    - $CI_PIPELINE_SOURCE == "schedule"
 
 
 container-scanning-initcontainer:
@@ -168,6 +184,9 @@ container-scanning-initcontainer:
   only:
   - main
   - tags
+  except:
+    variables:
+    - $CI_PIPELINE_SOURCE == "schedule"
 
 sbom:
   image: alpine:3.20.2@sha256:0a4eaa0eecf5f8c050e5bba433f58c052be7587ee8af3e8b3910ef9ab5fbe9f5
@@ -188,6 +207,9 @@ sbom:
   only:
   - main
   - tags
+  except:
+    variables:
+    - $CI_PIPELINE_SOURCE == "schedule"
 
 sbom-initcontainer:
   image: alpine:3.20.2@sha256:0a4eaa0eecf5f8c050e5bba433f58c052be7587ee8af3e8b3910ef9ab5fbe9f5
@@ -208,6 +230,9 @@ sbom-initcontainer:
   only:
   - main
   - tags
+  except:
+    variables:
+    - $CI_PIPELINE_SOURCE == "schedule"
 
 sign-image:
   stage: sign
@@ -225,6 +250,9 @@ sign-image:
   only:
   - main
   - tags
+  except:
+    variables:
+    - $CI_PIPELINE_SOURCE == "schedule"
 
 sign-image-initcontainer:
   stage: sign
@@ -242,7 +270,9 @@ sign-image-initcontainer:
   only:
   - main
   - tags
-
+  except:
+    variables:
+    - $CI_PIPELINE_SOURCE == "schedule"
 
 sign-sbom:
   stage: sign
@@ -261,6 +291,9 @@ sign-sbom:
   only:
   - main
   - tags
+  except:
+    variables:
+    - $CI_PIPELINE_SOURCE == "schedule"
 
 sign-sbom-initcontainer:
   stage: sign
@@ -279,3 +312,6 @@ sign-sbom-initcontainer:
   only:
   - main
   - tags
+  except:
+    variables:
+    - $CI_PIPELINE_SOURCE == "schedule"

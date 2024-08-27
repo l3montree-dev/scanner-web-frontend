@@ -57,16 +57,18 @@ export async function PUT(req: NextRequest, { params }: Params) {
     throw new ForbiddenException();
   }
   // update the collection
-  return prisma.collection.update({
-    where: {
-      id: collection.id,
-    },
-    data: {
-      title: reqBody.title,
-      color: reqBody.color,
-    },
-    include: {
-      shareLinks: true,
-    },
-  });
+  return NextResponse.json(
+    await prisma.collection.update({
+      where: {
+        id: collection.id,
+      },
+      data: {
+        title: reqBody.title,
+        color: reqBody.color,
+      },
+      include: {
+        shareLinks: true,
+      },
+    }),
+  );
 }

@@ -18,6 +18,7 @@ import {
 } from "../../../../utils/common";
 import { getCurrentUser, toDTO } from "../../../../utils/server";
 import { collectionService } from "../../../../services/collectionService";
+import { featureFlags } from "../../../../feature-flags";
 
 const logger = getLogger(__filename);
 
@@ -56,7 +57,7 @@ export async function POST(req: NextRequest) {
       requestId,
       sanitized,
       {
-        refreshCache: true,
+        refreshCache: !featureFlags.disableRefresh && true,
         startTimeMS: Date.now(),
       },
     );
