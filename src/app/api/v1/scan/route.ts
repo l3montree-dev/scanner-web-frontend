@@ -14,8 +14,8 @@ import {
 import { ISarifResponse } from "../../../../types";
 import { isScanError } from "../../../../utils/common";
 import { getServerSession } from "../../../../utils/server";
-import { staticSecrets } from "../../../../utils/staticSecrets";
 import { displayInspections } from "../../../../utils/view";
+import { featureFlags } from "../../../../feature-flags";
 
 const logger = getLogger(__filename);
 
@@ -72,7 +72,7 @@ export async function GET(req: NextRequest) {
       requestId,
       site,
       {
-        refreshCache: refresh === "true",
+        refreshCache: !featureFlags.disableRefresh && refresh === "true",
         socks5Proxy: req.nextUrl.searchParams.get("socks5Proxy") ?? undefined,
         startTimeMS: Date.now(),
       },
