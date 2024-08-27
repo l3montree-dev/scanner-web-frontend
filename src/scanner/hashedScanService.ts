@@ -138,7 +138,8 @@ export class HashedScanService extends ScanService {
     for (const run of copiedResult.runs) {
       const properties = run.properties;
       properties.target = sanitizedURI;
-      properties.sut = `${getHostnameFromUri(sanitizedURI)}${getPathFromUri(properties.sut)}`;
+      properties.sut =
+        getHostnameFromUri(sanitizedURI) + getPathFromUri(properties.sut);
     }
     return copiedResult;
   }
