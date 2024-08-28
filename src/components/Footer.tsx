@@ -2,6 +2,7 @@ import Image from "next/image";
 import { FunctionComponent } from "react";
 import LinkWithQuery from "./common/LinkWithQuery";
 import ScrollUpButton from "./ScrollUpButton";
+import { featureFlags } from "../feature-flags";
 
 const Footer: FunctionComponent = () => {
   return (
@@ -29,14 +30,16 @@ const Footer: FunctionComponent = () => {
               Impressum
             </LinkWithQuery>
 
-            <LinkWithQuery
-              aria-label="Datenschutzerklärung öffnen"
-              href="/datenschutz"
-              className="cursor-pointer uppercase font-medium text-white p-2 hover:text-white"
-              type="button"
-            >
-              Datenschutz
-            </LinkWithQuery>
+            {!featureFlags.disableDashboard && (
+              <LinkWithQuery
+                aria-label="Datenschutzerklärung öffnen"
+                href="/datenschutz"
+                className="cursor-pointer uppercase font-medium text-white p-2 hover:text-white"
+                type="button"
+              >
+                Datenschutz
+              </LinkWithQuery>
+            )}
 
             <span>
               <a
