@@ -13,11 +13,9 @@ export function withNotAvailable<P extends { displayNotAvailable: boolean }>(
       searchParams: Record<string, string>;
     },
   ) {
-    let displayNotAvailable;
+    let displayNotAvailable = false;
 
-    if (featureFlags.disableDashboard) {
-      displayNotAvailable = false;
-    } else {
+    if (!featureFlags.disableDashboard) {
       const code = props.searchParams["s"];
 
       const session = await getServerSession(authOptions);
