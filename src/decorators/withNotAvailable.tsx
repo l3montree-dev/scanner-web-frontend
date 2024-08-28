@@ -3,6 +3,7 @@ import React from "react";
 import { staticSecrets } from "../utils/staticSecrets";
 
 import { authOptions } from "../nextAuthOptions";
+import { featureFlags } from "../server-config";
 
 export function withNotAvailable<P extends { displayNotAvailable: boolean }>(
   Component: React.ComponentType<P>,
@@ -12,11 +13,15 @@ export function withNotAvailable<P extends { displayNotAvailable: boolean }>(
       searchParams: Record<string, string>;
     },
   ) {
-    const code = props.searchParams["s"];
+    let displayNotAvailable = false;
 
-    const session = await getServerSession(authOptions);
+    if (!featureFlags.disableDashboard) {
+      const code = props.searchParams["s"];
 
-    const displayNotAvailable = false; //  session === null &&(!Boolean(code) || code === null || !staticSecrets[code]);
+      const session = await getServerSession(authOptions);
+
+      displayNotAvailable = false; //  session === null &&(!Boolean(code) || code === null || !staticSecrets[code]);
+    }
 
     return (
       <Component

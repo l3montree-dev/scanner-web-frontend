@@ -13,6 +13,7 @@ import MenuButton from "../common/MenuButton";
 import { getLinks } from "../links";
 import Logo from "./Logo";
 import SmallLink from "./SmallLink";
+import { featureFlags } from "../../server-config";
 
 const BPAHeader: FunctionComponent = () => {
   const activeLink = usePathname();
@@ -46,7 +47,9 @@ const BPAHeader: FunctionComponent = () => {
                       </span>
                     </div>
                   ) : (
-                    <SmallLink href="/dashboard">Anmelden</SmallLink>
+                    !featureFlags.disableDashboard && (
+                      <SmallLink href="/dashboard">Anmelden</SmallLink>
+                    )
                   )}
                 </nav>
                 <nav className="text-gray-600 pt-2 flex flex-row justify-end gap-10">
@@ -146,9 +149,12 @@ const BPAHeader: FunctionComponent = () => {
                           >
                             Informationen zur Challenge
                           </Link>
-                          <Link className="py-3" href="/dashboard">
-                            Anmelden
-                          </Link>
+
+                          {!featureFlags.disableDashboard && (
+                            <Link className="py-3" href="/dashboard">
+                              Anmelden
+                            </Link>
+                          )}
                         </>
                       )}
                     </nav>
