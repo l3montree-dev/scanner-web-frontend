@@ -1,6 +1,7 @@
 import { Prisma, PrismaClient, ScanReport } from "@prisma/client";
 import { config } from "../config";
-import { ScanTargetOptions, scanService } from "../scanner/scanService";
+import { ScanTargetOptions } from "../scanner/scanService";
+import { scanService } from "../scanner/scanner.module";
 import { InspectionType, InspectionTypeEnum } from "../scanner/scans";
 import {
   DetailedTarget,
