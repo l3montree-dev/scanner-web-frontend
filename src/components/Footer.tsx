@@ -5,6 +5,8 @@ import ScrollUpButton from "./ScrollUpButton";
 import { featureFlags } from "../feature-flags";
 
 const Footer: FunctionComponent = () => {
+  let imprintUrl: string = process.env.NEXT_PUBLIC_IMPRINT_URL || "/impressum";
+
   return (
     <footer className="bg-bund relative pb-10">
       <div className="flex flex-row justify-center pt-10">
@@ -23,7 +25,7 @@ const Footer: FunctionComponent = () => {
           <div className="flex flex-wrap gap-2  flex-row">
             <LinkWithQuery
               aria-label="Impressum öffnen"
-              href={"/impressum"}
+              href={imprintUrl}
               className="cursor-pointer text-white uppercase font-medium p-2 hover:text-white"
               type="button"
             >
