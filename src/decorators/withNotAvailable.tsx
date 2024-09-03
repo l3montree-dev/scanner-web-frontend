@@ -3,7 +3,7 @@ import React from "react";
 import { staticSecrets } from "../utils/staticSecrets";
 
 import { authOptions } from "../nextAuthOptions";
-import { featureFlags } from "../server-config";
+import { featureFlags } from "../feature-flags";
 
 export function withNotAvailable<P extends { displayNotAvailable: boolean }>(
   Component: React.ComponentType<P>,
