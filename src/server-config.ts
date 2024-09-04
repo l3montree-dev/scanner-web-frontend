@@ -9,8 +9,3 @@ export const databaseConnection = {
   user: process.env.POSTGRES_USER,
   database: process.env.POSTGRES_DATABASE,
 };
-
-export const featureFlags = {
-  disableDashboard:
-    process.env.NEXT_PUBLIC_DISABLE_DASHBOARD?.toLowerCase() === "true",
-};

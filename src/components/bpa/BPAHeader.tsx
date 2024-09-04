@@ -13,7 +13,7 @@ import MenuButton from "../common/MenuButton";
 import { getLinks } from "../links";
 import Logo from "./Logo";
 import SmallLink from "./SmallLink";
-import { featureFlags } from "../../server-config";
+import { featureFlags } from "../../feature-flags";
 
 const BPAHeader: FunctionComponent = () => {
   const activeLink = usePathname();
