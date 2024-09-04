@@ -15,7 +15,6 @@ In this repository, you will find the web frontend that was developed as part of
 With public administration becoming more digital, the importance of information security is growing. Citizens and companies expect the state to protect their personal information with high levels of IT security. The [Federal Ministry of the Interior and Community (BMI)](https://www.bmi.bund.de/DE/startseite/startseite-node.html) would therefore like to further promote the increase in IT security during the implementation of the OZG and has launched the ‘OZG Security Challenge 2023’ in cooperation with the [Federal Office for Information Security (BSI)](https://www.bsi.bund.de/DE/Home/home_node.html). Within this scope, the ‘OZG Security Quick Test’ and the associated ‘Web Frontend’ component were developed.
 
 ## Features
-
 - Self-service check of the degree of implementation of the following best practices (**Beta**):
   - Responsible Disclosure: Reporting vulnerabilities before publication
   - Transport Layer Security (TLS) 1.3: Current encryption of communication between citizens and the OZG service
@@ -25,6 +24,8 @@ With public administration becoming more digital, the importance of information 
   - Resource Public Key Infrastructure (RPKI): Protection against unauthorised redirection of data traffic
 
 - Explanations and instructions for implementing the IT security measures ([One-pagers](https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/tree/main/public/one-pager)), prepared with a ‘Management Summary’, an ‘Explanation for Online Service Managers’ and a ‘Technical Implementation Approach’.
+
+Following features are only available after registration and login:
 
 - Continuous review of stored websites
 
@@ -37,6 +38,15 @@ With public administration becoming more digital, the importance of information 
 - API for integration into existing systems ([OpenAPI Spec](./docs/api/openapi.yaml))
 
 You can find further explanations and screenshots here: [Explanations of the features](./docs/features.md)
+
+
+## Configuration of the Application
+Some features can be deactivated by using feature flags. Without further configuration all features are active.
+
+- Features that are only available with an account can be deactivated by using the feature flag `NEXT_PUBLIC_DISABLE_DASHBOARD`.
+- The button for updating the website scan report manually can be deactivated by using the feature flag `NEXT_PUBLIC_DISABLE_REFRESH`.
+- The URI that redirects to the imprint can be configured with `NEXT_PUBLIC_IMPRINT_URL`. The default path is: `/impressum`.
+
 
 ## Collaboration
 
