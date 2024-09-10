@@ -416,3 +416,8 @@ export const collectionId = (user: User | Guest): number => {
   }
   return user.defaultCollectionId;
 };
+
+export const testFqdn = (url: string): boolean => {
+  const urlPattern: RegExp = /^(https?:\/\/[^\s$.?#].\S*)$/i;
+  return urlPattern.test(url);
+};
