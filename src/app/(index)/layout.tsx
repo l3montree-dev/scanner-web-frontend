@@ -8,6 +8,7 @@ import { GlobalStoreProvider } from "../../zustand/GlobalStoreProvider";
 const Layout = async ({ children }: any) => {
   let session: ISession | undefined;
   let user: User | undefined;
+
   try {
     const resp = await getSessionAndUser(authOptions);
     session = resp.session;
