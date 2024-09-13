@@ -1,6 +1,5 @@
 import { User } from "@prisma/client";
 import BPAHeader from "../../components/bpa/BPAHeader";
-import { featureFlags } from "../../feature-flags";
 import { authOptions } from "../../nextAuthOptions";
 import { ISession } from "../../types";
 import { getSessionAndUser } from "../../utils/server";
