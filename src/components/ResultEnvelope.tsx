@@ -40,7 +40,7 @@ const ResultEnvelope: FunctionComponent<Props> = ({
   testAmount,
 }) => {
   const sut = getSUTFromResponse(report) ?? "";
-  const { disableRefresh } = featureFlags;
+  const { refreshEnabled } = featureFlags;
   return report !== null ? (
     <div className="md:p-0 text-textblack">
       <div className="md:flex block mb-5 gap-5 flex-row justify-between">
@@ -73,7 +73,7 @@ const ResultEnvelope: FunctionComponent<Props> = ({
             <div className="flex-1">
               <div className="flex gap-3 items-center flex-row">
                 <p>{dateString.substring(0, dateString.length - 3)}</p>
-                {disableRefresh ? null : (
+                {refreshEnabled && (
                   <Button
                     onClick={handleRefresh}
                     title="Testergebnisse aktualisieren"

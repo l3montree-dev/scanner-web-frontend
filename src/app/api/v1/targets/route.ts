@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
       requestId,
       sanitized,
       {
-        refreshCache: !featureFlags.disableRefresh && true,
+        refreshCache: featureFlags.refreshEnabled,
         startTimeMS: Date.now(),
       },
     );

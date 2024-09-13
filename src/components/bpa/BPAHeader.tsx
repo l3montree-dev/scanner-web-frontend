@@ -47,7 +47,7 @@ const BPAHeader: FunctionComponent = () => {
                       </span>
                     </div>
                   ) : (
-                    !featureFlags.disableDashboard && (
+                    featureFlags.dashboardEnabled && (
                       <SmallLink href="/dashboard">Anmelden</SmallLink>
                     )
                   )}
@@ -150,7 +150,7 @@ const BPAHeader: FunctionComponent = () => {
                             Informationen zur Challenge
                           </Link>
 
-                          {!featureFlags.disableDashboard && (
+                          {featureFlags.dashboardEnabled && (
                             <Link className="py-3" href="/dashboard">
                               Anmelden
                             </Link>

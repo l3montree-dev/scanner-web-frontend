@@ -7,7 +7,7 @@ import { featureFlags } from "./feature-flags";
 export default function middleware(request: NextRequest) {
   try {
     if (
-      featureFlags.disableDashboard &&
+      featureFlags.dashboardEnabled &&
       (request.nextUrl.pathname.startsWith("/dashboard") ||
         request.nextUrl.pathname.startsWith("/auth") ||
         request.nextUrl.pathname.startsWith("/datenschutz"))
