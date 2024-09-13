@@ -169,6 +169,4 @@ const BPAHeader: FunctionComponent = () => {
   );
 };
 
-export default !featureFlags.disableDashboard
-  ? withAuthProvider(BPAHeader)
-  : BPAHeader;
+export default withAuthProvider(BPAHeader);
