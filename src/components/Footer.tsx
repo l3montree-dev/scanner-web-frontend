@@ -32,7 +32,7 @@ const Footer: FunctionComponent = () => {
               Impressum
             </LinkWithQuery>
 
-            {!featureFlags.disableDashboard && (
+            {featureFlags.dashboardEnabled && (
               <LinkWithQuery
                 aria-label="Datenschutzerklärung öffnen"
                 href="/datenschutz"

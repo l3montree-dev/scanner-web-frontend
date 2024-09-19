@@ -6,7 +6,13 @@ import { withAuthProvider } from "../../../providers/AuthProvider";
 import { ISession } from "../../../types";
 
 const SignIn = () => {
-  const { status, data } = useSession();
+  const session = useSession();
+  let data: typeof session.data | undefined = undefined;
+  let status: typeof session.status | undefined = undefined;
+  if (session) {
+    data = session.data;
+    status = session.status;
+  }
   const query = useSearchParams();
   const router = useRouter();
   const ref = useRef<"idle" | "redirecting">("idle");

@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }: Props) => {
 };
 
 export function withAuthProvider<P>(Component: React.ComponentType<P>) {
-  if (featureFlags.disableDashboard) {
+  if (featureFlags.dashboardEnabled) {
     return Component;
   }
   return function WithAuthProvider(props: P) {

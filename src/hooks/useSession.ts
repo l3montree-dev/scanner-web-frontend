@@ -2,7 +2,7 @@ import { useSession as baseUseSession } from "next-auth/react";
 import { ISession } from "../types";
 import { featureFlags } from "../feature-flags";
 export function useSession() {
-  if (!featureFlags.disableDashboard) {
+  if (!featureFlags.dashboardEnabled) {
     return baseUseSession() as {
       data: ISession | undefined | null;
       status: string;

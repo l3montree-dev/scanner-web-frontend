@@ -12,7 +12,7 @@ import { featureFlags } from "../feature-flags";
  */
 
 export const scanService = new GlobalRef("scanService", () => {
-  if (featureFlags.disableDashboard) {
+  if (!featureFlags.dashboardEnabled) {
     return new HashedScanService(rabbitMQRPCClient, prisma);
   } else return new ScanService(rabbitMQRPCClient, prisma);
 }).value;

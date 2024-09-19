@@ -72,7 +72,7 @@ export async function GET(req: NextRequest) {
       requestId,
       site,
       {
-        refreshCache: !featureFlags.disableRefresh && refresh === "true",
+        refreshCache: featureFlags.refreshEnabled && refresh === "true",
         socks5Proxy: req.nextUrl.searchParams.get("socks5Proxy") ?? undefined,
         startTimeMS: Date.now(),
       },

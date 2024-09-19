@@ -20,7 +20,7 @@ const logger = getLogger(__filename);
 
 const bootstrap = once(() => {
   // start the response loops.
-  if (featureFlags.disableDashboard) {
+  if (featureFlags.dashboardEnabled) {
     startLookupResponseLoop();
     startScanResponseLoop();
     statLoop();
