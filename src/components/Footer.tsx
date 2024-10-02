@@ -2,8 +2,11 @@ import Image from "next/image";
 import { FunctionComponent } from "react";
 import LinkWithQuery from "./common/LinkWithQuery";
 import ScrollUpButton from "./ScrollUpButton";
+import { featureFlags } from "../feature-flags";
 
 const Footer: FunctionComponent = () => {
+  let imprintUrl: string = process.env.NEXT_PUBLIC_IMPRINT_URL || "/impressum";
+
   return (
     <footer className="bg-zinc-900 relative pb-10">
       <div className="flex flex-row justify-center pt-10">

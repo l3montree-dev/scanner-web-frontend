@@ -8,7 +8,7 @@ import BadRequestException from "../../../../errors/BadRequestException";
 import { authOptions } from "../../../../nextAuthOptions";
 import { notificationServer } from "../../../../notifications/notificationServer";
 import { NotificationType } from "../../../../notifications/notifications";
-import { scanService } from "../../../../scanner/scanService";
+import { scanService } from "../../../../scanner/scanner.module";
 import { getLogger } from "../../../../services/logger";
 import {
   isScanError,
@@ -18,6 +18,7 @@ import {
 } from "../../../../utils/common";
 import { getCurrentUser, toDTO } from "../../../../utils/server";
 import { collectionService } from "../../../../services/collectionService";
+import { featureFlags } from "../../../../feature-flags";
 
 const logger = getLogger(__filename);
 
@@ -56,7 +57,7 @@ export async function POST(req: NextRequest) {
       requestId,
       sanitized,
       {
-        refreshCache: true,
+        refreshCache: featureFlags.refreshEnabled,
         startTimeMS: Date.now(),
       },
     );

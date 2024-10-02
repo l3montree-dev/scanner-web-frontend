@@ -3,9 +3,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { toUnicode } from "punycode";
 import { FunctionComponent } from "react";
 import { legendMessages } from "../messages/legend";
-import { DetailedTarget, ISarifResponse, IScanResponse } from "../types";
+import { ISarifResponse, TestAmount } from "../types";
 import { classNames } from "../utils/common";
-import { DTO } from "../utils/server";
 import {
   CheckResult,
   checkResult2BorderClassName,
@@ -14,6 +13,7 @@ import {
 import ResultGrid from "./ResultGrid";
 import Button from "./common/Button";
 import { getSUTFromResponse } from "../services/sarifTransformer";
+import { featureFlags } from "../feature-flags";
 
 interface Props {
   report: ISarifResponse | null;
@@ -29,7 +29,7 @@ interface Props {
     key: string;
     successed: boolean;
   };
-  amountPassed: number;
+  testAmount: TestAmount;
 }
 
 const ResultEnvelope: FunctionComponent<Props> = ({
@@ -37,9 +37,10 @@ const ResultEnvelope: FunctionComponent<Props> = ({
   dateString,
   handleRefresh,
   refreshRequest,
-  amountPassed,
+  testAmount,
 }) => {
   const sut = getSUTFromResponse(report) ?? "";
+  const { refreshEnabled } = featureFlags;
   return report !== null ? (
     <div className="p-6 md:p-0 text-textblack">
       <div className="md:flex block mb-5 gap-5 flex-row justify-between">
@@ -73,23 +74,23 @@ const ResultEnvelope: FunctionComponent<Props> = ({
           )}
           <div className="flex-wrap mt-8 justify-between flex-row">
             <div className="flex-1">
-              <div className="flex gap-3 items-center flex-rowtext-white">
-                <p className="text-white text-sm">
-                  {dateString.substring(0, dateString.length - 3)}
-                </p>
-                <Button
-                  id="rescan-button"
-                  data-umami-event="Re-Scan triggered"
-                  onClick={handleRefresh}
-                  title="Testergebnisse aktualisieren"
-                >
-                  <FontAwesomeIcon
-                    className={refreshRequest.isLoading ? "rotate" : ""}
-                    icon={faRefresh}
-                  />
-                </Button>
+              <div className="flex gap-3 items-center flex-row">
+                <p>{dateString.substring(0, dateString.length - 3)}</p>
+                {refreshEnabled && (
+                  <Button
+                    onClick={handleRefresh}
+                    title="Testergebnisse aktualisieren"
+                  >
+                    <FontAwesomeIcon
+                      className={refreshRequest.isLoading ? "rotate" : ""}
+                      icon={faRefresh}
+                    />
+                  </Button>
+                )}
               </div>
-              <p className="text-white text-sm">Erfüllt: {amountPassed}/6</p>
+              <p>
+                Erfüllt: {testAmount.passed}/{testAmount.total}
+              </p>
             </div>
           </div>
         </div>

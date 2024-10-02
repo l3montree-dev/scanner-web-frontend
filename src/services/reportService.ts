@@ -1,6 +1,7 @@
 import { Prisma, PrismaClient, ScanReport } from "@prisma/client";
 import { config } from "../config";
-import { ScanTargetOptions, scanService } from "../scanner/scanService";
+import { ScanTargetOptions } from "../scanner/scanService";
+import { scanService } from "../scanner/scanner.module";
 import { InspectionType, InspectionTypeEnum } from "../scanner/scans";
 import {
   DetailedTarget,
@@ -30,30 +31,25 @@ const didPassEq = (
   if (didPassA === didPassB) {
     return true;
   }
-  if (
+  return (
     (didPassA === null && didPassB === undefined) ||
     (didPassA === undefined && didPassB === null)
-  ) {
-    return true;
-  }
-  return false;
+  );
 };
 const reportDidChange = (
   lastReport: Omit<ScanReport, "createdAt" | "updatedAt" | "id">,
   newReport: Omit<ScanReport, "createdAt" | "updatedAt" | "id">,
 ) => {
-  const res = Object.values(InspectionTypeEnum).some((key) => {
+  return Object.values(InspectionTypeEnum).some((key) => {
     return !didPassEq(lastReport[key], newReport[key]);
   });
-
-  return res;
 };
 
 export const diffReport = (
   lastReport: ScanReport,
   secondLastReport?: ScanReport,
 ): Record<InspectionType, { was: boolean | null; now: boolean | null }> => {
-  const res = Object.values(InspectionTypeEnum).reduce(
+  return Object.values(InspectionTypeEnum).reduce(
     (acc, key) => {
       if (!secondLastReport) {
         acc[key] = {
@@ -73,7 +69,6 @@ export const diffReport = (
     },
     {} as Record<InspectionType, { was: boolean | null; now: boolean | null }>,
   );
-  return res;
 };
 
 // get the changed inspections of a user between start and end.
@@ -414,6 +409,11 @@ const handleNewScanReport = async (
       lastScan: startTimeOfResponse(result).getTime(),
       errorCount: 0,
       hostname: getHostnameFromUri(newReport.uri),
+      lastScanDetails: {
+        update: {
+          updatedAt: endTimeOfResponse(result),
+        },
+      },
     },
   });
 

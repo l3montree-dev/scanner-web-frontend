@@ -4,6 +4,7 @@ import EventEmitter from "events";
 import { getRabbitMQConnString } from "../server-config";
 import { GlobalRef } from "./globalRef";
 import { getLogger } from "./logger";
+import { MessageBrokerClient } from "../scanner/scanService";
 
 const logger = getLogger(__filename);
 
@@ -163,7 +164,10 @@ export class RabbitMQClient {
   }
 }
 
-export class RabbitMQRPCClient extends RabbitMQClient {
+export class RabbitMQRPCClient
+  extends RabbitMQClient
+  implements MessageBrokerClient
+{
   private eventEmitter = new EventEmitter();
 
   constructor(rabbitmqConnString: string) {

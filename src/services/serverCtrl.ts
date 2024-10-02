@@ -3,26 +3,29 @@ import PQueue from "p-queue";
 import { prisma } from "../db/connection";
 
 import { isMaster } from "../leaderelection/leaderelection";
-import { ISarifResponse, IScanResponse } from "../types";
+import { ISarifResponse } from "../types";
 import { once } from "../utils/common";
 import { targetService } from "./targetService";
 
 import { notificationServer } from "../notifications/notificationServer";
-import { scanService } from "../scanner/scanService";
+import { scanService } from "../scanner/scanner.module";
 import { getLogger } from "./logger";
 import { rabbitMQClient } from "./rabbitmqClient";
 import { serverSentEventsService } from "./serverSentEventsService";
 import { statService } from "./statService";
+import { featureFlags } from "../feature-flags";
 
 const logger = getLogger(__filename);
 // make sure to always execute a function only once.
 
 const bootstrap = once(() => {
   // start the response loops.
-  startLookupResponseLoop();
-  startScanResponseLoop();
-  statLoop();
-  startScanLoop();
+  if (featureFlags.dashboardEnabled) {
+    startLookupResponseLoop();
+    startScanResponseLoop();
+    statLoop();
+    startScanLoop();
+  }
   serverSentEventsService.bootstrap();
   // start the notification server
   notificationServer.bootstrap();

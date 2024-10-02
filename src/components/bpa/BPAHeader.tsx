@@ -4,8 +4,28 @@ import { FunctionComponent, useState } from "react";
 import { withAuthProvider } from "../../providers/AuthProvider";
 import Image from "next/image";
 import Link from "next/link";
+import { classNames } from "../../utils/common";
+import { useGlobalStore } from "../../zustand/global";
+import SideMenu from "../SideMenu";
+import MenuButton from "../common/MenuButton";
+import { getLinks } from "../links";
+import Logo from "./Logo";
+import SmallLink from "./SmallLink";
+import { featureFlags } from "../../feature-flags";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { usePathname, useSearchParams } from "next/navigation";
+import { useSignOut } from "../../hooks/useSignOut";
 
 const BPAHeader: FunctionComponent = () => {
+  const activeLink = usePathname();
+
+  const signOut = useSignOut();
+
+  const { user, session, hideLogin } = useGlobalStore();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const query = useSearchParams();
+
   return (
     <header className="z-50 sticky top-0 bg-zinc-950">
       <div className="container">
