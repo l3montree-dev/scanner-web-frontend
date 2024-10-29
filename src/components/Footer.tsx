@@ -1,8 +1,6 @@
-import Image from "next/image";
 import { FunctionComponent } from "react";
-import LinkWithQuery from "./common/LinkWithQuery";
 import ScrollUpButton from "./ScrollUpButton";
-import { featureFlags } from "../feature-flags";
+import Link from "next/link";
 
 const Footer: FunctionComponent = () => {
   let imprintUrl: string = process.env.NEXT_PUBLIC_IMPRINT_URL || "/impressum";
@@ -15,9 +13,9 @@ const Footer: FunctionComponent = () => {
       <div className="container pt-10 text-xs">
         <div className="lg:flex text-white pt-10 border-t justify-between">
           <div className="flex flex-wrap gap-2  flex-row">
-            <LinkWithQuery
+            <Link
               aria-label="Impressum öffnen"
-              href={"https://l3montree.com/impressum"}
+              href={"https://cyber-security-cluster.eu/impressum/"}
               className="cursor-pointer text-white uppercase font-medium p-2 hover:text-white"
               type="button"
               target="_blank"
@@ -26,11 +24,11 @@ const Footer: FunctionComponent = () => {
               data-umami-event="Open imprint page"
             >
               Impressum
-            </LinkWithQuery>
+            </Link>
 
-            <LinkWithQuery
+            <Link
               aria-label="Datenschutzerklärung öffnen"
-              href="https://l3montree.com/datenschutz"
+              href="https://cyber-security-cluster.eu/datenschutz/"
               target="_blank"
               rel="noopener noreferrer"
               className="cursor-pointer uppercase font-medium text-white p-2 hover:text-white"
@@ -39,12 +37,12 @@ const Footer: FunctionComponent = () => {
               data-umami-event="Open privacy page"
             >
               Datenschutz
-            </LinkWithQuery>
+            </Link>
           </div>
           <div className="flex flex-wrap flex-row mb-0">
             <span className="mt-5 py-2 sm:mt-0">
               <a
-                href="https://github.com/l3montree-dev/scanner-web-frontend"
+                href="https://github.com/l3montree-dev/scanner-web-frontend/tree/ccb"
                 rel="noopener noreferrer"
                 className="p-2 uppercase font-medium text-white block hover:text-white"
                 target={"_blank"}

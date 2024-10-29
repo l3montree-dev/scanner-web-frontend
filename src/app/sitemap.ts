@@ -11,7 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     process.env.NEXT_PUBLIC_IMPRINT_URL || "/impressum";
 
   return [
-    ...["/", imprintUrl, "/datenschutz"].map((entry) => {
+    ...["/"].map((entry) => {
       const isFqdn = testFqdn(entry);
 
       return {

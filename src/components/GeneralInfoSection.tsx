@@ -133,7 +133,7 @@ export default function GeneralInfoSection() {
                 Wir haben dieses Projekt nachgenutzt und eine Kopie des
                 Web-Frontends mit einem angepassten Design erstellt (
                 <a
-                  href="https://github.com/l3montree-dev/scanner-web-frontend"
+                  href="https://github.com/l3montree-dev/scanner-web-frontend/tree/ccb"
                   target="_blank"
                   className="text-ccb-600 font-normal underline decoration-dotted decoration-ccb-600 underline-offset-4 hover:text-ccb-500"
                   rel="noopener noreferrer"
