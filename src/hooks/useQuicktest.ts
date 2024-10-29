@@ -9,7 +9,7 @@ import {
 } from "react";
 import { getErrorMessage } from "../messages/http";
 import { clientHttpClient } from "../services/clientHttpClient";
-import { ISarifResponse } from "../types";
+import { ISarifResponse, TestAmount } from "../types";
 import { sanitizeURI } from "../utils/common";
 import { DTO } from "../utils/server";
 import useLoading from "./useLoading";
@@ -64,9 +64,10 @@ export function useQuicktest(code?: string | null) {
             return;
           }
           const err = await response.json();
+
           return scanRequest.error(
             `Es ist ein Fehler aufgetreten - Fehlermeldung: ${getErrorMessage(
-              err.error,
+              err.errorMessage,
             )}`,
           );
         }
@@ -135,7 +136,7 @@ export function useQuicktest(code?: string | null) {
         const err = await response.json();
         return refreshRequest.error(
           `Es ist ein Fehler aufgetreten - Fehlermeldung: ${getErrorMessage(
-            err.error.code,
+            err.errorMessage,
           )}`,
         );
       }
@@ -149,10 +150,13 @@ export function useQuicktest(code?: string | null) {
     }
   };
 
-  const amountPassed = useMemo(() => {
-    if (!report) return 0;
-    return (report?.runs[0].results ?? []).filter((r) => r.kind === "pass")
-      .length;
+  const testAmount: TestAmount = useMemo((): TestAmount => {
+    if (!report) return { passed: 0, total: 0 };
+    const results = report?.runs[0].results;
+    return {
+      passed: (results ?? []).filter((r) => r.kind === "pass").length,
+      total: results.length,
+    };
   }, [report]);
 
   const dateString = report
@@ -176,7 +180,7 @@ export function useQuicktest(code?: string | null) {
     refreshRequest,
     report,
     handleRefresh,
-    amountPassed,
+    testAmount,
     dateString,
   };
 }

@@ -10,4 +10,4 @@ Code des Projekts auf: [Open CoDE](https://gitlab.opencode.de/bmi/ozg-rahmenarch
 
 ## Lizenz
 
-Dieses Projekt ist lizenziert unter der [EUPL-1.2](./LICENSE.md) Lizenz.
+Dieses Projekt ist lizenziert unter der [EUPL-1.2](./LICENSE) Lizenz.

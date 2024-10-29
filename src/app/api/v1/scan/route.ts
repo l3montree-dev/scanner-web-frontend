@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "../../../../nextAuthOptions";
 import { getLogger } from "../../../../services/logger";
 
-import { scanService } from "../../../../scanner/scanService";
+import { scanService } from "../../../../scanner/scanner.module";
 import { InspectionType } from "../../../../scanner/scans";
 import { monitoringService } from "../../../../services/monitoringService";
 import {
@@ -14,8 +14,8 @@ import {
 import { ISarifResponse } from "../../../../types";
 import { isScanError } from "../../../../utils/common";
 import { getServerSession } from "../../../../utils/server";
-import { staticSecrets } from "../../../../utils/staticSecrets";
 import { displayInspections } from "../../../../utils/view";
+import { featureFlags } from "../../../../feature-flags";
 
 const logger = getLogger(__filename);
 
@@ -72,7 +72,7 @@ export async function GET(req: NextRequest) {
       requestId,
       site,
       {
-        refreshCache: refresh === "true",
+        refreshCache: featureFlags.refreshEnabled && refresh === "true",
         socks5Proxy: req.nextUrl.searchParams.get("socks5Proxy") ?? undefined,
         startTimeMS: Date.now(),
       },
@@ -86,6 +86,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json(
         {
           error: result.runs[0].invocations[0].exitCode,
+          errorMessage: result.runs[0].invocations[0].exitCodeDescription,
           uri: getTargetFromResponse(result),
         },
         { status: 422 },

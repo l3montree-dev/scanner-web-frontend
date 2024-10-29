@@ -61,12 +61,12 @@ const handleTargetScanError = async (
   content: ISarifScanErrorResponse,
   prisma: PrismaClient,
 ) => {
-  const lastScan =
-    new Date(content.runs[0].invocations[0].startTimeUtc).getTime() ??
-    Date.now();
-  const res = await prisma.target.upsert({
+  const startTime = content?.runs[0]?.invocations[0]?.startTimeUtc;
+  const lastScan = !!startTime ? new Date(startTime).getTime() : Date.now();
+  const targetUri = content?.runs[0]?.properties?.target;
+  return prisma.target.upsert({
     where: {
-      uri: content.runs[0].properties.target,
+      uri: targetUri,
     },
     update: {
       lastScan,
@@ -77,13 +77,11 @@ const handleTargetScanError = async (
     },
     create: {
       errorCount: 1,
-      uri: content.runs[0].properties.target,
+      uri: targetUri,
       lastScan,
-      hostname: getHostnameFromUri(content.runs[0].properties.target),
+      hostname: getHostnameFromUri(targetUri),
     },
   });
-
-  return res;
 };
 
 const translateSortDirection = (

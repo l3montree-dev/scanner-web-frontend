@@ -8,6 +8,7 @@ import { XMarkIcon } from "@heroicons/react/20/solid";
 
 const BPAHeader: FunctionComponent = () => {
   const [showBanner, setShowBanner] = useState(true);
+
   return (
     <header className="z-50 sticky top-0 bg-zinc-900">
       {showBanner && (

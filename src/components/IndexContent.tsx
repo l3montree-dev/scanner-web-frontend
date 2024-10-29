@@ -22,7 +22,7 @@ const IndexContent: FunctionComponent<Props> = ({ displayNotAvailable }) => {
     refreshRequest,
     report,
     dateString,
-    amountPassed,
+    testAmount,
     handleRefresh,
     onSubmit,
   } = useQuicktest(searchParams?.get("s"));
@@ -53,7 +53,7 @@ const IndexContent: FunctionComponent<Props> = ({ displayNotAvailable }) => {
               dateString={dateString}
               handleRefresh={handleRefresh}
               refreshRequest={refreshRequest}
-              amountPassed={amountPassed}
+              testAmount={testAmount}
             />
           </div>
         </div>

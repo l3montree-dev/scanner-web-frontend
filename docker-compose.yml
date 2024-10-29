@@ -1,7 +1,27 @@
 version: '3'
 
 services:
-
+  scanner:
+    # https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-best-practice-scanner/container_registry
+    image: registry.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-best-practice-scanner:v1.0.0
+    environment:
+      REDIS_HOST: redis:6379
+      INFLUX_URL: http://influxdb:8086
+      INFLUX_ORG: ozgsec
+      INFLUX_BUCKET: ozgsec
+      INFLUX_TOKEN: secret
+      RABBITMQ_PASS: rabbitmq
+      RABBITMQ_USER: rabbitmq
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_CONNECTION_RETRIES: 1
+      SERVER_TIMEOUT: 10000
+      RIPE_SOURCE_APP: "quicktest-bmi-germany"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - rabbitmq
+      - redis
   
   redis:
     image: bitnami/redis

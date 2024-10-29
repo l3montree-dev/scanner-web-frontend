@@ -10,7 +10,7 @@ import FormInput from "../../../components/common/FormInput";
 import { useQuicktest } from "../../../hooks/useQuicktest";
 
 interface Props {}
-const Content: FunctionComponent<Props> = (props) => {
+const Content: FunctionComponent<Props> = () => {
   const {
     website,
     setWebsite,
@@ -18,7 +18,7 @@ const Content: FunctionComponent<Props> = (props) => {
     refreshRequest,
     report,
     dateString,
-    amountPassed,
+    testAmount,
     handleRefresh,
     onSubmit,
   } = useQuicktest();
@@ -71,7 +71,7 @@ const Content: FunctionComponent<Props> = (props) => {
             dateString={dateString}
             handleRefresh={handleRefresh}
             refreshRequest={refreshRequest}
-            amountPassed={amountPassed}
+            testAmount={testAmount}
           />
         </div>
       )}

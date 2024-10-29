@@ -4,7 +4,7 @@ import { withNotAvailable } from "../../decorators/withNotAvailable";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Security Challenge Schnelltest | L3montree",
+  title: "Security Challenge Schnelltest | Cyber Security Cluster Bonn e.V.",
   description:
     "Security Challenge Schnelltest einer Webseite in Bezug auf IT-Sicherheitsmaßnahmen und Best-Practices",
   openGraph: {

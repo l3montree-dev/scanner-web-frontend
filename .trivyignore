@@ -1,12 +1,3 @@
-# Added: 2024-05-03
-# Status: will_not_fix, main image is not affected currently (distroless) - https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/jobs/189800
-CVE-2023-45853
-
-# Added: 2024-05-03
-# Risk temp. accepted, main image is not affected currently (distroless) - https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/jobs/189800
-CVE-2023-5841
-CVE-2023-6879
-
-# Added: 2024-05-15
-# Risk temp. accepted, Git is not used, main image is not affected currently (distroless) - https://gitlab.opencode.de/bmi/ozg-rahmenarchitektur/ozgsec/ozgsec-web-frontend/-/jobs/204034
-CVE-2024-32002
+# The affected method is not explicitly used in the codebase and not called implicitly also
+CVE-2023-42282
+CVE-2024-29415

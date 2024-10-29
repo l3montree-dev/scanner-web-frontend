@@ -65,3 +65,8 @@
     :why: OSI-approved OSS license, permissive
     :versions: []
     :when: 2024-05-14 11:57:14.697744000 Z
+- - :permit
+  - EUPL-1.2
+  - :who: Sebastian Kawelke
+    :why: OSI-approved OSS license, same as ours
+    :when: 2024-07-26 13:45:20.797550000 Z

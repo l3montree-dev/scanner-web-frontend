@@ -1,9 +1,10 @@
 import { config } from "../config";
-import { scanService } from "../scanner/scanService";
+import { scanService } from "../scanner/scanner.module";
 import { reportService } from "./reportService";
 
 jest.mock("next-auth", () => ({}));
 jest.mock("next-auth/jwt", () => ({}));
+const startAndEndTimeUtc = "2021-08-24T12:00:00.000Z";
 
 describe("Report Service Test Suite", () => {
   it("should not create a new scan report if the reports did not change", async () => {
@@ -34,8 +35,8 @@ describe("Report Service Test Suite", () => {
           {
             invocations: [
               {
-                endTimeUtc: "2021-08-24T12:00:00.000Z",
-                startTimeUtc: "2021-08-24T12:00:00.000Z",
+                endTimeUtc: startAndEndTimeUtc,
+                startTimeUtc: startAndEndTimeUtc,
               },
             ],
             properties: {
@@ -66,6 +67,11 @@ describe("Report Service Test Suite", () => {
         lastScan: 1629806400000,
         errorCount: 0,
         hostname: "example.com",
+        lastScanDetails: {
+          update: {
+            updatedAt: new Date(startAndEndTimeUtc),
+          },
+        },
       },
     });
   });
@@ -99,8 +105,8 @@ describe("Report Service Test Suite", () => {
           {
             invocations: [
               {
-                endTimeUtc: "2021-08-24T12:00:00.000Z",
-                startTimeUtc: "2021-08-24T12:00:00.000Z",
+                endTimeUtc: startAndEndTimeUtc,
+                startTimeUtc: startAndEndTimeUtc,
               },
             ],
             properties: {
@@ -123,8 +129,8 @@ describe("Report Service Test Suite", () => {
           {
             invocations: [
               {
-                endTimeUtc: "2021-08-24T12:00:00.000Z",
-                startTimeUtc: "2021-08-24T12:00:00.000Z",
+                endTimeUtc: startAndEndTimeUtc,
+                startTimeUtc: startAndEndTimeUtc,
               },
             ],
             properties: {
@@ -158,6 +164,11 @@ describe("Report Service Test Suite", () => {
         lastScan: 1629806400000,
         errorCount: 0,
         hostname: "example.com",
+        lastScanDetails: {
+          update: {
+            updatedAt: new Date(startAndEndTimeUtc),
+          },
+        },
       },
     });
   });
@@ -207,8 +218,8 @@ describe("Report Service Test Suite", () => {
             {
               invocations: [
                 {
-                  endTimeUtc: "2021-08-24T12:00:00.000Z",
-                  startTimeUtc: "2021-08-24T12:00:00.000Z",
+                  endTimeUtc: startAndEndTimeUtc,
+                  startTimeUtc: startAndEndTimeUtc,
                 },
               ],
               properties: {
@@ -236,8 +247,8 @@ describe("Report Service Test Suite", () => {
             {
               invocations: [
                 {
-                  endTimeUtc: "2021-08-24T12:00:00.000Z",
-                  startTimeUtc: "2021-08-24T12:00:00.000Z",
+                  endTimeUtc: startAndEndTimeUtc,
+                  startTimeUtc: startAndEndTimeUtc,
                 },
               ],
               properties: {
@@ -342,8 +353,8 @@ describe("Report Service Test Suite", () => {
           {
             invocations: [
               {
-                endTimeUtc: "2021-08-24T12:00:00.000Z",
-                startTimeUtc: "2021-08-24T12:00:00.000Z",
+                endTimeUtc: startAndEndTimeUtc,
+                startTimeUtc: startAndEndTimeUtc,
                 exitCode: 0,
               },
             ],
@@ -374,8 +385,8 @@ describe("Report Service Test Suite", () => {
           {
             invocations: [
               {
-                endTimeUtc: "2021-08-24T12:00:00.000Z",
-                startTimeUtc: "2021-08-24T12:00:00.000Z",
+                endTimeUtc: startAndEndTimeUtc,
+                startTimeUtc: startAndEndTimeUtc,
                 exitCode: 0,
               },
             ],
@@ -453,8 +464,8 @@ describe("Report Service Test Suite", () => {
           {
             invocations: [
               {
-                endTimeUtc: "2021-08-24T12:00:00.000Z",
-                startTimeUtc: "2021-08-24T12:00:00.000Z",
+                endTimeUtc: startAndEndTimeUtc,
+                startTimeUtc: startAndEndTimeUtc,
                 exitCode: 0,
               },
             ],
@@ -487,8 +498,8 @@ describe("Report Service Test Suite", () => {
           {
             invocations: [
               {
-                endTimeUtc: "2021-08-24T12:00:00.000Z",
-                startTimeUtc: "2021-08-24T12:00:00.000Z",
+                endTimeUtc: startAndEndTimeUtc,
+                startTimeUtc: startAndEndTimeUtc,
                 exitCode: 0,
               },
             ],
@@ -578,8 +589,8 @@ describe("Report Service Test Suite", () => {
               {
                 invocations: [
                   {
-                    endTimeUtc: "2021-08-24T12:00:00.000Z",
-                    startTimeUtc: "2021-08-24T12:00:00.000Z",
+                    endTimeUtc: startAndEndTimeUtc,
+                    startTimeUtc: startAndEndTimeUtc,
                     exitCode: 0,
                   },
                 ],
@@ -616,8 +627,8 @@ describe("Report Service Test Suite", () => {
           {
             invocations: [
               {
-                endTimeUtc: "2021-08-24T12:00:00.000Z",
-                startTimeUtc: "2021-08-24T12:00:00.000Z",
+                endTimeUtc: startAndEndTimeUtc,
+                startTimeUtc: startAndEndTimeUtc,
                 exitCode: 0,
               },
             ],
@@ -650,8 +661,8 @@ describe("Report Service Test Suite", () => {
           {
             invocations: [
               {
-                endTimeUtc: "2021-08-24T12:00:00.000Z",
-                startTimeUtc: "2021-08-24T12:00:00.000Z",
+                endTimeUtc: startAndEndTimeUtc,
+                startTimeUtc: startAndEndTimeUtc,
                 exitCode: 0,
               },
             ],
