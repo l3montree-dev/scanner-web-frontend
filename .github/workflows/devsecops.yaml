@@ -43,7 +43,7 @@ jobs:
     - name: DevGuard SCA
       uses: docker://ghcr.io/l3montree-dev/devguard-scanner:main-7aff2bfc-1730197803
       with:
-        args: devguard-scanner sca --assetName="sebastian-kw/projects/ozgsec-web-frontend/assets/ozgsec-web-frontend" --apiUrl="https://api.main.devguard.org/" --token="${{ secrets.DEVGUARD_TOKEN }}" --path="/github/workspace"
+        args: devguard-scanner sca --assetName="sebastian-kw/projects/ozgsec-web-frontend/assets/ozgsec-web-frontend" --apiUrl="https://api.main.devguard.org" --token="${{ secrets.DEVGUARD_TOKEN }}" --path="/github/workspace"
 
   iac:
     runs-on: ubuntu-latest
