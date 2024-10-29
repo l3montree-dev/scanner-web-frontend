@@ -34,25 +34,16 @@ jobs:
   # Software Composition Analysis (SCA) to find vulnerabilities in project dependencies
   sca:
     runs-on: ubuntu-latest
-    permissions:
-      security-events: write
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
-    - name: Run Trivy vulnerability scanner in fs mode
-      # Running Trivy to scan the filesystem for vulnerabilities
-      uses: aquasecurity/trivy-action@master
+      uses: actions/checkout@v4 # Check out the repository content to the runner
+    - name: Set up Git
+      run: |
+        git config --global --add safe.directory /github/workspace
+    - name: DevGuard SCA
+      uses: docker://ghcr.io/l3montree-dev/devguard-scanner:main-7aff2bfc-1730197803
       with:
-        scan-type: "fs"
-        scan-ref: "."
-        severity: "CRITICAL,HIGH"
-        format: "sarif"
-        output: "trivy-results.sarif"
-    - name: Upload Trivy scan results to GitHub Security tab
-      uses: github/codeql-action/upload-sarif@v3
-      with:
-        sarif_file: "trivy-results.sarif"
-        category: "sca"
+        args: devguard-scanner sca --assetName="sebastian-kw/projects/ozgsec-web-frontend/assets/ozgsec-web-frontend" --apiUrl="https://api.main.devguard.org/" --token="${{ secrets.DEVGUARD_TOKEN }}" --path="/github/workspace"
 
   iac:
     runs-on: ubuntu-latest
@@ -205,55 +196,49 @@ jobs:
   # Image scanning job to detect vulnerabilities in the built Docker image
   image-scanning:
     needs: build-image
-    permissions:
-      security-events: write
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/ccb' || startsWith(github.ref, 'refs/tags/')
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
     - uses: actions/download-artifact@v4
       with:
         name: docker-image
         path: .
-    - name: Run Trivy vulnerability scanner in tarball mode
       # Running Trivy to scan the Docker image for vulnerabilities
-      uses: aquasecurity/trivy-action@master
+    - name: Set up Git
+      run: |
+        git config --global --add safe.directory /github/workspace
+    - name: DevGuard Container-Scanning
+      uses: docker://ghcr.io/l3montree-dev/devguard-scanner:main-7aff2bfc-1730197803
       with:
-        input: /github/workspace/image.tar
-        severity: "CRITICAL,HIGH"
-        format: "sarif"
-        output: "trivy-results.sarif"
-    - name: Upload Trivy scan results to GitHub Security tab
-      uses: github/codeql-action/upload-sarif@v3
-      with:
-        sarif_file: "trivy-results.sarif"
-        category: "image-scanning"
-    
-  initcontainer-image-scanning:
-    needs: build-initcontainer-image
-    permissions:
-      security-events: write
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/ccb' || startsWith(github.ref, 'refs/tags/')
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/download-artifact@v4
-      with:
-        name: docker-initcontainer-image
-        path: .
-    - name: Run Trivy vulnerability scanner in tarball mode
-      # Running Trivy to scan the Docker image for vulnerabilities
-      uses: aquasecurity/trivy-action@master
-      with:
-        input: /github/workspace/initcontainer-image.tar
-        severity: "CRITICAL"
-        format: "sarif"
-        output: "trivy-results.sarif"
-    - name: Upload Trivy scan results to GitHub Security tab
-      uses: github/codeql-action/upload-sarif@v3
-      with:
-        sarif_file: "trivy-results.sarif"
-        category: "image-scanning"
+        args: devguard-scanner container-scanning --assetName="sebastian-kw/projects/ozgsec-web-frontend/assets/ozgsec-web-frontend" --apiUrl="https://api.main.devguard.org" --token="${{ secrets.DEVGUARD_TOKEN }}" --path="/github/workspace/image.tar"
+
+  #initcontainer-image-scanning:
+  #  needs: build-initcontainer-image
+  #  permissions:
+  #    security-events: write
+  #  runs-on: ubuntu-latest
+  #  if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/ccb' || startsWith(github.ref, 'refs/tags/')
+  #  steps:
+  #  - uses: actions/checkout@v4
+  #  - uses: actions/download-artifact@v4
+  #    with:
+  #      name: docker-initcontainer-image
+  #      path: .
+  #  - name: Run Trivy vulnerability scanner in tarball mode
+  #    # Running Trivy to scan the Docker image for vulnerabilities
+  #    uses: aquasecurity/trivy-action@master
+  #    with:
+  #      input: /github/workspace/initcontainer-image.tar
+  #      severity: "CRITICAL"
+  #      format: "sarif"
+  #      output: "trivy-results.sarif"
+  #  - name: Upload Trivy scan results to GitHub Security tab
+  #    uses: github/codeql-action/upload-sarif@v3
+  #    with:
+  #      sarif_file: "trivy-results.sarif"
+  #      category: "image-scanning"
 
   # Publish job to push the Docker image to a registry
   publish:
@@ -281,7 +266,7 @@ jobs:
       run: crane push image.tar ${{ env.IMAGE_TAG }}
 
   publish-initcontainer:
-    needs: [build-initcontainer-image, initcontainer-image-scanning, secret-scanning, sca, sast, iac]
+    needs: [build-initcontainer-image, secret-scanning, sca, sast, iac]
     runs-on: ubuntu-latest
     permissions:
       packages: write
